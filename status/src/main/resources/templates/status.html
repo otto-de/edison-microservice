@@ -1,0 +1,17 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Status</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h1>Status</h1>
+<ul>
+    <li th:text="${name}" />
+    <li th:text="${status}" />
+</ul>
+<h1>Details</h1>
+<ul th:each="statusDetail : ${statusDetails}">
+    <li th:text="${statusDetail.key} + ': ' + ${statusDetail.status} + ' (' + ${statusDetail.message} + ')'" />
+</ul>
+</body>
+</html>
