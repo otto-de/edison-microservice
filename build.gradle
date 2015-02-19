@@ -30,8 +30,8 @@ subprojects {
     apply plugin: 'project-report'
     apply plugin: 'signing'
 
-    group = 'de.otto.microservice'
-    version = '0.0.2'
+    group = 'de.otto.edison'
+    version = '0.0.3'
 
     repositories {
         mavenCentral()

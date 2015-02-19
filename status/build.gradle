@@ -30,13 +30,13 @@ uploadArchives {
             pom.project {
                 name 'status'
                 packaging 'jar'
-                description 'Status library of the springboot-microservice project.'
-                url 'http://github.com/otto-de/springboot-microservice'
+                description 'Status library of the edison-microservice project.'
+                url 'http://github.com/otto-de/edison-microservice'
 
                 scm {
-                    url 'scm:git@github.com:otto-de/springboot-microservice.git'
-                    connection 'scm:git@github.com:otto-de/springboot-microservice.git'
-                    developerConnection 'scm:git@github.com:otto-de/springboot-microservice.git'
+                    url 'scm:git@github.com:otto-de/edison-microservice.git'
+                    connection 'scm:git@github.com:otto-de/edison-microservice.git'
+                    developerConnection 'scm:git@github.com:otto-de/edison-microservice.git'
                 }
 
                 licenses {
