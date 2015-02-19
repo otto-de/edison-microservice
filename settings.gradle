@@ -1,5 +1,6 @@
 include "testsupport"
 include "health"
 include "status"
+include "metrics"
 include "jobs"
 include "example"

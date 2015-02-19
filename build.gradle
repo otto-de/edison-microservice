@@ -16,6 +16,12 @@ repositories {
     maven { url "http://repo.spring.io/libs-snapshot" }
 }
 
+idea {
+    project {
+        languageLevel = '1.8'
+    }
+}
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
@@ -25,10 +31,7 @@ subprojects {
     apply plugin: 'signing'
 
     group = 'de.otto.microservice'
-    version = '0.0.1'
-
-    targetCompatibility = "1.8"
-    sourceCompatibility = "1.8"
+    version = '0.0.2'
 
     repositories {
         mavenCentral()
@@ -70,8 +73,7 @@ subprojects {
 
         compile("net.jcip:jcip-annotations:1.0")
 
-        testCompile("ch.qos.logback:logback-core:1.0.13")
-        testCompile("ch.qos.logback:logback-classic:1.0.13")
+        compile("ch.qos.logback:logback-classic:1.0.13")
 
         testCompile("org.testng:testng:6.1.1")
         testCompile("org.hamcrest:hamcrest-core:1.3")
