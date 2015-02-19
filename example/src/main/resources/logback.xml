@@ -14,7 +14,7 @@
         </encoder>
     </appender>
 
-    <logger name="de.otto.µservice.jobs.service.JobRunner" additivity="false">
+    <logger name="de.otto.edison.jobs.service.JobRunner" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="jobAppender"/>
     </logger>
