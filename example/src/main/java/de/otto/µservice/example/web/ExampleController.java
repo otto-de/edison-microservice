@@ -1,5 +1,6 @@
 package de.otto.µservice.example.web;
 
+import com.codahale.metrics.annotation.Metered;
 import de.otto.µservice.example.status.ExampleStatusIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
