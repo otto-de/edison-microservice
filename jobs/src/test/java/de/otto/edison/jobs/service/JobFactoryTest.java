@@ -15,7 +15,7 @@ public class JobFactoryTest {
     @Test
     public void shouldCreateJob() {
         JobFactory jobFactory = new JobFactory("/foo");
-        JobInfo job = jobFactory.createJob(() -> "BAR");
+        JobInfo job = jobFactory.createJobInfo(() -> "BAR");
 
         assertThat(job.getJobUri().toString(), startsWith("/foo/jobs/"));
         assertThat(job.getJobType().name(), is("BAR"));

@@ -1,10 +1,14 @@
 package de.otto.edison.example.jobs;
 
+import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.JobType;
+import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.jobs.service.JobLogger;
 import de.otto.edison.jobs.service.JobRunnable;
 import de.otto.edison.jobs.service.JobRunner;
 import org.slf4j.Logger;
 
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.lang.Thread.sleep;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -14,10 +18,6 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class FooJob implements JobRunnable {
 
-    // We are using the JobRunner to log the job. logback.xml contains a separate appender associated with JobRunner,
-    // that is logging every message with job_id and job_type using MDC
-    private static final Logger JOB_LOGGER = getLogger(JobRunner.class);
-
     private FooJob() {
     }
 
@@ -25,21 +25,20 @@ public class FooJob implements JobRunnable {
         return new FooJob();
     }
 
-    @Override
     public JobType getJobType() {
         return ExampleJobs.FOO;
     }
 
     @Override
-    public void run() {
+    public void execute(final JobLogger jobLogger) {
         for (int i = 0; i < 10; ++i) {
-            JOB_LOGGER.info("Still doing some hard work...");
-            doSomeHardWork();
+            doSomeHardWork(jobLogger);
         }
     }
 
-    private void doSomeHardWork() {
+    private void doSomeHardWork(final JobLogger jobLogger) {
         try {
+            jobLogger.log(jobMessage(Level.INFO, "Still doing some hard work..."));
             sleep(1000);
         } catch (InterruptedException e) {
         /* ignore */

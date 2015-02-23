@@ -21,7 +21,7 @@ public class InMemJobInfoRepositoryTest {
         final InMemJobRepository repository = new InMemJobRepository();
         final JobFactory jobFactory = new JobFactory("/test");
         // when
-        final JobInfo job = jobFactory.createJob(MockJobType.FOO);
+        final JobInfo job = jobFactory.createJobInfo(MockJobType.FOO);
         repository.createOrUpdate(job);
         // then
         assertThat(repository.findBy(job.getJobUri()), isPresent());

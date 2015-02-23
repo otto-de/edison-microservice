@@ -21,7 +21,7 @@ public class JobFactory {
         this.serverContextPath = serverContextPath;
     }
 
-    public JobInfo createJob(final JobType type) {
+    public JobInfo createJobInfo(final JobType type) {
         return new JobInfo(type, create(serverContextPath + "/jobs/" + randomUUID()));
     }
 
