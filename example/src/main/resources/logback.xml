@@ -14,14 +14,18 @@
         </encoder>
     </appender>
 
-    <logger name="de.otto.edison.jobs.service.JobRunner" additivity="false">
+    <logger name="de.otto.edison.jobs.service.JobRunner">
         <level value="INFO"/>
         <appender-ref ref="jobAppender"/>
     </logger>
 
-    <logger name="org" additivity="false">
+    <logger name="de.otto.edison.example.metrics">
         <level value="INFO"/>
         <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="org">
+        <level value="INFO"/>
     </logger>
 
     <root level="info">
