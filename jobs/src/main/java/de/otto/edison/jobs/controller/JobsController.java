@@ -66,8 +66,8 @@ public class JobsController {
 
         final Optional<JobInfo> optionalJob = repository.findBy(uri);
         if (optionalJob.isPresent()) {
-            final ModelAndView modelAndView = new ModelAndView("jobs");
-            modelAndView.addObject("jobs", representationOf(optionalJob.get()));
+            final ModelAndView modelAndView = new ModelAndView("job");
+            modelAndView.addObject("job", representationOf(optionalJob.get()));
             return modelAndView;
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
