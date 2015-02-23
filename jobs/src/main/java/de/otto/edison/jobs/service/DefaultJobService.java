@@ -29,7 +29,7 @@ public class DefaultJobService implements JobService {
 
     @Override
     public URI startAsyncJob(final JobRunnable jobRunnable) {
-        final JobInfo job = jobFactory.createJob(jobRunnable.getJobType());
+        final JobInfo job = jobFactory.createJobInfo(jobRunnable.getJobType());
         newJobRunner(job, repository).startAsync(jobRunnable);
         return job.getJobUri();
     }

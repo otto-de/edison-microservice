@@ -1,5 +1,6 @@
 package de.otto.edison.example.web;
 
+import de.otto.edison.example.jobs.FooJob;
 import de.otto.edison.jobs.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

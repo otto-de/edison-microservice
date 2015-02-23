@@ -36,7 +36,7 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnJobIfJobExists() throws IOException {
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo expectedJob = new JobFactory("/test").createJob(() -> "TEST");
+        final JobInfo expectedJob = new JobFactory("/test").createJobInfo(() -> "TEST");
         repository.createOrUpdate(expectedJob);
 
         final JobsController jobsController = new JobsController(repository);
@@ -52,8 +52,8 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnAllJobs() throws IOException {
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo firstJob = new JobFactory("/test").createJob(() -> "TEST");
-        final JobInfo secondJob = new JobFactory("/test").createJob(() -> "TEST");
+        final JobInfo firstJob = new JobFactory("/test").createJobInfo(() -> "TEST");
+        final JobInfo secondJob = new JobFactory("/test").createJobInfo(() -> "TEST");
         secondJob.setStarted(now().plus(10, ChronoUnit.MILLIS));
 
         repository.createOrUpdate(firstJob);

@@ -1,6 +1,8 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -31,12 +33,17 @@ public final class JobRunner {
     public void startAsync(final JobRunnable runnable) {
         start();
         try {
-            runnable.run();
+            runnable.execute(this::log);
         } catch (final RuntimeException e) {
             error(e);
         } finally {
             stop();
         }
+    }
+
+    private void log(final JobMessage jobMessage) {
+        job.addMessage(jobMessage);
+        repository.createOrUpdate(job);
     }
 
     private void start() {
