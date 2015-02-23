@@ -1,0 +1,38 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Job Overview</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+<br/>
+
+<table>
+    <thead>
+    <tr>
+        <th>JobType</th>
+        <th>Status</th>
+        <th>State</th>
+        <th>Started</th>
+        <th>Stopped</th>
+        <th>Messages</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${job.jobType}">&nbsp;</td>
+        <td th:text="${job.status}">&nbsp;</td>
+        <td th:text="${job.state}">&nbsp;</td>
+        <td th:text="${job.started}">&nbsp;</td>
+        <td th:text="${job.stopped}">&nbsp;</td>
+        <td>
+            <ul th:each="message : ${job.messages}">
+                <li th:text="${message}"/>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
