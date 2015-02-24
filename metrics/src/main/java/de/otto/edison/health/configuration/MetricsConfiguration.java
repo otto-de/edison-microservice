@@ -15,7 +15,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
 @EnableMetrics
-//@ConditionalOnProperty(name = "edison.metrics.slf4j.logger")
+@ConditionalOnProperty(name = "edison.metrics.slf4j.logger")
 public class MetricsConfiguration extends MetricsConfigurerAdapter {
 
     @Value("${edison.metrics.slf4j.logger}")
