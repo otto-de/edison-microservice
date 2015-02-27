@@ -5,6 +5,8 @@ import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.service.JobLogger;
 import de.otto.edison.jobs.service.JobRunnable;
 
+import java.util.Random;
+
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.lang.Thread.sleep;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -36,7 +38,7 @@ public class FooJob implements JobRunnable {
     private void doSomeHardWork(final JobLogger jobLogger) {
         try {
             jobLogger.log(jobMessage(Level.INFO, "Still doing some hard work..."));
-            sleep(1000);
+            sleep(new Random(42).nextInt(2000));
         } catch (InterruptedException e) {
         /* ignore */
         }
