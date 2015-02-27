@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 public class JobInfoBuilder {
     private final JobType type;
@@ -68,7 +69,7 @@ public class JobInfoBuilder {
     }
 
     public JobInfoBuilder withStopped(final LocalDateTime stopped) {
-        this.stopped = of(stopped);
+        this.stopped = ofNullable(stopped);
         return this;
     }
 
