@@ -5,7 +5,6 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
-import org.springframework.scheduling.annotation.Async;
 
 import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.RUNNING;
 import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.STOPPED;
@@ -16,7 +15,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public final class JobRunner {
 
-    private static final Logger JOB_LOGGER = getLogger(JobRunner.class);
+    private static final Logger LOG = getLogger(JobRunner.class);
 
     private final JobRepository repository;
     private volatile JobInfo job;
@@ -51,20 +50,20 @@ public final class JobRunner {
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
         MDC.put("job_type", job.getJobType().toString());
         repository.createOrUpdate(job);
-        JOB_LOGGER.info("[started]");
+        LOG.info("[started]");
     }
 
     private void error(final Exception e) {
         assert job.getState() == RUNNING;
         job = copyOf(job).withStatus(ERROR).build();
-        JOB_LOGGER.error(e.getMessage());
+        LOG.error(e.getMessage());
         repository.createOrUpdate(job);
     }
 
     private void stop() {
         assert job.getState() == RUNNING;
         try {
-            JOB_LOGGER.info("[stopped]");
+            LOG.info("[stopped]");
             job = copyOf(job)
                     .withState(STOPPED)
                     .withStopped(now())
