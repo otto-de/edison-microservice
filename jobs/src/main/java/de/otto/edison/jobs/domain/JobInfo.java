@@ -4,34 +4,45 @@ import net.jcip.annotations.ThreadSafe;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.time.LocalDateTime.now;
+import static java.util.Collections.unmodifiableList;
 
 @ThreadSafe
 public final class JobInfo {
 
     private final URI jobUri;
     private final JobType jobType;
-    private volatile LocalDateTime started;
-    private volatile LocalDateTime stopped;
-    private volatile List<JobMessage> messages = new CopyOnWriteArrayList<>();
-    private volatile ExecutionState state;
-    private volatile JobStatus status;
+    private final LocalDateTime started;
+    private final Optional<LocalDateTime> stopped;
+    private final List<JobMessage> messages;
+    private final ExecutionState state;
+    private final JobStatus status;
 
     public enum JobStatus { OK, ERROR;}
 
 
     public enum ExecutionState { RUNNING, STOPPED;}
 
-    public JobInfo(final JobType type, final URI jobUri) {
+    JobInfo(final JobType type,
+            final URI jobUri,
+            final LocalDateTime started,
+            final Optional<LocalDateTime> stopped,
+            final List<JobMessage> messages,
+            final ExecutionState state,
+            final JobStatus status) {
         this.jobUri = jobUri;
         this.jobType = type;
-        state = ExecutionState.RUNNING;
-        status = JobStatus.OK;
-        started = now();
+        this.started = started;
+        this.stopped = stopped;
+        this.messages = unmodifiableList(new ArrayList<>(messages));
+        this.state = state;
+        this.status = status;
     }
 
     public URI getJobUri() {
@@ -46,36 +57,16 @@ public final class JobInfo {
         return state;
     }
 
-    public void setState(final ExecutionState state) {
-        this.state = state;
-    }
-
     public JobStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(final JobStatus status) {
-        this.status = status;
     }
 
     public LocalDateTime getStarted() {
         return started;
     }
 
-    public void setStarted(final LocalDateTime started) {
-        this.started = started;
-    }
-
     public Optional<LocalDateTime> getStopped() {
-        return Optional.ofNullable(stopped);
-    }
-
-    public void setStopped(final LocalDateTime stopped) {
-        this.stopped = stopped;
-    }
-
-    public void addMessage(final JobMessage message) {
-        this.messages.add(message);
+        return stopped;
     }
 
     public List<JobMessage> getMessages() {
