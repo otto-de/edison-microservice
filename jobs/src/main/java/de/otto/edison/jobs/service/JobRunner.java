@@ -29,8 +29,7 @@ public final class JobRunner {
         return new JobRunner(job, repository);
     }
 
-    @Async
-    public void startAsync(final JobRunnable runnable) {
+    public void start(final JobRunnable runnable) {
         start();
         try {
             runnable.execute(this::log);
