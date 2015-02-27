@@ -1,5 +1,7 @@
 package de.otto.edison.example.web;
 
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
 import de.otto.edison.example.status.ExampleStatusIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

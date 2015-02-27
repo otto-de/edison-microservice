@@ -2,7 +2,10 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.InMemJobRepository;
+import de.otto.edison.jobs.repository.JobRepository;
 import org.mockito.stubbing.Stubber;
+import org.springframework.boot.actuate.metrics.GaugeService;
+import org.springframework.boot.actuate.metrics.writer.DefaultGaugeService;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -19,50 +22,57 @@ import static org.mockito.Mockito.*;
 
 public class DefaultJobServiceTest {
 
-    private ExecutorService executorService;
-
-    @BeforeMethod
-    public void setUp() {
-        executorService = mock(ExecutorService.class);
-        immediatelyRunGivenRunnable()
-                .when(executorService)
-                .execute(any(Runnable.class));
-    }
-
     @Test
     public void shouldReturnCreatedJobUri() {
-        final DefaultJobService jobService = new DefaultJobService("/foo", new InMemJobRepository(), executorService);
+        // given:
+        final DefaultJobService jobService = new DefaultJobService("/foo", new InMemJobRepository(), mock(GaugeService.class));
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
+        // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
+        // then:
         assertThat(jobUri.toString(), startsWith("/foo/jobs/"));
     }
 
     @Test
     public void shouldPersistJobs() {
+        // given:
         final InMemJobRepository jobRepository = new InMemJobRepository();
-        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, executorService);
+        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class));
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
+        // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
+        // then:
         assertThat(jobRepository.findBy(jobUri), isPresent());
     }
 
     @Test
     public void shouldRunJobs() {
+        // given:
         final InMemJobRepository jobRepository = new InMemJobRepository();
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
-        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, executorService);
+        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class));
+        // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
+        // then:
         final JobInfo jobInfo = jobRepository.findBy(jobUri).get();
         assertThat(jobInfo.getState(), is(STOPPED));
     }
 
-    private Stubber immediatelyRunGivenRunnable() {
-        return doAnswer(i -> {
-            ((Runnable) i.getArguments()[0]).run();
-            return null;
-        });
+    @Test
+    public void shouldReportRuntime() {
+        // given:
+        final JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
+
+        final GaugeService mock = mock(GaugeService.class);
+        final DefaultJobService jobService = new DefaultJobService("/foo", mock(JobRepository.class), mock);
+        // when:
+        jobService.startAsyncJob(jobRunnable);
+        // then:
+        verify(mock).submit(eq("gauge.jobs.runtime.bar"), anyLong());
     }
+
 }

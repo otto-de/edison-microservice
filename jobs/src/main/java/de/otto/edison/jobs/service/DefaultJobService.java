@@ -1,15 +1,18 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobType;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.metrics.GaugeService;
 
 import java.net.URI;
 import java.util.concurrent.Executor;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
+import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
 import static java.util.UUID.randomUUID;
 
@@ -23,6 +26,8 @@ public class DefaultJobService implements JobService {
     private JobRepository repository;
     @Autowired
     private Executor executor;
+    @Autowired
+    private GaugeService gaugeService;
 
     @Value("${server.contextPath}")
     private String serverContextPath;
@@ -30,17 +35,42 @@ public class DefaultJobService implements JobService {
     public DefaultJobService() {
     }
 
-    DefaultJobService(final String serverContextPath, final JobRepository jobRepository, final Executor executor) {
+    DefaultJobService(final String serverContextPath, final JobRepository jobRepository, final GaugeService gaugeService) {
         this.serverContextPath = serverContextPath;
         this.repository = jobRepository;
-        this.executor = executor;
+        this.executor = command -> command.run();
+        this.gaugeService = gaugeService;
     }
 
     @Override
     public URI startAsyncJob(final JobRunnable jobRunnable) {
+        return startAsync(metered(jobRunnable));
+    }
+
+    private URI startAsync(final JobRunnable jobRunnable) {
         final JobInfo jobInfo = jobInfoBuilder(jobRunnable.getJobType(), newJobUri()).build();
         executor.execute(() -> newJobRunner(jobInfo, repository).start(jobRunnable));
         return jobInfo.getJobUri();
+    }
+
+    private JobRunnable metered(final JobRunnable delegate) {
+        return new JobRunnable() {
+            @Override
+            public JobType getJobType() {
+                return delegate.getJobType();
+            }
+
+            @Override
+            public void execute(final JobLogger logger) {
+                long ts = currentTimeMillis();
+                delegate.execute(logger);
+                gaugeService.submit(gaugeName(), (currentTimeMillis()-ts)/1000L);
+            }
+
+            private String gaugeName() {
+                return "gauge.jobs.runtime." + delegate.getJobType().name().toLowerCase();
+            }
+        };
     }
 
     private URI newJobUri() {
