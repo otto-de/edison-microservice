@@ -1,4 +1,5 @@
 language: java
 jdk:
   - oraclejdk8
+install: /bin/true # skip gradle assemble 
 script: gradle check
