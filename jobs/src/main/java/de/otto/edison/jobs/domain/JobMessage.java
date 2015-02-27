@@ -12,15 +12,20 @@ public final class JobMessage {
 
     private final Level level;
     private final String message;
-    private final LocalDateTime ts = now();
+    private final LocalDateTime ts;
 
-    private JobMessage(final Level level, final String message) {
+    private JobMessage(final Level level, final String message, LocalDateTime timestamp) {
         this.level = level;
         this.message = message;
+        this.ts = timestamp;
     }
 
     public static JobMessage jobMessage(final Level level, final String message) {
-        return new JobMessage(level, message);
+        return new JobMessage(level, message, now());
+    }
+
+    public static JobMessage jobMessage(final Level level, final String message, LocalDateTime ts) {
+        return new JobMessage(level, message, ts);
     }
 
     public Level getLevel() {

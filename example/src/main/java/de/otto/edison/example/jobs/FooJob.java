@@ -1,12 +1,9 @@
 package de.otto.edison.example.jobs;
 
-import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.JobType;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.service.JobLogger;
 import de.otto.edison.jobs.service.JobRunnable;
-import de.otto.edison.jobs.service.JobRunner;
-import org.slf4j.Logger;
 
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.lang.Thread.sleep;
