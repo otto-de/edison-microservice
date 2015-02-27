@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
@@ -22,7 +22,7 @@ public class DefaultJobService implements JobService {
     @Autowired
     private JobRepository repository;
     @Autowired
-    private ExecutorService executorService;
+    private Executor executor;
 
     @Value("${server.contextPath}")
     private String serverContextPath;
@@ -30,16 +30,16 @@ public class DefaultJobService implements JobService {
     public DefaultJobService() {
     }
 
-    DefaultJobService(final String serverContextPath, final JobRepository jobRepository,final ExecutorService executorService) {
+    DefaultJobService(final String serverContextPath, final JobRepository jobRepository, final Executor executor) {
         this.serverContextPath = serverContextPath;
         this.repository = jobRepository;
-        this.executorService = executorService;
+        this.executor = executor;
     }
 
     @Override
     public URI startAsyncJob(final JobRunnable jobRunnable) {
         final JobInfo jobInfo = jobInfoBuilder(jobRunnable.getJobType(), newJobUri()).build();
-        executorService.execute(() -> newJobRunner(jobInfo, repository).start(jobRunnable));
+        executor.execute(() -> newJobRunner(jobInfo, repository).start(jobRunnable));
         return jobInfo.getJobUri();
     }
 

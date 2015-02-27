@@ -9,12 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 @Configuration
 @EnableAsync
 public class JobConfiguration {
+
+    public static final int N_THREADS = 10;
 
     @Bean
     @ConditionalOnMissingBean(JobRepository.class)
@@ -27,8 +30,9 @@ public class JobConfiguration {
     public JobService jobService() { return new DefaultJobService(); }
 
     @Bean
-    @ConditionalOnMissingBean(ExecutorService.class)
-    public ExecutorService executorService() {
-        return Executors.newSingleThreadExecutor();
+    @ConditionalOnMissingBean(Executor.class)
+    public Executor executorService() {
+        return newFixedThreadPool(N_THREADS);
     }
+
 }
