@@ -30,7 +30,7 @@ public class JobRunnerTest {
         final InMemJobRepository repository = new InMemJobRepository();
         final JobRunner jobRunner = newJobRunner(new JobInfo(() -> "NAME", jobUri), repository);
         // when
-        jobRunner.startAsync(new JobRunnable() {
+        jobRunner.start(new JobRunnable() {
             @Override
             public JobType getJobType() {
                 return () -> "NAME";
@@ -53,7 +53,7 @@ public class JobRunnerTest {
         final InMemJobRepository repository = new InMemJobRepository();
         final JobRunner jobRunner = newJobRunner(new JobInfo(() -> "NAME", jobUri), repository);
         // when
-        jobRunner.startAsync(new JobRunnable() {
+        jobRunner.start(new JobRunnable() {
             @Override
             public JobType getJobType() {
                 return () -> "NAME";
@@ -75,7 +75,7 @@ public class JobRunnerTest {
         final InMemJobRepository repository = new InMemJobRepository();
         final JobRunner jobRunner = newJobRunner(new JobInfo(() -> "NAME", jobUri), repository);
         // when
-        jobRunner.startAsync(new JobRunnable() {
+        jobRunner.start(new JobRunnable() {
             @Override
             public JobType getJobType() {
                 return () -> "NAME";

@@ -5,6 +5,7 @@ import de.otto.edison.jobs.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URI;
+import java.util.concurrent.ExecutorService;
 
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 
@@ -18,19 +19,24 @@ public class DefaultJobService implements JobService {
     private JobFactory jobFactory;
     @Autowired
     private JobRepository repository;
+    @Autowired
+    private ExecutorService executorService;
 
     public DefaultJobService() {
     }
 
-    DefaultJobService(final JobFactory jobFactory, final JobRepository jobRepository) {
+    DefaultJobService(final JobFactory jobFactory, final JobRepository jobRepository,final ExecutorService executorService) {
         this.jobFactory = jobFactory;
         this.repository = jobRepository;
+        this.executorService = executorService;
     }
 
     @Override
     public URI startAsyncJob(final JobRunnable jobRunnable) {
         final JobInfo job = jobFactory.createJobInfo(jobRunnable.getJobType());
-        newJobRunner(job, repository).startAsync(jobRunnable);
+
+        executorService.execute(() -> newJobRunner(job, repository).start(jobRunnable));
+
         return job.getJobUri();
     }
 }
