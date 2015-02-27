@@ -2,7 +2,6 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -10,6 +9,8 @@ import org.springframework.scheduling.annotation.Async;
 
 import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.RUNNING;
 import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.STOPPED;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
+import static de.otto.edison.jobs.domain.JobInfoBuilder.copyOf;
 import static java.time.LocalDateTime.now;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -18,7 +19,7 @@ public final class JobRunner {
     private static final Logger JOB_LOGGER = getLogger(JobRunner.class);
 
     private final JobRepository repository;
-    private final JobInfo job;
+    private volatile JobInfo job;
 
     private JobRunner(final JobInfo job, final JobRepository repository) {
         this.repository = repository;
@@ -41,7 +42,7 @@ public final class JobRunner {
     }
 
     private void log(final JobMessage jobMessage) {
-        job.addMessage(jobMessage);
+        job = copyOf(job).addMessage(jobMessage).build();
         repository.createOrUpdate(job);
     }
 
@@ -55,7 +56,7 @@ public final class JobRunner {
 
     private void error(final Exception e) {
         assert job.getState() == RUNNING;
-        job.setStatus(JobInfo.JobStatus.ERROR);
+        job = copyOf(job).withStatus(ERROR).build();
         JOB_LOGGER.error(e.getMessage());
         repository.createOrUpdate(job);
     }
@@ -64,8 +65,10 @@ public final class JobRunner {
         assert job.getState() == RUNNING;
         try {
             JOB_LOGGER.info("[stopped]");
-            job.setState(STOPPED);
-            job.setStopped(now());
+            job = copyOf(job)
+                    .withState(STOPPED)
+                    .withStopped(now())
+                    .build();
             repository.createOrUpdate(job);
         } finally {
             MDC.clear();

@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobInfoBuilder;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.JobType;
 import de.otto.edison.jobs.repository.InMemJobRepository;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.STOPPED;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
+import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
@@ -28,7 +30,7 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = newJobRunner(new JobInfo(() -> "NAME", jobUri), repository);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(()->"NAME", jobUri).build(), repository);
         // when
         jobRunner.start(new JobRunnable() {
             @Override
@@ -51,7 +53,7 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = newJobRunner(new JobInfo(() -> "NAME", jobUri), repository);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository);
         // when
         jobRunner.start(new JobRunnable() {
             @Override
@@ -73,7 +75,7 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = newJobRunner(new JobInfo(() -> "NAME", jobUri), repository);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository);
         // when
         jobRunner.start(new JobRunnable() {
             @Override

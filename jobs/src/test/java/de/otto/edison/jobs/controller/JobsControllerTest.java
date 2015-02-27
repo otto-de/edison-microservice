@@ -2,16 +2,19 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.InMemJobRepository;
-import de.otto.edison.jobs.service.JobFactory;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.temporal.ChronoUnit;
+import java.net.URI;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
+import static de.otto.edison.jobs.domain.JobInfoBuilder.copyOf;
+import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
+import static java.net.URI.create;
 import static java.time.LocalDateTime.now;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -36,7 +39,7 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnJobIfJobExists() throws IOException {
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo expectedJob = new JobFactory("/test").createJobInfo(() -> "TEST");
+        final JobInfo expectedJob = jobInfoBuilder(() -> "TEST", create("/test/42")).build();
         repository.createOrUpdate(expectedJob);
 
         final JobsController jobsController = new JobsController(repository);
@@ -52,10 +55,10 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnAllJobs() throws IOException {
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo firstJob = new JobFactory("/test").createJobInfo(() -> "TEST");
-        final JobInfo secondJob = new JobFactory("/test").createJobInfo(() -> "TEST");
-        secondJob.setStarted(now().plus(10, ChronoUnit.MILLIS));
-
+        final JobInfo firstJob = jobInfoBuilder(() -> "TEST", create("/test/42")).build();
+        final JobInfo secondJob = jobInfoBuilder(() -> "TEST", create("/test/43"))
+                .withStarted(now().plus(10, MILLIS))
+                .build();
         repository.createOrUpdate(firstJob);
         repository.createOrUpdate(secondJob);
 
