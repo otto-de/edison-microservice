@@ -5,6 +5,7 @@ import de.otto.edison.jobs.domain.JobType;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
@@ -86,9 +87,10 @@ public class InMemJobRepositoryTest {
                 expectedSurvivor
         );
         // when
-        repository.deleteOldest(empty());
+        Optional<JobInfo> deleted = repository.deleteOldest(empty());
         // then
         assertThat(repository.size(), is(1));
+        assertThat(deleted, isPresent());
         assertThat(repository.findBy(expectedSurvivor.getJobUri()), isPresent());
     }
 

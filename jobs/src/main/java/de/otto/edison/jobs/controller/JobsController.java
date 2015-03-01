@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static java.net.URI.create;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.reverseOrder;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 @RestController
@@ -42,7 +44,7 @@ public class JobsController {
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView findJobsAsHtml() {
-        final List<JobRepresentation> jobRepresentations = repository.findAll()
+        final List<JobRepresentation> jobRepresentations = repository.findAll(comparing(JobInfo::getStarted, reverseOrder()))
                 .stream()
                 .map(JobRepresentation::representationOf)
                 .collect(Collectors.toList());
@@ -53,7 +55,7 @@ public class JobsController {
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET, produces = "application/json")
     public List<JobRepresentation> findJobsAsJson() {
-        return repository.findAll()
+        return repository.findAll(comparing(JobInfo::getStarted, reverseOrder()))
                 .stream()
                 .map(JobRepresentation::representationOf)
                 .collect(Collectors.toList());
