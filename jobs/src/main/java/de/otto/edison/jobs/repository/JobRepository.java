@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobType;
 
 import java.net.URI;
 import java.util.List;
@@ -13,4 +14,8 @@ public interface JobRepository {
     public void createOrUpdate(final JobInfo job);
 
     public List<JobInfo> findAll();
+
+    public int size();
+
+    void deleteOldest(Optional<JobType> jobType);
 }
