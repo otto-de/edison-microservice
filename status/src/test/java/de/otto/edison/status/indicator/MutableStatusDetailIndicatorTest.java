@@ -5,6 +5,7 @@ import org.testng.annotations.Test;
 
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
+import static de.otto.edison.status.domain.Status.WARNING;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -32,6 +33,45 @@ public class MutableStatusDetailIndicatorTest {
         assertThat(indicator.statusDetail().getName(), is("foo"));
         assertThat(indicator.statusDetail().getMessage(), is("ok now"));
         assertThat(indicator.statusDetail().getStatus(), is(OK));
+    }
+
+    @Test
+    public void shouldIndicateOkStatus() {
+        // given
+        final StatusDetail initial = statusDetail("foo", ERROR, "message");
+        final MutableStatusDetailIndicator indicator = new MutableStatusDetailIndicator(initial);
+        // when
+        indicator.toOk("ok now");
+        // then
+        assertThat(indicator.statusDetail().getName(), is("foo"));
+        assertThat(indicator.statusDetail().getMessage(), is("ok now"));
+        assertThat(indicator.statusDetail().getStatus(), is(OK));
+    }
+
+    @Test
+    public void shouldIndicateWarnStatus() {
+        // given
+        final StatusDetail initial = statusDetail("foo", ERROR, "message");
+        final MutableStatusDetailIndicator indicator = new MutableStatusDetailIndicator(initial);
+        // when
+        indicator.toWarning("something strange");
+        // then
+        assertThat(indicator.statusDetail().getName(), is("foo"));
+        assertThat(indicator.statusDetail().getMessage(), is("something strange"));
+        assertThat(indicator.statusDetail().getStatus(), is(WARNING));
+    }
+
+    @Test
+    public void shouldIndicateErrorStatus() {
+        // given
+        final StatusDetail initial = statusDetail("foo", WARNING, "message");
+        final MutableStatusDetailIndicator indicator = new MutableStatusDetailIndicator(initial);
+        // when
+        indicator.toError("broken");
+        // then
+        assertThat(indicator.statusDetail().getName(), is("foo"));
+        assertThat(indicator.statusDetail().getMessage(), is("broken"));
+        assertThat(indicator.statusDetail().getStatus(), is(ERROR));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
