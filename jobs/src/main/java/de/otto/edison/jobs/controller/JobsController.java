@@ -44,7 +44,7 @@ public class JobsController {
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView findJobsAsHtml() {
-        final List<JobRepresentation> jobRepresentations = repository.findAll(comparing(JobInfo::getStarted, reverseOrder()))
+        final List<JobRepresentation> jobRepresentations = repository.findAll()
                 .stream()
                 .map(JobRepresentation::representationOf)
                 .collect(Collectors.toList());
@@ -55,7 +55,7 @@ public class JobsController {
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET, produces = "application/json")
     public List<JobRepresentation> findJobsAsJson() {
-        return repository.findAll(comparing(JobInfo::getStarted, reverseOrder()))
+        return repository.findAll()
                 .stream()
                 .map(JobRepresentation::representationOf)
                 .collect(Collectors.toList());

@@ -8,6 +8,10 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static java.util.stream.Collectors.toList;
+
 /**
  * A JobCleanupStrategy that is removing all but the newest N jobs of an optional JobType.
  * <p>
@@ -41,21 +45,16 @@ public class KeepLastJobs implements JobCleanupStrategy {
      */
     @Override
     public void doCleanUp(final JobRepository repository) {
-        int i=0;
-        if (jobType.isPresent()) {
-            while (repository.findBy(jobType.get()).size() > numberOfJobsToKeep) {
-                if (repository.deleteOldest(jobType).isPresent()) {
-                    ++i;
-                }
-            }
-        } else {
-            while (repository.size() > numberOfJobsToKeep) {
-                if (repository.deleteOldest(jobType).isPresent()) {
-                    ++i;
-                }
-            }
+        final List<JobInfo> jobs = jobType.isPresent()
+                ? repository.findBy(jobType.get(), comparing(JobInfo::getStarted, naturalOrder()))
+                : repository.findAll(comparing(JobInfo::getStarted, naturalOrder()));
+        final List<JobInfo> stoppedJobs = jobs
+                .stream()
+                .filter(jobInfo -> jobInfo.getStopped().isPresent())
+                .collect(toList());
+        for (int i=0, n=stoppedJobs.size()-numberOfJobsToKeep; i<n; ++i) {
+            repository.removeIfStopped(jobs.get(i).getJobUri());
         }
-        LOG.info("Cleaned up " + i + " jobs from JobRepository");
     }
 
 }
