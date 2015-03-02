@@ -6,7 +6,7 @@ import net.jcip.annotations.ThreadSafe;
 import static java.util.Objects.requireNonNull;
 
 @ThreadSafe
-public final class MutableStatusDetailIndicator implements StatusDetailIndicator {
+public class MutableStatusDetailIndicator implements StatusDetailIndicator {
 
     private volatile StatusDetail statusDetail;
 
