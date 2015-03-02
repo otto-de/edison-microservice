@@ -5,93 +5,107 @@ import de.otto.edison.jobs.domain.JobType;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.util.Optional;
+import java.util.List;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
-import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
+import static java.net.URI.create;
 import static java.time.LocalDateTime.now;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 public class InMemJobRepositoryTest {
 
     @Test
-    public void shouldNotDeleteRunningJobs() {
+    public void shouldNotRemoveRunningJobs() {
         // given
-        InMemJobRepository repository = new InMemJobRepository();
-        JobType jobType = () -> "FOO";
+        final InMemJobRepository repository = new InMemJobRepository();
+        final URI testUri = create("test");
         repository.createOrUpdate(
-                jobInfoBuilder(jobType, URI.create("test")).build()
+                jobInfoBuilder(() -> "FOO", testUri).build()
         );
         // when
-        repository.deleteOldest(of(jobType));
+        repository.removeIfStopped(testUri);
         // then
         assertThat(repository.size(), is(1));
     }
 
     @Test
-    public void shouldNotFailToDeleteMissingJob() {
+    public void shouldNotFailToRemoveMissingJob() {
         // given
         InMemJobRepository repository = new InMemJobRepository();
         // when
-        repository.deleteOldest(of((JobType) () -> "FOO"));
-        repository.deleteOldest(empty());
+        repository.removeIfStopped(create("foo"));
         // then
         // no Exception is thrown...
     }
 
     @Test
-    public void shouldDeleteStoppedJob() {
+    public void shouldOrderYoungestFirst() {
         // given
-        InMemJobRepository repository = new InMemJobRepository();
-        JobType jobType = () -> "FOO";
-        repository.createOrUpdate(
-                jobInfoBuilder(jobType, URI.create("test")).withStopped(now()).build()
-        );
+        final JobType type = () -> "TEST";
+        final InMemJobRepository repository = new InMemJobRepository() {{
+            createOrUpdate(jobInfoBuilder(type, create("oldest")).withStarted(now().minusSeconds(1)).build());
+            createOrUpdate(jobInfoBuilder(type, create("youngest")).build());
+        }};
         // when
-        repository.deleteOldest(of(jobType));
+        final List<JobInfo> jobInfos = repository.findAll();
         // then
-        assertThat(repository.size(), is(0));
+        assertThat(jobInfos.get(0).getJobUri(), is(create("youngest")));
+        assertThat(jobInfos.get(1).getJobUri(), is(create("oldest")));
     }
 
     @Test
-    public void shouldDeleteOldestStoppedJobOfType() {
+    public void shouldOrderOldestFirst() {
         // given
-        InMemJobRepository repository = new InMemJobRepository();
-        JobType jobType = () -> "FOO";
-        repository.createOrUpdate(
-                jobInfoBuilder(jobType, URI.create("42")).withStarted(now().minusSeconds(1)).withStopped(now()).build()
-        );
-        JobInfo expectedSurvivor = jobInfoBuilder(jobType, URI.create("0815")).withStopped(now()).build();
-        repository.createOrUpdate(
-                expectedSurvivor
-        );
+        final JobType type = () -> "TEST";
+        final InMemJobRepository repository = new InMemJobRepository() {{
+            createOrUpdate(jobInfoBuilder(type, create("oldest")).withStarted(now().minusSeconds(1)).build());
+            createOrUpdate(jobInfoBuilder(type, create("youngest")).build());
+        }};
         // when
-        repository.deleteOldest(of(jobType));
+        final List<JobInfo> jobInfos = repository.findAll(comparing(JobInfo::getStarted, naturalOrder()));
         // then
-        assertThat(repository.size(), is(1));
-        assertThat(repository.findBy(expectedSurvivor.getJobUri()), isPresent());
+        assertThat(jobInfos.get(0).getJobUri(), is(create("oldest")));
+        assertThat(jobInfos.get(1).getJobUri(), is(create("youngest")));
     }
 
     @Test
-    public void shouldDeleteOldestStoppedJob() {
+    public void shouldOrderYoungestOfTypeFirst() {
         // given
-        InMemJobRepository repository = new InMemJobRepository();
-        repository.createOrUpdate(
-                jobInfoBuilder(() -> "FOO", URI.create("42")).withStarted(now().minusSeconds(1)).withStopped(now()).build()
-        );
-        JobInfo expectedSurvivor = jobInfoBuilder(() -> "BAR", URI.create("0815")).withStopped(now()).build();
-        repository.createOrUpdate(
-                expectedSurvivor
-        );
+        final JobType type = () -> "TEST";
+        final JobType otherType = () -> "OTHERTEST";
+        final InMemJobRepository repository = new InMemJobRepository() {{
+            createOrUpdate(jobInfoBuilder(type, create("oldest")).withStarted(now().minusSeconds(2)).build());
+            createOrUpdate(jobInfoBuilder(otherType, create("other")).withStarted(now().minusSeconds(1)).build());
+            createOrUpdate(jobInfoBuilder(type, create("youngest")).build());
+        }};
         // when
-        Optional<JobInfo> deleted = repository.deleteOldest(empty());
+        final List<JobInfo> jobInfos = repository.findBy(type);
         // then
-        assertThat(repository.size(), is(1));
-        assertThat(deleted, isPresent());
-        assertThat(repository.findBy(expectedSurvivor.getJobUri()), isPresent());
+        assertThat(jobInfos.get(0).getJobUri(), is(create("youngest")));
+        assertThat(jobInfos.get(1).getJobUri(), is(create("oldest")));
+        assertThat(jobInfos, hasSize(2));
+    }
+
+    @Test
+    public void shouldOrderOldestOfTypeFirst() {
+        // given
+        final JobType type = () -> "TEST";
+        final JobType otherType = () -> "OTHERTEST";
+        final InMemJobRepository repository = new InMemJobRepository() {{
+            createOrUpdate(jobInfoBuilder(type, create("oldest")).withStarted(now().minusSeconds(2)).build());
+            createOrUpdate(jobInfoBuilder(otherType, create("other")).withStarted(now().minusSeconds(1)).build());
+            createOrUpdate(jobInfoBuilder(type, create("youngest")).build());
+        }};
+        // when
+        final List<JobInfo> jobInfos = repository.findBy(type, comparing(JobInfo::getStarted, naturalOrder()));
+        // then
+        assertThat(jobInfos.get(0).getJobUri(), is(create("oldest")));
+        assertThat(jobInfos.get(1).getJobUri(), is(create("youngest")));
+        assertThat(jobInfos, hasSize(2));
     }
 
 }
