@@ -25,4 +25,16 @@ public final class MutableStatusDetailIndicator implements StatusDetailIndicator
         }
         this.statusDetail = requireNonNull(statusDetail, "Parameter StatusDetail must not be null");
     }
+
+    public void toOk(String message) {
+        update(statusDetail.toOk(message));
+    }
+
+    public void toWarning(String message) {
+        update(statusDetail.toWarning(message));
+    }
+
+    public void toError(String message) {
+        update(statusDetail.toError(message));
+    }
 }
