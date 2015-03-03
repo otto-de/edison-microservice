@@ -15,6 +15,15 @@ public enum Level {
         this.key = key;
     }
 
+    public static Level ofKey(final String s) {
+        for (Level l : Level.values()) {
+            if (l.getKey().equalsIgnoreCase(s)) {
+                return l;
+            }
+        }
+        throw new IllegalArgumentException("no level with this key found");
+    }
+
     public String getKey() {
         return key;
     }
