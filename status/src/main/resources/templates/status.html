@@ -9,6 +9,11 @@
     <li th:text="${name}" />
     <li th:text="${status}" />
 </ul>
+<h1>Version</h1>
+<ul>
+    <li th:text="${version}" />
+    <li th:text="${commit}" />
+</ul>
 <h1>Details</h1>
 <ul th:each="statusDetail : ${statusDetails}">
     <li th:text="${statusDetail.key} + ': ' + ${statusDetail.status} + ' (' + ${statusDetail.message} + ')'" />

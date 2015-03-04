@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+import static de.otto.edison.status.domain.VersionInfo.versionInfo;
 import static java.util.Collections.emptyList;
 
 @Configuration
@@ -19,13 +20,18 @@ public class StatusConfiguration {
     @Autowired(required = false)
     private List<StatusDetailIndicator> statusDetailIndicators = emptyList();
 
-    @Value(value = "${application.name}")
+    @Value("${application.name}")
     private String applicationName;
+
+    @Value("${info.build.version:unknown}")
+    private String version;
+    @Value(("${info.build.commit:unknown}"))
+    private String commit;
 
     @Bean
     @ConditionalOnMissingBean(ApplicationStatusAggregator.class)
     public ApplicationStatusAggregator statusAggregator() {
-        return new DefaultApplicationStatusAggregator(applicationName, statusDetailIndicators);
+        return new DefaultApplicationStatusAggregator(applicationName, versionInfo(version, commit), statusDetailIndicators);
     }
 
 }
