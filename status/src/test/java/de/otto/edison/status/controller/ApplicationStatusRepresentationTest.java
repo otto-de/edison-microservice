@@ -4,10 +4,11 @@ import de.otto.edison.testsupport.util.JsonMap;
 import org.testng.annotations.Test;
 
 import static de.otto.edison.status.controller.ApplicationStatusRepresentation.statusRepresentationOf;
-import static de.otto.edison.status.domain.ApplicationStatus.detailedStatus;
+import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
+import static de.otto.edison.status.domain.VersionInfo.versionInfo;
 import static de.otto.edison.testsupport.util.JsonMap.jsonMapFrom;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -20,7 +21,7 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithoutDetails() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                detailedStatus("app", emptyList())
+                applicationStatus("app", versionInfo("", ""), emptyList())
         );
         // when
         final JsonMap jsonMap = jsonMapFrom(representation.getApplication());
@@ -31,10 +32,25 @@ public class ApplicationStatusRepresentationTest {
     }
 
     @Test
+    public void shouldCreateStatusRepresentationWithVersionInfo() {
+        // given
+        final ApplicationStatusRepresentation representation = statusRepresentationOf(
+                applicationStatus("app", versionInfo("1.0.0", "0815"), emptyList())
+        );
+        // when
+        final JsonMap jsonMap = jsonMapFrom(representation.getApplication());
+        // then
+        assertThat(jsonMap.getString("version"), is("1.0.0"));
+        assertThat(jsonMap.getString("commit"), is("0815"));
+    }
+
+    @Test
     public void shouldCreateStatusRepresentationWithSingleDetail() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                detailedStatus("app", asList(statusDetail("someDetail", WARNING, "detailed warning")))
+                applicationStatus("app", versionInfo("", ""), asList(
+                        statusDetail("someDetail", WARNING, "detailed warning"))
+                )
         );
         // when
         final JsonMap jsonMap = jsonMapFrom(representation.getApplication());
@@ -49,9 +65,9 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithMultipleDetails() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                detailedStatus("app", asList(
-                        statusDetail("someDetail", OK, "perfect"),
-                        statusDetail("someOtherDetail", WARNING, "detailed warning"))
+                applicationStatus("app", versionInfo("", ""), asList(
+                                statusDetail("someDetail", OK, "perfect"),
+                                statusDetail("someOtherDetail", WARNING, "detailed warning"))
                 )
         );
         // when

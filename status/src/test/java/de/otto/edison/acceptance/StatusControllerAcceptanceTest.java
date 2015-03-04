@@ -46,6 +46,23 @@ public class StatusControllerAcceptanceTest {
     }
 
     @Test
+    public void shouldGetApplicationStatusWithVcsInformation() throws IOException {
+        when(
+                the_internal_status_is_retrieved_as("application/json")
+        );
+
+        then(
+                assertThat(the_status_code().value(), is(200)),
+                and(
+                        assertThat(the_returned_json().at("/application/version").asText(), is("unknown"))
+                ),
+                and(
+                        assertThat(the_returned_json().at("/application/commit").asText(), is("unknown"))
+                )
+        );
+    }
+
+    @Test
     public void shouldGetApplicationStatusAsHtml() throws IOException {
         when(
                 the_internal_status_is_retrieved_as("text/html")
