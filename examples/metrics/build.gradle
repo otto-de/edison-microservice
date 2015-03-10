@@ -1,0 +1,22 @@
+
+dependencies {
+    compile project(":health")
+    compile project(":status")
+    compile project(":jobs")
+    compile project(":metrics")
+
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf:" + springBootVersion)
+
+    testCompile project(":testsupport")
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
