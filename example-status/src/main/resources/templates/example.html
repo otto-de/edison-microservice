@@ -1,0 +1,17 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Example Microservice</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <h1>Example</h1>
+    <p th:text="${hello}" />
+
+    <h1>Some Links</h1>
+    <ul>
+        <li><a href="/example/internal/status">Status Page</a></li>
+        <li><a href="/example/internal/health">Application Health</a></li>
+    </ul>
+
+</body>
+</html>
