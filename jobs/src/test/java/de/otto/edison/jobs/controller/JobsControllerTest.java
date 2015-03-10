@@ -2,12 +2,14 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.InMemJobRepository;
+import org.springframework.web.servlet.ModelAndView;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.copyOf;
@@ -55,7 +57,8 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnAllJobs() throws IOException {
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo firstJob = jobInfoBuilder(() -> "TEST", create("/test/42")).build();
+        final JobInfo firstJob = jobInfoBuilder(() -> "TEST", create("/test/42"))
+                .build();
         final JobInfo secondJob = jobInfoBuilder(() -> "TEST", create("/test/43"))
                 .withStarted(now().plus(10, MILLIS))
                 .build();
@@ -64,8 +67,42 @@ public class JobsControllerTest {
 
         final JobsController jobsController = new JobsController(repository);
 
-        Object job = jobsController.findJobsAsJson();
+        Object job = jobsController.findJobsAsJson(null);
         assertThat(job, is(asList(representationOf(secondJob), representationOf(firstJob))));
+    }
+
+    @Test
+    public void shouldReturnAllJobsOfType() {
+        final InMemJobRepository repository = new InMemJobRepository();
+        final JobInfo firstJob = jobInfoBuilder(() -> "SOME_TYPE", create("/test/42"))
+                .build();
+        final JobInfo secondJob = jobInfoBuilder(() -> "SOME_OTHER_TYPE", create("/test/43"))
+                .build();
+        repository.createOrUpdate(firstJob);
+        repository.createOrUpdate(secondJob);
+
+        final JobsController jobsController = new JobsController(repository);
+
+        Object job = jobsController.findJobsAsJson("SOME_TYPE");
+        assertThat(job, is(asList(representationOf(firstJob))));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldReturnAllJobsOfTypeAsHtml() {
+        final InMemJobRepository repository = new InMemJobRepository();
+        final JobInfo firstJob = jobInfoBuilder(() -> "SOME_TYPE", create("/test/42"))
+                .build();
+        final JobInfo secondJob = jobInfoBuilder(() -> "SOME_OTHER_TYPE", create("/test/43"))
+                .build();
+        repository.createOrUpdate(firstJob);
+        repository.createOrUpdate(secondJob);
+
+        final JobsController jobsController = new JobsController(repository);
+
+        ModelAndView modelAndView = jobsController.findJobsAsHtml("SOME_TYPE");
+        List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
+        assertThat(jobs, is(asList(representationOf(firstJob))));
     }
 
 }
