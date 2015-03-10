@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,6 +19,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static java.net.URI.create;
@@ -43,20 +45,24 @@ public class JobsController {
     }
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET, produces = "text/html")
-    public ModelAndView findJobsAsHtml() {
-        final List<JobRepresentation> jobRepresentations = repository.findAll()
-                .stream()
-                .map(JobRepresentation::representationOf)
-                .collect(Collectors.toList());
+    public ModelAndView findJobsAsHtml(@RequestParam(value = "type", required = false) String type) {
+        final List<JobRepresentation> jobRepresentations = findJobsAsJson(type);
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
         return modelAndView;
     }
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET, produces = "application/json")
-    public List<JobRepresentation> findJobsAsJson() {
-        return repository.findAll()
-                .stream()
+    public List<JobRepresentation> findJobsAsJson(@RequestParam(value = "type", required = false) String type) {
+        Stream<JobInfo> allJobs = repository.findAll()
+                .stream();
+        Stream<JobInfo> filteredJobs;
+        if (type != null) {
+            filteredJobs = allJobs.filter( j -> j.getJobType().name().equals(type));
+        } else {
+            filteredJobs = allJobs;
+        }
+        return filteredJobs
                 .map(JobRepresentation::representationOf)
                 .collect(Collectors.toList());
     }
@@ -91,4 +97,5 @@ public class JobsController {
             return null;
         }
     }
+
 }
