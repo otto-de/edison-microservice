@@ -2,11 +2,14 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 public class JobRepresentation {
 
@@ -37,18 +40,19 @@ public class JobRepresentation {
     }
 
     public String getStarted() {
-        return ISO_LOCAL_DATE_TIME.format(job.getStarted());
+        ZonedDateTime started = job.getStarted();
+        return ISO_OFFSET_DATE_TIME.format(started);
     }
 
     public String getStopped() {
         return job.getStopped().isPresent()
-                ? ISO_LOCAL_DATE_TIME.format(job.getStopped().get())
+                ? ISO_OFFSET_DATE_TIME.format(job.getStopped().get())
                 : "";
     }
 
     public List<String> getMessages() {
         return job.getMessages().stream().map((jobMessage) ->
-            "[" + ISO_DATE_TIME.format(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()
+            "[" + ISO_OFFSET_DATE_TIME.format(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()
         ).collect(Collectors.toList());
     }
 

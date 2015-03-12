@@ -3,14 +3,14 @@ package de.otto.edison.jobs.domain;
 import net.jcip.annotations.ThreadSafe;
 
 import java.net.URI;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static java.time.LocalDateTime.now;
+import static java.time.ZonedDateTime.now;
 import static java.util.Collections.unmodifiableList;
 
 @ThreadSafe
@@ -18,8 +18,8 @@ public final class JobInfo {
 
     private final URI jobUri;
     private final JobType jobType;
-    private final LocalDateTime started;
-    private final Optional<LocalDateTime> stopped;
+    private final ZonedDateTime started;
+    private final Optional<ZonedDateTime> stopped;
     private final List<JobMessage> messages;
     private final ExecutionState state;
     private final JobStatus status;
@@ -31,8 +31,8 @@ public final class JobInfo {
 
     JobInfo(final JobType type,
             final URI jobUri,
-            final LocalDateTime started,
-            final Optional<LocalDateTime> stopped,
+            final ZonedDateTime started,
+            final Optional<ZonedDateTime> stopped,
             final List<JobMessage> messages,
             final ExecutionState state,
             final JobStatus status) {
@@ -61,11 +61,11 @@ public final class JobInfo {
         return status;
     }
 
-    public LocalDateTime getStarted() {
+    public ZonedDateTime getStarted() {
         return started;
     }
 
-    public Optional<LocalDateTime> getStopped() {
+    public Optional<ZonedDateTime> getStopped() {
         return stopped;
     }
 

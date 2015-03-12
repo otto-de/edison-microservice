@@ -1,8 +1,8 @@
 package de.otto.edison.jobs.domain;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
-import static java.time.LocalDateTime.now;
+import static java.time.ZonedDateTime.now;
 
 /**
  * @author Guido Steinacker
@@ -12,9 +12,9 @@ public final class JobMessage {
 
     private final Level level;
     private final String message;
-    private final LocalDateTime ts;
+    private final ZonedDateTime ts;
 
-    private JobMessage(final Level level, final String message, LocalDateTime timestamp) {
+    private JobMessage(final Level level, final String message, ZonedDateTime timestamp) {
         this.level = level;
         this.message = message;
         this.ts = timestamp;
@@ -24,7 +24,7 @@ public final class JobMessage {
         return new JobMessage(level, message, now());
     }
 
-    public static JobMessage jobMessage(final Level level, final String message, LocalDateTime ts) {
+    public static JobMessage jobMessage(final Level level, final String message, ZonedDateTime ts) {
         return new JobMessage(level, message, ts);
     }
 
@@ -36,7 +36,7 @@ public final class JobMessage {
         return message;
     }
 
-    public LocalDateTime getTimestamp() {
+    public ZonedDateTime getTimestamp() {
         return ts;
     }
 
