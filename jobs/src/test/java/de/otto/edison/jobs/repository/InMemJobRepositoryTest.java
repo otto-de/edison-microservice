@@ -9,7 +9,7 @@ import java.util.List;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static java.net.URI.create;
-import static java.time.LocalDateTime.now;
+import static java.time.ZonedDateTime.now;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static org.hamcrest.MatcherAssert.assertThat;

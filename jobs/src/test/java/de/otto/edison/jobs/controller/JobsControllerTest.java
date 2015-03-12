@@ -15,7 +15,7 @@ import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.copyOf;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static java.net.URI.create;
-import static java.time.LocalDateTime.now;
+import static java.time.ZonedDateTime.now;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
