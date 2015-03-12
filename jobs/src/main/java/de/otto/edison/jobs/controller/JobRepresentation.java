@@ -2,7 +2,7 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +40,7 @@ public class JobRepresentation {
     }
 
     public String getStarted() {
-        ZonedDateTime started = job.getStarted();
+        OffsetDateTime started = job.getStarted();
         return ISO_OFFSET_DATE_TIME.format(started);
     }
 

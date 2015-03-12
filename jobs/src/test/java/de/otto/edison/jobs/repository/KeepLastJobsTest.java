@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isAbsent;
-import static java.time.ZonedDateTime.now;
+import static java.time.OffsetDateTime.now;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
