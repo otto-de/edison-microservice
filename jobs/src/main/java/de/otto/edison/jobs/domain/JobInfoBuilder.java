@@ -1,12 +1,12 @@
 package de.otto.edison.jobs.domain;
 
 import java.net.URI;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static java.time.ZonedDateTime.now;
+import static java.time.OffsetDateTime.now;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -15,8 +15,8 @@ public class JobInfoBuilder {
     private final JobType type;
     private final URI jobUri;
     private final List<JobMessage> messages;
-    private ZonedDateTime started;
-    private Optional<ZonedDateTime> stopped;
+    private OffsetDateTime started;
+    private Optional<OffsetDateTime> stopped;
     private JobInfo.ExecutionState state;
     private JobInfo.JobStatus status;
 
@@ -53,7 +53,7 @@ public class JobInfoBuilder {
         return this;
     }
 
-    public JobInfoBuilder withStarted(final ZonedDateTime started) {
+    public JobInfoBuilder withStarted(final OffsetDateTime started) {
         this.started = started;
         return this;
     }
@@ -68,7 +68,7 @@ public class JobInfoBuilder {
         return this;
     }
 
-    public JobInfoBuilder withStopped(final ZonedDateTime stopped) {
+    public JobInfoBuilder withStopped(final OffsetDateTime stopped) {
         this.stopped = ofNullable(stopped);
         return this;
     }

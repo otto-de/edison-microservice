@@ -10,7 +10,7 @@ import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.RUNNING;
 import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.STOPPED;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.copyOf;
-import static java.time.ZonedDateTime.now;
+import static java.time.OffsetDateTime.now;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public final class JobRunner {
