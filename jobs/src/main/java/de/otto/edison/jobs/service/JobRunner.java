@@ -6,6 +6,10 @@ import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.RUNNING;
 import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.STOPPED;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
@@ -16,19 +20,23 @@ import static org.slf4j.LoggerFactory.getLogger;
 public final class JobRunner {
 
     private static final Logger LOG = getLogger(JobRunner.class);
+    public static final long PING_PERIOD = 10l;
 
     private final JobRepository repository;
     private volatile JobInfo job;
     private final Clock clock;
+    private final ScheduledExecutorService executorService;
+    private ScheduledFuture<?> pingJob;
 
-    private JobRunner(final JobInfo job, final JobRepository repository, final Clock clock) {
+    private JobRunner(final JobInfo job, final JobRepository repository, final Clock clock, final ScheduledExecutorService executorService) {
         this.repository = repository;
         this.job = job;
         this.clock = clock;
+        this.executorService = executorService;
     }
 
-    public static JobRunner newJobRunner(final JobInfo job, final JobRepository repository, final Clock clock) {
-        return new JobRunner(job, repository, clock);
+    public static JobRunner newJobRunner(final JobInfo job, final JobRepository repository, final Clock clock, final ScheduledExecutorService executorService) {
+        return new JobRunner(job, repository, clock, executorService);
     }
 
     public void start(final JobRunnable runnable) {
@@ -49,11 +57,17 @@ public final class JobRunner {
     }
 
     private void start() {
+        pingJob = executorService.scheduleAtFixedRate(this::ping, PING_PERIOD, PING_PERIOD, TimeUnit.SECONDS);
+
         final String jobId = job.getJobUri().toString();
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
         MDC.put("job_type", job.getJobType().toString());
         createOrUpdateJob();
         LOG.info("[started]");
+    }
+
+    private void ping() {
+        createOrUpdateJob();
     }
 
     private void error(final Exception e) {
@@ -64,6 +78,8 @@ public final class JobRunner {
     }
 
     private void stop() {
+        pingJob.cancel(false);
+
         assert job.getState() == RUNNING;
         try {
             LOG.info("[stopped]");
