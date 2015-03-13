@@ -37,11 +37,12 @@ public class DefaultJobService implements JobService {
     public DefaultJobService() {
     }
 
-    DefaultJobService(final String serverContextPath, final JobRepository jobRepository, final GaugeService gaugeService) {
+    DefaultJobService(final String serverContextPath, final JobRepository jobRepository, final GaugeService gaugeService,final Clock clock) {
         this.serverContextPath = serverContextPath;
         this.repository = jobRepository;
         this.executor = command -> command.run();
         this.gaugeService = gaugeService;
+        this.clock = clock;
     }
 
     @Override
