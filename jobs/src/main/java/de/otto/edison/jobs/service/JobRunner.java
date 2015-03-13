@@ -44,7 +44,6 @@ public final class JobRunner {
 
     private void log(final JobMessage jobMessage) {
         job = copyOf(job).addMessage(jobMessage)
-
                 .build();
         createOrUpdateJob();
     }
