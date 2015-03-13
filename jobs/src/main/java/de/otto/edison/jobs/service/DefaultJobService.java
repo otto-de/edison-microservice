@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.GaugeService;
 
 import java.net.URI;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
@@ -25,7 +25,7 @@ public class DefaultJobService implements JobService {
     @Autowired
     private JobRepository repository;
     @Autowired
-    private Executor executor;
+    private ScheduledExecutorService executor;
     @Autowired
     private GaugeService gaugeService;
     @Autowired
@@ -37,12 +37,12 @@ public class DefaultJobService implements JobService {
     public DefaultJobService() {
     }
 
-    DefaultJobService(final String serverContextPath, final JobRepository jobRepository, final GaugeService gaugeService, final Clock clock, final Executor executor) {
+    DefaultJobService(final String serverContextPath, final JobRepository jobRepository, final GaugeService gaugeService, final Clock clock, final ScheduledExecutorService executor) {
         this.serverContextPath = serverContextPath;
         this.repository = jobRepository;
-        this.executor = executor;
         this.gaugeService = gaugeService;
         this.clock = clock;
+        this.executor = executor;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class DefaultJobService implements JobService {
 
     private URI startAsync(final JobRunnable jobRunnable) {
         final JobInfo jobInfo = jobInfoBuilder(jobRunnable.getJobType(), newJobUri()).build();
-        executor.execute(() -> newJobRunner(jobInfo, repository, clock).start(jobRunnable));
+        executor.execute(() -> newJobRunner(jobInfo, repository, clock, executor).start(jobRunnable));
         return jobInfo.getJobUri();
     }
 

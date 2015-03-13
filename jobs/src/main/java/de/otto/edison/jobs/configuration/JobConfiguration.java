@@ -12,8 +12,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.util.concurrent.Executors.newScheduledThreadPool;
 
 @Configuration
 @EnableAsync
@@ -24,9 +27,9 @@ public class JobConfiguration {
     public static final int NUMBER_OF_JOBS_TO_KEEP = 100;
 
     @Bean
-    @ConditionalOnMissingBean(Executor.class)
-    public Executor executorService() {
-        return newFixedThreadPool(N_THREADS);
+    @ConditionalOnMissingBean(ScheduledExecutorService.class)
+    public ScheduledExecutorService scheduledExecutorService() {
+        return newScheduledThreadPool(N_THREADS);
     }
 
     @Bean

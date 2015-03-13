@@ -3,11 +3,16 @@ package de.otto.edison.jobs.service;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.boot.actuate.metrics.GaugeService;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.STOPPED;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
@@ -19,12 +24,21 @@ import static org.mockito.Mockito.*;
 
 public class DefaultJobServiceTest {
 
-    public static final Executor EXECUTE_IMMEDIATELY_EXECUTOR = command -> command.run();
+    private ScheduledExecutorService executorService;
+
+    @BeforeMethod
+    @SuppressWarnings("unchecked")
+    public void setUp() throws Exception {
+        this.executorService = mock(ScheduledExecutorService.class);
+        doAnswer(new RunImmediately()).when(executorService).execute(any(Runnable.class));
+
+        when(executorService.scheduleAtFixedRate(any(Runnable.class),anyLong(),anyLong(),any(TimeUnit.class))).thenReturn(mock(ScheduledFuture.class));
+    }
 
     @Test
     public void shouldReturnCreatedJobUri() {
         // given:
-        final DefaultJobService jobService = new DefaultJobService("/foo", new InMemJobRepository(), mock(GaugeService.class), mock(Clock.class), EXECUTE_IMMEDIATELY_EXECUTOR);
+        final DefaultJobService jobService = new DefaultJobService("/foo", new InMemJobRepository(), mock(GaugeService.class), mock(Clock.class), executorService);
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
         // when:
@@ -37,7 +51,7 @@ public class DefaultJobServiceTest {
     public void shouldPersistJobs() {
         // given:
         final InMemJobRepository jobRepository = new InMemJobRepository();
-        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), mock(Clock.class), EXECUTE_IMMEDIATELY_EXECUTOR);
+        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), mock(Clock.class), executorService);
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
         // when:
@@ -52,7 +66,7 @@ public class DefaultJobServiceTest {
         final InMemJobRepository jobRepository = new InMemJobRepository();
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
-        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), mock(Clock.class), EXECUTE_IMMEDIATELY_EXECUTOR);
+        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), mock(Clock.class), executorService);
         // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
@@ -67,11 +81,19 @@ public class DefaultJobServiceTest {
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
 
         final GaugeService mock = mock(GaugeService.class);
-        final DefaultJobService jobService = new DefaultJobService("/foo", mock(JobRepository.class), mock,mock(Clock.class), command -> command.run());
+        final DefaultJobService jobService = new DefaultJobService("/foo", mock(JobRepository.class), mock,mock(Clock.class), executorService);
         // when:
         jobService.startAsyncJob(jobRunnable);
         // then:
         verify(mock).submit(eq("gauge.jobs.runtime.bar"), anyLong());
     }
 
+    private static class RunImmediately implements Answer {
+        @Override
+        public Object answer(InvocationOnMock invocation) throws Throwable {
+            Runnable runnable = (Runnable) invocation.getArguments()[0];
+            runnable.run();
+            return null;
+        }
+    }
 }
