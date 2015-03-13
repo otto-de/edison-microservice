@@ -8,7 +8,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.time.OffsetDateTime.now;
 import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 public class JobInfoBuilder {
@@ -19,6 +18,7 @@ public class JobInfoBuilder {
     private Optional<OffsetDateTime> stopped;
     private JobInfo.ExecutionState state;
     private JobInfo.JobStatus status;
+    private OffsetDateTime lastUpdated;
 
     private JobInfoBuilder(final JobType type, final URI jobUri) {
         this.type = type;
@@ -28,6 +28,7 @@ public class JobInfoBuilder {
         status = JobInfo.JobStatus.OK;
         started = now();
         stopped = empty();
+        lastUpdated = OffsetDateTime.now();
     }
 
     public JobInfoBuilder(final JobInfo prototype) {
@@ -38,6 +39,7 @@ public class JobInfoBuilder {
         this.messages = new CopyOnWriteArrayList<>(prototype.getMessages());
         this.state = prototype.getState();
         this.status = prototype.getStatus();
+        this.lastUpdated = prototype.getLastUpdated();
     }
 
     public static JobInfoBuilder jobInfoBuilder(final JobType type, final URI uri) {
@@ -73,7 +75,12 @@ public class JobInfoBuilder {
         return this;
     }
 
+    public JobInfoBuilder withLastUpdated(final OffsetDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+        return this;
+    }
+
     public JobInfo build() {
-        return new JobInfo(type, jobUri, started, stopped, messages, state, status);
+        return new JobInfo(type, jobUri, started, stopped, messages, state, status, lastUpdated);
     }
 }

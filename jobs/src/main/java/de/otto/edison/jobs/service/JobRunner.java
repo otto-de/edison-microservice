@@ -19,14 +19,16 @@ public final class JobRunner {
 
     private final JobRepository repository;
     private volatile JobInfo job;
+    private final Clock clock;
 
-    private JobRunner(final JobInfo job, final JobRepository repository) {
+    private JobRunner(final JobInfo job, final JobRepository repository, final Clock clock) {
         this.repository = repository;
         this.job = job;
+        this.clock = clock;
     }
 
-    public static JobRunner newJobRunner(final JobInfo job, final JobRepository repository) {
-        return new JobRunner(job, repository);
+    public static JobRunner newJobRunner(final JobInfo job, final JobRepository repository, final Clock clock) {
+        return new JobRunner(job, repository, clock);
     }
 
     public void start(final JobRunnable runnable) {
@@ -41,15 +43,17 @@ public final class JobRunner {
     }
 
     private void log(final JobMessage jobMessage) {
-        job = copyOf(job).addMessage(jobMessage).build();
-        repository.createOrUpdate(job);
+        job = copyOf(job).addMessage(jobMessage)
+
+                .build();
+        createOrUpdateJob();
     }
 
     private void start() {
         final String jobId = job.getJobUri().toString();
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
         MDC.put("job_type", job.getJobType().toString());
-        repository.createOrUpdate(job);
+        createOrUpdateJob();
         LOG.info("[started]");
     }
 
@@ -57,7 +61,7 @@ public final class JobRunner {
         assert job.getState() == RUNNING;
         job = copyOf(job).withStatus(ERROR).build();
         LOG.error(e.getMessage());
-        repository.createOrUpdate(job);
+        createOrUpdateJob();
     }
 
     private void stop() {
@@ -68,10 +72,18 @@ public final class JobRunner {
                     .withState(STOPPED)
                     .withStopped(now())
                     .build();
-            repository.createOrUpdate(job);
+            createOrUpdateJob();
         } finally {
             MDC.clear();
         }
+    }
+
+    private void createOrUpdateJob() {
+        job = copyOf(job)
+                .withLastUpdated(clock.now())
+                .build();
+
+        repository.createOrUpdate(job);
     }
 
 }

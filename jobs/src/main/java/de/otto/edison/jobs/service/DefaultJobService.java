@@ -28,6 +28,8 @@ public class DefaultJobService implements JobService {
     private Executor executor;
     @Autowired
     private GaugeService gaugeService;
+    @Autowired
+    private Clock clock;
 
     @Value("${server.contextPath}")
     private String serverContextPath;
@@ -49,9 +51,11 @@ public class DefaultJobService implements JobService {
 
     private URI startAsync(final JobRunnable jobRunnable) {
         final JobInfo jobInfo = jobInfoBuilder(jobRunnable.getJobType(), newJobUri()).build();
-        executor.execute(() -> newJobRunner(jobInfo, repository).start(jobRunnable));
+        executor.execute(() -> newJobRunner(jobInfo, repository, clock).start(jobRunnable));
         return jobInfo.getJobUri();
     }
+
+
 
     private JobRunnable metered(final JobRunnable delegate) {
         return new JobRunnable() {

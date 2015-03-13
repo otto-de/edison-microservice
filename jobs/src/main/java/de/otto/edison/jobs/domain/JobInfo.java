@@ -23,6 +23,7 @@ public final class JobInfo {
     private final List<JobMessage> messages;
     private final ExecutionState state;
     private final JobStatus status;
+    private final OffsetDateTime lastUpdated;
 
     public enum JobStatus { OK, ERROR;}
 
@@ -35,11 +36,12 @@ public final class JobInfo {
             final Optional<OffsetDateTime> stopped,
             final List<JobMessage> messages,
             final ExecutionState state,
-            final JobStatus status) {
+            final JobStatus status, OffsetDateTime lastUpdated) {
         this.jobUri = jobUri;
         this.jobType = type;
         this.started = started;
         this.stopped = stopped;
+        this.lastUpdated = lastUpdated;
         this.messages = unmodifiableList(new ArrayList<>(messages));
         this.state = state;
         this.status = status;
@@ -73,6 +75,10 @@ public final class JobInfo {
         return messages;
     }
 
+    public OffsetDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -82,6 +88,7 @@ public final class JobInfo {
 
         if (jobType != null ? !jobType.equals(jobInfo.jobType) : jobInfo.jobType != null) return false;
         if (jobUri != null ? !jobUri.equals(jobInfo.jobUri) : jobInfo.jobUri != null) return false;
+        if (lastUpdated != null ? !lastUpdated.equals(jobInfo.lastUpdated) : jobInfo.lastUpdated != null) return false;
         if (messages != null ? !messages.equals(jobInfo.messages) : jobInfo.messages != null) return false;
         if (started != null ? !started.equals(jobInfo.started) : jobInfo.started != null) return false;
         if (state != jobInfo.state) return false;
@@ -100,19 +107,21 @@ public final class JobInfo {
         result = 31 * result + (messages != null ? messages.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (lastUpdated != null ? lastUpdated.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return "JobInfo{" +
-                "jobType=" + jobType +
-                ", jobUri=" + jobUri +
+                "jobUri=" + jobUri +
+                ", jobType=" + jobType +
                 ", started=" + started +
                 ", stopped=" + stopped +
                 ", messages=" + messages +
                 ", state=" + state +
                 ", status=" + status +
+                ", lastUpdated=" + lastUpdated +
                 '}';
     }
 }
