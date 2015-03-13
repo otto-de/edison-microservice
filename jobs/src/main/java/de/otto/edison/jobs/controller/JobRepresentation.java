@@ -41,18 +41,26 @@ public class JobRepresentation {
 
     public String getStarted() {
         OffsetDateTime started = job.getStarted();
+        return formatDateTime(started);
+    }
+
+    private String formatDateTime(OffsetDateTime started) {
         return ISO_OFFSET_DATE_TIME.format(started);
     }
 
     public String getStopped() {
         return job.getStopped().isPresent()
-                ? ISO_OFFSET_DATE_TIME.format(job.getStopped().get())
+                ? formatDateTime(job.getStopped().get())
                 : "";
+    }
+
+    public String getLastUpdated() {
+        return formatDateTime(job.getLastUpdated());
     }
 
     public List<String> getMessages() {
         return job.getMessages().stream().map((jobMessage) ->
-            "[" + ISO_OFFSET_DATE_TIME.format(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()
+            "[" + formatDateTime(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()
         ).collect(Collectors.toList());
     }
 
