@@ -45,7 +45,11 @@ public class JobRepresentation {
     }
 
     private String formatDateTime(OffsetDateTime started) {
-        return ISO_OFFSET_DATE_TIME.format(started);
+        if (started==null) {
+            return null;
+        } else {
+            return ISO_OFFSET_DATE_TIME.format(started);
+        }
     }
 
     public String getStopped() {
