@@ -2,6 +2,7 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -51,6 +52,14 @@ public final class JobRunner {
     }
 
     private void log(final JobMessage jobMessage) {
+        switch (jobMessage.getLevel()) {
+            case WARNING:
+                LOG.warn(jobMessage.getMessage());
+                break;
+            default:
+                LOG.info(jobMessage.getMessage());
+        }
+
         job = copyOf(job).addMessage(jobMessage)
                 .build();
         createOrUpdateJob();
