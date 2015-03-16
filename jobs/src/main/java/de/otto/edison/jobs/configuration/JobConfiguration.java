@@ -25,6 +25,7 @@ public class JobConfiguration {
 
     public static final int N_THREADS = 10;
     public static final int NUMBER_OF_JOBS_TO_KEEP = 100;
+    public static final int SECONDS_TO_MARK_JOBS_AS_STOPPED = 20;
 
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
@@ -52,6 +53,12 @@ public class JobConfiguration {
     @ConditionalOnMissingBean(JobCleanupStrategy.class)
     public JobCleanupStrategy jobCleanupStrategy() {
         return new KeepLastJobs(NUMBER_OF_JOBS_TO_KEEP, Optional.<JobType>empty());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JobCleanupStrategy.class)
+    public JobCleanupStrategy deadJobStrategy() {
+        return new StopDeadJobs(SECONDS_TO_MARK_JOBS_AS_STOPPED);
     }
 
 }
