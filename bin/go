@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+b=`tput bold`
+nb=`tput sgr0`
+SCRIPT_DIR=$(dirname $0)
+
+function echob {
+    echo "${b}${1}${nb}"
+}
+
+function ensure_requirements {
+    command -v gradlew >/dev/null 2>&1 || { echob "ERROR: gradlew not in PATH. Aborting."; exit 1; }
+}
+
+function release {
+    ${SCRIPT_DIR}/release-snapshot.sh
+}
+
+function help {
+    echo "usage: $0 <task>
+task can be:
+    help      -- This help message
+    release   -- Release new SNAPSHOT
+    check     -- Run all tests
+    clean     -- Clean working directory
+    cleanIdea -- Remove IntelliJ IDEA files
+    idea      -- Generate files for IntelliJ IDEA
+
+              -- Anything else accepted by gradlew
+    "
+}
+
+
+ensure_requirements
+
+if [ "$1" == "help" ]; then
+    help
+elif [ "$1" == "release" ]; then
+    release
+else
+    gradlew $*
+fi
+
+
