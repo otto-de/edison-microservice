@@ -16,7 +16,6 @@ public class JobInfoBuilder {
     private final List<JobMessage> messages;
     private OffsetDateTime started;
     private Optional<OffsetDateTime> stopped;
-    private JobInfo.ExecutionState state;
     private JobInfo.JobStatus status;
     private OffsetDateTime lastUpdated;
 
@@ -24,7 +23,6 @@ public class JobInfoBuilder {
         this.type = type;
         this.jobUri = jobUri;
         messages = new CopyOnWriteArrayList<>();
-        state = JobInfo.ExecutionState.RUNNING;
         status = JobInfo.JobStatus.OK;
         started = now();
         stopped = empty();
@@ -37,7 +35,6 @@ public class JobInfoBuilder {
         this.started = prototype.getStarted();
         this.stopped = prototype.getStopped();
         this.messages = new CopyOnWriteArrayList<>(prototype.getMessages());
-        this.state = prototype.getState();
         this.status = prototype.getStatus();
         this.lastUpdated = prototype.getLastUpdated();
     }
@@ -60,11 +57,6 @@ public class JobInfoBuilder {
         return this;
     }
 
-    public JobInfoBuilder withState(final JobInfo.ExecutionState state) {
-        this.state = state;
-        return this;
-    }
-
     public JobInfoBuilder withStatus(final JobInfo.JobStatus status) {
         this.status = status;
         return this;
@@ -81,6 +73,6 @@ public class JobInfoBuilder {
     }
 
     public JobInfo build() {
-        return new JobInfo(type, jobUri, started, stopped, messages, state, status, lastUpdated);
+        return new JobInfo(type, jobUri, started, stopped, messages, status, lastUpdated);
     }
 }

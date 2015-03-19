@@ -2,7 +2,6 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -11,8 +10,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.RUNNING;
-import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.STOPPED;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.copyOf;
 import static java.time.OffsetDateTime.now;
@@ -80,7 +77,7 @@ public final class JobRunner {
     }
 
     private void error(final Exception e) {
-        assert job.getState() == RUNNING;
+        assert !job.getStopped().isPresent();
         job = copyOf(job).withStatus(ERROR).build();
         LOG.error(e.getMessage());
         createOrUpdateJob();
@@ -89,11 +86,10 @@ public final class JobRunner {
     private void stop() {
         pingJob.cancel(false);
 
-        assert job.getState() == RUNNING;
+        assert !job.getStopped().isPresent();
         try {
             LOG.info("[stopped]");
             job = copyOf(job)
-                    .withState(STOPPED)
                     .withStopped(now())
                     .build();
             createOrUpdateJob();

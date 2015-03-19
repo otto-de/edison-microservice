@@ -14,10 +14,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.STOPPED;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -71,7 +69,7 @@ public class DefaultJobServiceTest {
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
         final JobInfo jobInfo = jobRepository.findBy(jobUri).get();
-        assertThat(jobInfo.getState(), is(STOPPED));
+        assertThat(jobInfo.getStopped(), isPresent());
     }
 
     @Test

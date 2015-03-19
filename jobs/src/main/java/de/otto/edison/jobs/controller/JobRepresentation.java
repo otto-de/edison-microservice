@@ -3,12 +3,9 @@ package de.otto.edison.jobs.controller;
 import de.otto.edison.jobs.domain.JobInfo;
 
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 public class JobRepresentation {
@@ -29,10 +26,6 @@ public class JobRepresentation {
 
     public String getJobType() {
         return job.getJobType().name();
-    }
-
-    public JobInfo.ExecutionState getState() {
-        return job.getState();
     }
 
     public JobInfo.JobStatus getStatus() {
