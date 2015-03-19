@@ -6,7 +6,6 @@ import de.otto.edison.jobs.domain.JobType;
 import de.otto.edison.jobs.repository.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -14,12 +13,10 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static de.otto.edison.jobs.domain.JobInfo.ExecutionState.STOPPED;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
@@ -63,7 +60,7 @@ public class JobRunnerTest {
         // then
         final JobInfo jobInfo = repository.findBy(jobUri).get();
         assertThat(jobInfo.getStatus(), is(OK));
-        assertThat(jobInfo.getState(), is(STOPPED));
+        assertThat(jobInfo.getStopped(), isPresent());
     }
 
     @Test

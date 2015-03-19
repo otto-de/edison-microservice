@@ -17,7 +17,6 @@ public class JobInfoTest {
     @Test
     public void shouldInitializeCorrectly() {
         JobInfo job = jobInfoBuilder(() -> "TEST", create("foo")).build();
-        assertThat(job.getState(), is(JobInfo.ExecutionState.RUNNING));
         assertThat(job.getStatus(), is(JobInfo.JobStatus.OK));
         assertThat(job.getJobUri(), is(create("foo")));
         assertThat(job.getJobType().name(), is("TEST"));

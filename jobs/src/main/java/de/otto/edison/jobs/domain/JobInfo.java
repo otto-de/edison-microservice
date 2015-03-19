@@ -21,21 +21,17 @@ public final class JobInfo {
     private final OffsetDateTime started;
     private final Optional<OffsetDateTime> stopped;
     private final List<JobMessage> messages;
-    private final ExecutionState state;
     private final JobStatus status;
     private final OffsetDateTime lastUpdated;
 
     public enum JobStatus { OK, ERROR;}
 
 
-    public enum ExecutionState { RUNNING, STOPPED;}
-
     JobInfo(final JobType type,
             final URI jobUri,
             final OffsetDateTime started,
             final Optional<OffsetDateTime> stopped,
             final List<JobMessage> messages,
-            final ExecutionState state,
             final JobStatus status, OffsetDateTime lastUpdated) {
         this.jobUri = jobUri;
         this.jobType = type;
@@ -43,7 +39,6 @@ public final class JobInfo {
         this.stopped = stopped;
         this.lastUpdated = lastUpdated;
         this.messages = unmodifiableList(new ArrayList<>(messages));
-        this.state = state;
         this.status = status;
     }
 
@@ -53,10 +48,6 @@ public final class JobInfo {
 
     public JobType getJobType() {
         return jobType;
-    }
-
-    public ExecutionState getState() {
-        return state;
     }
 
     public JobStatus getStatus() {
@@ -91,7 +82,6 @@ public final class JobInfo {
         if (lastUpdated != null ? !lastUpdated.equals(jobInfo.lastUpdated) : jobInfo.lastUpdated != null) return false;
         if (messages != null ? !messages.equals(jobInfo.messages) : jobInfo.messages != null) return false;
         if (started != null ? !started.equals(jobInfo.started) : jobInfo.started != null) return false;
-        if (state != jobInfo.state) return false;
         if (status != jobInfo.status) return false;
         if (stopped != null ? !stopped.equals(jobInfo.stopped) : jobInfo.stopped != null) return false;
 
@@ -105,7 +95,6 @@ public final class JobInfo {
         result = 31 * result + (started != null ? started.hashCode() : 0);
         result = 31 * result + (stopped != null ? stopped.hashCode() : 0);
         result = 31 * result + (messages != null ? messages.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (lastUpdated != null ? lastUpdated.hashCode() : 0);
         return result;
@@ -119,7 +108,6 @@ public final class JobInfo {
                 ", started=" + started +
                 ", stopped=" + stopped +
                 ", messages=" + messages +
-                ", state=" + state +
                 ", status=" + status +
                 ", lastUpdated=" + lastUpdated +
                 '}';
