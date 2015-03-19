@@ -32,6 +32,10 @@ public class JobRepresentation {
         return job.getStatus();
     }
 
+    public String getState() {
+        return job.getState();
+    }
+
     public String getStarted() {
         OffsetDateTime started = job.getStarted();
         return formatDateTime(started);
