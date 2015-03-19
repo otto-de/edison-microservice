@@ -58,6 +58,10 @@ public final class JobInfo {
         return started;
     }
 
+    public String getState() {
+        return stopped.isPresent() ? "STOPPED" : "RUNNING";
+    }
+
     public Optional<OffsetDateTime> getStopped() {
         return stopped;
     }
