@@ -5,12 +5,9 @@ import net.jcip.annotations.ThreadSafe;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import static java.time.OffsetDateTime.now;
 import static java.util.Collections.unmodifiableList;
 
 @ThreadSafe
@@ -24,7 +21,7 @@ public final class JobInfo {
     private final JobStatus status;
     private final OffsetDateTime lastUpdated;
 
-    public enum JobStatus { OK, ERROR;}
+    public enum JobStatus { OK, ERROR, DEAD;}
 
 
     JobInfo(final JobType type,
