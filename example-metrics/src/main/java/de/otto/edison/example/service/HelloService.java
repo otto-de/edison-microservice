@@ -1,7 +1,7 @@
 package de.otto.edison.example.service;
 
+import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Gauge;
-import com.ryantenney.metrics.annotation.Counted;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
