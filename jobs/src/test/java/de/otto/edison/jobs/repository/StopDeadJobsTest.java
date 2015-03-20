@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
+import static de.otto.edison.jobs.repository.StopDeadJobs.*;
 import static java.time.OffsetDateTime.now;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -51,6 +52,7 @@ public class StopDeadJobsTest {
         assertThat(toBeStopped.getStopped().get(), is(now));
         assertThat(toBeStopped.getLastUpdated(), is(now));
         assertThat(toBeStopped.getStatus(), is(DEAD));
+        assertThat(toBeStopped.getMessages().get(0).getMessage(),is(JOB_DEAD_MESSAGE));
         assertThat(running, is(runningJob));
         assertThat(stopped, is(stoppedJob));
 
