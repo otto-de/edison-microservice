@@ -1,8 +1,15 @@
 
 dependencies {
+    compile("io.dropwizard.metrics:metrics-annotation:3.1.0")
     compile("io.dropwizard.metrics:metrics-core:3.1.0")
     compile("io.dropwizard.metrics:metrics-graphite:3.1.0")
-    compile("com.ryantenney.metrics:metrics-spring:3.0.3")
+    compile("io.dropwizard.metrics:metrics-healthchecks:3.1.0")
+    compile("com.ryantenney.metrics:metrics-spring:3.0.3") {
+        // Fix dependencies of metrics-spring 3.0.3
+        exclude module: "metrics-annotation"
+        exclude module: "metrics-core"
+        exclude module: "metrics-healthchecks"
+    }
 
     testCompile project(":testsupport")
 }
