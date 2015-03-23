@@ -16,7 +16,7 @@ public class ApplicationStatusTest {
     public void shouldHaveStatusOkIfDetailsAreOk() {
         // given
         ApplicationStatus applicationStatus = applicationStatus("foo", versionInfo("1", "none"), asList(
-                        statusDetail("bar", OK, "a message"))
+                        statusDetail("bar", OK, "a message")), "localhost"
         );
         // then
         assertThat(applicationStatus.getName(), is("foo"));
@@ -29,7 +29,7 @@ public class ApplicationStatusTest {
         ApplicationStatus applicationStatus = applicationStatus("foo", versionInfo("1", "none"), asList(
                 statusDetail("bar", OK, "a message"),
                 statusDetail("foobar", WARNING, "another message")
-        ));
+        ), "localhost");
         // then
         assertThat(applicationStatus.getStatus(), is(WARNING));
     }
@@ -41,7 +41,7 @@ public class ApplicationStatusTest {
                 statusDetail("bar", OK, "a message"),
                 statusDetail("foobar", ERROR, "another message"),
                 statusDetail("foobar", WARNING, "yet another message")
-        ));
+        ), "localhost");
         // then
         assertThat(applicationStatus.getStatus(), is(ERROR));
     }

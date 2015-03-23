@@ -27,6 +27,7 @@ public final class ApplicationStatusRepresentation {
             put("name", applicationStatus.getName());
             put("commit", applicationStatus.getVersionInfo().getCommit());
             put("version", applicationStatus.getVersionInfo().getVersion());
+            put("hostname", applicationStatus.getHostName());
             put("statusDetails", statusDetailsRepresentationOf(applicationStatus));
         }};
     }

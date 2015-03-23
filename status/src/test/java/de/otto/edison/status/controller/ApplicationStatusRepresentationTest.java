@@ -21,13 +21,14 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithoutDetails() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                applicationStatus("app", versionInfo("", ""), emptyList())
+                applicationStatus("app", versionInfo("", ""), emptyList(), "localhost")
         );
         // when
         final JsonMap jsonMap = jsonMapFrom(representation.getApplication());
         // then
         assertThat(jsonMap.getString("name"), is("app"));
         assertThat(jsonMap.getString("status"), is("OK"));
+        assertThat(jsonMap.getString("hostname"), is("localhost"));
         assertThat(jsonMap.get("statusDetails").asMap().size(), is(0));
     }
 
@@ -35,7 +36,7 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithVersionInfo() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                applicationStatus("app", versionInfo("1.0.0", "0815"), emptyList())
+                applicationStatus("app", versionInfo("1.0.0", "0815"), emptyList(), "localhost")
         );
         // when
         final JsonMap jsonMap = jsonMapFrom(representation.getApplication());
@@ -49,7 +50,7 @@ public class ApplicationStatusRepresentationTest {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
                 applicationStatus("app", versionInfo("", ""), asList(
-                        statusDetail("someDetail", WARNING, "detailed warning"))
+                        statusDetail("someDetail", WARNING, "detailed warning")), "localhost"
                 )
         );
         // when
@@ -67,7 +68,7 @@ public class ApplicationStatusRepresentationTest {
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
                 applicationStatus("app", versionInfo("", ""), asList(
                                 statusDetail("someDetail", OK, "perfect"),
-                                statusDetail("someOtherDetail", WARNING, "detailed warning"))
+                                statusDetail("someOtherDetail", WARNING, "detailed warning")), "localhost"
                 )
         );
         // when
