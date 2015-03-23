@@ -1,8 +1,6 @@
 package de.otto.edison.status.configuration;
 
-import de.otto.edison.status.indicator.ApplicationStatusAggregator;
-import de.otto.edison.status.indicator.DefaultApplicationStatusAggregator;
-import de.otto.edison.status.indicator.StatusDetailIndicator;
+import de.otto.edison.status.indicator.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,19 +28,19 @@ public class StatusConfiguration {
     @Value(("${info.build.commit:unknown}"))
     private String commit;
 
+    @Autowired
+    private HostnameIndicator hostnameIndicator;
+
+    @Bean
+    @ConditionalOnMissingBean(HostnameIndicator.class)
+    public HostnameIndicator hostnameIndicator() {
+        return new DefaultHostnameIndicator();
+    }
+
     @Bean
     @ConditionalOnMissingBean(ApplicationStatusAggregator.class)
     public ApplicationStatusAggregator statusAggregator() {
-        return new DefaultApplicationStatusAggregator(applicationName, versionInfo(version, commit), statusDetailIndicators, getHostName());
-    }
-
-    private static String getHostName() {
-        try {
-            InetAddress localhost = java.net.InetAddress.getLocalHost();
-            return localhost.getHostName();
-        } catch (UnknownHostException e) {
-            return "UNKOWN";
-        }
+        return new DefaultApplicationStatusAggregator(applicationName, versionInfo(version, commit), statusDetailIndicators, hostnameIndicator.hostname());
     }
 
 }
