@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import static de.otto.edison.status.domain.VersionInfo.versionInfo;
@@ -31,7 +33,16 @@ public class StatusConfiguration {
     @Bean
     @ConditionalOnMissingBean(ApplicationStatusAggregator.class)
     public ApplicationStatusAggregator statusAggregator() {
-        return new DefaultApplicationStatusAggregator(applicationName, versionInfo(version, commit), statusDetailIndicators);
+        return new DefaultApplicationStatusAggregator(applicationName, versionInfo(version, commit), statusDetailIndicators, getHostName());
+    }
+
+    private static String getHostName() {
+        try {
+            InetAddress localhost = java.net.InetAddress.getLocalHost();
+            return localhost.getHostName();
+        } catch (UnknownHostException e) {
+            return "UNKOWN";
+        }
     }
 
 }

@@ -18,13 +18,16 @@ public class DefaultApplicationStatusAggregator implements ApplicationStatusAggr
 
     private final String applicationName;
     private final VersionInfo versionInfo;
+    private String hostName;
     private final List<StatusDetailIndicator> indicators;
 
     public DefaultApplicationStatusAggregator(final String applicationName,
                                               final VersionInfo versionInfo,
-                                              final List<StatusDetailIndicator> indicators) {
+                                              final List<StatusDetailIndicator> indicators,
+                                              final String hostName) {
         this.applicationName = applicationName;
         this.versionInfo = versionInfo;
+        this.hostName = hostName;
         this.indicators = unmodifiableList(new ArrayList<>(indicators));
     }
 
@@ -33,6 +36,7 @@ public class DefaultApplicationStatusAggregator implements ApplicationStatusAggr
         return applicationStatus(applicationName, versionInfo, indicators
                 .stream()
                 .map(StatusDetailIndicator::statusDetail)
-                .collect(toList()));
+                .collect(toList()),
+                hostName);
     }
 }
