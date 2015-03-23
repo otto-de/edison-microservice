@@ -51,17 +51,19 @@ public final class JobRunner {
     }
 
     private void log(final JobMessage jobMessage) {
-        switch (jobMessage.getLevel()) {
-            case WARNING:
-                LOG.warn(jobMessage.getMessage());
-                break;
-            default:
-                LOG.info(jobMessage.getMessage());
-        }
+        synchronized (this) {
+            switch (jobMessage.getLevel()) {
+                case WARNING:
+                    LOG.warn(jobMessage.getMessage());
+                    break;
+                default:
+                    LOG.info(jobMessage.getMessage());
+            }
 
-        job = copyOf(job).addMessage(jobMessage)
-                .build();
-        createOrUpdateJob();
+            job = copyOf(job).addMessage(jobMessage)
+                    .build();
+            createOrUpdateJob();
+        }
     }
 
     private void start() {
@@ -75,41 +77,50 @@ public final class JobRunner {
     }
 
     private void ping() {
-        job = copyOf(job)
-                .addMessage(jobMessage(Level.INFO, "Job still alive."))
-                .build();
+        synchronized (this) {
+            job = copyOf(job)
+                    .addMessage(jobMessage(Level.INFO, "Job still alive."))
+                    .build();
 
-        createOrUpdateJob();
+            createOrUpdateJob();
+        }
     }
 
     private void error(final Exception e) {
-        assert !job.getStopped().isPresent();
-        job = copyOf(job).withStatus(ERROR).build();
-        LOG.error(e.getMessage());
-        createOrUpdateJob();
+        synchronized (this) {
+            assert !job.getStopped().isPresent();
+            job = copyOf(job).withStatus(ERROR).build();
+            LOG.error(e.getMessage());
+            createOrUpdateJob();
+        }
     }
 
     private void stop() {
-        pingJob.cancel(false);
+        synchronized (this) {
+            pingJob.cancel(false);
 
-        assert !job.getStopped().isPresent();
-        try {
-            LOG.info("[stopped]");
-            job = copyOf(job)
-                    .withStopped(now())
-                    .build();
-            createOrUpdateJob();
-        } finally {
-            MDC.clear();
+            assert !job.getStopped().isPresent();
+            try {
+                LOG.info("stopped job {}", job);
+                job = copyOf(job)
+                        .withStopped(now())
+                        .build();
+                createOrUpdateJob();
+            } finally {
+                MDC.clear();
+            }
         }
     }
 
     private void createOrUpdateJob() {
-        job = copyOf(job)
-                .withLastUpdated(clock.now())
-                .build();
+        synchronized (this) {
+            job = copyOf(job)
+                    .withLastUpdated(clock.now())
+                    .build();
 
-        repository.createOrUpdate(job);
+            repository.createOrUpdate(job);
+
+        }
     }
 
 }
