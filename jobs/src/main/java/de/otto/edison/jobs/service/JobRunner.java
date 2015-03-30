@@ -91,7 +91,7 @@ public final class JobRunner {
             assert !job.getStopped().isPresent();
             job = copyOf(job).withStatus(ERROR).build();
 
-            LOG.error("Fatal error in job "+ job.getJobType()+" ("+job.getJobUri()+")",e.getMessage());
+            LOG.error("Fatal error in job "+ job.getJobType()+" ("+job.getJobUri()+")",e);
             log(jobMessage(Level.WARNING,e.getMessage()));
 
             createOrUpdateJob();
