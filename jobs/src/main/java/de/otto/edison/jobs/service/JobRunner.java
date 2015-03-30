@@ -90,7 +90,10 @@ public final class JobRunner {
         synchronized (this) {
             assert !job.getStopped().isPresent();
             job = copyOf(job).withStatus(ERROR).build();
-            LOG.error(e.getMessage());
+
+            LOG.error("Fatal error in job "+ job.getJobType()+" ("+job.getJobUri()+")",e.getMessage());
+            log(jobMessage(Level.WARNING,e.getMessage()));
+
             createOrUpdateJob();
         }
     }
