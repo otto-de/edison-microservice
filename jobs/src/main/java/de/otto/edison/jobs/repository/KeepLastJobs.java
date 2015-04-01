@@ -48,12 +48,15 @@ public class KeepLastJobs implements JobCleanupStrategy {
         final List<JobInfo> jobs = jobType.isPresent()
                 ? repository.findBy(jobType.get(), comparing(JobInfo::getStarted, naturalOrder()))
                 : repository.findAll(comparing(JobInfo::getStarted, naturalOrder()));
-        final List<JobInfo> stoppedJobs = jobs
-                .stream()
-                .filter(jobInfo -> jobInfo.getStopped().isPresent())
-                .collect(toList());
-        for (int i=0, n=stoppedJobs.size()-numberOfJobsToKeep; i<n; ++i) {
-            repository.removeIfStopped(jobs.get(i).getJobUri());
+
+        if (jobs.size() > numberOfJobsToKeep) {
+            int numberOfJobsToDelete = jobs.size() - numberOfJobsToKeep;
+
+            jobs
+                    .stream()
+                    .filter(jobInfo -> jobInfo.getStopped().isPresent())
+                    .limit(numberOfJobsToDelete)
+                    .forEach(jobInfo -> repository.removeIfStopped(jobInfo.getJobUri()));
         }
     }
 
