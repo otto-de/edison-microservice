@@ -58,6 +58,12 @@ public class StatusDetail {
         return statusDetail(name,status,message, newDetails);
     }
 
+    public StatusDetail withoutDetail(String key) {
+        LinkedHashMap<String, String> newDetails = new LinkedHashMap<>(details);
+        newDetails.remove(key);
+        return statusDetail(name,status,message, newDetails);
+    }
+
     public String getName() {
         return name;
     }
@@ -107,4 +113,5 @@ public class StatusDetail {
                 ", details=" + details +
                 '}';
     }
+
 }
