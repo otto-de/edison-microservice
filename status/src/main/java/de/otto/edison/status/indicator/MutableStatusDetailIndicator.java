@@ -37,4 +37,8 @@ public class MutableStatusDetailIndicator implements StatusDetailIndicator {
     public void toError(String message) {
         update(statusDetail.toError(message));
     }
+
+    public void withDetail(String key, String value) {
+        update(statusDetail.withDetail(key, value));
+    }
 }

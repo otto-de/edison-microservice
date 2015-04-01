@@ -62,4 +62,33 @@ public class StatusDetailTest {
         assertThat(statusDetail.getDetails(), hasEntry("foo", "bar"));
     }
 
+
+    @Test
+    public void shouldAddDetail() {
+        // given
+        StatusDetail statusDetail = statusDetail("foo", WARNING, "message", singletonMap("foo", "bar"));
+        // when
+        statusDetail = statusDetail.withDetail("bar", "baz");
+        // then
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getMessage(), is("message"));
+        assertThat(statusDetail.getStatus(), is(WARNING));
+        assertThat(statusDetail.getDetails(), hasEntry("foo", "bar"));
+        assertThat(statusDetail.getDetails(), hasEntry("bar", "baz"));
+    }
+
+    @Test
+    public void shouldOverwriteDetail() {
+        // given
+        StatusDetail statusDetail = statusDetail("foo", WARNING, "message", singletonMap("foo", "bar"));
+        // when
+        statusDetail = statusDetail.withDetail("foo","baz");
+        // then
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getMessage(), is("message"));
+        assertThat(statusDetail.getStatus(), is(WARNING));
+        assertThat(statusDetail.getDetails(), hasEntry("foo", "baz"));
+    }
+
+
 }

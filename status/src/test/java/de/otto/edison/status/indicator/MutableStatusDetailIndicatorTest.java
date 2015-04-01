@@ -8,6 +8,7 @@ import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 
 public class MutableStatusDetailIndicatorTest {
@@ -72,6 +73,20 @@ public class MutableStatusDetailIndicatorTest {
         assertThat(indicator.statusDetail().getName(), is("foo"));
         assertThat(indicator.statusDetail().getMessage(), is("broken"));
         assertThat(indicator.statusDetail().getStatus(), is(ERROR));
+    }
+
+    @Test
+    public void shouldIndicateAdditionalDetails() {
+        // given
+        final StatusDetail initial = statusDetail("foo", WARNING, "message");
+        final MutableStatusDetailIndicator indicator = new MutableStatusDetailIndicator(initial);
+        // when
+        indicator.withDetail("foo", "bar");
+        // then
+        assertThat(indicator.statusDetail().getName(), is("foo"));
+        assertThat(indicator.statusDetail().getMessage(), is("message"));
+        assertThat(indicator.statusDetail().getStatus(), is(WARNING));
+        assertThat(indicator.statusDetail().getDetails(), hasEntry("foo", "bar"));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

@@ -52,6 +52,12 @@ public class StatusDetail {
         return statusDetail(name, ERROR, message, details);
     }
 
+    public StatusDetail withDetail(String key, String value) {
+        LinkedHashMap<String, String> newDetails = new LinkedHashMap<>(details);
+        newDetails.put(key, value);
+        return statusDetail(name,status,message, newDetails);
+    }
+
     public String getName() {
         return name;
     }
