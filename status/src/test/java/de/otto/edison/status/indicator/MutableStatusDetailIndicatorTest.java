@@ -7,6 +7,8 @@ import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
@@ -87,6 +89,20 @@ public class MutableStatusDetailIndicatorTest {
         assertThat(indicator.statusDetail().getMessage(), is("message"));
         assertThat(indicator.statusDetail().getStatus(), is(WARNING));
         assertThat(indicator.statusDetail().getDetails(), hasEntry("foo", "bar"));
+    }
+
+    @Test
+    public void shouldDeleteAdditionalDetail() {
+        // given
+        final StatusDetail initial = statusDetail("foo", WARNING, "message", singletonMap("foo", "baz"));
+        final MutableStatusDetailIndicator indicator = new MutableStatusDetailIndicator(initial);
+        // when
+        indicator.withoutDetail("bar");
+        // then
+        assertThat(indicator.statusDetail().getName(), is("foo"));
+        assertThat(indicator.statusDetail().getMessage(), is("message"));
+        assertThat(indicator.statusDetail().getStatus(), is(WARNING));
+        assertThat(indicator.statusDetail().getDetails(), not(hasEntry("bar", "baz")));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

@@ -41,4 +41,8 @@ public class MutableStatusDetailIndicator implements StatusDetailIndicator {
     public void withDetail(String key, String value) {
         update(statusDetail.withDetail(key, value));
     }
+
+    public void withoutDetail(String key) {
+        update(statusDetail.withoutDetail(key));
+    }
 }

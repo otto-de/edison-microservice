@@ -7,6 +7,7 @@ import java.util.Map;
 import static de.otto.edison.status.domain.Status.*;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
@@ -62,7 +63,6 @@ public class StatusDetailTest {
         assertThat(statusDetail.getDetails(), hasEntry("foo", "bar"));
     }
 
-
     @Test
     public void shouldAddDetail() {
         // given
@@ -75,6 +75,19 @@ public class StatusDetailTest {
         assertThat(statusDetail.getStatus(), is(WARNING));
         assertThat(statusDetail.getDetails(), hasEntry("foo", "bar"));
         assertThat(statusDetail.getDetails(), hasEntry("bar", "baz"));
+    }
+
+    @Test
+    public void shouldRemoveDetail() {
+        // given
+        StatusDetail statusDetail = statusDetail("foo", WARNING, "message", singletonMap("foo", "bar"));
+        // when
+        statusDetail = statusDetail.withoutDetail("foo");
+        // then
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getMessage(), is("message"));
+        assertThat(statusDetail.getStatus(), is(WARNING));
+        assertThat(statusDetail.getDetails(), not(hasEntry("foo", "bar")));
     }
 
     @Test
