@@ -21,7 +21,7 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithoutDetails() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                applicationStatus("app", versionInfo("", ""), emptyList(), "localhost")
+                applicationStatus("app", "localhost", versionInfo("", ""), emptyList())
         );
         // when
         final JsonMap jsonMap = jsonMapFrom(representation.getApplication());
@@ -36,7 +36,7 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithVersionInfo() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                applicationStatus("app", versionInfo("1.0.0", "0815"), emptyList(), "localhost")
+                applicationStatus("app", "localhost", versionInfo("1.0.0", "0815"), emptyList())
         );
         // when
         final JsonMap jsonMap = jsonMapFrom(representation.getApplication());
@@ -49,8 +49,8 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithSingleDetail() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                applicationStatus("app", versionInfo("", ""), asList(
-                        statusDetail("someDetail", WARNING, "detailed warning")), "localhost"
+                applicationStatus("app", "localhost", versionInfo("", ""), asList(
+                        statusDetail("someDetail", WARNING, "detailed warning"))
                 )
         );
         // when
@@ -66,9 +66,9 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithMultipleDetails() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                applicationStatus("app", versionInfo("", ""), asList(
+                applicationStatus("app", "localhost", versionInfo("", ""), asList(
                                 statusDetail("someDetail", OK, "perfect"),
-                                statusDetail("someOtherDetail", WARNING, "detailed warning")), "localhost"
+                                statusDetail("someOtherDetail", WARNING, "detailed warning"))
                 )
         );
         // when

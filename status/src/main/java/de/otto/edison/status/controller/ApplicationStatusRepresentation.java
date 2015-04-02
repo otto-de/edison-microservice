@@ -25,9 +25,9 @@ public final class ApplicationStatusRepresentation {
         return new LinkedHashMap<String, Object>() {{
             put("status", applicationStatus.getStatus().name());
             put("name", applicationStatus.getName());
+            put("hostname", applicationStatus.getHostName());
             put("commit", applicationStatus.getVersionInfo().getCommit());
             put("version", applicationStatus.getVersionInfo().getVersion());
-            put("hostname", applicationStatus.getHostName());
             put("statusDetails", statusDetailsRepresentationOf(applicationStatus));
         }};
     }

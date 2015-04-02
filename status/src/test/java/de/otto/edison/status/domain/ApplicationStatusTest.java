@@ -15,8 +15,8 @@ public class ApplicationStatusTest {
     @Test
     public void shouldHaveStatusOkIfDetailsAreOk() {
         // given
-        ApplicationStatus applicationStatus = applicationStatus("foo", versionInfo("1", "none"), asList(
-                        statusDetail("bar", OK, "a message")), "localhost"
+        ApplicationStatus applicationStatus = applicationStatus("foo", "localhost", versionInfo("1", "none"), asList(
+                        statusDetail("bar", OK, "a message"))
         );
         // then
         assertThat(applicationStatus.getName(), is("foo"));
@@ -26,10 +26,10 @@ public class ApplicationStatusTest {
     @Test
     public void shouldHaveStatusWarningIfDetailsContainWarnings() {
         // given
-        ApplicationStatus applicationStatus = applicationStatus("foo", versionInfo("1", "none"), asList(
+        ApplicationStatus applicationStatus = applicationStatus("foo", "localhost", versionInfo("1", "none"), asList(
                 statusDetail("bar", OK, "a message"),
                 statusDetail("foobar", WARNING, "another message")
-        ), "localhost");
+        ));
         // then
         assertThat(applicationStatus.getStatus(), is(WARNING));
     }
@@ -37,11 +37,11 @@ public class ApplicationStatusTest {
     @Test
     public void shouldHaveStatusErrorIfDetailsContainWarnings() {
         // given
-        ApplicationStatus applicationStatus = applicationStatus("foo", versionInfo("1", "none"), asList(
+        ApplicationStatus applicationStatus = applicationStatus("foo", "localhost", versionInfo("1", "none"), asList(
                 statusDetail("bar", OK, "a message"),
                 statusDetail("foobar", ERROR, "another message"),
                 statusDetail("foobar", WARNING, "yet another message")
-        ), "localhost");
+        ));
         // then
         assertThat(applicationStatus.getStatus(), is(ERROR));
     }

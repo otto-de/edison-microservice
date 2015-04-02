@@ -47,12 +47,12 @@ public class StatusController {
     public ModelAndView getStatusAsHtml() {
         final ApplicationStatus applicationStatus = aggregator.aggregate();
         return new ModelAndView("status") {{
-                addObject("status", applicationStatus.getStatus().name());
-                addObject("name", applicationStatus.getName());
-                addObject("version", applicationStatus.getVersionInfo().getVersion());
-                addObject("commit", applicationStatus.getVersionInfo().getCommit());
-                addObject("statusDetails", statusDetails(applicationStatus));
-                addObject("hostname", applicationStatus.getHostName());
+            addObject("status", applicationStatus.getStatus().name());
+            addObject("name", applicationStatus.getName());
+            addObject("hostname", applicationStatus.getHostName());
+            addObject("version", applicationStatus.getVersionInfo().getVersion());
+            addObject("commit", applicationStatus.getVersionInfo().getCommit());
+            addObject("statusDetails", statusDetails(applicationStatus));
         }};
     }
 

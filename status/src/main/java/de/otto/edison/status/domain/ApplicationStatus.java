@@ -17,9 +17,9 @@ public final class ApplicationStatus {
     private final String hostName;
 
     private ApplicationStatus(final String applicationName,
+                              final String hostName,
                               final VersionInfo versionInfo,
-                              final List<StatusDetail> details,
-                              final String hostName) {
+                              final List<StatusDetail> details) {
         this.name = applicationName;
         this.versionInfo = versionInfo;
         this.hostName = hostName;
@@ -30,10 +30,10 @@ public final class ApplicationStatus {
     }
 
     public static ApplicationStatus applicationStatus(final String applicationName,
+                                                      final String hostName,
                                                       final VersionInfo versionInfo,
-                                                      final List<StatusDetail> details,
-                                                      final String hostName) {
-        return new ApplicationStatus(applicationName, versionInfo, details, hostName);
+                                                      final List<StatusDetail> details) {
+        return new ApplicationStatus(applicationName, hostName, versionInfo, details);
     }
 
     public String getName() {
