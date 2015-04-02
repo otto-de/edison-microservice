@@ -28,19 +28,10 @@ public class StatusConfiguration {
     @Value(("${info.build.commit:unknown}"))
     private String commit;
 
-    @Autowired
-    private HostnameIndicator hostnameIndicator;
-
-    @Bean
-    @ConditionalOnMissingBean(HostnameIndicator.class)
-    public HostnameIndicator hostnameIndicator() {
-        return new DefaultHostnameIndicator();
-    }
-
     @Bean
     @ConditionalOnMissingBean(ApplicationStatusAggregator.class)
     public ApplicationStatusAggregator statusAggregator() {
-        return new DefaultApplicationStatusAggregator(applicationName, versionInfo(version, commit), statusDetailIndicators, hostnameIndicator.hostname());
+        return new DefaultApplicationStatusAggregator(applicationName, versionInfo(version, commit), statusDetailIndicators);
     }
 
 }
