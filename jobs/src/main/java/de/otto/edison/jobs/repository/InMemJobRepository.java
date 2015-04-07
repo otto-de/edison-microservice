@@ -56,7 +56,7 @@ public class InMemJobRepository implements JobRepository {
     @Override
     public void removeIfStopped(final URI uri) {
         final JobInfo jobInfo = jobs.get(uri);
-        if (jobInfo != null && jobInfo.getStopped().isPresent()) {
+        if (jobInfo != null && jobInfo.isStopped()) {
             jobs.remove(uri);
         }
     }

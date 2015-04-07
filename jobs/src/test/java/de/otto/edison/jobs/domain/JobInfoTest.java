@@ -25,4 +25,21 @@ public class JobInfoTest {
         assertThat(job.getMessages(), is(emptyIterable()));
     }
 
+
+    @Test
+    public void shouldTreatAJobWithAStoppedDateAsStopped() {
+        JobInfo job = jobInfoBuilder(() -> "TEST", create("foo"))
+                .withStopped(now())
+                .build();
+
+        assertThat(job.isStopped(),is(true));
+    }
+
+    @Test
+    public void shouldTreatAJobWithoutAStoppedDateAsNotStopped() {
+        JobInfo job = jobInfoBuilder(() -> "TEST", create("foo"))
+                .build();
+
+        assertThat(job.isStopped(),is(false));
+    }
 }

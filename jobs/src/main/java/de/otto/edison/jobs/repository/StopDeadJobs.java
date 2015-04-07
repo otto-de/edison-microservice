@@ -37,7 +37,7 @@ public class StopDeadJobs implements JobCleanupStrategy {
         OffsetDateTime timeToMarkJobAsStopped = now.minusSeconds(stopJobAfterSeconds);
         List<JobInfo> deadJobs = repository.findAll()
                 .stream()
-                .filter(job -> (!job.getStopped().isPresent() && job.getLastUpdated().isBefore(timeToMarkJobAsStopped)))
+                .filter(job -> (!job.isStopped() && job.getLastUpdated().isBefore(timeToMarkJobAsStopped)))
                 .collect(Collectors.toList());
 
         for (JobInfo deadJob : deadJobs) {
