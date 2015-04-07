@@ -50,7 +50,7 @@ public class JobRepresentation {
     }
 
     public String getStopped() {
-        return job.getStopped().isPresent()
+        return job.isStopped()
                 ? formatDateTime(job.getStopped().get())
                 : "";
     }

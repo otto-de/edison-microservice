@@ -88,7 +88,7 @@ public final class JobRunner {
 
     private void error(final Exception e) {
         synchronized (this) {
-            assert !job.getStopped().isPresent();
+            assert !job.isStopped();
             job = copyOf(job).withStatus(ERROR).build();
 
             LOG.error("Fatal error in job "+ job.getJobType()+" ("+job.getJobUri()+")",e);
@@ -102,7 +102,7 @@ public final class JobRunner {
         synchronized (this) {
             pingJob.cancel(false);
 
-            assert !job.getStopped().isPresent();
+            assert !job.isStopped();
             try {
                 LOG.info("stopped job {}", job);
                 job = copyOf(job)

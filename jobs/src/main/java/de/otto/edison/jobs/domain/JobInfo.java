@@ -23,7 +23,6 @@ public final class JobInfo {
 
     public enum JobStatus { OK, ERROR, DEAD;}
 
-
     JobInfo(final JobType type,
             final URI jobUri,
             final OffsetDateTime started,
@@ -37,6 +36,11 @@ public final class JobInfo {
         this.lastUpdated = lastUpdated;
         this.messages = unmodifiableList(new ArrayList<>(messages));
         this.status = status;
+    }
+
+
+    public boolean isStopped() {
+        return stopped.isPresent();
     }
 
     public URI getJobUri() {
@@ -56,7 +60,7 @@ public final class JobInfo {
     }
 
     public String getState() {
-        return stopped.isPresent() ? "STOPPED" : "RUNNING";
+        return isStopped() ? "STOPPED" : "RUNNING";
     }
 
     public Optional<OffsetDateTime> getStopped() {

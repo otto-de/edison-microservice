@@ -54,7 +54,7 @@ public class KeepLastJobs implements JobCleanupStrategy {
 
             jobs
                     .stream()
-                    .filter(jobInfo -> jobInfo.getStopped().isPresent())
+                    .filter(JobInfo::isStopped)
                     .limit(numberOfJobsToDelete)
                     .forEach(jobInfo -> repository.removeIfStopped(jobInfo.getJobUri()));
         }
