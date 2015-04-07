@@ -5,11 +5,13 @@ import de.otto.edison.jobs.domain.JobType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -50,14 +52,30 @@ public class KeepLastJobs implements JobCleanupStrategy {
                 : repository.findAll(comparing(JobInfo::getStarted, naturalOrder()));
 
         if (jobs.size() > numberOfJobsToKeep) {
-            int numberOfJobsToDelete = jobs.size() - numberOfJobsToKeep;
-
-            jobs
-                    .stream()
-                    .filter(JobInfo::isStopped)
-                    .limit(numberOfJobsToDelete)
+            jobsToDelete(jobs)
                     .forEach(jobInfo -> repository.removeIfStopped(jobInfo.getJobUri()));
         }
+    }
+
+    private List<JobInfo> jobsToDelete(List<JobInfo> jobs){
+        int numberOfJobsToDelete = jobs.size() - numberOfJobsToKeep;
+        Optional<JobInfo> lastOKJob = findLastOKJob(jobs);
+        
+        return jobs
+                .stream()
+                .filter(JobInfo::isStopped)
+                .filter(j -> !lastOKJob.isPresent() || j != lastOKJob.get() )
+                .limit(numberOfJobsToDelete)
+                .collect(toList());
+    }
+
+    private Optional<JobInfo> findLastOKJob(List<JobInfo> jobs) {
+        return jobs
+                .stream()
+                .filter(JobInfo::isStopped)
+                .filter(j -> JobInfo.JobStatus.OK.equals(j.getStatus()))
+                .sorted(Comparator.comparing(JobInfo::getStarted, reverseOrder()))
+                .findFirst();
     }
 
 }

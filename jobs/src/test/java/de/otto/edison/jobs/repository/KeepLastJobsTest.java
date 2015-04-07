@@ -71,12 +71,13 @@ public class KeepLastJobsTest {
         // when
         strategy.doCleanUp(repository);
         // then
-        assertThat(repository.size(), is(2));
         assertThat(repository.findBy(URI.create("one")), isPresent());
         assertThat(repository.findBy(URI.create("two")), isPresent());
         assertThat(repository.findBy(URI.create("three")), isAbsent());
         assertThat(repository.findBy(URI.create("four")), isAbsent());
-        assertThat(repository.findBy(URI.create("five")), isAbsent());
+        assertThat(repository.findBy(URI.create("five")), isPresent());
+
+        assertThat(repository.size(), is(3));
     }
 
     @Test
@@ -85,21 +86,42 @@ public class KeepLastJobsTest {
         JobType type = () -> "TYPE";
         KeepLastJobs strategy = new KeepLastJobs(2, Optional.of(type));
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(jobInfoBuilder(type, URI.create("one")).withStarted(now().minusSeconds(4)).build());
-            createOrUpdate(jobInfoBuilder(type, URI.create("two")).withStarted(now().minusSeconds(3)).build());
-            createOrUpdate(jobInfoBuilder(type, URI.create("three")).withStarted(now().minusSeconds(2)).build());
-            createOrUpdate(jobInfoBuilder(type, URI.create("four")).withStarted(now().minusSeconds(1)).withStopped(now()).build());
+            createOrUpdate(jobInfoBuilder(type, URI.create("one")).withStarted(now().minusSeconds(5)).build());
+            createOrUpdate(jobInfoBuilder(type, URI.create("two")).withStarted(now().minusSeconds(4)).build());
+            createOrUpdate(jobInfoBuilder(type, URI.create("three")).withStarted(now().minusSeconds(3)).build());
+            createOrUpdate(jobInfoBuilder(type, URI.create("four")).withStarted(now().minusSeconds(2)).withStopped(now().minusSeconds(1)).build());
             createOrUpdate(jobInfoBuilder(type, URI.create("five")).withStarted(now()).withStopped(now()).build());
         }};
         // when
         strategy.doCleanUp(repository);
         // then
-        assertThat(repository.size(), is(3));
         assertThat(repository.findBy(URI.create("one")), isPresent());
         assertThat(repository.findBy(URI.create("two")), isPresent());
         assertThat(repository.findBy(URI.create("three")), isPresent());
+
         assertThat(repository.findBy(URI.create("four")), isAbsent());
-        assertThat(repository.findBy(URI.create("five")), isAbsent());
+        assertThat(repository.findBy(URI.create("five")), isPresent());
+
+        assertThat(repository.size(), is(4));
+    }
+
+    @Test
+    public void shouldKeepAtLeastOneSuccessfulJob() {
+        // given
+        JobType type = () -> "TYPE";
+        KeepLastJobs strategy = new KeepLastJobs(2, Optional.of(type));
+        JobRepository repository = new InMemJobRepository() {{
+            createOrUpdate(jobInfoBuilder(type, URI.create("foo")).withStarted(now()).withStatus(ERROR).withStopped(now()).build());
+            createOrUpdate(jobInfoBuilder(type, URI.create("foobar")).withStarted(now().minusSeconds(2)).withStatus(OK).withStopped(now()).build());
+            createOrUpdate(jobInfoBuilder(type, URI.create("bar")).withStarted(now().minusSeconds(1)).withStatus(ERROR).withStopped(now()).build());
+        }};
+        // when
+        strategy.doCleanUp(repository);
+        // then
+        assertThat(repository.size(), is(2));
+        assertThat(repository.findBy(URI.create("foobar")), isPresent());
+        assertThat(repository.findBy(URI.create("foo")), isPresent());
+        assertThat(repository.findBy(URI.create("bar")), isAbsent());
     }
 
     @Test
