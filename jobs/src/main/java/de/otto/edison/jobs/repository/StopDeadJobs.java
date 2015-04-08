@@ -2,12 +2,10 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfoBuilder;
-import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.jobs.service.Clock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +14,7 @@ import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static java.lang.String.format;
+import static java.time.OffsetDateTime.now;
 
 public class StopDeadJobs implements JobCleanupStrategy {
 
@@ -25,7 +24,7 @@ public class StopDeadJobs implements JobCleanupStrategy {
     private final int stopJobAfterSeconds;
     private final Clock clock;
 
-    public StopDeadJobs(final int stopJobAfterSeconds, Clock clock) {
+    public StopDeadJobs(final int stopJobAfterSeconds, final Clock clock) {
         this.stopJobAfterSeconds = stopJobAfterSeconds;
         this.clock = clock;
         LOG.info(format("Mark old as stopped after %s seconds of inactivity.", stopJobAfterSeconds));
@@ -33,7 +32,7 @@ public class StopDeadJobs implements JobCleanupStrategy {
 
     @Override
     public void doCleanUp(JobRepository repository) {
-        OffsetDateTime now = clock.now();
+        OffsetDateTime now = now(clock);
         OffsetDateTime timeToMarkJobAsStopped = now.minusSeconds(stopJobAfterSeconds);
         List<JobInfo> deadJobs = repository.findAll()
                 .stream()

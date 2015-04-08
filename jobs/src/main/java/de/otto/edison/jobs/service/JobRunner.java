@@ -7,6 +7,7 @@ import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
+import java.time.Clock;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +107,7 @@ public final class JobRunner {
             try {
                 LOG.info("stopped job {}", job);
                 job = copyOf(job)
-                        .withStopped(now())
+                        .withStopped(now(clock))
                         .build();
                 createOrUpdateJob();
             } finally {
@@ -118,7 +119,7 @@ public final class JobRunner {
     private void createOrUpdateJob() {
         synchronized (this) {
             job = copyOf(job)
-                    .withLastUpdated(clock.now())
+                    .withLastUpdated(now(clock))
                     .build();
 
             repository.createOrUpdate(job);
