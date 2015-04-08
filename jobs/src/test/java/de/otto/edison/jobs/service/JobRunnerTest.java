@@ -5,12 +5,17 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.JobType;
 import de.otto.edison.jobs.repository.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.testsupport.util.TestClock;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.time.OffsetDateTime;
+import java.time.*;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,6 +30,16 @@ import static de.otto.edison.jobs.service.JobRunner.PING_PERIOD;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.net.URI.create;
+import static java.time.Clock.fixed;
+import static java.time.Clock.tick;
+import static java.time.Clock.tickSeconds;
+import static java.time.Duration.of;
+import static java.time.Duration.ofSeconds;
+import static java.time.OffsetDateTime.now;
+import static java.time.OffsetDateTime.ofInstant;
+import static java.time.ZoneId.systemDefault;
+import static java.time.temporal.ChronoUnit.MILLIS;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -41,7 +56,7 @@ public class JobRunnerTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        this.clock = mock(Clock.class);
+        clock = fixed(Instant.now(), systemDefault());
         this.scheduledExecutorService = mock(ScheduledExecutorService.class);
 
         scheduledJob = mock(ScheduledFuture.class);
@@ -100,11 +115,13 @@ public class JobRunnerTest {
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
 
-        OffsetDateTime startedTime = OffsetDateTime.now();
+        OffsetDateTime startedTime = ofInstant(Instant.ofEpochMilli(0L), systemDefault());
         OffsetDateTime loggingTime = startedTime.plusSeconds(1);
         OffsetDateTime finishTime = loggingTime.plusSeconds(1);
 
-        when(clock.now()).thenReturn(startedTime,loggingTime,finishTime);
+        clock = mock(Clock.class);
+        when(clock.getZone()).thenReturn(systemDefault());
+        when(clock.instant()).thenReturn(Instant.ofEpochSecond(0L),Instant.ofEpochSecond(1L),Instant.ofEpochSecond(2L));
 
         final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
@@ -120,9 +137,10 @@ public class JobRunnerTest {
     @Test
     public void shouldPeriodicallyUpdateJobTimestampSoThatWeCanDetectDeadJobs() {
         //given
+        TestClock testClock = TestClock.now();
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository, testClock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         //then
@@ -132,13 +150,12 @@ public class JobRunnerTest {
 
         // given
         reset(repository);
-        OffsetDateTime someOtherTime = OffsetDateTime.now().plusSeconds(42);
-        when(clock.now()).thenReturn(someOtherTime);
+        testClock.proceed(1, MINUTES);
         // when
         pingRunnableArgumentCaptor.getValue().run();
         // then
         List<JobInfo> historyOfSavedJobInfos = historyOfSavedJobInfos(repository, 1);
-        assertThat(historyOfSavedJobInfos.get(0).getLastUpdated(),is(someOtherTime));
+        assertThat(historyOfSavedJobInfos.get(0).getLastUpdated().toInstant(), is(testClock.instant()));
     }
 
     @Test

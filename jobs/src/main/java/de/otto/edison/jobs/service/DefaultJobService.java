@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.GaugeService;
 
 import java.net.URI;
+import java.time.Clock;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
+import static java.time.Clock.systemDefaultZone;
 import static java.util.UUID.randomUUID;
 
 /**
@@ -28,13 +30,13 @@ public class DefaultJobService implements JobService {
     private ScheduledExecutorService executor;
     @Autowired
     private GaugeService gaugeService;
-    @Autowired
-    private Clock clock;
 
     @Value("${server.contextPath}")
     private String serverContextPath;
+    private final Clock clock;
 
     public DefaultJobService() {
+        this.clock = systemDefaultZone();
     }
 
     DefaultJobService(final String serverContextPath, final JobRepository jobRepository, final GaugeService gaugeService, final Clock clock, final ScheduledExecutorService executor) {

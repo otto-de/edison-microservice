@@ -2,20 +2,21 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobType;
-import de.otto.edison.jobs.service.Clock;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
-import static de.otto.edison.jobs.repository.StopDeadJobs.*;
+import static de.otto.edison.jobs.repository.StopDeadJobs.JOB_DEAD_MESSAGE;
+import static java.time.Clock.fixed;
 import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Test
 public class StopDeadJobsTest {
@@ -25,7 +26,8 @@ public class StopDeadJobsTest {
     @Test
     public void shouldOnlyMarkOldJobAsStopped() throws Exception {
         //given
-        OffsetDateTime now = now();
+        final Clock clock = fixed(Instant.now(), systemDefault());
+        final OffsetDateTime now = now(clock);
         JobInfo runningJobToBeStopped = jobInfoBuilder(type, URI.create("runningJobToBeStopped")).withStarted(now.minusSeconds(60)).withLastUpdated(now.minusSeconds(25)).build();
         JobInfo runningJob = jobInfoBuilder(type, URI.create("runningJob")).withStarted(now.minusSeconds(60)).withLastUpdated(now).build();
         JobInfo stoppedJob = jobInfoBuilder(type, URI.create("stoppedJob")).withStarted(now.minusSeconds(60)).withStopped(now.minusSeconds(30)).build();
@@ -35,9 +37,6 @@ public class StopDeadJobsTest {
             createOrUpdate(runningJob);
             createOrUpdate(stoppedJob);
         }};
-
-        Clock clock = mock(Clock.class);
-        when(clock.now()).thenReturn(now);
 
         StopDeadJobs strategy = new StopDeadJobs(21, clock);
 

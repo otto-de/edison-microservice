@@ -10,11 +10,17 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
+import static java.time.Clock.fixed;
+import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Matchers.any;
@@ -36,7 +42,8 @@ public class DefaultJobServiceTest {
     @Test
     public void shouldReturnCreatedJobUri() {
         // given:
-        final DefaultJobService jobService = new DefaultJobService("/foo", new InMemJobRepository(), mock(GaugeService.class), mock(Clock.class), executorService);
+        final Clock clock = fixed(Instant.now(), systemDefault());
+        final DefaultJobService jobService = new DefaultJobService("/foo", new InMemJobRepository(), mock(GaugeService.class), clock, executorService);
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
         // when:
@@ -48,8 +55,9 @@ public class DefaultJobServiceTest {
     @Test
     public void shouldPersistJobs() {
         // given:
+        final Clock clock = fixed(Instant.now(), systemDefault());
         final InMemJobRepository jobRepository = new InMemJobRepository();
-        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), mock(Clock.class), executorService);
+        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), clock, executorService);
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
         // when:
@@ -61,10 +69,11 @@ public class DefaultJobServiceTest {
     @Test
     public void shouldRunJobs() {
         // given:
+        final Clock clock = fixed(Instant.now(), systemDefault());
         final InMemJobRepository jobRepository = new InMemJobRepository();
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
-        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), mock(Clock.class), executorService);
+        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), clock, executorService);
         // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
@@ -75,11 +84,13 @@ public class DefaultJobServiceTest {
     @Test
     public void shouldReportRuntime() {
         // given:
+        final Clock clock = fixed(Instant.now(), systemDefault());
+
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
 
         final GaugeService mock = mock(GaugeService.class);
-        final DefaultJobService jobService = new DefaultJobService("/foo", mock(JobRepository.class), mock,mock(Clock.class), executorService);
+        final DefaultJobService jobService = new DefaultJobService("/foo", mock(JobRepository.class), mock, clock, executorService);
         // when:
         jobService.startAsyncJob(jobRunnable);
         // then:
