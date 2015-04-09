@@ -37,8 +37,6 @@ public class CachingApplicationStatusAggregatorTest {
                 .thenReturn(SOME_OTHER_STATUS);
 
         CachingApplicationStatusAggregator cachingApplicationStatusAggregator = new CachingApplicationStatusAggregator(statusAggregator);
-
-        cachingApplicationStatusAggregator.update();
         assertThat(cachingApplicationStatusAggregator.aggregate(), is(SOME_STATUS));
 
         cachingApplicationStatusAggregator.update();
@@ -51,7 +49,6 @@ public class CachingApplicationStatusAggregatorTest {
         when(statusAggregator.aggregate())
                 .thenReturn(SOME_STATUS);
         CachingApplicationStatusAggregator cachingApplicationStatusAggregator = new CachingApplicationStatusAggregator(statusAggregator);
-        cachingApplicationStatusAggregator.update();
 
         assertThat(cachingApplicationStatusAggregator.aggregate(),is(SOME_STATUS));
         assertThat(cachingApplicationStatusAggregator.aggregate(),is(SOME_STATUS));

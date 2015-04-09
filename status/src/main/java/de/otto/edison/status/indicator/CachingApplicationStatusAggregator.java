@@ -19,7 +19,7 @@ public class CachingApplicationStatusAggregator implements ApplicationStatusAggr
         return cachedStatus;
     }
 
-    @Scheduled(fixedDelay = TEN_SECONDS)
+    @Scheduled(initialDelay = TEN_SECONDS, fixedDelay = TEN_SECONDS)
     public void update() {
         cachedStatus = aggregator.aggregate();
     }
