@@ -7,7 +7,7 @@ public class CachingApplicationStatusAggregator implements ApplicationStatusAggr
     public static final int TEN_SECONDS = 10 * 1000;
 
     private final ApplicationStatusAggregator aggregator;
-    private volatile ApplicationStatus cachedStatus;
+    private volatile ApplicationStatus cachedStatus = null;
 
     public CachingApplicationStatusAggregator(ApplicationStatusAggregator aggregator) {
         this.aggregator = aggregator;

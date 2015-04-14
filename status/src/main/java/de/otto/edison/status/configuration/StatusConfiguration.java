@@ -1,14 +1,15 @@
 package de.otto.edison.status.configuration;
 
-import de.otto.edison.status.indicator.*;
+import de.otto.edison.status.indicator.ApplicationStatusAggregator;
+import de.otto.edison.status.indicator.CachingApplicationStatusAggregator;
+import de.otto.edison.status.indicator.DefaultApplicationStatusAggregator;
+import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import static de.otto.edison.status.domain.VersionInfo.versionInfo;
@@ -31,7 +32,9 @@ public class StatusConfiguration {
     @Bean
     @ConditionalOnMissingBean(ApplicationStatusAggregator.class)
     public ApplicationStatusAggregator statusAggregator() {
-        return new DefaultApplicationStatusAggregator(applicationName, versionInfo(version, commit), statusDetailIndicators);
+        return new CachingApplicationStatusAggregator(
+                new DefaultApplicationStatusAggregator(applicationName, versionInfo(version, commit), statusDetailIndicators)
+        );
     }
 
 }
