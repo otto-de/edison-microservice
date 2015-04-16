@@ -1,5 +1,6 @@
 include "testsupport"
 include "health"
+include "hystrix"
 include "status"
 include "metrics"
 include "jobs"
