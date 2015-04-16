@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
  * @author Guido Steinacker
  * @since 15.04.15
  */
-public final class HttpGetAsyncCommand<T> extends HystrixCommand<T> {
+public final class AsyncHttpCommand<T> extends HystrixCommand<T> {
 
     private final AsyncHttpClient.BoundRequestBuilder requestBuilder;
     private final AsyncHandler<T> asyncHandler;
@@ -24,11 +24,11 @@ public final class HttpGetAsyncCommand<T> extends HystrixCommand<T> {
     private final TimeUnit timeUnit;
 
 
-    public HttpGetAsyncCommand(final HystrixCommandGroupKey commandGroup,
-                               final AsyncHandler<T> asyncHandler,
-                               final AsyncHttpClient.BoundRequestBuilder requestBuilder,
-                               final int timeout,
-                               final TimeUnit timeUnit) {
+    public AsyncHttpCommand(final HystrixCommandGroupKey commandGroup,
+                            final AsyncHandler<T> asyncHandler,
+                            final AsyncHttpClient.BoundRequestBuilder requestBuilder,
+                            final int timeout,
+                            final TimeUnit timeUnit) {
         super(commandGroup);
         this.requestBuilder = requestBuilder;
         this.asyncHandler = asyncHandler;
