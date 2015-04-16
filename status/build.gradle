@@ -1,8 +1,14 @@
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf:" + springBootVersion)
+            compile libs.springBootWeb
+            compile libs.springBootThymeleaf
 
-    testCompile project(":testsupport")
+            compile libs.jcip
+            compile libs.logging
+
+            testCompile libs.testUnit
+            testCompile libs.asyncHttp
+            testCompile project(":testsupport")
 }
 
 artifacts {

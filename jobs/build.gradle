@@ -1,6 +1,9 @@
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf:" + springBootVersion)
+
+    compile libs.springBootWeb
+    compile libs.logging
+    compile libs.jcip
 
     testCompile project(":testsupport")
 }
