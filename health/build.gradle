@@ -1,5 +1,11 @@
 
 dependencies {
+    compile libs.springBootWeb
+    compile libs.logging
+    compile libs.jcip
+
+    testCompile libs.testUnit
+
     testCompile project(":testsupport")
 }
 

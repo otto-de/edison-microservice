@@ -1,6 +1,8 @@
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
+apply from: 'dependencies.gradle'
+
 buildscript {
     repositories {
         maven { url "http://repo.spring.io/libs-snapshot" }
@@ -62,29 +64,5 @@ subprojects {
         classifier = 'sources'
     }
 
-    ext.springBootVersion = '1.2.2.RELEASE'
-
-    dependencies {
-        compile("org.springframework.boot:spring-boot-starter-web:" + springBootVersion) {
-            exclude module: "spring-boot-starter-tomcat"
-        }
-        compile("org.springframework.boot:spring-boot-starter-jetty:" + springBootVersion)
-        compile("org.springframework.boot:spring-boot-starter-actuator:" + springBootVersion)
-
-        compile("net.jcip:jcip-annotations:1.0")
-
-        compile("ch.qos.logback:logback-classic:1.0.13")
-
-        testCompile("org.testng:testng:6.1.1")
-        testCompile("org.hamcrest:hamcrest-core:1.3")
-        testCompile("org.hamcrest:hamcrest-library:1.3")
-        testCompile("org.mockito:mockito-core:1.9.5")
-
-        testCompile("com.ning:async-http-client:1.8.3")
-
-        testCompile module("org.uncommons:reportng:1.1.2") {
-            dependency "org.testng:testng:6.1.1"
-        }
-    }
 }
 

@@ -3,7 +3,7 @@ dependencies {
     compile project(":health")
     compile project(":status")
 
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf:" + springBootVersion)
+    compile libs.springBootThymeleaf
 
     testCompile project(":testsupport")
 }
