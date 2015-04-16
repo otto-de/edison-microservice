@@ -30,7 +30,14 @@ public final class HttpCommand<T> extends HystrixCommand<Response> {
                        final AsyncHttpClient.BoundRequestBuilder requestBuilder,
                        final int timeout,
                        final TimeUnit timeUnit) {
-        super(commandGroup);
+        this(Setter.withGroupKey(commandGroup), requestBuilder, timeout, timeUnit);
+    }
+
+    public HttpCommand(final Setter setter,
+                       final AsyncHttpClient.BoundRequestBuilder requestBuilder,
+                       final int timeout,
+                       final TimeUnit timeUnit) {
+        super(setter);
         this.requestBuilder = requestBuilder;
         this.timeout = timeout;
         this.timeUnit = timeUnit;
