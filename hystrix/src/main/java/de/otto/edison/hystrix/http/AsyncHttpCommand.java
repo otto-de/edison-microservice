@@ -29,7 +29,15 @@ public final class AsyncHttpCommand<T> extends HystrixCommand<T> {
                             final AsyncHttpClient.BoundRequestBuilder requestBuilder,
                             final int timeout,
                             final TimeUnit timeUnit) {
-        super(commandGroup);
+        this(Setter.withGroupKey(commandGroup), asyncHandler, requestBuilder, timeout, timeUnit);
+    }
+
+    public AsyncHttpCommand(final Setter setter,
+                            final AsyncHandler<T> asyncHandler,
+                            final AsyncHttpClient.BoundRequestBuilder requestBuilder,
+                            final int timeout,
+                            final TimeUnit timeUnit) {
+        super(setter);
         this.requestBuilder = requestBuilder;
         this.asyncHandler = asyncHandler;
         this.timeout = timeout;
