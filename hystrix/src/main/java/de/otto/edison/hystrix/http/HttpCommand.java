@@ -18,7 +18,7 @@ import java.util.concurrent.TimeoutException;
  * @author Guido Steinacker
  * @since 15.04.15
  */
-public final class HttpCommand<T> extends HystrixCommand<Response> {
+final class HttpCommand extends HystrixCommand<Response> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpCommand.class);
 
@@ -26,14 +26,7 @@ public final class HttpCommand<T> extends HystrixCommand<Response> {
     private final int timeout;
     private final TimeUnit timeUnit;
 
-    public HttpCommand(final HystrixCommandGroupKey commandGroup,
-                       final AsyncHttpClient.BoundRequestBuilder requestBuilder,
-                       final int timeout,
-                       final TimeUnit timeUnit) {
-        this(Setter.withGroupKey(commandGroup), requestBuilder, timeout, timeUnit);
-    }
-
-    public HttpCommand(final Setter setter,
+    HttpCommand(final Setter setter,
                        final AsyncHttpClient.BoundRequestBuilder requestBuilder,
                        final int timeout,
                        final TimeUnit timeUnit) {
