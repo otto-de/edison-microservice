@@ -6,7 +6,10 @@ import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 
+import java.util.Optional;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static com.netflix.hystrix.HystrixCommand.Setter.withGroupKey;
 import static java.util.Objects.requireNonNull;
@@ -20,6 +23,7 @@ import static java.util.Objects.requireNonNull;
 public final class HttpCommands {
     private HystrixCommand.Setter setter;
     private AsyncHttpClient.BoundRequestBuilder requestBuilder;
+    private Optional<Supplier<Response>> optionalFallback = Optional.empty();
     private int timeout = 10;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
 
@@ -36,6 +40,11 @@ public final class HttpCommands {
         return this;
     }
 
+    public HttpCommands withFallback(final Supplier<Response> fallback) {
+        this.optionalFallback = Optional.ofNullable(fallback);
+        return this;
+    }
+
     public HttpCommands timingOutAfter(final int timeout, final TimeUnit timeUnit) {
         this.timeout = timeout;
         this.timeUnit = requireNonNull(timeUnit);
@@ -46,14 +55,16 @@ public final class HttpCommands {
         return new HttpCommand(
                 setter,
                 requireNonNull(requestBuilder, "Missing request builder"),
+                optionalFallback,
                 timeout, timeUnit);
     }
 
-    public <T> HystrixCommand<T> asyncUsing(final AsyncHandler<T> handler) {
-        return new AsyncHttpCommand<T>(
+    public HystrixCommand<Future<Response>> asyncUsing(final AsyncHandler<Future<Response>> handler) {
+        return new AsyncHttpCommand(
                 setter,
                 requireNonNull(handler),
                 requestBuilder,
+                optionalFallback,
                 timeout, timeUnit);
     }
 
