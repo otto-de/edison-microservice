@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Immutable
-public final class ApplicationStatusRepresentation {
+final class ApplicationStatusRepresentation {
 
 
     private final ApplicationStatus applicationStatus;

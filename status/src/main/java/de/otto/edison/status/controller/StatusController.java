@@ -36,7 +36,7 @@ public class StatusController {
             method = GET
     )
     public ApplicationStatusRepresentation getStatusAsJson() {
-        return statusRepresentationOf(aggregator.aggregate());
+        return statusRepresentationOf(aggregator.aggregatedStatus());
     }
 
     @RequestMapping(
@@ -45,7 +45,7 @@ public class StatusController {
             method = GET
     )
     public ModelAndView getStatusAsHtml() {
-        final ApplicationStatus applicationStatus = aggregator.aggregate();
+        final ApplicationStatus applicationStatus = aggregator.aggregatedStatus();
         return new ModelAndView("status") {{
             addObject("status", applicationStatus.getStatus().name());
             addObject("name", applicationStatus.getName());

@@ -6,7 +6,7 @@ package de.otto.edison.status.domain;
  * @author Guido Steinacker
  * @since 04.03.15
  */
-public final class VersionInfo {
+public class VersionInfo {
 
     private final String version;
     private final String commit;
