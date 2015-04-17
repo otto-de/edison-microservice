@@ -9,6 +9,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
 
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static de.otto.edison.hystrix.http.HttpCommands.newCommand;
@@ -29,9 +30,9 @@ public class HttpCommandsTest {
     public void shouldCreateAsyncHttpCommand() {
         // given
         @SuppressWarnings("unchecked")
-        final AsyncHandler<Integer> handler = mock(AsyncHandler.class);
+        final AsyncHandler<Future<Response>> handler = mock(AsyncHandler.class);
         // when
-        final HystrixCommand<Integer> command = newCommand(TestGroup.FOO)
+        final HystrixCommand<Future<Response>> command = newCommand(TestGroup.FOO)
                 .forRequest(mock(AsyncHttpClient.BoundRequestBuilder.class))
                 .timingOutAfter(42, TimeUnit.DAYS)
                 .asyncUsing(handler);
