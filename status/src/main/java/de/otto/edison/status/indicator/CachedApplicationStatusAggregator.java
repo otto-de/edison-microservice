@@ -43,7 +43,6 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
 
     @Override
     public void update() {
-        System.out.println("updating...");
         this.cachedStatus = calcApplicationStatus();
     }
 
