@@ -21,31 +21,36 @@ import java.util.function.Supplier;
  * @author Guido Steinacker
  * @since 15.04.15
  */
-final class HttpCommand extends HystrixCommand<Response> {
+final class HttpCommand<T> extends HystrixCommand<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpCommand.class);
 
     private final AsyncHttpClient.BoundRequestBuilder requestBuilder;
-    private final Optional<Supplier<Response>> fallback;
+    private final Optional<Supplier<T>> fallback;
+    private final Function<Response, T> mapper;
     private final int timeout;
     private final TimeUnit timeUnit;
 
     HttpCommand(final Setter setter,
-                       final AsyncHttpClient.BoundRequestBuilder requestBuilder,
-                       final Optional<Supplier<Response>> fallback,
-                       final int timeout,
-                       final TimeUnit timeUnit) {
+                final AsyncHttpClient.BoundRequestBuilder requestBuilder,
+                final Optional<Supplier<T>> fallback,
+                final Function<Response, T> mapper,
+                final int timeout,
+                final TimeUnit timeUnit) {
         super(setter);
         this.requestBuilder = requestBuilder;
         this.fallback = fallback;
+        this.mapper = mapper;
         this.timeout = timeout;
         this.timeUnit = timeUnit;
     }
 
     @Override
-    protected Response run() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+    protected T run() throws IOException, InterruptedException, ExecutionException, TimeoutException {
         try {
-            return requestBuilder.execute().get(timeout, timeUnit);
+            return mapper.apply(
+                    requestBuilder.execute().get(timeout, timeUnit)
+            );
         } catch (final Exception e) {
             LOG.error(e.getMessage(), e);
             throw e;
@@ -53,7 +58,7 @@ final class HttpCommand extends HystrixCommand<Response> {
     }
 
     @Override
-    protected Response getFallback() {
+    protected T getFallback() {
         return fallback.orElse(() -> super.getFallback()).get();
     }
 }

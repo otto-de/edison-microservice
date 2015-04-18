@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static de.otto.edison.hystrix.http.HttpCommands.newCommand;
+import static de.otto.edison.hystrix.http.HttpCommandBuilder.httpCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
@@ -29,9 +29,10 @@ public class HttpCommandTest {
         when(mockRequest.execute()).thenReturn(mock(ListenableFuture.class));
 
         // when
-        newCommand(TestGroup.TEST)
+        httpCommand()
+                .inGroup(TestGroup.TEST)
                 .forRequest(mockRequest)
-                .sync()
+                .build()
                 .execute();
         // then
         verify(mockRequest, atLeastOnce()).execute();
@@ -45,9 +46,10 @@ public class HttpCommandTest {
         when(mockRequest.execute()).thenThrow(new IOException());
 
         // when
-        newCommand(TestGroup.TEST)
+        httpCommand()
+                .inGroup(TestGroup.TEST)
                 .forRequest(mockRequest)
-                .sync()
+                .build()
                 .execute();
         // then an IOException is thrown.
     }
@@ -62,10 +64,11 @@ public class HttpCommandTest {
         Response fallbackResponse = mock(Response.class);
 
         // when
-        final Response response = newCommand(TestGroup.TEST)
+        final Response response = httpCommand()
+                .inGroup(TestGroup.TEST)
                 .forRequest(mockRequest)
                 .withFallback(() -> fallbackResponse)
-                .sync()
+                .build()
                 .execute();
         // then
         assertThat(response, is(fallbackResponse));

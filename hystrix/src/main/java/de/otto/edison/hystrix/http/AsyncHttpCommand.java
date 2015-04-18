@@ -19,20 +19,20 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * @author Guido Steinacker
  * @since 15.04.15
  */
-final class AsyncHttpCommand extends HystrixCommand<Future<Response>> {
+final class AsyncHttpCommand<T> extends HystrixCommand<Future<T>> {
 
     private final AsyncHttpClient.BoundRequestBuilder requestBuilder;
-    private final AsyncHandler<Future<Response>> asyncHandler;
+    private final AsyncHandler<Future<T>> asyncHandler;
     private final int timeout;
     private final TimeUnit timeUnit;
-    private final Optional<Supplier<Response>> fallback;
+    private final Optional<Supplier<T>> fallback;
 
     AsyncHttpCommand(final Setter setter,
-                            final AsyncHandler<Future<Response>> asyncHandler,
-                            final AsyncHttpClient.BoundRequestBuilder requestBuilder,
-                            final Optional<Supplier<Response>> fallback,
-                            final int timeout,
-                            final TimeUnit timeUnit) {
+                     final AsyncHandler<Future<T>> asyncHandler,
+                     final AsyncHttpClient.BoundRequestBuilder requestBuilder,
+                     final Optional<Supplier<T>> fallback,
+                     final int timeout,
+                     final TimeUnit timeUnit) {
         super(setter);
         this.requestBuilder = requestBuilder;
         this.asyncHandler = asyncHandler;
@@ -42,12 +42,12 @@ final class AsyncHttpCommand extends HystrixCommand<Future<Response>> {
     }
 
     @Override
-    protected Future<Response> run() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+    protected Future<T> run() throws IOException, InterruptedException, ExecutionException, TimeoutException {
         return requestBuilder.execute(asyncHandler).get(timeout, timeUnit);
     }
 
     @Override
-    protected Future<Response> getFallback() {
+    protected Future<T> getFallback() {
         if (fallback.isPresent()) {
             return completedFuture(fallback.get().get());
         } else {

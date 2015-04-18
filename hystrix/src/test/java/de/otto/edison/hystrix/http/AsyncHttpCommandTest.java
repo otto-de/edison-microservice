@@ -13,9 +13,8 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static de.otto.edison.hystrix.http.HttpCommands.newCommand;
+import static de.otto.edison.hystrix.http.AsyncHttpCommandBuilder.asyncHttpCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
@@ -35,9 +34,11 @@ public class AsyncHttpCommandTest {
         when(mockRequest.execute(asyncHandler)).thenReturn(mock(ListenableFuture.class));
 
         // when
-        newCommand(TestGroup.TEST)
+        asyncHttpCommand()
+                .inGroup(TestGroup.TEST)
                 .forRequest(mockRequest)
-                .asyncUsing(asyncHandler)
+                .handledBy(asyncHandler)
+                .build()
                 .execute();
         // then
         verify(mockRequest, atLeastOnce()).execute(anyObject());
@@ -53,9 +54,11 @@ public class AsyncHttpCommandTest {
         when(mockRequest.execute(asyncHandler)).thenThrow(new IOException());
 
         // when
-        newCommand(TestGroup.TEST)
+        asyncHttpCommand()
+                .inGroup(TestGroup.TEST)
                 .forRequest(mockRequest)
-                .asyncUsing(asyncHandler)
+                .handledBy(asyncHandler)
+                .build()
                 .execute();
         // then an IOException is thrown.
     }
@@ -72,10 +75,12 @@ public class AsyncHttpCommandTest {
         Response fallbackResponse = mock(Response.class);
 
         // when
-        HystrixCommand<Future<Response>> hystrixCommand = newCommand(TestGroup.TEST)
+        HystrixCommand<Future<Response>> hystrixCommand = asyncHttpCommand()
+                .inGroup(TestGroup.TEST)
                 .forRequest(mockRequest)
                 .withFallback(() -> fallbackResponse)
-                .asyncUsing(asyncHandler);
+                .handledBy(asyncHandler)
+                .build();
         Future<Response> response = hystrixCommand.execute();
         // then
         assertThat(response.get(), is(fallbackResponse));
