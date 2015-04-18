@@ -5,20 +5,16 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static de.otto.edison.hystrix.http.HttpCommands.newCommand;
+import static de.otto.edison.hystrix.http.AsyncHttpCommandBuilder.asyncHttpCommand;
+import static de.otto.edison.hystrix.http.HttpCommandBuilder.httpCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isA;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
 
 public class HttpCommandsTest {
 
@@ -32,10 +28,13 @@ public class HttpCommandsTest {
         @SuppressWarnings("unchecked")
         final AsyncHandler<Future<Response>> handler = mock(AsyncHandler.class);
         // when
-        final HystrixCommand<Future<Response>> command = newCommand(TestGroup.FOO)
+        final HystrixCommand<Future<Response>> command = asyncHttpCommand()
+                .inGroup(TestGroup.FOO)
                 .forRequest(mock(AsyncHttpClient.BoundRequestBuilder.class))
                 .timingOutAfter(42, TimeUnit.DAYS)
-                .asyncUsing(handler);
+                .withFallback(()->mock(Response.class))
+                .handledBy(handler)
+                .build();
         // then
         assertThat(command.getClass().equals(AsyncHttpCommand.class), is(true));
     }
@@ -44,10 +43,11 @@ public class HttpCommandsTest {
     public void shouldCreateSyncHttpCommand() {
         // given
         // when
-        final HystrixCommand<Response> command = newCommand(TestGroup.BAR)
+        final HystrixCommand<Response> command = httpCommand()
+                .inGroup(TestGroup.BAR)
                 .forRequest(mock(AsyncHttpClient.BoundRequestBuilder.class))
                 .timingOutAfter(42, TimeUnit.DAYS)
-                .sync();
+                .build();
         // then
         assertThat(command.getClass().equals(HttpCommand.class), is(true));
     }
