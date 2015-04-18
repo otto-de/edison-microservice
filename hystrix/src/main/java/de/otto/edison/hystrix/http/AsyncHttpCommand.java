@@ -1,16 +1,18 @@
 package de.otto.edison.hystrix.http;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.Response;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
 /**
@@ -33,12 +35,12 @@ final class AsyncHttpCommand<T> extends HystrixCommand<Future<T>> {
                      final Optional<Supplier<T>> fallback,
                      final int timeout,
                      final TimeUnit timeUnit) {
-        super(setter);
-        this.requestBuilder = requestBuilder;
-        this.asyncHandler = asyncHandler;
-        this.fallback = fallback;
+        super(requireNonNull(setter));
+        this.requestBuilder = requireNonNull(requestBuilder);
+        this.asyncHandler = requireNonNull(asyncHandler);
+        this.fallback = requireNonNull(fallback);
         this.timeout = timeout;
-        this.timeUnit = timeUnit;
+        this.timeUnit = requireNonNull(timeUnit);
     }
 
     @Override
