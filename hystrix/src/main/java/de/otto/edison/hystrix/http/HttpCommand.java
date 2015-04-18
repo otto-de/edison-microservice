@@ -1,7 +1,6 @@
 package de.otto.edison.hystrix.http;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import org.slf4j.Logger;
@@ -14,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A Hystrix command that is synchronously getting a resource using AsyncHttpClient.
@@ -37,12 +38,12 @@ final class HttpCommand<T> extends HystrixCommand<T> {
                 final Function<Response, T> mapper,
                 final int timeout,
                 final TimeUnit timeUnit) {
-        super(setter);
-        this.requestBuilder = requestBuilder;
-        this.fallback = fallback;
-        this.mapper = mapper;
+        super(requireNonNull(setter));
+        this.requestBuilder = requireNonNull(requestBuilder);
+        this.fallback = requireNonNull(fallback);
+        this.mapper = requireNonNull(mapper);
         this.timeout = timeout;
-        this.timeUnit = timeUnit;
+        this.timeUnit = requireNonNull(timeUnit);
     }
 
     @Override
