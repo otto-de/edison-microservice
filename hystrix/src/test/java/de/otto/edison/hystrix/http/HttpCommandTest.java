@@ -1,6 +1,5 @@
 package de.otto.edison.hystrix.http;
 
-import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.ning.http.client.AsyncHttpClient;
@@ -51,7 +50,7 @@ public class HttpCommandTest {
                 .forRequest(mockRequest)
                 .build()
                 .execute();
-        // then an IOException is thrown.
+        // then an HystrixRuntimeException is thrown.
     }
 
     @Test
@@ -72,5 +71,67 @@ public class HttpCommandTest {
                 .execute();
         // then
         assertThat(response, is(fallbackResponse));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldFallbackToStringWhenExecutionFails() throws IOException {
+        // given
+        AsyncHttpClient.BoundRequestBuilder mockRequest = mock(AsyncHttpClient.BoundRequestBuilder.class);
+        when(mockRequest.execute()).thenThrow(new IOException());
+        // and
+        String fallbackResponse = "42";
+
+        // when
+        final String response = httpCommand(String.class)
+                .inGroup(TestGroup.TEST)
+                .forRequest(mockRequest)
+                .mappedBy(x -> "")
+                .withFallback(() -> fallbackResponse)
+                .build()
+                .execute();
+        // then
+        assertThat(response, is(fallbackResponse));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldFallbackToStringWhenMappingFails() throws IOException {
+        // given
+        AsyncHttpClient.BoundRequestBuilder mockRequest = mock(AsyncHttpClient.BoundRequestBuilder.class);
+        when(mockRequest.execute()).thenReturn(mock(ListenableFuture.class));
+        // and
+        String fallbackResponse = "42";
+
+        // when
+        final String response = httpCommand(String.class)
+                .inGroup(TestGroup.TEST)
+                .forRequest(mockRequest)
+                .mappedBy(x -> {
+                    throw new RuntimeException();
+                })
+                .withFallback(() -> fallbackResponse)
+                .build()
+                .execute();
+        // then
+        assertThat(response, is(fallbackResponse));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldMapResponse() throws IOException {
+        // given
+        AsyncHttpClient.BoundRequestBuilder mockRequest = mock(AsyncHttpClient.BoundRequestBuilder.class);
+        when(mockRequest.execute()).thenReturn(mock(ListenableFuture.class));
+
+        // when
+        String response = httpCommand(String.class)
+                .inGroup("Foo")
+                .forRequest(mockRequest)
+                .mappedBy(x -> "42")
+                .build()
+                .execute();
+        // then
+        assertThat(response, is("42"));
     }
 }

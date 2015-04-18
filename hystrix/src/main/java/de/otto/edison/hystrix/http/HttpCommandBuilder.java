@@ -2,12 +2,10 @@ package de.otto.edison.hystrix.http;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 
 import java.util.Optional;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -40,6 +38,11 @@ public final class HttpCommandBuilder<T> {
 
     public HttpCommandBuilder<T> inGroup(final HystrixCommandGroupKey group) {
         this.setter = withGroupKey(group);
+        return this;
+    }
+
+    public HttpCommandBuilder<T> inGroup(final String hystrixCommandGgroup) {
+        this.setter = withGroupKey(HystrixCommandGroupKey.Factory.asKey(hystrixCommandGgroup));
         return this;
     }
 
