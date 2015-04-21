@@ -16,12 +16,12 @@ public interface ApplicationStatusAggregator {
      *
      * @return aggregated ApplicationStatus
      */
-    public ApplicationStatus aggregatedStatus();
+    ApplicationStatus aggregatedStatus();
 
     /**
      * Optionally implement an update method, that is used to explicitly update a
      * cached ApplicationStatus. This is used by the {@link de.otto.edison.status.scheduler.Scheduler}.
      */
-    public default void update() {}
+    default void update() {}
 
 }
