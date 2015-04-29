@@ -41,8 +41,9 @@ public class GracefulShutdownHealthIndicator implements SmartLifecycle, HealthIn
             waitForShutdown();
         } catch (InterruptedException e) {
             LOG.error("graceful shutdown interrupted", e);
+        } finally {
+            callback.run();
         }
-        callback.run();
     }
 
     private void indicateDown() {
