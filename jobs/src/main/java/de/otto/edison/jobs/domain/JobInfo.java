@@ -11,7 +11,7 @@ import java.util.Optional;
 import static java.util.Collections.unmodifiableList;
 
 @ThreadSafe
-public final class JobInfo {
+public class JobInfo {
 
     private final URI jobUri;
     private final JobType jobType;
