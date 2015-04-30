@@ -23,7 +23,7 @@ public class JobInfo {
 
     public enum JobStatus { OK, ERROR, DEAD;}
 
-    JobInfo(final JobType type,
+    public JobInfo(final JobType type,
             final URI jobUri,
             final OffsetDateTime started,
             final Optional<OffsetDateTime> stopped,
