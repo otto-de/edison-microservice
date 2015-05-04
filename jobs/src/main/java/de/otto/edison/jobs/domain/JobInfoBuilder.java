@@ -52,6 +52,11 @@ public class JobInfoBuilder {
         return this;
     }
 
+    public JobInfoBuilder addMessages(final List<JobMessage> messages) {
+        this.messages.addAll(messages);
+        return this;
+    }
+
     public JobInfoBuilder withStarted(final OffsetDateTime started) {
         this.started = started;
         return this;
