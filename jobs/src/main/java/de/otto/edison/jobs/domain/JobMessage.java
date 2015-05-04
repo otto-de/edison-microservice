@@ -12,12 +12,12 @@ public final class JobMessage {
 
     private final Level level;
     private final String message;
-    private final OffsetDateTime ts;
+    private final OffsetDateTime timestamp;
 
     private JobMessage(final Level level, final String message, OffsetDateTime timestamp) {
         this.level = level;
         this.message = message;
-        this.ts = timestamp;
+        this.timestamp = timestamp;
     }
 
     public static JobMessage jobMessage(final Level level, final String message) {
@@ -37,7 +37,7 @@ public final class JobMessage {
     }
 
     public OffsetDateTime getTimestamp() {
-        return ts;
+        return timestamp;
     }
 
     @Override
@@ -49,7 +49,7 @@ public final class JobMessage {
 
         if (level != that.level) return false;
         if (message != null ? !message.equals(that.message) : that.message != null) return false;
-        if (ts != null ? !ts.equals(that.ts) : that.ts != null) return false;
+        if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
 
         return true;
     }
@@ -58,7 +58,7 @@ public final class JobMessage {
     public int hashCode() {
         int result = level != null ? level.hashCode() : 0;
         result = 31 * result + (message != null ? message.hashCode() : 0);
-        result = 31 * result + (ts != null ? ts.hashCode() : 0);
+        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         return result;
     }
 
@@ -67,7 +67,7 @@ public final class JobMessage {
         return "JobMessage{" +
                 "level=" + level +
                 ", message='" + message + '\'' +
-                ", ts=" + ts +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }

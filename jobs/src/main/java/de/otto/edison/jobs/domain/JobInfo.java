@@ -23,14 +23,14 @@ public class JobInfo {
 
     public enum JobStatus { OK, ERROR, DEAD;}
 
-    public JobInfo(final JobType type,
+    public JobInfo(final JobType jobType,
             final URI jobUri,
             final OffsetDateTime started,
             final Optional<OffsetDateTime> stopped,
             final List<JobMessage> messages,
             final JobStatus status, OffsetDateTime lastUpdated) {
         this.jobUri = jobUri;
-        this.jobType = type;
+        this.jobType = jobType;
         this.started = started;
         this.stopped = stopped;
         this.lastUpdated = lastUpdated;
