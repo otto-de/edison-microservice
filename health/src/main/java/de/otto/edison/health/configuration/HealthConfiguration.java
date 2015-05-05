@@ -23,7 +23,7 @@ public class HealthConfiguration {
     }
 
     @Bean
-    public ApplicationHealthIndicator healthIndicator() {
+    public ApplicationHealthIndicator applicationHealthIndicator() {
         return new ApplicationHealthIndicator();
     }
 
