@@ -26,6 +26,7 @@ public class CachedApplicationStatusAggregatorTest {
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
                 "Test", mock(VersionInfo.class), singletonList(mockIndicator)
         );
+        statusAggregator.update();
         // when
         statusAggregator.aggregatedStatus();
         statusAggregator.aggregatedStatus();
@@ -45,6 +46,7 @@ public class CachedApplicationStatusAggregatorTest {
                         someStatusDetailIndicator(SOME_OTHER_DETAIL)
                 )
         );
+        statusAggregator.update();
         // when
         statusAggregator.aggregatedStatus();
         // then
