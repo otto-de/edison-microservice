@@ -1,11 +1,12 @@
 package de.otto.edison.status.indicator;
 
 import de.otto.edison.status.domain.ApplicationStatus;
+import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.domain.VersionInfo;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
@@ -33,7 +34,7 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
         this.versionInfo = versionInfo;
         this.indicators = unmodifiableList(new ArrayList<>(indicators));
         this.hostName = hostName();
-        this.cachedStatus = calcApplicationStatus();
+        this.cachedStatus = ApplicationStatus.applicationStatus(applicationName, hostName, versionInfo, Collections.<StatusDetail>emptyList());
     }
 
     @Override
