@@ -64,6 +64,11 @@ public class GraphiteConfiguration {
     }
 
     private static String hostName() {
+
+        final String envHost = System.getenv("HOST");
+        if (envHost != null) {
+            return envHost;
+        }
         try {
             return getLocalHost().getCanonicalHostName();
         } catch (final UnknownHostException e) {
