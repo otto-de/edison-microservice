@@ -28,8 +28,8 @@ public class JobRepresentation {
         return job.getJobType().name();
     }
 
-    public JobInfo.JobStatus getStatus() {
-        return job.getStatus();
+    public String getStatus() {
+        return job.getStatus().name();
     }
 
     public String getState() {
