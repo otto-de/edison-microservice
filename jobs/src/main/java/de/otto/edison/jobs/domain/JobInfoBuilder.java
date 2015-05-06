@@ -29,7 +29,7 @@ public class JobInfoBuilder {
         lastUpdated = OffsetDateTime.now();
     }
 
-    public JobInfoBuilder(final JobInfo prototype) {
+    private JobInfoBuilder(final JobInfo prototype) {
         this.type = prototype.getJobType();
         this.jobUri = prototype.getJobUri();
         this.started = prototype.getStarted();
