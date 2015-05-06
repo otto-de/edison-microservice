@@ -49,13 +49,15 @@ public class JobConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JobCleanupStrategy.class)
-    public JobCleanupStrategy jobCleanupStrategy() {
+    public AggregateCleanupStrategy defaultJobCleanupStrategy() {
+        return new AggregateCleanupStrategy(deadJobStrategy(), keepLastJobsStrategy());
+    }
+
+    private KeepLastJobs keepLastJobsStrategy() {
         return new KeepLastJobs(NUMBER_OF_JOBS_TO_KEEP, Optional.<JobType>empty());
     }
 
-    @Bean
-    @ConditionalOnMissingBean(JobCleanupStrategy.class)
-    public JobCleanupStrategy deadJobStrategy() {
+    private StopDeadJobs deadJobStrategy() {
         return new StopDeadJobs(SECONDS_TO_MARK_JOBS_AS_STOPPED, systemDefaultZone());
     }
 

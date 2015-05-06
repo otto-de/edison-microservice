@@ -1,8 +1,10 @@
 package de.otto.edison.jobs.repository;
 
+import de.otto.edison.jobs.configuration.JobConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -26,6 +28,7 @@ public class JobRepositoryCleanup {
     private CounterService counterService;
     @Autowired
     private JobRepository repository;
+
     @Autowired
     private List<JobCleanupStrategy> strategies;
 
