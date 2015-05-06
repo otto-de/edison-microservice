@@ -7,7 +7,8 @@ package de.otto.edison.jobs.domain;
 public enum Level {
 
     INFO("info"),
-    WARNING("warning");
+    WARNING("warning"),
+    ERROR("error");
 
     private final String key;
 
