@@ -3,7 +3,7 @@ dependencies {
     compile libs.logging
     compile libs.metrics
     compile libs.springBoot
-    compile("com.ryantenney.metrics:metrics-spring:3.0.3") {
+    compile("com.ryantenney.metrics:metrics-spring:3.1.0") {
         // Fix dependencies of metrics-spring 3.0.3
         exclude module: "metrics-annotation"
         exclude module: "metrics-core"

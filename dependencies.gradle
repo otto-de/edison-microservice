@@ -23,11 +23,11 @@ ext.libs = [
                 "ch.qos.logback:logback-classic:1.0.13",
 
         metrics: [
-                "io.dropwizard.metrics:metrics-annotation:3.1.2",
-                "io.dropwizard.metrics:metrics-core:3.1.2",
-                "io.dropwizard.metrics:metrics-graphite:3.1.2",
-                "io.dropwizard.metrics:metrics-healthchecks:3.1.2",
-                "io.dropwizard.metrics:metrics-jvm:3.1.2"
+                "io.dropwizard.metrics:metrics-annotation:3.1.0",
+                "io.dropwizard.metrics:metrics-core:3.1.0",
+                "io.dropwizard.metrics:metrics-graphite:3.1.0",
+                "io.dropwizard.metrics:metrics-healthchecks:3.1.0",
+                "io.dropwizard.metrics:metrics-jvm:3.1.0"
         ],
         testUnit: [
                 "org.testng:testng:6.1.1",
