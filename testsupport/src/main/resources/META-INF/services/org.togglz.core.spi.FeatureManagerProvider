@@ -1,0 +1,2 @@
+de.otto.edison.testsupport.togglz.TestFeatureManagerProvider
+de.otto.edison.testsupport.togglz.fallback.FallbackTestFeatureManagerProvider

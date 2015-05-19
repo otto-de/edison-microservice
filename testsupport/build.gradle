@@ -2,6 +2,8 @@
 dependencies {
     compile libs.springBoot
     compile libs.testUnit
+    compile libs.togglz
+    compile libs.testTogglz
 }
 
 artifacts {
