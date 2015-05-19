@@ -34,7 +34,7 @@ public class TogglzConfiguration {
     @Bean
     @ConditionalOnMissingBean(StateRepository.class)
     public StateRepository stateRepository() {
-        return new CachingStateRepository(createInMemoryStateRepository(), 60000, TimeUnit.MILLISECONDS);
+        return new CachingStateRepository(createInMemoryStateRepository(), 2000, TimeUnit.MILLISECONDS);
     }
 
     @Bean

@@ -6,7 +6,7 @@ dependencies {
             compile libs.togglz
 
             testCompile libs.testUnit
-            testCompile libs.testTogglz
+//            testCompile libs.testTogglz
             testCompile project(":testsupport")
 }
 
