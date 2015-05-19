@@ -1,7 +1,5 @@
 package de.otto.edison.testsupport.togglz;
 
-import de.otto.edison.testsupport.togglz.TestFeatureManager;
-import de.otto.edison.testsupport.togglz.TestFeatureManagerProvider;
 import org.togglz.core.Feature;
 import org.togglz.core.context.FeatureContext;
 import org.togglz.core.repository.FeatureState;
