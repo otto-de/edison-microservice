@@ -40,19 +40,15 @@ public class TogglzConfiguration {
     @Bean
     @ConditionalOnMissingBean(UserProvider.class)
     public UserProvider getUserProvider() {
-        return new UserProvider() {
+        return () -> {
 
-            @Override
-            public FeatureUser getCurrentUser() {
+            HttpServletRequest request = HttpServletRequestHolder.get();
 
-                HttpServletRequest request = HttpServletRequestHolder.get();
+            String username = (String) request.getAttribute("username");
+            boolean isAdmin = true; // "admin".equals(username);
 
-                String username = (String) request.getAttribute("username");
-                boolean isAdmin = true; // "admin".equals(username);
+            return new SimpleFeatureUser(username, isAdmin);
 
-                return new SimpleFeatureUser(username, isAdmin);
-
-            }
         };
     }
 
