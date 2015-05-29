@@ -18,7 +18,7 @@ public class GracefulShutdownHealthIndicator implements SmartLifecycle, HealthIn
     private final long timeBeforeIndicateError;
     private final long timeForPhaseOut;
 
-    private Health health = up().build();
+    private volatile Health health = up().build();
 
     public GracefulShutdownHealthIndicator(final long timeBeforeIndicateError, final long timeForPhaseOut) {
         this.timeBeforeIndicateError = timeBeforeIndicateError;
