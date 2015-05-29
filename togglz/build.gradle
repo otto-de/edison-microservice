@@ -1,13 +1,14 @@
-
 dependencies {
 
-            compile libs.springBootWeb
-            compile libs.logging
-            compile libs.togglz
+    compile libs.springBootWeb
+    compile libs.logging
+    compile libs.togglz
+    compile libs.jcip
 
-            testCompile libs.testUnit
-            testCompile project(":testsupport")
-            testCompile project(":togglz-testsupport")
+
+    testCompile libs.testUnit
+    testCompile project(":testsupport")
+    testCompile project(":togglz-testsupport")
 }
 
 artifacts {
