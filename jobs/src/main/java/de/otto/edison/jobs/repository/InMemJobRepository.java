@@ -1,9 +1,9 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobType;
 
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,13 +18,16 @@ import static java.util.stream.Collectors.toList;
 
 public class InMemJobRepository implements JobRepository {
 
+    private static final Comparator<JobInfo> STARTED_TIME_DESC_COMPARATOR = comparing(JobInfo::getStarted, reverseOrder());
+
     private final ConcurrentMap<URI, JobInfo> jobs = new ConcurrentHashMap<>();
 
     @Override
-    public List<JobInfo> findAll(final Comparator<JobInfo> comparator) {
+    public List<JobInfo> findLatest(int maxCount) {
         return new ArrayList<>(jobs.values()
                 .stream()
-                .sorted(comparator)
+                .sorted(STARTED_TIME_DESC_COMPARATOR)
+                .limit(maxCount)
                 .collect(toList())
         );
     }
@@ -35,16 +38,25 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public List<JobInfo> findBy(final JobType type) {
-        return findBy(type, comparing(JobInfo::getStarted, reverseOrder()));
+    public List<JobInfo> findLatestBy(String type, int maxCount) {
+        return jobs.values()
+                .stream()
+                .sorted(STARTED_TIME_DESC_COMPARATOR)
+                .filter(jobInfo -> jobInfo.getJobType() == type)
+                .collect(toList());
     }
 
     @Override
-    public List<JobInfo> findBy(final JobType type, final Comparator<JobInfo> comparator) {
-        return new ArrayList<>(jobs.values())
-                .stream()
-                .sorted(comparator)
-                .filter(jobInfo -> jobInfo.getJobType() == type)
+    public List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset) {
+        return jobs.values().stream()
+                .filter(jobInfo -> jobInfo.getLastUpdated().isBefore(timeOffset))
+                .collect(toList());
+    }
+
+    @Override
+    public List<JobInfo> findAll() {
+        return jobs.values().stream()
+                .sorted(STARTED_TIME_DESC_COMPARATOR)
                 .collect(toList());
     }
 

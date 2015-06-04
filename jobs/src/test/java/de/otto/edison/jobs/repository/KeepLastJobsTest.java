@@ -1,8 +1,6 @@
 package de.otto.edison.jobs.repository;
 
 
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobType;
 import org.testng.annotations.Test;
 
 import java.net.URI;
@@ -17,7 +15,6 @@ import static java.time.OffsetDateTime.now;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isA;
 
 public class KeepLastJobsTest {
 
@@ -25,10 +22,10 @@ public class KeepLastJobsTest {
     @Test
     public void shouldRemoveJobsWithMatchingJobType() {
         // given
-        JobType type = () -> "TYPE2";
-        KeepLastJobs strategy = new KeepLastJobs(1, Optional.of(type));
+        String type = "TYPE2";
+        KeepLastJobs strategy = new KeepLastJobs(1);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(jobInfoBuilder(() -> "TYPE1", URI.create("foo")).withStopped(now()).build());
+            createOrUpdate(jobInfoBuilder("TYPE1", URI.create("foo")).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder(type, URI.create("foobar")).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder(type, URI.create("bar")).withStopped(now()).build());
         }};
@@ -36,14 +33,14 @@ public class KeepLastJobsTest {
         strategy.doCleanUp(repository);
         // then
         assertThat(repository.size(), is(2));
-        assertThat(repository.findBy(type), hasSize(1));
+        assertThat(repository.findLatestBy(type, 10), hasSize(1));
     }
 
     @Test
     public void shouldRemoveOldestJobs() {
         // given
-        JobType type = () -> "TYPE";
-        KeepLastJobs strategy = new KeepLastJobs(2, Optional.of(type));
+        String type = "TYPE";
+        KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(jobInfoBuilder(type, URI.create("foo")).withStarted(now()).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder(type, URI.create("foobar")).withStarted(now().minusSeconds(2)).withStopped(now()).build());
@@ -59,8 +56,8 @@ public class KeepLastJobsTest {
     @Test
     public void shouldOnlyRemoveStoppedJobs() {
         // given
-        JobType type = () -> "TYPE";
-        KeepLastJobs strategy = new KeepLastJobs(2, Optional.of(type));
+        String type = "TYPE";
+        KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(jobInfoBuilder(type, URI.create("one")).withStarted(now().minusSeconds(4)).build());
             createOrUpdate(jobInfoBuilder(type, URI.create("two")).withStarted(now().minusSeconds(3)).build());
@@ -83,8 +80,8 @@ public class KeepLastJobsTest {
     @Test
     public void shouldKeepAllRunningJobs() {
         // given
-        JobType type = () -> "TYPE";
-        KeepLastJobs strategy = new KeepLastJobs(2, Optional.of(type));
+        String type = "TYPE";
+        KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(jobInfoBuilder(type, URI.create("one")).withStarted(now().minusSeconds(5)).build());
             createOrUpdate(jobInfoBuilder(type, URI.create("two")).withStarted(now().minusSeconds(4)).build());
@@ -108,8 +105,8 @@ public class KeepLastJobsTest {
     @Test
     public void shouldKeepAtLeastOneSuccessfulJob() {
         // given
-        JobType type = () -> "TYPE";
-        KeepLastJobs strategy = new KeepLastJobs(2, Optional.of(type));
+        String type = "TYPE";
+        KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(jobInfoBuilder(type, URI.create("foo")).withStarted(now()).withStatus(ERROR).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder(type, URI.create("foobar")).withStarted(now().minusSeconds(2)).withStatus(OK).withStopped(now()).build());
@@ -127,10 +124,10 @@ public class KeepLastJobsTest {
     @Test
     public void shouldOnlyRemoveStoppedJobsWithMatchingJobType() {
         // given
-        JobType type = () -> "TYPE2";
-        KeepLastJobs strategy = new KeepLastJobs(1, Optional.of(type));
+        String type = "TYPE2";
+        KeepLastJobs strategy = new KeepLastJobs(1);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(jobInfoBuilder(() -> "TYPE1", URI.create("foo")).withStopped(now()).build());
+            createOrUpdate(jobInfoBuilder("TYPE1", URI.create("foo")).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder(type, URI.create("foobar")).build());
             createOrUpdate(jobInfoBuilder(type, URI.create("bar")).build());
         }};
@@ -138,17 +135,17 @@ public class KeepLastJobsTest {
         strategy.doCleanUp(repository);
         // then
         assertThat(repository.size(), is(3));
-        assertThat(repository.findBy(type), hasSize(2));
+        assertThat(repository.findLatestBy(type, 10), hasSize(2));
     }
 
     @Test
     public void shouldKeepTwoJobInfos() {
         // given
-        KeepLastJobs strategy = new KeepLastJobs(2, Optional.<JobType>empty());
+        KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(jobInfoBuilder(() -> "TYPE", URI.create("foo")).withStopped(now()).build());
-            createOrUpdate(jobInfoBuilder(() -> "TYPE", URI.create("foobar")).withStopped(now()).build());
-            createOrUpdate(jobInfoBuilder(() -> "TYPE", URI.create("bar")).withStopped(now()).build());
+            createOrUpdate(jobInfoBuilder("TYPE", URI.create("foo")).withStopped(now()).build());
+            createOrUpdate(jobInfoBuilder("TYPE", URI.create("foobar")).withStopped(now()).build());
+            createOrUpdate(jobInfoBuilder("TYPE", URI.create("bar")).withStopped(now()).build());
         }};
         // when
         strategy.doCleanUp(repository);
@@ -159,9 +156,9 @@ public class KeepLastJobsTest {
     @Test
     public void shouldBeOkToKeepAllJobs() {
         // given
-        KeepLastJobs strategy = new KeepLastJobs(2, Optional.<JobType>empty());
+        KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(jobInfoBuilder(() -> "TYPE", URI.create("bar")).withStopped(now()).build());
+            createOrUpdate(jobInfoBuilder("TYPE", URI.create("bar")).withStopped(now()).build());
         }};
         // when
         strategy.doCleanUp(repository);

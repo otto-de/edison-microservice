@@ -25,7 +25,7 @@ public class JobRepresentation {
     }
 
     public String getJobType() {
-        return job.getJobType().name();
+        return job.getJobType();
     }
 
     public String getStatus() {

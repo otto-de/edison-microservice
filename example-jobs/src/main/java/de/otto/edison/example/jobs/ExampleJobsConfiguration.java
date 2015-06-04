@@ -16,7 +16,7 @@ public class ExampleJobsConfiguration {
 
     @Bean
     public JobCleanupStrategy keepLast10FooJobsCleanupStrategy() {
-        return new KeepLastJobs(10, of(ExampleJobs.FOO));
+        return new KeepLastJobs(10);
     }
 
 }

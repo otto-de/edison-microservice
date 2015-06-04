@@ -1,16 +1,16 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static java.util.Comparator.comparing;
-import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
 
@@ -28,16 +28,13 @@ public class KeepLastJobs implements JobCleanupStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(KeepLastJobs.class);
 
     private final int numberOfJobsToKeep;
-    private final Optional<JobType> jobType;
 
     /**
      * @param numberOfJobsToKeep the number of jobs that are kept
-     * @param jobType            the optional type of the jobs
      */
-    public KeepLastJobs(final int numberOfJobsToKeep, final Optional<JobType> jobType) {
+    public KeepLastJobs(final int numberOfJobsToKeep) {
         this.numberOfJobsToKeep = numberOfJobsToKeep;
-        this.jobType = jobType;
-        LOG.info("KeepLastJobs strategy configured with numberOfJobsToKeep=" + numberOfJobsToKeep + ", jobType=" + jobType.toString());
+        LOG.info("KeepLastJobs strategy configured with numberOfJobsToKeep=" + numberOfJobsToKeep);
     }
 
     /**
@@ -47,9 +44,7 @@ public class KeepLastJobs implements JobCleanupStrategy {
      */
     @Override
     public void doCleanUp(final JobRepository repository) {
-        final List<JobInfo> jobs = jobType.isPresent()
-                ? repository.findBy(jobType.get(), comparing(JobInfo::getStarted, naturalOrder()))
-                : repository.findAll(comparing(JobInfo::getStarted, naturalOrder()));
+        final List<JobInfo> jobs = repository.findAll();
 
         if (jobs.size() > numberOfJobsToKeep) {
             jobsToDelete(jobs)
@@ -57,25 +52,30 @@ public class KeepLastJobs implements JobCleanupStrategy {
         }
     }
 
-    private List<JobInfo> jobsToDelete(List<JobInfo> jobs){
+    private List<JobInfo> jobsToDelete(List<JobInfo> jobs) {
         int numberOfJobsToDelete = jobs.size() - numberOfJobsToKeep;
-        Optional<JobInfo> lastOKJob = findLastOKJob(jobs);
-        
+        List<JobInfo> lastOKJobs = findLastOKJobs(jobs);
+
         return jobs
                 .stream()
                 .filter(JobInfo::isStopped)
-                .filter(j -> !lastOKJob.isPresent() || j != lastOKJob.get() )
+                .filter(j -> !lastOKJobs.contains(j))
+                .sorted(comparing(JobInfo::getStarted))
                 .limit(numberOfJobsToDelete)
                 .collect(toList());
     }
 
-    private Optional<JobInfo> findLastOKJob(List<JobInfo> jobs) {
-        return jobs
-                .stream()
-                .filter(JobInfo::isStopped)
-                .filter(j -> JobInfo.JobStatus.OK.equals(j.getStatus()))
-                .sorted(Comparator.comparing(JobInfo::getStarted, reverseOrder()))
-                .findFirst();
+    private List<JobInfo> findLastOKJobs(List<JobInfo> jobs) {
+        Map<String, List<JobInfo>> jobsGroupedByType = jobs.stream().collect(Collectors.groupingBy(o -> o.getJobType()));
+
+        return jobsGroupedByType.entrySet().stream().map(entry -> {
+            return entry.getValue().stream()
+                    .filter(j -> j.isStopped() && j.getStatus() == OK)
+                    .sorted(comparing(JobInfo::getStarted, reverseOrder()))
+                    .findFirst();
+        }).filter(Optional::isPresent).map(Optional::get)
+                .collect(Collectors.toList());
     }
+
 
 }

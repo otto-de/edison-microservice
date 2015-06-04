@@ -15,7 +15,7 @@ import static org.hamcrest.core.Is.is;
 public class JobRepresentationTest {
     @Test
     public void shouldBeAbleToDealWithJobsWithoutLastUpdatedTimestampForLegacyData() throws Exception {
-        JobInfo someJob = JobInfoBuilder.jobInfoBuilder(() -> "TYPE", URI.create("some/uri"))
+        JobInfo someJob = JobInfoBuilder.jobInfoBuilder("TYPE", URI.create("some/uri"))
                 .withLastUpdated(null)
                 .build();
         JobRepresentation jobRepresentation = representationOf(someJob);

@@ -16,10 +16,10 @@ public class JobInfoTest {
 
     @Test
     public void shouldInitializeCorrectly() {
-        JobInfo job = jobInfoBuilder(() -> "TEST", create("foo")).build();
+        JobInfo job = jobInfoBuilder("TEST", create("foo")).build();
         assertThat(job.getStatus(), is(JobInfo.JobStatus.OK));
         assertThat(job.getJobUri(), is(create("foo")));
-        assertThat(job.getJobType().name(), is("TEST"));
+        assertThat(job.getJobType(), is("TEST"));
         assertThat(job.getStarted().getHour(), is(now().getHour()));
         assertThat(job.getStopped(), isAbsent());
         assertThat(job.getMessages(), is(emptyIterable()));
@@ -28,7 +28,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldTreatAJobWithAStoppedDateAsStopped() {
-        JobInfo job = jobInfoBuilder(() -> "TEST", create("foo"))
+        JobInfo job = jobInfoBuilder("TEST", create("foo"))
                 .withStopped(now())
                 .build();
 
@@ -37,7 +37,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldTreatAJobWithoutAStoppedDateAsNotStopped() {
-        JobInfo job = jobInfoBuilder(() -> "TEST", create("foo"))
+        JobInfo job = jobInfoBuilder("TEST", create("foo"))
                 .build();
 
         assertThat(job.isStopped(),is(false));

@@ -1,35 +1,28 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobType;
 
 import java.net.URI;
-import java.util.Comparator;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.reverseOrder;
-import static java.util.Comparator.comparing;
-
 public interface JobRepository {
 
-    public default List<JobInfo> findAll() {
-        return findAll(comparing(JobInfo::getStarted, reverseOrder()));
-    }
+    List<JobInfo> findLatest(int maxCount);
 
-    public List<JobInfo> findAll(Comparator<JobInfo> comparator);
+    Optional<JobInfo> findBy(URI uri);
 
-    public Optional<JobInfo> findBy(URI uri);
+    List<JobInfo> findLatestBy(String type, int maxCount);
 
-    public default List<JobInfo> findBy(JobType type) {
-        return findBy(type, comparing(JobInfo::getStarted, reverseOrder()));
-    }
+    List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset);
 
-    public List<JobInfo> findBy(JobType type, Comparator<JobInfo> comparator);
+    List<JobInfo> findAll();
 
-    public void createOrUpdate(JobInfo job);
+    void createOrUpdate(JobInfo job);
 
-    public void removeIfStopped(URI uri);
+    void removeIfStopped(URI uri);
 
-    public int size();
+    int size();
+
 }

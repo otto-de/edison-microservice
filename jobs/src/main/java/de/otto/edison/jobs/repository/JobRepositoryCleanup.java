@@ -1,10 +1,8 @@
 package de.otto.edison.jobs.repository;
 
-import de.otto.edison.jobs.configuration.JobConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -22,7 +20,7 @@ public class JobRepositoryCleanup {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobRepositoryCleanup.class);
 
-    public static final long ONE_MINUTE = 60 * 1000L;
+    public static final long ONE_HOUR = 60 * 60 * 1000L;
 
     @Autowired
     private CounterService counterService;
@@ -32,7 +30,7 @@ public class JobRepositoryCleanup {
     @Autowired
     private List<JobCleanupStrategy> strategies;
 
-    @Scheduled(fixedDelay = ONE_MINUTE)
+    @Scheduled(fixedDelay = ONE_HOUR)
     public void cleanup() {
         try {
             for (final JobCleanupStrategy strategy : strategies) {

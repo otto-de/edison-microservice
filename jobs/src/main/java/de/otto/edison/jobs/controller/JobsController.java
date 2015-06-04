@@ -31,6 +31,7 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 public class JobsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsController.class);
+    public static final int JOB_VIEW_COUNT = 100;
 
     @Autowired
     private JobRepository repository;
@@ -46,22 +47,23 @@ public class JobsController {
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView findJobsAsHtml(@RequestParam(value = "type", required = false) String type) {
-        final List<JobRepresentation> jobRepresentations = findJobsAsJson(type);
+        final List<JobRepresentation> jobRepresentations = findJobsAsJson(type, JOB_VIEW_COUNT);
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
         return modelAndView;
     }
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET, produces = "application/json")
-    public List<JobRepresentation> findJobsAsJson(@RequestParam(value = "type", required = false) String type) {
-        Stream<JobInfo> allJobs = repository.findAll()
-                .stream();
-        Stream<JobInfo> filteredJobs;
-        if (type != null) {
-            filteredJobs = allJobs.filter( j -> j.getJobType().name().equals(type));
+    public List<JobRepresentation> findJobsAsJson(
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "count", required = false, defaultValue = "1") Integer count) {
+        final Stream<JobInfo> filteredJobs;
+        if (type == null) {
+            filteredJobs = repository.findLatest(count).stream();
         } else {
-            filteredJobs = allJobs;
+            filteredJobs = repository.findLatestBy(type, count).stream();
         }
+
         return filteredJobs
                 .map(JobRepresentation::representationOf)
                 .collect(Collectors.toList());
