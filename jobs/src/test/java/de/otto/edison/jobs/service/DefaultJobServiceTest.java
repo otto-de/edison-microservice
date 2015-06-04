@@ -45,7 +45,7 @@ public class DefaultJobServiceTest {
         final Clock clock = fixed(Instant.now(), systemDefault());
         final DefaultJobService jobService = new DefaultJobService("/foo", new InMemJobRepository(), mock(GaugeService.class), clock, executorService);
         final JobRunnable jobRunnable = mock(JobRunnable.class);
-        when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
+        when(jobRunnable.getJobType()).thenReturn("BAR");
         // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
@@ -59,7 +59,7 @@ public class DefaultJobServiceTest {
         final InMemJobRepository jobRepository = new InMemJobRepository();
         final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), clock, executorService);
         final JobRunnable jobRunnable = mock(JobRunnable.class);
-        when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
+        when(jobRunnable.getJobType()).thenReturn("BAR");
         // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
@@ -72,7 +72,7 @@ public class DefaultJobServiceTest {
         final Clock clock = fixed(Instant.now(), systemDefault());
         final InMemJobRepository jobRepository = new InMemJobRepository();
         final JobRunnable jobRunnable = mock(JobRunnable.class);
-        when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
+        when(jobRunnable.getJobType()).thenReturn("BAR");
         final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, mock(GaugeService.class), clock, executorService);
         // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
@@ -87,7 +87,7 @@ public class DefaultJobServiceTest {
         final Clock clock = fixed(Instant.now(), systemDefault());
 
         final JobRunnable jobRunnable = mock(JobRunnable.class);
-        when(jobRunnable.getJobType()).thenReturn(() -> "BAR");
+        when(jobRunnable.getJobType()).thenReturn("BAR");
 
         final GaugeService mock = mock(GaugeService.class);
         final DefaultJobService jobService = new DefaultJobService("/foo", mock(JobRepository.class), mock, clock, executorService);

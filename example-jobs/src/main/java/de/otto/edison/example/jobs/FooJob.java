@@ -1,6 +1,5 @@
 package de.otto.edison.example.jobs;
 
-import de.otto.edison.jobs.domain.JobType;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.service.JobLogger;
 import de.otto.edison.jobs.service.JobRunnable;
@@ -23,8 +22,8 @@ public class FooJob implements JobRunnable {
         return new FooJob();
     }
 
-    public JobType getJobType() {
-        return ExampleJobs.FOO;
+    public String getJobType() {
+        return "FOO";
     }
 
     @Override

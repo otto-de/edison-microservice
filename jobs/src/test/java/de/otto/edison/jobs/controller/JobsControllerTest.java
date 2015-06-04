@@ -41,7 +41,7 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnJobIfJobExists() throws IOException {
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo expectedJob = jobInfoBuilder(() -> "TEST", create("/test/42")).build();
+        final JobInfo expectedJob = jobInfoBuilder("TEST", create("/test/42")).build();
         repository.createOrUpdate(expectedJob);
 
         final JobsController jobsController = new JobsController(repository);
@@ -56,10 +56,11 @@ public class JobsControllerTest {
 
     @Test
     public void shouldReturnAllJobs() throws IOException {
+        // given
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo firstJob = jobInfoBuilder(() -> "TEST", create("/test/42"))
+        final JobInfo firstJob = jobInfoBuilder("TEST", create("/test/42"))
                 .build();
-        final JobInfo secondJob = jobInfoBuilder(() -> "TEST", create("/test/43"))
+        final JobInfo secondJob = jobInfoBuilder("TEST", create("/test/43"))
                 .withStarted(now().plus(10, MILLIS))
                 .build();
         repository.createOrUpdate(firstJob);
@@ -67,23 +68,47 @@ public class JobsControllerTest {
 
         final JobsController jobsController = new JobsController(repository);
 
-        Object job = jobsController.findJobsAsJson(null);
+        // when
+        Object job = jobsController.findJobsAsJson(null, 100);
+
+        // then
         assertThat(job, is(asList(representationOf(secondJob), representationOf(firstJob))));
     }
 
     @Test
-    public void shouldReturnAllJobsOfType() {
+    public void shouldReturnOneJobs() throws IOException {
+        // given
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo firstJob = jobInfoBuilder(() -> "SOME_TYPE", create("/test/42"))
+        final JobInfo firstJob = jobInfoBuilder("TEST", create("/test/42"))
                 .build();
-        final JobInfo secondJob = jobInfoBuilder(() -> "SOME_OTHER_TYPE", create("/test/43"))
+        final JobInfo secondJob = jobInfoBuilder("TEST", create("/test/43"))
+                .withStarted(now().plus(10, MILLIS))
                 .build();
         repository.createOrUpdate(firstJob);
         repository.createOrUpdate(secondJob);
 
         final JobsController jobsController = new JobsController(repository);
 
-        Object job = jobsController.findJobsAsJson("SOME_TYPE");
+        // when
+        Object job = jobsController.findJobsAsJson(null, 1);
+
+        // then
+        assertThat(job, is(asList(representationOf(secondJob))));
+    }
+
+    @Test
+    public void shouldReturnAllJobsOfType() {
+        final InMemJobRepository repository = new InMemJobRepository();
+        final JobInfo firstJob = jobInfoBuilder("SOME_TYPE", create("/test/42"))
+                .build();
+        final JobInfo secondJob = jobInfoBuilder("SOME_OTHER_TYPE", create("/test/43"))
+                .build();
+        repository.createOrUpdate(firstJob);
+        repository.createOrUpdate(secondJob);
+
+        final JobsController jobsController = new JobsController(repository);
+
+        Object job = jobsController.findJobsAsJson("SOME_TYPE", 100);
         assertThat(job, is(asList(representationOf(firstJob))));
     }
 
@@ -91,9 +116,9 @@ public class JobsControllerTest {
     @SuppressWarnings("unchecked")
     public void shouldReturnAllJobsOfTypeAsHtml() {
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo firstJob = jobInfoBuilder(() -> "SOME_TYPE", create("/test/42"))
+        final JobInfo firstJob = jobInfoBuilder("SOME_TYPE", create("/test/42"))
                 .build();
-        final JobInfo secondJob = jobInfoBuilder(() -> "SOME_OTHER_TYPE", create("/test/43"))
+        final JobInfo secondJob = jobInfoBuilder("SOME_OTHER_TYPE", create("/test/43"))
                 .build();
         repository.createOrUpdate(firstJob);
         repository.createOrUpdate(secondJob);

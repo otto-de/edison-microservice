@@ -14,7 +14,7 @@ import static java.util.Collections.unmodifiableList;
 public class JobInfo {
 
     private final URI jobUri;
-    private final JobType jobType;
+    private final String jobType;
     private final OffsetDateTime started;
     private final Optional<OffsetDateTime> stopped;
     private final List<JobMessage> messages;
@@ -23,7 +23,7 @@ public class JobInfo {
 
     public enum JobStatus { OK, ERROR, DEAD;}
 
-    public JobInfo(final JobType jobType,
+    public JobInfo(final String jobType,
             final URI jobUri,
             final OffsetDateTime started,
             final Optional<OffsetDateTime> stopped,
@@ -47,7 +47,7 @@ public class JobInfo {
         return jobUri;
     }
 
-    public JobType getJobType() {
+    public String getJobType() {
         return jobType;
     }
 

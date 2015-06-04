@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobType;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,7 +62,7 @@ public class DefaultJobService implements JobService {
     private JobRunnable metered(final JobRunnable delegate) {
         return new JobRunnable() {
             @Override
-            public JobType getJobType() {
+            public String getJobType() {
                 return delegate.getJobType();
             }
 
@@ -75,7 +74,7 @@ public class DefaultJobService implements JobService {
             }
 
             private String gaugeName() {
-                return "gauge.jobs.runtime." + delegate.getJobType().name().toLowerCase();
+                return "gauge.jobs.runtime." + delegate.getJobType().toLowerCase();
             }
         };
     }

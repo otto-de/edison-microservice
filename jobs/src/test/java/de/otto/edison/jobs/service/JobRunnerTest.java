@@ -2,7 +2,6 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.JobType;
 import de.otto.edison.jobs.repository.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.testsupport.util.TestClock;
@@ -11,11 +10,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.time.*;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalField;
-import java.time.temporal.TemporalUnit;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,14 +28,8 @@ import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.net.URI.create;
 import static java.time.Clock.fixed;
-import static java.time.Clock.tick;
-import static java.time.Clock.tickSeconds;
-import static java.time.Duration.of;
-import static java.time.Duration.ofSeconds;
-import static java.time.OffsetDateTime.now;
 import static java.time.OffsetDateTime.ofInstant;
 import static java.time.ZoneId.systemDefault;
-import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -69,7 +60,7 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(()->"NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         // then
@@ -83,7 +74,7 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         // then
@@ -96,7 +87,7 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         // then
@@ -121,17 +112,17 @@ public class JobRunnerTest {
 
         clock = mock(Clock.class);
         when(clock.getZone()).thenReturn(systemDefault());
-        when(clock.instant()).thenReturn(Instant.ofEpochSecond(0L),Instant.ofEpochSecond(1L),Instant.ofEpochSecond(2L));
+        when(clock.instant()).thenReturn(Instant.ofEpochSecond(0L), Instant.ofEpochSecond(1L), Instant.ofEpochSecond(2L));
 
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         //then
         List<JobInfo> jobInfoHistory = historyOfSavedJobInfos(repository, 3);
 
-        assertThat(jobInfoHistory.get(0).getLastUpdated(),is(startedTime));
-        assertThat(jobInfoHistory.get(1).getLastUpdated(),is(loggingTime));
-        assertThat(jobInfoHistory.get(2).getLastUpdated(),is(finishTime));
+        assertThat(jobInfoHistory.get(0).getLastUpdated(), is(startedTime));
+        assertThat(jobInfoHistory.get(1).getLastUpdated(), is(loggingTime));
+        assertThat(jobInfoHistory.get(2).getLastUpdated(), is(finishTime));
     }
 
     @Test
@@ -140,7 +131,7 @@ public class JobRunnerTest {
         TestClock testClock = TestClock.now();
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository, testClock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, testClock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         //then
@@ -164,7 +155,7 @@ public class JobRunnerTest {
 
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder(() -> "NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
 
@@ -175,15 +166,15 @@ public class JobRunnerTest {
 
     private List<JobInfo> historyOfSavedJobInfos(JobRepository repository, int wantedNumberOfInvocations) {
         ArgumentCaptor<JobInfo> jobInfoArgumentCaptor = ArgumentCaptor.forClass(JobInfo.class);
-        verify(repository,times(wantedNumberOfInvocations)).createOrUpdate(jobInfoArgumentCaptor.capture());
+        verify(repository, times(wantedNumberOfInvocations)).createOrUpdate(jobInfoArgumentCaptor.capture());
 
         return jobInfoArgumentCaptor.getAllValues();
     }
 
     private static class SomeJobRunnable implements JobRunnable {
         @Override
-        public JobType getJobType() {
-            return () -> "NAME";
+        public String getJobType() {
+            return "NAME";
         }
 
         @Override

@@ -17,7 +17,7 @@ public class InMemJobInfoRepositoryTest {
         // given
         final InMemJobRepository repository = new InMemJobRepository();
         // when
-        final JobInfo job = jobInfoBuilder(()->"MYJOB", create("/jobs/" + randomUUID())).build();
+        final JobInfo job = jobInfoBuilder("MYJOB", create("/jobs/" + randomUUID())).build();
         repository.createOrUpdate(job);
         // then
         assertThat(repository.findBy(job.getJobUri()), isPresent());

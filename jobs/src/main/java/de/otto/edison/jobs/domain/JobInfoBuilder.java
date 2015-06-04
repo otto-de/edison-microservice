@@ -11,7 +11,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 public class JobInfoBuilder {
-    private final JobType type;
+    private final String type;
     private final URI jobUri;
     private final List<JobMessage> messages;
     private OffsetDateTime started;
@@ -19,7 +19,7 @@ public class JobInfoBuilder {
     private JobInfo.JobStatus status;
     private OffsetDateTime lastUpdated;
 
-    private JobInfoBuilder(final JobType type, final URI jobUri) {
+    private JobInfoBuilder(final String type, final URI jobUri) {
         this.type = type;
         this.jobUri = jobUri;
         messages = new CopyOnWriteArrayList<>();
@@ -39,7 +39,7 @@ public class JobInfoBuilder {
         this.lastUpdated = prototype.getLastUpdated();
     }
 
-    public static JobInfoBuilder jobInfoBuilder(final JobType type, final URI uri) {
+    public static JobInfoBuilder jobInfoBuilder(final String type, final URI uri) {
         return new JobInfoBuilder(type, uri);
     }
 

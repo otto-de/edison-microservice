@@ -1,6 +1,5 @@
 package de.otto.edison.jobs.configuration;
 
-import de.otto.edison.jobs.domain.JobType;
 import de.otto.edison.jobs.repository.*;
 import de.otto.edison.jobs.service.DefaultJobService;
 import de.otto.edison.jobs.service.JobService;
@@ -54,7 +53,7 @@ public class JobConfiguration {
     }
 
     private KeepLastJobs keepLastJobsStrategy() {
-        return new KeepLastJobs(NUMBER_OF_JOBS_TO_KEEP, Optional.<JobType>empty());
+        return new KeepLastJobs(NUMBER_OF_JOBS_TO_KEEP);
     }
 
     private StopDeadJobs deadJobStrategy() {

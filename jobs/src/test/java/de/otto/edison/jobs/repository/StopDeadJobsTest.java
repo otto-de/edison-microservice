@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobType;
 import org.testng.annotations.Test;
 
 import java.net.URI;
@@ -21,7 +20,7 @@ import static org.hamcrest.Matchers.is;
 @Test
 public class StopDeadJobsTest {
 
-    private static final JobType type = () -> "TYPE2";
+    private static final String type = "TYPE2";
 
     @Test
     public void shouldOnlyMarkOldJobAsStopped() throws Exception {
