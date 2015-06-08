@@ -36,8 +36,11 @@ public final class JobRunner {
         this.executorService = executorService;
     }
 
-    public static JobRunner newJobRunner(final JobInfo job, final JobRepository repository, final Clock clock, final ScheduledExecutorService executorService) {
-        return new JobRunner(job, repository, clock, executorService);
+    public static JobRunner createAndPersistJobRunner(final JobInfo job, final JobRepository repository, final Clock clock, final ScheduledExecutorService executorService) {
+        JobRunner jobRunner = new JobRunner(job, repository, clock, executorService);
+        jobRunner.createOrUpdateJob();
+        return jobRunner;
+
     }
 
     public void start(final JobRunnable runnable) {
@@ -52,7 +55,6 @@ public final class JobRunner {
     }
 
     private void log(final JobMessage jobMessage) {
-        synchronized (this) {
             switch (jobMessage.getLevel()) {
                 case WARNING:
                     LOG.warn(jobMessage.getMessage());
@@ -61,6 +63,7 @@ public final class JobRunner {
                     LOG.info(jobMessage.getMessage());
             }
 
+        synchronized (this) {
             job = copyOf(job).addMessage(jobMessage)
                     .build();
             createOrUpdateJob();
@@ -73,7 +76,6 @@ public final class JobRunner {
         final String jobId = job.getJobUri().toString();
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
         MDC.put("job_type", job.getJobType().toString());
-        createOrUpdateJob();
         LOG.info("[started]");
     }
 
