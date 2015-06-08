@@ -20,7 +20,7 @@ public class JobRepositoryCleanup {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobRepositoryCleanup.class);
 
-    public static final long ONE_HOUR = 60 * 60 * 1000L;
+    public static final long THREE_MENUTES = 3 * 60 * 1000L;
 
     @Autowired
     private CounterService counterService;
@@ -30,7 +30,7 @@ public class JobRepositoryCleanup {
     @Autowired
     private List<JobCleanupStrategy> strategies;
 
-    @Scheduled(fixedDelay = ONE_HOUR)
+    @Scheduled(fixedDelay = THREE_MENUTES)
     public void cleanup() {
         try {
             for (final JobCleanupStrategy strategy : strategies) {
