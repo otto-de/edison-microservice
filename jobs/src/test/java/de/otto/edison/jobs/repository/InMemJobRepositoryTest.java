@@ -15,6 +15,7 @@ import static java.net.URI.create;
 import static java.time.OffsetDateTime.now;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.testng.Assert.assertTrue;
 
 public class InMemJobRepositoryTest {
 
@@ -151,5 +152,27 @@ public class InMemJobRepositoryTest {
 
         // then
         assertThat(runningJob, is(nullValue()));
+    }
+
+    @Test
+    public void shouldFindAllJobsOfSpecificType() throws Exception {
+        // Given
+        final String type1 = "TYPE1";
+        final String type2 = "TYPE2";
+
+        repository.createOrUpdate(jobInfoBuilder(type1, create("1")).build());
+        repository.createOrUpdate(jobInfoBuilder(type2, create("2")).build());
+        repository.createOrUpdate(jobInfoBuilder(type1, create("3")).build());
+
+        // When
+        final List<JobInfo> jobsType1 = repository.findByType(type1);
+        final List<JobInfo> jobsType2 = repository.findByType(type2);
+
+        // Then
+        assertThat(jobsType1.size(), is(2));
+        assertTrue(jobsType1.stream().anyMatch(job -> job.getJobUri().equals(create("1"))));
+        assertTrue(jobsType1.stream().anyMatch(job -> job.getJobUri().equals(create("3"))));
+        assertThat(jobsType2.size(), is(1));
+        assertTrue(jobsType2.stream().anyMatch(job -> job.getJobUri().equals(create("2"))));
     }
 }

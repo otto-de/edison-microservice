@@ -4,10 +4,10 @@ import de.otto.edison.jobs.domain.JobInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static java.util.Comparator.comparing;
@@ -28,13 +28,16 @@ public class KeepLastJobs implements JobCleanupStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(KeepLastJobs.class);
 
     private final int numberOfJobsToKeep;
+    private final Optional<String> jobType;
 
     /**
      * @param numberOfJobsToKeep the number of jobs that are kept
+     * @param jobType            the optional type of the jobs
      */
-    public KeepLastJobs(final int numberOfJobsToKeep) {
+    public KeepLastJobs(final int numberOfJobsToKeep, final Optional<String> jobType) {
         this.numberOfJobsToKeep = numberOfJobsToKeep;
-        LOG.info("KeepLastJobs strategy configured with numberOfJobsToKeep=" + numberOfJobsToKeep);
+        this.jobType = jobType;
+        LOG.info("KeepLastJobs strategy configured with numberOfJobsToKeep=" + numberOfJobsToKeep + ", jobType=" + jobType.toString());
     }
 
     /**
@@ -44,15 +47,17 @@ public class KeepLastJobs implements JobCleanupStrategy {
      */
     @Override
     public void doCleanUp(final JobRepository repository) {
-        final List<JobInfo> jobs = repository.findAll();
+        final List<JobInfo> jobs = jobType.isPresent()
+                ? repository.findByType(jobType.get())
+                : repository.findAll();
 
         if (jobs.size() > numberOfJobsToKeep) {
-            jobsToDelete(jobs)
+            findJobsToDelete(jobs)
                     .forEach(jobInfo -> repository.removeIfStopped(jobInfo.getJobUri()));
         }
     }
 
-    private List<JobInfo> jobsToDelete(List<JobInfo> jobs) {
+    private List<JobInfo> findJobsToDelete(List<JobInfo> jobs) {
         int numberOfJobsToDelete = jobs.size() - numberOfJobsToKeep;
         List<JobInfo> lastOKJobs = findLastOKJobs(jobs);
 
@@ -76,6 +81,4 @@ public class KeepLastJobs implements JobCleanupStrategy {
         }).filter(Optional::isPresent).map(Optional::get)
                 .collect(Collectors.toList());
     }
-
-
 }

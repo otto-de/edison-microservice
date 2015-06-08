@@ -5,7 +5,7 @@ import de.otto.edison.jobs.repository.KeepLastJobs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static java.util.Optional.of;
+import java.util.Optional;
 
 /**
  * @author Guido Steinacker
@@ -16,7 +16,7 @@ public class ExampleJobsConfiguration {
 
     @Bean
     public JobCleanupStrategy keepLast10FooJobsCleanupStrategy() {
-        return new KeepLastJobs(10);
+        return new KeepLastJobs(10, Optional.empty());
     }
 
 }
