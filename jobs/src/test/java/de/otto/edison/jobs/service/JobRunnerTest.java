@@ -24,7 +24,7 @@ import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.service.JobRunner.PING_PERIOD;
-import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
+import static de.otto.edison.jobs.service.JobRunner.createAndPersistJobRunner;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.net.URI.create;
 import static java.time.Clock.fixed;
@@ -60,7 +60,7 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         // then
@@ -70,13 +70,12 @@ public class JobRunnerTest {
     }
 
     @Test
-    public void shouldPersistJobInfo() {
+    public void shouldPersistJobInfoInConstructor() {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
-        jobRunner.start(new SomeJobRunnable());
+        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // then
         final Optional<JobInfo> optionalJob = repository.findBy(jobUri);
         assertThat(optionalJob, isPresent());
@@ -87,7 +86,7 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         // then
@@ -114,7 +113,7 @@ public class JobRunnerTest {
         when(clock.getZone()).thenReturn(systemDefault());
         when(clock.instant()).thenReturn(Instant.ofEpochSecond(0L), Instant.ofEpochSecond(1L), Instant.ofEpochSecond(2L));
 
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         //then
@@ -131,7 +130,7 @@ public class JobRunnerTest {
         TestClock testClock = TestClock.now();
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, testClock, scheduledExecutorService);
+        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, testClock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
         //then
@@ -155,7 +154,7 @@ public class JobRunnerTest {
 
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
-        final JobRunner jobRunner = newJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
         // when
         jobRunner.start(new SomeJobRunnable());
 

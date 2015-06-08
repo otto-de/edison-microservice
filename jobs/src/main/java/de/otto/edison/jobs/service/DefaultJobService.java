@@ -11,7 +11,7 @@ import java.time.Clock;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
-import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
+import static de.otto.edison.jobs.service.JobRunner.createAndPersistJobRunner;
 import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
 import static java.time.Clock.systemDefaultZone;
@@ -53,7 +53,8 @@ public class DefaultJobService implements JobService {
 
     private URI startAsync(final JobRunnable jobRunnable) {
         final JobInfo jobInfo = jobInfoBuilder(jobRunnable.getJobType(), newJobUri()).build();
-        executor.execute(() -> newJobRunner(jobInfo, repository, clock, executor).start(jobRunnable));
+        JobRunner jobRunner = createAndPersistJobRunner(jobInfo, repository, clock, executor);
+        executor.execute(() -> jobRunner.start(jobRunnable));
         return jobInfo.getJobUri();
     }
 
