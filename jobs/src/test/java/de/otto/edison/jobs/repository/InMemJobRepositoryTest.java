@@ -1,26 +1,20 @@
 package de.otto.edison.jobs.repository;
 
-import com.sun.scenario.effect.Offset;
 import de.otto.edison.jobs.domain.JobInfo;
 import org.hamcrest.collection.IsCollectionWithSize;
-import org.hamcrest.core.IsCollectionContaining;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
 import java.util.List;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static java.net.URI.create;
 import static java.time.OffsetDateTime.now;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class InMemJobRepositoryTest {
 
@@ -129,5 +123,33 @@ public class InMemJobRepositoryTest {
         assertThat(jobInfos.get(0).getJobUri(), is(create("youngest")));
         assertThat(jobInfos.get(1).getJobUri(), is(create("other")));
         assertThat(jobInfos, hasSize(2));
+    }
+
+    @Test
+    public void shouldFindARunningJobGivenAType() throws Exception {
+        // given
+        final OffsetDateTime someTime = now();
+        final String someType = "someType";
+
+        repository.createOrUpdate(jobInfoBuilder(someType, create("some/job/oldest")).withStopped(someTime.minusSeconds(2)).build());
+        repository.createOrUpdate(jobInfoBuilder(someType, create("some/job/running")).build());
+        repository.createOrUpdate(jobInfoBuilder("someOtherType", create("some/other/job")).build());
+
+        // when
+        final JobInfo runningJob = repository.findRunningJobByType(someType);
+
+        // then
+        assertThat(runningJob.getJobUri(), is(URI.create("some/job/running")));
+    }
+
+    @Test
+    public void shouldReturnNullIfNoRunningJobOfTypePresent() throws Exception {
+        // given
+        
+        // when
+        final JobInfo runningJob = repository.findRunningJobByType("someType");
+
+        // then
+        assertThat(runningJob, is(nullValue()));
     }
 }
