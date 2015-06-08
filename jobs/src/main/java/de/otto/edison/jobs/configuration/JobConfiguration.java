@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static java.time.Clock.systemDefaultZone;
@@ -52,7 +53,7 @@ public class JobConfiguration {
     }
 
     private KeepLastJobs keepLastJobsStrategy() {
-        return new KeepLastJobs(NUMBER_OF_JOBS_TO_KEEP);
+        return new KeepLastJobs(NUMBER_OF_JOBS_TO_KEEP, Optional.empty());
     }
 
     private StopDeadJobs deadJobStrategy() {

@@ -19,6 +19,8 @@ public interface JobRepository {
 
     List<JobInfo> findAll();
 
+    List<JobInfo> findByType(String jobType);
+
     JobInfo findRunningJobByType(String jobType);
 
     void createOrUpdate(JobInfo job);
