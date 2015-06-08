@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static java.time.Clock.systemDefaultZone;
@@ -22,7 +21,7 @@ public class JobConfiguration {
 
     public static final int N_THREADS = 10;
     public static final int NUMBER_OF_JOBS_TO_KEEP = 100;
-    public static final int SECONDS_TO_MARK_JOBS_AS_STOPPED = 20;
+    public static final int SECONDS_TO_MARK_JOBS_AS_DEAD = 20;
 
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
@@ -57,7 +56,7 @@ public class JobConfiguration {
     }
 
     private StopDeadJobs deadJobStrategy() {
-        return new StopDeadJobs(SECONDS_TO_MARK_JOBS_AS_STOPPED, systemDefaultZone());
+        return new StopDeadJobs(SECONDS_TO_MARK_JOBS_AS_DEAD, systemDefaultZone());
     }
 
 }
