@@ -43,7 +43,7 @@ public class InMemJobRepository implements JobRepository {
         return jobs.values()
                 .stream()
                 .sorted(STARTED_TIME_DESC_COMPARATOR)
-                .filter(jobInfo -> jobInfo.getJobType() == type)
+                .filter(jobInfo -> jobInfo.getJobType().equals(type))
                 .collect(toList());
     }
 
