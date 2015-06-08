@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
@@ -58,6 +59,14 @@ public class InMemJobRepository implements JobRepository {
         return jobs.values().stream()
                 .sorted(STARTED_TIME_DESC_COMPARATOR)
                 .collect(toList());
+    }
+
+    @Override
+    public JobInfo findRunningJobByType(String jobType) {
+        final List<JobInfo> runningJobsOfType = jobs.values().stream()
+                .filter(job -> job.getJobType().equals(jobType) && !job.getStopped().isPresent())
+                .collect(Collectors.toList());
+        return runningJobsOfType.isEmpty() ? null : runningJobsOfType.get(0);
     }
 
     @Override
