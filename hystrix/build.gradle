@@ -1,6 +1,7 @@
 
 dependencies {
     compile libs.springBoot
+    compile libs.springBootWeb
     compile libs.hystrix
     compile libs.asyncHttp
     compile libs.logging
