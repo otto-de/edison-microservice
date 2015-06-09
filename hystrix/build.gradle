@@ -1,15 +1,15 @@
-
 dependencies {
     compile libs.springBoot
-    compile libs.springBootWeb
     compile libs.hystrix
     compile libs.asyncHttp
     compile libs.logging
     compile libs.jcip
+    // TODO: Should be replaced by springBootWeb once P13N was converted to spring boot
+    compile libs.servlet
 
     testCompile libs.testUnit
-
     testCompile project(":testsupport")
+
 }
 
 artifacts {
