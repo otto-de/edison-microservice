@@ -8,6 +8,6 @@ package de.otto.edison.jobs.repository;
  */
 public interface JobCleanupStrategy {
 
-    void doCleanUp(final JobRepository repository);
+    void doCleanUp();
 
 }
