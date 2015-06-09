@@ -19,18 +19,21 @@ import static org.hamcrest.Matchers.is;
 public class KeepLastJobsTest {
 
 
+
+
     @Test
     public void shouldRemoveJobsWithMatchingJobType() {
         // given
         String type = "TYPE2";
-        KeepLastJobs strategy = new KeepLastJobs(1, Optional.of(type));
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(jobInfoBuilder("TYPE1", create("foo")).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder(type, create("foobar")).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder(type, create("bar")).withStopped(now()).build());
         }};
+        KeepLastJobs strategy = new KeepLastJobs(1, Optional.of(type));
+        strategy.setJobRepository(repository);
         // when
-        strategy.doCleanUp(repository);
+        strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(2));
         assertThat(repository.findByType(type), hasSize(1));
@@ -45,8 +48,9 @@ public class KeepLastJobsTest {
             createOrUpdate(jobInfoBuilder("TYPE", create("foobar")).withStarted(now().minusSeconds(2)).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder("TYPE", create("bar")).withStarted(now().minusSeconds(1)).withStopped(now()).build());
         }};
+        strategy.setJobRepository(repository);
         // when
-        strategy.doCleanUp(repository);
+        strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(2));
         assertThat(repository.findBy(create("foobar")), isAbsent());
@@ -64,8 +68,9 @@ public class KeepLastJobsTest {
             createOrUpdate(jobInfoBuilder(type, create("four")).withStarted(now().minusSeconds(1)).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder(type, create("five")).withStarted(now()).withStopped(now()).build());
         }};
+        strategy.setJobRepository(repository);
         // when
-        strategy.doCleanUp(repository);
+        strategy.doCleanUp();
         // then
         assertThat(repository.findBy(create("one")), isPresent());
         assertThat(repository.findBy(create("two")), isPresent());
@@ -88,8 +93,9 @@ public class KeepLastJobsTest {
             createOrUpdate(jobInfoBuilder(type, create("four")).withStarted(now().minusSeconds(2)).withStopped(now().minusSeconds(1)).build());
             createOrUpdate(jobInfoBuilder(type, create("five")).withStarted(now()).withStopped(now()).build());
         }};
+        strategy.setJobRepository(repository);
         // when
-        strategy.doCleanUp(repository);
+        strategy.doCleanUp();
         // then
         assertThat(repository.findBy(create("one")), isPresent());
         assertThat(repository.findBy(create("two")), isPresent());
@@ -111,8 +117,9 @@ public class KeepLastJobsTest {
             createOrUpdate(jobInfoBuilder(type, create("foobar")).withStarted(now().minusSeconds(2)).withStatus(OK).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder(type, create("bar")).withStarted(now().minusSeconds(1)).withStatus(ERROR).withStopped(now()).build());
         }};
+        strategy.setJobRepository(repository);
         // when
-        strategy.doCleanUp(repository);
+        strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(2));
         assertThat(repository.findBy(create("foobar")), isPresent());
@@ -130,8 +137,9 @@ public class KeepLastJobsTest {
             createOrUpdate(jobInfoBuilder(type, create("foobar")).build());
             createOrUpdate(jobInfoBuilder(type, create("bar")).build());
         }};
+        strategy.setJobRepository(repository);
         // when
-        strategy.doCleanUp(repository);
+        strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(3));
         assertThat(repository.findByType(type), hasSize(2));
@@ -146,8 +154,9 @@ public class KeepLastJobsTest {
             createOrUpdate(jobInfoBuilder("TYPE", create("foobar")).withStopped(now()).build());
             createOrUpdate(jobInfoBuilder("TYPE", create("bar")).withStopped(now()).build());
         }};
+        strategy.setJobRepository(repository);
         // when
-        strategy.doCleanUp(repository);
+        strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(2));
     }
@@ -159,8 +168,9 @@ public class KeepLastJobsTest {
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(jobInfoBuilder("TYPE", create("bar")).withStopped(now()).build());
         }};
+        strategy.setJobRepository(repository);
         // when
-        strategy.doCleanUp(repository);
+        strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(1));
     }

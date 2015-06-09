@@ -38,9 +38,10 @@ public class StopDeadJobsTest {
         }};
 
         StopDeadJobs strategy = new StopDeadJobs(21, clock);
+        strategy.setJobRepository(repository);
 
         //when
-        strategy.doCleanUp(repository);
+        strategy.doCleanUp();
 
         //then
         JobInfo toBeStopped = repository.findBy(URI.create("runningJobToBeStopped")).get();

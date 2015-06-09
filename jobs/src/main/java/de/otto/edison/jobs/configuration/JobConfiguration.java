@@ -1,8 +1,12 @@
 package de.otto.edison.jobs.configuration;
 
-import de.otto.edison.jobs.repository.*;
+import de.otto.edison.jobs.repository.InMemJobRepository;
+import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.repository.KeepLastJobs;
+import de.otto.edison.jobs.repository.StopDeadJobs;
 import de.otto.edison.jobs.service.DefaultJobService;
 import de.otto.edison.jobs.service.JobService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,14 +24,19 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 @EnableScheduling
 public class JobConfiguration {
 
-    public static final int N_THREADS = 10;
-    public static final int NUMBER_OF_JOBS_TO_KEEP = 100;
-    public static final int SECONDS_TO_MARK_JOBS_AS_DEAD = 20;
+    @Value("${edison.jobs.scheduler.thread.count:10}")
+    int numberOfThreads;
+
+    @Value("${edison.jobs.number.to.keep:100}")
+    int numberOfJobsToKeep;
+
+    @Value("${edison.jobs.mark.dead.after:20}")
+    int secondsToMarkJobsAsDead;
 
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
     public ScheduledExecutorService scheduledExecutorService() {
-        return newScheduledThreadPool(N_THREADS);
+        return newScheduledThreadPool(numberOfThreads);
     }
 
     @Bean
@@ -38,26 +47,19 @@ public class JobConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JobService.class)
-    public JobService jobService() { return new DefaultJobService(); }
-
-    @Bean
-    @ConditionalOnMissingBean(JobRepositoryCleanup.class)
-    public JobRepositoryCleanup jobRepositoryCleanup() {
-        return new JobRepositoryCleanup();
+    public JobService jobService() {
+        return new DefaultJobService();
     }
 
     @Bean
-    @ConditionalOnMissingBean(JobCleanupStrategy.class)
-    public AggregateCleanupStrategy defaultJobCleanupStrategy() {
-        return new AggregateCleanupStrategy(deadJobStrategy(), keepLastJobsStrategy());
+    @ConditionalOnMissingBean(KeepLastJobs.class)
+    public KeepLastJobs keepLastJobsStrategy() {
+        return new KeepLastJobs(numberOfJobsToKeep, Optional.empty());
     }
 
-    private KeepLastJobs keepLastJobsStrategy() {
-        return new KeepLastJobs(NUMBER_OF_JOBS_TO_KEEP, Optional.empty());
+    @Bean
+    @ConditionalOnMissingBean(StopDeadJobs.class)
+    public StopDeadJobs deadJobStrategy() {
+        return new StopDeadJobs(secondsToMarkJobsAsDead, systemDefaultZone());
     }
-
-    private StopDeadJobs deadJobStrategy() {
-        return new StopDeadJobs(SECONDS_TO_MARK_JOBS_AS_DEAD, systemDefaultZone());
-    }
-
 }
