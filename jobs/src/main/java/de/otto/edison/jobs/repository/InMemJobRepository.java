@@ -49,7 +49,7 @@ public class InMemJobRepository implements JobRepository {
     @Override
     public List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset) {
         return jobs.values().stream()
-                .filter(jobInfo -> jobInfo.getLastUpdated().isBefore(timeOffset))
+                .filter(jobInfo -> !jobInfo.isStopped() && jobInfo.getLastUpdated().isBefore(timeOffset))
                 .collect(toList());
     }
 
