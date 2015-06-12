@@ -76,9 +76,11 @@ public class InMemJobRepositoryTest {
     public void shouldFindRunningJobsWithoutUpdatedSinceSpecificDate() throws Exception {
         // given
         final String type = "TEST";
-        repository.createOrUpdate(jobInfoBuilder(type, create("deadJob")).withLastUpdated(now().minusHours(2)).build());
-        repository.createOrUpdate(jobInfoBuilder(type, create("running")).withLastUpdated(now()).build());
-        repository.createOrUpdate(jobInfoBuilder(type, create("stopped")).withStopped(now().minusMinutes(10)).build());
+        final OffsetDateTime someTime = now();
+
+        repository.createOrUpdate(jobInfoBuilder(type, create("deadJob")).withLastUpdated(someTime.minusHours(2)).build());
+        repository.createOrUpdate(jobInfoBuilder(type, create("running")).withLastUpdated(someTime).build());
+        repository.createOrUpdate(jobInfoBuilder(type, create("stopped")).withStopped(someTime.minusMinutes(10)).withLastUpdated(someTime.minusHours(1)).build());
 
         // when
         final List<JobInfo> jobInfos = repository.findRunningWithoutUpdateSince(OffsetDateTime.now().minus(1, ChronoUnit.HOURS));
