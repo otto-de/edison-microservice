@@ -33,9 +33,9 @@ import static org.slf4j.LoggerFactory.getLogger;
         "edison.metrics.graphite.port",
         "edison.metrics.graphite.prefix"}
 )
-public class GraphiteConfiguration {
+public class GraphiteReporterConfiguration {
 
-    private static final Logger LOG = getLogger(GraphiteConfiguration.class);
+    private static final Logger LOG = getLogger(GraphiteReporterConfiguration.class);
 
     @Value("${edison.metrics.graphite.host}")
     private String graphiteHost;
