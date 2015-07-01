@@ -1,15 +1,15 @@
 ext.libs = [
 
         springBoot: [
-                "org.springframework.boot:spring-boot:1.2.2.RELEASE",
-                "org.springframework.boot:spring-boot-autoconfigure:1.2.2.RELEASE"
+                "org.springframework.boot:spring-boot:1.2.4.RELEASE",
+                "org.springframework.boot:spring-boot-autoconfigure:1.2.4.RELEASE"
         ],
         springBootWeb: [
-                "org.springframework.boot:spring-boot-starter-web:1.2.2.RELEASE",
-                "org.springframework.boot:spring-boot-starter-actuator:1.2.2.RELEASE"
+                "org.springframework.boot:spring-boot-starter-web:1.2.4.RELEASE",
+                "org.springframework.boot:spring-boot-starter-actuator:1.2.4.RELEASE"
         ],
         springBootThymeleaf:
-                "org.springframework.boot:spring-boot-starter-thymeleaf:1.2.2.RELEASE",
+                "org.springframework.boot:spring-boot-starter-thymeleaf:1.2.4.RELEASE",
 
         hystrix: [
                 "com.netflix.hystrix:hystrix-core:1.4.12",
@@ -29,6 +29,7 @@ ext.libs = [
                 "io.dropwizard.metrics:metrics-healthchecks:3.1.0",
                 "io.dropwizard.metrics:metrics-jvm:3.1.0"
         ],
+        metricsSpring: "com.ryantenney.metrics:metrics-spring:3.1.0",
         testUnit: [
                 "org.testng:testng:6.1.1",
                 "org.hamcrest:hamcrest-core:1.3",
