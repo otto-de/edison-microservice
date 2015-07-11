@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.repository.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.mockito.invocation.InvocationOnMock;
@@ -12,6 +13,9 @@ import org.testng.annotations.Test;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +24,10 @@ import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.time.Clock.fixed;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -93,6 +100,38 @@ public class DefaultJobServiceTest {
         // then:
         final JobInfo jobInfo = jobRepository.findBy(jobUri).get();
         assertThat(jobInfo.getStopped(), isPresent());
+    }
+
+    @Test
+    public void shouldNotRunSameJobsInParallel() {
+        // given:
+        final Clock clock = fixed(Instant.now(), systemDefault());
+        final InMemJobRepository jobRepository = new InMemJobRepository();
+        final JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobType()).thenReturn("BAR");
+        URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
+        jobRepository.createOrUpdate(new JobInfo("BAR", alreadyRunningJob, OffsetDateTime.now(), Optional.<OffsetDateTime>empty(), Collections.<JobMessage>emptyList(), JobInfo.JobStatus.OK, OffsetDateTime.now()));
+        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, asList(jobRunnable), mock(GaugeService.class), clock, executorService);
+        // when:
+        final URI jobUri = jobService.startAsyncJob("bar");
+        // then:
+        assertThat(jobUri, is(alreadyRunningJob));
+    }
+
+    @Test
+    public void shouldRunDifferentJobsInParallel() {
+        // given:
+        final Clock clock = fixed(Instant.now(), systemDefault());
+        final InMemJobRepository jobRepository = new InMemJobRepository();
+        final JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobType()).thenReturn("FOO");
+        URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
+        jobRepository.createOrUpdate(new JobInfo("BAR", alreadyRunningJob, OffsetDateTime.now(), Optional.<OffsetDateTime>empty(), Collections.<JobMessage>emptyList(), JobInfo.JobStatus.OK, OffsetDateTime.now()));
+        final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, asList(jobRunnable), mock(GaugeService.class), clock, executorService);
+        // when:
+        final URI jobUri = jobService.startAsyncJob("foo");
+        // then:
+        assertThat(jobUri, is(not(alreadyRunningJob)));
     }
 
     @Test

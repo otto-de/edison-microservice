@@ -2,6 +2,8 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.JobRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.GaugeService;
@@ -19,6 +21,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
 import static java.time.Clock.systemDefaultZone;
 import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
 import static java.util.UUID.randomUUID;
 
 /**
@@ -26,6 +29,8 @@ import static java.util.UUID.randomUUID;
  * @since 15.02.15
  */
 public class DefaultJobService implements JobService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultJobService.class);
 
     @Autowired
     private JobRepository repository;
@@ -67,7 +72,13 @@ public class DefaultJobService implements JobService {
 
     @Override
     public URI startAsyncJob(final JobRunnable jobRunnable) {
-        return startAsync(metered(jobRunnable));
+        final JobInfo alreadyRunning = repository.findRunningJobByType(jobRunnable.getJobType());
+        if (isNull(alreadyRunning)) {
+            return startAsync(metered(jobRunnable));
+        } else {
+            LOG.info("Job {} triggered but not started - still running.", alreadyRunning.getJobUri());
+            return alreadyRunning.getJobUri();
+        }
     }
 
     @Override
