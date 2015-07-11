@@ -8,6 +8,9 @@ import org.springframework.boot.actuate.metrics.GaugeService;
 
 import java.net.URI;
 import java.time.Clock;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
@@ -15,6 +18,7 @@ import static de.otto.edison.jobs.service.JobRunner.createAndPersistJobRunner;
 import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
 import static java.time.Clock.systemDefaultZone;
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
 /**
@@ -29,6 +33,9 @@ public class DefaultJobService implements JobService {
     private ScheduledExecutorService executor;
     @Autowired
     private GaugeService gaugeService;
+    @Autowired(required = false)
+    private List<JobRunnable> jobRunnables = emptyList();
+
 
     @Value("${server.contextPath}")
     private String serverContextPath;
@@ -38,17 +45,43 @@ public class DefaultJobService implements JobService {
         this.clock = systemDefaultZone();
     }
 
-    DefaultJobService(final String serverContextPath, final JobRepository jobRepository, final GaugeService gaugeService, final Clock clock, final ScheduledExecutorService executor) {
+    public DefaultJobService(final String serverContextPath,
+                      final JobRepository jobRepository,
+                      final List<JobRunnable> jobRunnables,
+                      final GaugeService gaugeService,
+                      final Clock clock,
+                      final ScheduledExecutorService executor) {
         this.serverContextPath = serverContextPath;
         this.repository = jobRepository;
+        this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
         this.clock = clock;
         this.executor = executor;
     }
 
     @Override
+    public URI startAsyncJob(String jobType) {
+        final Optional<JobRunnable> jobRunnable = jobRunnables.stream().filter((r) -> r.getJobType().equalsIgnoreCase(jobType)).findFirst();
+        return startAsyncJob(jobRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for" + jobType)));
+    }
+
+    @Override
     public URI startAsyncJob(final JobRunnable jobRunnable) {
         return startAsync(metered(jobRunnable));
+    }
+
+    @Override
+    public Optional<JobInfo> findJob(final URI uri) {
+        return repository.findBy(uri);
+    }
+
+    @Override
+    public List<JobInfo> findJobs(final String type, final int count) {
+        if (type == null) {
+            return repository.findLatest(count);
+        } else {
+            return repository.findLatestBy(type, count);
+        }
     }
 
     private URI startAsync(final JobRunnable jobRunnable) {
@@ -57,8 +90,6 @@ public class DefaultJobService implements JobService {
         executor.execute(() -> jobRunner.start(jobRunnable));
         return jobInfo.getJobUri();
     }
-
-
 
     private JobRunnable metered(final JobRunnable delegate) {
         return new JobRunnable() {
@@ -81,6 +112,6 @@ public class DefaultJobService implements JobService {
     }
 
     private URI newJobUri() {
-        return create(serverContextPath + "/jobs/" + randomUUID());
+        return create(serverContextPath + "/internal/jobs/" + randomUUID());
     }
 }

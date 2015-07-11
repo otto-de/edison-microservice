@@ -1,6 +1,10 @@
 package de.otto.edison.jobs.service;
 
+import de.otto.edison.jobs.domain.JobInfo;
+
 import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Guido Steinacker
@@ -8,6 +12,11 @@ import java.net.URI;
  */
 public interface JobService {
 
-    public URI startAsyncJob(final JobRunnable jobRunnable);
+    public URI startAsyncJob(String jobType);
 
+    public URI startAsyncJob(JobRunnable jobRunnable);
+
+    public List<JobInfo> findJobs(String type, int count);
+
+    public Optional<JobInfo> findJob(URI uri);
 }
