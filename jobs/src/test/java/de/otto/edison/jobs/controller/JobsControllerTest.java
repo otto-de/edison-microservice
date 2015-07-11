@@ -2,6 +2,8 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.InMemJobRepository;
+import de.otto.edison.jobs.service.DefaultJobService;
+import de.otto.edison.jobs.service.JobService;
 import org.springframework.web.servlet.ModelAndView;
 import org.testng.annotations.Test;
 
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.copyOf;
@@ -28,102 +31,73 @@ public class JobsControllerTest {
 
     @Test
     public void shouldReturn404IfJobIsUnknown() throws IOException {
-        final JobsController jobsController = new JobsController(new InMemJobRepository());
+        // given
+        final JobService jobService = mock(JobService.class);
+        when(jobService.findJob(any(URI.class))).thenReturn(Optional.<JobInfo>empty());
+
+        final JobsController jobsController = new JobsController(jobService);
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("http://127.0.0.1/jobs/42");
 
         final HttpServletResponse response = mock(HttpServletResponse.class);
+        // when
         jobsController.findJob(request, response);
+        // then
         verify(response).sendError(eq(404), anyString());
     }
 
     @Test
     public void shouldReturnJobIfJobExists() throws IOException {
-        final InMemJobRepository repository = new InMemJobRepository();
+        // given
         final JobInfo expectedJob = jobInfoBuilder("TEST", create("/test/42")).build();
-        repository.createOrUpdate(expectedJob);
 
-        final JobsController jobsController = new JobsController(repository);
+        final JobService jobService = mock(JobService.class);
+        when(jobService.findJob(any(URI.class))).thenReturn(Optional.of(expectedJob));
+
+        final JobsController jobsController = new JobsController(jobService);
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(expectedJob.getJobUri().toString());
 
         final HttpServletResponse response = mock(HttpServletResponse.class);
-        Object job = jobsController.findJob(request, response);
+
+        // when
+        final JobRepresentation job = jobsController.findJob(request, response);
+
+        // then
         assertThat(job, is(representationOf(expectedJob)));
     }
 
     @Test
     public void shouldReturnAllJobs() throws IOException {
         // given
-        final InMemJobRepository repository = new InMemJobRepository();
         final JobInfo firstJob = jobInfoBuilder("TEST", create("/test/42"))
                 .build();
         final JobInfo secondJob = jobInfoBuilder("TEST", create("/test/43"))
                 .withStarted(now().plus(10, MILLIS))
                 .build();
-        repository.createOrUpdate(firstJob);
-        repository.createOrUpdate(secondJob);
+        final JobService service = mock(JobService.class);
+        when(service.findJobs(null, 100)).thenReturn(asList(firstJob, secondJob));
 
-        final JobsController jobsController = new JobsController(repository);
+        final JobsController jobsController = new JobsController(service);
 
         // when
         Object job = jobsController.findJobsAsJson(null, 100);
 
         // then
-        assertThat(job, is(asList(representationOf(secondJob), representationOf(firstJob))));
-    }
-
-    @Test
-    public void shouldReturnOneJobs() throws IOException {
-        // given
-        final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo firstJob = jobInfoBuilder("TEST", create("/test/42"))
-                .build();
-        final JobInfo secondJob = jobInfoBuilder("TEST", create("/test/43"))
-                .withStarted(now().plus(10, MILLIS))
-                .build();
-        repository.createOrUpdate(firstJob);
-        repository.createOrUpdate(secondJob);
-
-        final JobsController jobsController = new JobsController(repository);
-
-        // when
-        Object job = jobsController.findJobsAsJson(null, 1);
-
-        // then
-        assertThat(job, is(asList(representationOf(secondJob))));
-    }
-
-    @Test
-    public void shouldReturnAllJobsOfType() {
-        final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo firstJob = jobInfoBuilder("SOME_TYPE", create("/test/42"))
-                .build();
-        final JobInfo secondJob = jobInfoBuilder("SOME_OTHER_TYPE", create("/test/43"))
-                .build();
-        repository.createOrUpdate(firstJob);
-        repository.createOrUpdate(secondJob);
-
-        final JobsController jobsController = new JobsController(repository);
-
-        Object job = jobsController.findJobsAsJson("SOME_TYPE", 100);
-        assertThat(job, is(asList(representationOf(firstJob))));
+        assertThat(job, is(asList(representationOf(firstJob), representationOf(secondJob))));
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void shouldReturnAllJobsOfTypeAsHtml() {
-        final InMemJobRepository repository = new InMemJobRepository();
         final JobInfo firstJob = jobInfoBuilder("SOME_TYPE", create("/test/42"))
                 .build();
-        final JobInfo secondJob = jobInfoBuilder("SOME_OTHER_TYPE", create("/test/43"))
-                .build();
-        repository.createOrUpdate(firstJob);
-        repository.createOrUpdate(secondJob);
+        final JobService service = mock(JobService.class);
+        when(service.findJobs("SOME_TYPE", 100)).thenReturn(asList(firstJob));
 
-        final JobsController jobsController = new JobsController(repository);
+        final JobsController jobsController = new JobsController(service);
 
         ModelAndView modelAndView = jobsController.findJobsAsHtml("SOME_TYPE");
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
