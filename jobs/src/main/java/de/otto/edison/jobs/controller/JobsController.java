@@ -44,21 +44,25 @@ public class JobsController {
     }
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")
-    public ModelAndView findJobsAsHtml(@RequestParam(value = "type", required = false) String type) {
-        final List<JobRepresentation> jobRepresentations = findJobsAsJson(type, JOB_VIEW_COUNT);
+    public ModelAndView getJobsAsHtml(@RequestParam(value = "type", required = false) String type) {
+        final List<JobRepresentation> jobRepresentations = getJobsAsJson(type, JOB_VIEW_COUNT);
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
         return modelAndView;
     }
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "application/json")
-    public List<JobRepresentation> findJobsAsJson(
-            @RequestParam(value = "type", required = false) String type,
-            @RequestParam(value = "count", defaultValue = "1") int count) {
-        return jobService.findJobs(type, count)
+    public List<JobRepresentation> getJobsAsJson(@RequestParam(value = "type", required = false) String type,
+                                                 @RequestParam(value = "count", defaultValue = "1") int count) {
+        return jobService.findJobs(Optional.ofNullable(type), count)
                 .stream()
                 .map(JobRepresentation::representationOf)
                 .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/internal/jobs", method = DELETE)
+    public void deleteJobs(@RequestParam(value = "type", required = false) String type) {
+        jobService.deleteJobs(Optional.ofNullable(type));
     }
 
     @RequestMapping(

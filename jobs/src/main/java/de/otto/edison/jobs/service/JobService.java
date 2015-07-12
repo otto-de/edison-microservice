@@ -16,7 +16,9 @@ public interface JobService {
 
     public URI startAsyncJob(JobRunnable jobRunnable);
 
-    public List<JobInfo> findJobs(String type, int count);
+    public List<JobInfo> findJobs(Optional<String> type, int count);
 
     public Optional<JobInfo> findJob(URI uri);
+
+    public void deleteJobs(Optional<String> type);
 }
