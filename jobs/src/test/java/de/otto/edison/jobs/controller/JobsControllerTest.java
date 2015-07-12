@@ -1,8 +1,6 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.repository.InMemJobRepository;
-import de.otto.edison.jobs.service.DefaultJobService;
 import de.otto.edison.jobs.service.JobService;
 import org.springframework.web.servlet.ModelAndView;
 import org.testng.annotations.Test;
@@ -15,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
-import static de.otto.edison.jobs.domain.JobInfoBuilder.copyOf;
 import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
 import static java.net.URI.create;
 import static java.time.OffsetDateTime.now;
@@ -78,12 +75,12 @@ public class JobsControllerTest {
                 .withStarted(now().plus(10, MILLIS))
                 .build();
         final JobService service = mock(JobService.class);
-        when(service.findJobs(null, 100)).thenReturn(asList(firstJob, secondJob));
+        when(service.findJobs(Optional.<String>empty(), 100)).thenReturn(asList(firstJob, secondJob));
 
         final JobsController jobsController = new JobsController(service);
 
         // when
-        Object job = jobsController.findJobsAsJson(null, 100);
+        Object job = jobsController.getJobsAsJson(null, 100);
 
         // then
         assertThat(job, is(asList(representationOf(firstJob), representationOf(secondJob))));
@@ -95,11 +92,11 @@ public class JobsControllerTest {
         final JobInfo firstJob = jobInfoBuilder("SOME_TYPE", create("/test/42"))
                 .build();
         final JobService service = mock(JobService.class);
-        when(service.findJobs("SOME_TYPE", 100)).thenReturn(asList(firstJob));
+        when(service.findJobs(Optional.of("SOME_TYPE"), 100)).thenReturn(asList(firstJob));
 
         final JobsController jobsController = new JobsController(service);
 
-        ModelAndView modelAndView = jobsController.findJobsAsHtml("SOME_TYPE");
+        ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE");
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
         assertThat(jobs, is(asList(representationOf(firstJob))));
     }

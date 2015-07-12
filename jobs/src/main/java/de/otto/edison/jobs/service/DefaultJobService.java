@@ -7,12 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.GaugeService;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.time.Clock;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -69,7 +67,7 @@ public class DefaultJobService implements JobService {
 
     @PostConstruct
     public void postConstruct() {
-        LOG.info("Found {} JobRunnables: {}", + jobRunnables.size(), jobRunnables.stream().map(JobRunnable::getJobType).collect(Collectors.toList()));
+        LOG.info("Found {} JobRunnables: {}", +jobRunnables.size(), jobRunnables.stream().map(JobRunnable::getJobType).collect(Collectors.toList()));
     }
 
     @Override
@@ -95,11 +93,20 @@ public class DefaultJobService implements JobService {
     }
 
     @Override
-    public List<JobInfo> findJobs(final String type, final int count) {
-        if (type == null) {
-            return repository.findLatest(count);
+    public List<JobInfo> findJobs(final Optional<String> type, final int count) {
+        if (type.isPresent()) {
+            return repository.findLatestBy(type.get(), count);
         } else {
-            return repository.findLatestBy(type, count);
+            return repository.findLatest(count);
+        }
+    }
+
+    @Override
+    public void deleteJobs(final Optional<String> type) {
+        if (type.isPresent()) {
+            repository.findByType(type.get()).forEach((j)-> repository.removeIfStopped(j.getJobUri()));
+        } else {
+            repository.findAll().forEach((j)-> repository.removeIfStopped(j.getJobUri()));
         }
     }
 
