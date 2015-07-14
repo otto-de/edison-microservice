@@ -15,7 +15,7 @@ public class FeatureTestController {
     @RequestMapping(value = "/featurestate/test",method = RequestMethod.GET)
     @ResponseBody
     public String getFeatureState() {
-        if (TogglzConfiguration.Features.TEST.isActive()) {
+        if (Features.TEST.isActive()) {
             return "feature is active";
         } else {
             return "feature is inactive";

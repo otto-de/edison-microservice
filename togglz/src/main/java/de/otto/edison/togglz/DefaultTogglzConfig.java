@@ -1,24 +1,22 @@
 package de.otto.edison.togglz;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.togglz.core.Feature;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
+import org.togglz.core.repository.cache.CachingStateRepository;
 import org.togglz.core.user.UserProvider;
 
-@Component
 public class DefaultTogglzConfig implements TogglzConfig {
 
-	private final StateRepository stateRepository;
-    private final UserProvider userProvider;
+    private StateRepository cachingStateRepository;
+    private UserProvider userProvider;
     private FeatureClassProvider featureClassProvider;
 
-    @Autowired
-    public DefaultTogglzConfig(final StateRepository stateRepository,
+    public DefaultTogglzConfig(final long ttlMilliseconds,
+                               final StateRepository stateRepository,
                                final UserProvider userProvider,
                                final FeatureClassProvider featureClassProvider) {
-        this.stateRepository = stateRepository;
+        this.cachingStateRepository = new CachingStateRepository(stateRepository, ttlMilliseconds);
         this.userProvider = userProvider;
         this.featureClassProvider = featureClassProvider;
     }
@@ -30,12 +28,11 @@ public class DefaultTogglzConfig implements TogglzConfig {
 
     @Override
     public StateRepository getStateRepository() {
-        return stateRepository;
+        return cachingStateRepository;
     }
 
     @Override
     public UserProvider getUserProvider() {
        return userProvider;
     }
-
 }
