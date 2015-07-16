@@ -10,14 +10,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HealthConfiguration {
 
-    @Value("${edison.graceful.shutdown.time.beforeIndicateError:5000}")
+    @Value("${edison.gracefulshutdown.indicateErrorAfter:5000}")
     private long timeBeforeIndicateError;
 
-    @Value("${edison.graceful.shutdown.time.phaseOut:25000}")
+    @Value("${edison.gracefulshutdown.phaseOutAfter:25000}")
     private long timeForPhaseOut;
 
     @Bean
-    @ConditionalOnProperty(name = "edison.graceful.shutdown.active", havingValue = "true")
+    @ConditionalOnProperty(name = "edison.gracefulshutdown.enabled", havingValue = "true", matchIfMissing = true)
     public GracefulShutdownHealthIndicator gracefulShutdownHealthIndicator() {
         return new GracefulShutdownHealthIndicator(timeBeforeIndicateError, timeForPhaseOut);
     }

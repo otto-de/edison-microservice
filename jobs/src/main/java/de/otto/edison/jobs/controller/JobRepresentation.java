@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
+import static java.time.format.DateTimeFormatter.ofLocalizedTime;
+import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
 
 public class JobRepresentation {
@@ -42,28 +44,36 @@ public class JobRepresentation {
         return formatDateTime(started);
     }
 
-    private String formatDateTime(OffsetDateTime started) {
-        if (started==null) {
-            return null;
-        } else {
-            return ofLocalizedDateTime(SHORT, SHORT).format(started);
-        }
-    }
-
     public String getStopped() {
         return job.isStopped()
-                ? formatDateTime(job.getStopped().get())
+                ? formatTime(job.getStopped().get())
                 : "";
     }
 
     public String getLastUpdated() {
-        return formatDateTime(job.getLastUpdated());
+        return formatTime(job.getLastUpdated());
     }
 
     public List<String> getMessages() {
         return job.getMessages().stream().map((jobMessage) ->
-            "[" + formatDateTime(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()
+            "[" + formatTime(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()
         ).collect(Collectors.toList());
+    }
+
+    private String formatDateTime(OffsetDateTime dateTime) {
+        if (dateTime==null) {
+            return null;
+        } else {
+            return ofLocalizedDateTime(SHORT, MEDIUM).format(dateTime);
+        }
+    }
+
+    private String formatTime(OffsetDateTime dateTime) {
+        if (dateTime==null) {
+            return null;
+        } else {
+            return ofLocalizedTime(MEDIUM).format(dateTime);
+        }
     }
 
     @Override
