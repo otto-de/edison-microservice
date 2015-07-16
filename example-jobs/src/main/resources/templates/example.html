@@ -12,12 +12,12 @@
         <li><a href="/example/internal/status">Status Page</a></li>
         <li><a href="/example/internal/health">Application Health</a></li>
         <li><a href="/example/internal/metrics">Application Metrics</a></li>
-        <li><a href="/example/jobs">Jobs</a></li>
+        <li><a href="/example/internal/jobs">Jobs</a></li>
     </ul>
 
     <h1>Start a long-running job</h1>
     <p>The state of the job can be observed on the <a href="/example/internal/jobs">jobs</a> page.</p>
-    <form action="/example/startJob">
+    <form action="/example/internal/jobs/foo">
         <button formmethod="post" type="submit">Start Foo</button>
     </form>
 </body>

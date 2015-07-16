@@ -3,6 +3,7 @@ package de.otto.edison.example.jobs;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.service.JobLogger;
 import de.otto.edison.jobs.service.JobRunnable;
+import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
@@ -13,6 +14,7 @@ import static java.lang.Thread.sleep;
  * @author Guido Steinacker
  * @since 15.02.15
  */
+@Component
 public class FooJob implements JobRunnable {
 
     private FooJob() {
