@@ -1,8 +1,11 @@
 package de.otto.edison.togglz.configuration;
 
+import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,17 +28,13 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class TogglzConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean(FeatureClassProvider.class)
-    public FeatureClassProvider features() {
-        return () -> Features.class;
-    }
+    @Autowired
+    private StateRepository stateRepository;
 
-    @Bean
-    @ConditionalOnMissingBean(StateRepository.class)
-    public StateRepository stateRepository() {
-        return new CachingStateRepository(createInMemoryStateRepository(), 2000, TimeUnit.MILLISECONDS);
-    }
+    @Autowired
+    private FeatureClassProvider featureClassProvider;
+
+
 
     @Bean
     @ConditionalOnMissingBean(UserProvider.class)
@@ -52,37 +51,13 @@ public class TogglzConfiguration {
         };
     }
 
-    private StateRepository createInMemoryStateRepository() {
-        return new StateRepository() {
+    @Value("${edison.togglz.cache.ttlMilliseconds:5000}")
+    private long cacheTtlMilliseconds;
 
-            Logger LOG = LoggerFactory.getLogger(TogglzConfiguration.class);
-
-            private Map<String, FeatureState> featureStore = new HashMap<>();
-
-            @Override
-            public FeatureState getFeatureState(final Feature feature) {
-                if (featureStore.containsKey(feature.name())) {
-                    return featureStore.get(feature.name());
-                }
-                return new FeatureState(feature, false);
-            }
-
-            @Override
-            public void setFeatureState(final FeatureState featureState) {
-                featureStore.put(featureState.getFeature().name(), featureState);
-                LOG.info("Switched feature state to " + featureState.toString());
-            }
-        };
+    @Bean
+    public DefaultTogglzConfig defaultTogglzConfig() {
+        return new DefaultTogglzConfig(cacheTtlMilliseconds, stateRepository, getUserProvider(), featureClassProvider);
     }
 
-    public enum Features implements Feature {
-
-        @Label("test")
-        TEST;
-
-        public boolean isActive() {
-            return FeatureContext.getFeatureManager().isActive(this);
-        }
-    }
 
 }
