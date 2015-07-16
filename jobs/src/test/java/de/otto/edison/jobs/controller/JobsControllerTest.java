@@ -13,10 +13,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
-import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
+import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static java.net.URI.create;
-import static java.time.OffsetDateTime.now;
-import static java.time.temporal.ChronoUnit.MILLIS;
+import static java.time.Clock.fixed;
+import static java.time.Clock.systemDefaultZone;
+import static java.time.Instant.ofEpochMilli;
+import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -47,8 +49,7 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnJobIfJobExists() throws IOException {
         // given
-        final JobInfo expectedJob = jobInfoBuilder("TEST", create("/test/42")).build();
-
+        final JobInfo expectedJob = newJobInfo("TEST", create("/test/42"), (j) -> {}, systemDefaultZone());
         final JobService jobService = mock(JobService.class);
         when(jobService.findJob(any(URI.class))).thenReturn(Optional.of(expectedJob));
 
@@ -69,11 +70,8 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnAllJobs() throws IOException {
         // given
-        final JobInfo firstJob = jobInfoBuilder("TEST", create("/test/42"))
-                .build();
-        final JobInfo secondJob = jobInfoBuilder("TEST", create("/test/43"))
-                .withStarted(now().plus(10, MILLIS))
-                .build();
+        final JobInfo firstJob = newJobInfo("TEST", create("/test/42"), (j) -> {}, fixed(ofEpochMilli(0), systemDefault()));
+        final JobInfo secondJob = newJobInfo("TEST", create("/test/42"), (j) -> {}, fixed(ofEpochMilli(1), systemDefault()));
         final JobService service = mock(JobService.class);
         when(service.findJobs(Optional.<String>empty(), 100)).thenReturn(asList(firstJob, secondJob));
 
@@ -89,8 +87,7 @@ public class JobsControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldReturnAllJobsOfTypeAsHtml() {
-        final JobInfo firstJob = jobInfoBuilder("SOME_TYPE", create("/test/42"))
-                .build();
+        final JobInfo firstJob = newJobInfo("SOME_TYPE", create("/test/42"), (j) -> {}, systemDefaultZone());
         final JobService service = mock(JobService.class);
         when(service.findJobs(Optional.of("SOME_TYPE"), 100)).thenReturn(asList(firstJob));
 

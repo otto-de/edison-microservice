@@ -1,45 +1,62 @@
 package de.otto.edison.jobs.domain;
 
+import de.otto.edison.jobs.monitor.JobMonitor;
 import net.jcip.annotations.ThreadSafe;
 
 import java.net.URI;
+import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.unmodifiableList;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.*;
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
+import static de.otto.edison.jobs.domain.Level.WARNING;
+import static java.time.OffsetDateTime.now;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 @ThreadSafe
 public class JobInfo {
+    private static final String JOB_DEAD_MESSAGE = "Job didn't receive updates for a while, considering it dead";
 
+    private final JobMonitor monitor;
+    private final Clock clock;
     private final URI jobUri;
     private final String jobType;
     private final OffsetDateTime started;
-    private final Optional<OffsetDateTime> stopped;
-    private final List<JobMessage> messages;
-    private final JobStatus status;
-    private final OffsetDateTime lastUpdated;
+    private final List<JobMessage> messages = new ArrayList<>();
+    private Optional<OffsetDateTime> stopped;
+    private JobStatus status;
+    private OffsetDateTime lastUpdated;
 
     public enum JobStatus { OK, ERROR, DEAD;}
 
-    public JobInfo(final String jobType,
-            final URI jobUri,
-            final OffsetDateTime started,
-            final Optional<OffsetDateTime> stopped,
-            final List<JobMessage> messages,
-            final JobStatus status, OffsetDateTime lastUpdated) {
-        this.jobUri = jobUri;
-        this.jobType = jobType;
-        this.started = started;
-        this.stopped = stopped;
-        this.lastUpdated = lastUpdated;
-        this.messages = unmodifiableList(new ArrayList<>(messages));
-        this.status = status;
+    public static JobInfo newJobInfo(final String jobType,
+                                     final URI jobUri,
+                                     final JobMonitor monitor,
+                                     final Clock clock) {
+        return new JobInfo(jobType, jobUri, monitor, clock);
     }
 
+    JobInfo(final String jobType,
+            final URI jobUri,
+            final JobMonitor monitor,
+            final Clock clock) {
+        this.clock = clock;
+        this.jobUri = jobUri;
+        this.jobType = jobType;
+        this.started = now(clock);
+        this.stopped = empty();
+        this.status = OK;
+        this.monitor = monitor;
+        this.lastUpdated = started;
+        this.messages.add(jobMessage(Level.INFO, "Started " + jobType));
+        this.monitor.update(this);
+    }
 
-    public boolean isStopped() {
+    public synchronized boolean isStopped() {
         return stopped.isPresent();
     }
 
@@ -51,28 +68,69 @@ public class JobInfo {
         return jobType;
     }
 
-    public JobStatus getStatus() {
-        return status;
-    }
-
     public OffsetDateTime getStarted() {
         return started;
     }
 
-    public String getState() {
+    public synchronized JobStatus getStatus() {
+        return status;
+    }
+
+    public synchronized String getState() {
         return isStopped() ? "STOPPED" : "RUNNING";
     }
 
-    public Optional<OffsetDateTime> getStopped() {
+    public synchronized Optional<OffsetDateTime> getStopped() {
         return stopped;
     }
 
-    public List<JobMessage> getMessages() {
+    public synchronized List<JobMessage> getMessages() {
         return messages;
     }
 
-    public OffsetDateTime getLastUpdated() {
+    public synchronized OffsetDateTime getLastUpdated() {
         return lastUpdated;
+    }
+
+
+    public synchronized void ping() {
+        lastUpdated = now(clock);
+        monitor.update(this);
+    }
+
+    public synchronized JobInfo info(final String message) {
+        messages.add(jobMessage(Level.INFO, message));
+        lastUpdated = now(clock);
+        monitor.update(this);
+        return this;
+    }
+
+    public synchronized JobInfo error(final String message) {
+        messages.add(jobMessage(Level.ERROR, message));
+        lastUpdated = now(clock);
+        status = ERROR;
+        monitor.update(this);
+        return this;
+    }
+
+    public synchronized JobInfo stop() {
+        lastUpdated = now(clock);
+        stopped = of(lastUpdated);
+        monitor.update(this);
+        return this;
+    }
+
+    public synchronized JobInfo dead() {
+        messages.add(jobMessage(WARNING, JOB_DEAD_MESSAGE));
+        lastUpdated = now(clock);
+        stopped = of(lastUpdated);
+        status = DEAD;
+        monitor.update(this);
+        return this;
+    }
+
+    JobMonitor getMonitor() {
+        return monitor;
     }
 
     @Override

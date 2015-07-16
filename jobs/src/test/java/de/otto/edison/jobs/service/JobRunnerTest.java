@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,15 +19,13 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
-import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
-import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
+import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.service.JobRunner.PING_PERIOD;
-import static de.otto.edison.jobs.service.JobRunner.createAndPersistJobRunner;
+import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.net.URI.create;
 import static java.time.Clock.fixed;
-import static java.time.OffsetDateTime.ofInstant;
 import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -42,17 +39,17 @@ import static org.mockito.Mockito.*;
 public class JobRunnerTest {
 
     private Clock clock;
-    private ScheduledExecutorService scheduledExecutorService;
+    private ScheduledExecutorService executor;
     private ScheduledFuture scheduledJob;
 
     @BeforeMethod
     public void setUp() throws Exception {
         clock = fixed(Instant.now(), systemDefault());
-        this.scheduledExecutorService = mock(ScheduledExecutorService.class);
+        this.executor = mock(ScheduledExecutorService.class);
 
         scheduledJob = mock(ScheduledFuture.class);
         doReturn(scheduledJob)
-                .when(scheduledExecutorService).scheduleAtFixedRate(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class));
+                .when(executor).scheduleAtFixedRate(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class));
     }
 
     @Test
@@ -60,25 +57,16 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobInfo jobInfo = newJobInfo("NAME", jobUri, (j)-> {}, clock);
+        final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor);
         // when
-        jobRunner.start(new SomeJobRunnable());
+        JobRunnable jobRunnable = mock(JobRunnable.class);
+        jobRunner.start(jobRunnable);
         // then
-        final JobInfo jobInfo = repository.findBy(jobUri).get();
-        assertThat(jobInfo.getStatus(), is(OK));
-        assertThat(jobInfo.getStopped(), isPresent());
-    }
-
-    @Test
-    public void shouldPersistJobInfoInConstructor() {
-        // given
-        final URI jobUri = create("/foo/jobs/42");
-        final InMemJobRepository repository = new InMemJobRepository();
-        // when
-        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
-        // then
-        final Optional<JobInfo> optionalJob = repository.findBy(jobUri);
-        assertThat(optionalJob, isPresent());
+        verify(jobRunnable).execute(jobInfo);
+        final JobInfo persistedJobInfo = repository.findBy(jobUri).get();
+        assertThat(persistedJobInfo.getStatus(), is(OK));
+        assertThat(persistedJobInfo.getStopped(), isPresent());
     }
 
     @Test
@@ -86,42 +74,22 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(
+                newJobInfo("NAME", jobUri, (j)-> {}, clock),
+                repository,
+                executor);
         // when
         jobRunner.start(new SomeJobRunnable());
         // then
         final Optional<JobInfo> optionalJob = repository.findBy(jobUri);
         final JobInfo jobInfo = optionalJob.get();
-        assertThat(jobInfo.getMessages(), hasSize(1));
-        final JobMessage message = jobInfo.getMessages().get(0);
-        assertThat(message.getMessage(), is("a message"));
-        assertThat(message.getLevel(), is(INFO));
-        assertThat(message.getTimestamp(), is(notNullValue()));
-    }
-
-    @Test
-    public void shouldUpdateJobTimeStamp() {
-        //given
-        final URI jobUri = create("/foo/jobs/42");
-        final JobRepository repository = mock(JobRepository.class);
-
-        OffsetDateTime startedTime = ofInstant(Instant.ofEpochMilli(0L), systemDefault());
-        OffsetDateTime loggingTime = startedTime.plusSeconds(1);
-        OffsetDateTime finishTime = loggingTime.plusSeconds(1);
-
-        clock = mock(Clock.class);
-        when(clock.getZone()).thenReturn(systemDefault());
-        when(clock.instant()).thenReturn(Instant.ofEpochSecond(0L), Instant.ofEpochSecond(1L), Instant.ofEpochSecond(2L));
-
-        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
-        // when
-        jobRunner.start(new SomeJobRunnable());
-        //then
-        List<JobInfo> jobInfoHistory = historyOfSavedJobInfos(repository, 3);
-
-        assertThat(jobInfoHistory.get(0).getLastUpdated(), is(startedTime));
-        assertThat(jobInfoHistory.get(1).getLastUpdated(), is(loggingTime));
-        assertThat(jobInfoHistory.get(2).getLastUpdated(), is(finishTime));
+        assertThat(jobInfo.getMessages(), hasSize(2));
+        final JobMessage first = jobInfo.getMessages().get(0);
+        final JobMessage second = jobInfo.getMessages().get(1);
+        assertThat(first.getMessage(), is("Started NAME"));
+        assertThat(second.getMessage(), is("a message"));
+        assertThat(second.getLevel(), is(INFO));
+        assertThat(second.getTimestamp(), is(notNullValue()));
     }
 
     @Test
@@ -130,13 +98,16 @@ public class JobRunnerTest {
         TestClock testClock = TestClock.now();
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
-        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, testClock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(
+                newJobInfo("NAME", jobUri, (j)-> {}, testClock),
+                repository,
+                executor);
         // when
         jobRunner.start(new SomeJobRunnable());
         //then
 
         ArgumentCaptor<Runnable> pingRunnableArgumentCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(scheduledExecutorService).scheduleAtFixedRate(pingRunnableArgumentCaptor.capture(), eq(PING_PERIOD), eq(PING_PERIOD), eq(SECONDS));
+        verify(executor).scheduleAtFixedRate(pingRunnableArgumentCaptor.capture(), eq(PING_PERIOD), eq(PING_PERIOD), eq(SECONDS));
 
         // given
         reset(repository);
@@ -154,7 +125,11 @@ public class JobRunnerTest {
 
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
-        final JobRunner jobRunner = createAndPersistJobRunner(jobInfoBuilder("NAME", jobUri).build(), repository, clock, scheduledExecutorService);
+        final JobRunner jobRunner = newJobRunner(
+                newJobInfo("NAME", jobUri, (j)-> {}, clock),
+                repository,
+                executor);
+
         // when
         jobRunner.start(new SomeJobRunnable());
 
@@ -177,8 +152,8 @@ public class JobRunnerTest {
         }
 
         @Override
-        public void execute(final JobLogger logger) {
-            logger.log(jobMessage(INFO, "a message"));
+        public void execute(final JobInfo jobInfo) {
+            jobInfo.info("a message");
         }
     }
 }

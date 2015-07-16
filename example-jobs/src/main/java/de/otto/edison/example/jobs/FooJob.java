@@ -1,13 +1,11 @@
 package de.otto.edison.example.jobs;
 
-import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.jobs.service.JobLogger;
+import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobRunnable;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
-import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.lang.Thread.sleep;
 
 /**
@@ -29,18 +27,18 @@ public class FooJob implements JobRunnable {
     }
 
     @Override
-    public void execute(final JobLogger jobLogger) {
+    public void execute(final JobInfo jobInfo) {
         for (int i = 0; i < 10; ++i) {
-            doSomeHardWork(jobLogger);
+            doSomeHardWork(jobInfo);
         }
     }
 
-    private void doSomeHardWork(final JobLogger jobLogger) {
+    private void doSomeHardWork(final JobInfo jobInfo) {
         try {
-            jobLogger.log(jobMessage(Level.INFO, "Still doing some hard work..."));
+            jobInfo.info("Still doing some hard work...");
             sleep(new Random(42).nextInt(2000));
-        } catch (InterruptedException e) {
-        /* ignore */
+        } catch (final InterruptedException e) {
+            jobInfo.error(e.getMessage());
         }
     }
 

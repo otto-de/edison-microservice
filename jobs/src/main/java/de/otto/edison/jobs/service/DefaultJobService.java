@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +17,8 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
-import static de.otto.edison.jobs.domain.JobInfoBuilder.jobInfoBuilder;
-import static de.otto.edison.jobs.service.JobRunner.createAndPersistJobRunner;
+import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
 import static java.time.Clock.systemDefaultZone;
@@ -33,6 +34,8 @@ public class DefaultJobService implements JobService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJobService.class);
 
+    @Autowired
+    private JobMonitor monitor;
     @Autowired
     private JobRepository repository;
     @Autowired
@@ -51,14 +54,17 @@ public class DefaultJobService implements JobService {
         this.clock = systemDefaultZone();
     }
 
-    public DefaultJobService(final String serverContextPath,
-                      final JobRepository jobRepository,
+    DefaultJobService(final String serverContextPath,
+                      final JobRepository repository,
+                      final JobMonitor monitor,
                       final List<JobRunnable> jobRunnables,
                       final GaugeService gaugeService,
                       final Clock clock,
                       final ScheduledExecutorService executor) {
         this.serverContextPath = serverContextPath;
-        this.repository = jobRepository;
+        this.repository = repository;
+        this.monitor = monitor;
+        this.repository = repository;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
         this.clock = clock;
@@ -111,8 +117,8 @@ public class DefaultJobService implements JobService {
     }
 
     private URI startAsync(final JobRunnable jobRunnable) {
-        final JobInfo jobInfo = jobInfoBuilder(jobRunnable.getJobType(), newJobUri()).build();
-        JobRunner jobRunner = createAndPersistJobRunner(jobInfo, repository, clock, executor);
+        final JobInfo jobInfo = newJobInfo(jobRunnable.getJobType(), newJobUri(), monitor, clock);
+        final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor);
         executor.execute(() -> jobRunner.start(jobRunnable));
         return jobInfo.getJobUri();
     }
@@ -125,9 +131,9 @@ public class DefaultJobService implements JobService {
             }
 
             @Override
-            public void execute(final JobLogger logger) {
+            public void execute(final JobInfo jobInfo) {
                 long ts = currentTimeMillis();
-                delegate.execute(logger);
+                delegate.execute(jobInfo);
                 gaugeService.submit(gaugeName(), (currentTimeMillis()-ts)/1000L);
             }
 

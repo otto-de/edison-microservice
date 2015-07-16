@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.configuration;
 
+import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.KeepLastJobs;
@@ -24,13 +25,13 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 @EnableScheduling
 public class JobConfiguration {
 
-    @Value("${edison.jobs.scheduler.thread.count:10}")
+    @Value("${edison.jobs.scheduler.thread-count:10}")
     int numberOfThreads;
 
-    @Value("${edison.jobs.number.to.keep:100}")
+    @Value("${edison.jobs.cleanup.number-to-keep:100}")
     int numberOfJobsToKeep;
 
-    @Value("${edison.jobs.mark.dead.after:20}")
+    @Value("${edison.jobs.cleanup.mark-dead-after:20}")
     int secondsToMarkJobsAsDead;
 
     @Bean
@@ -61,5 +62,11 @@ public class JobConfiguration {
     @ConditionalOnMissingBean(StopDeadJobs.class)
     public StopDeadJobs deadJobStrategy() {
         return new StopDeadJobs(secondsToMarkJobsAsDead, systemDefaultZone());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JobMonitor.class)
+    public JobMonitor jobMonitor() {
+        return jobInfo -> { /* no-op */ };
     }
 }
