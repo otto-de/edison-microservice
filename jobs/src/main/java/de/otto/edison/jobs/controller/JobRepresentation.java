@@ -6,7 +6,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
+import static java.time.format.FormatStyle.SHORT;
 
 public class JobRepresentation {
 
@@ -45,7 +46,7 @@ public class JobRepresentation {
         if (started==null) {
             return null;
         } else {
-            return ISO_OFFSET_DATE_TIME.format(started);
+            return ofLocalizedDateTime(SHORT, SHORT).format(started);
         }
     }
 
