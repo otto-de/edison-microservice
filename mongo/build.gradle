@@ -1,0 +1,63 @@
+
+dependencies {
+
+    compile libs.springBoot
+    compile libs.logging
+    compile libs.jcip
+    compile libs.mongoDb
+
+    testCompile project(":testsupport")
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.project {
+                name 'mongo'
+                packaging 'jar'
+                description 'Mongo library of the edison-microservice project.'
+                url 'http://github.com/otto-de/edison-microservice'
+
+                scm {
+                    url 'scm:git@github.com:otto-de/edison-microservice.git'
+                    connection 'scm:git@github.com:otto-de/edison-microservice.git'
+                    developerConnection 'scm:git@github.com:otto-de/edison-microservice.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'gsteinacker'
+                        name 'Guido Steinacker'
+                    }
+                }
+            }
+        }
+    }
+}
