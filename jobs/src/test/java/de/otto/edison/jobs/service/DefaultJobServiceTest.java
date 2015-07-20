@@ -2,7 +2,7 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.monitor.JobMonitor;
-import de.otto.edison.jobs.repository.InMemJobRepository;
+import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -106,7 +106,7 @@ public class DefaultJobServiceTest {
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn("BAR");
         URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
-        jobRepository.createOrUpdate(JobInfo.newJobInfo("BAR", alreadyRunningJob, (j) -> {},  clock));
+        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", (j) -> {},  clock));
         final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, (j)-> {}, asList(jobRunnable), mock(GaugeService.class), clock, executorService);
         // when:
         final URI jobUri = jobService.startAsyncJob("bar");
@@ -122,7 +122,7 @@ public class DefaultJobServiceTest {
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn("FOO");
         URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
-        jobRepository.createOrUpdate(JobInfo.newJobInfo("BAR", alreadyRunningJob, (j) -> {},  clock));
+        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", (j) -> {},  clock));
         final DefaultJobService jobService = new DefaultJobService("/foo", jobRepository, (j)-> {}, asList(jobRunnable), mock(GaugeService.class), clock, executorService);
         // when:
         final URI jobUri = jobService.startAsyncJob("foo");

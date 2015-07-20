@@ -2,7 +2,7 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.repository.InMemJobRepository;
+import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.testsupport.util.TestClock;
 import org.mockito.ArgumentCaptor;
@@ -57,7 +57,7 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo jobInfo = newJobInfo("NAME", jobUri, (j)-> {}, clock);
+        final JobInfo jobInfo = newJobInfo(jobUri, "NAME", (j)-> {}, clock);
         final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor);
         // when
         JobRunnable jobRunnable = mock(JobRunnable.class);
@@ -75,7 +75,7 @@ public class JobRunnerTest {
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
         final JobRunner jobRunner = newJobRunner(
-                newJobInfo("NAME", jobUri, (j)-> {}, clock),
+                newJobInfo(jobUri, "NAME", (j)-> {}, clock),
                 repository,
                 executor);
         // when
@@ -99,7 +99,7 @@ public class JobRunnerTest {
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
         final JobRunner jobRunner = newJobRunner(
-                newJobInfo("NAME", jobUri, (j)-> {}, testClock),
+                newJobInfo(jobUri, "NAME", (j)-> {}, testClock),
                 repository,
                 executor);
         // when
@@ -126,7 +126,7 @@ public class JobRunnerTest {
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
         final JobRunner jobRunner = newJobRunner(
-                newJobInfo("NAME", jobUri, (j)-> {}, clock),
+                newJobInfo(jobUri, "NAME", (j)-> {}, clock),
                 repository,
                 executor);
 

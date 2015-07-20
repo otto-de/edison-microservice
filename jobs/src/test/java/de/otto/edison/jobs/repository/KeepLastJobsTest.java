@@ -2,6 +2,8 @@ package de.otto.edison.jobs.repository;
 
 
 import de.otto.edison.jobs.monitor.JobMonitor;
+import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
+import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.testng.annotations.Test;
 
 import java.time.Clock;
@@ -29,16 +31,16 @@ public class KeepLastJobsTest {
     public void shouldRemoveJobsWithMatchingJobType() {
         // given
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("TYPE1", create("foo"), mock(JobMonitor.class), now).stop());
-            createOrUpdate(newJobInfo("TYPE2", create("foobar"), mock(JobMonitor.class), now).stop());
-            createOrUpdate(newJobInfo("TYPE2", create("bar"), mock(JobMonitor.class), now).stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE1", mock(JobMonitor.class), now).stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE2", mock(JobMonitor.class), now).stop());
+            createOrUpdate(newJobInfo(create("bar"), "TYPE2", mock(JobMonitor.class), now).stop());
         }};
         KeepLastJobs strategy = new KeepLastJobs(1, Optional.of("TYPE2"));
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
-        assertThat(repository.size(), is(2));
+        assertThat(repository.size(), is(2L));
         assertThat(repository.findByType("TYPE2"), hasSize(1));
     }
 
@@ -47,15 +49,15 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2, Optional.empty());
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("TYPE", create("foo"), mock(JobMonitor.class), now).stop());
-            createOrUpdate(newJobInfo("TYPE", create("foobar"), mock(JobMonitor.class), earlier).stop());
-            createOrUpdate(newJobInfo("TYPE", create("bar"), mock(JobMonitor.class), muchEarlier).stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE", mock(JobMonitor.class), now).stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE", mock(JobMonitor.class), earlier).stop());
+            createOrUpdate(newJobInfo(create("bar"), "TYPE", mock(JobMonitor.class), muchEarlier).stop());
         }};
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
-        assertThat(repository.size(), is(2));
+        assertThat(repository.size(), is(2L));
         assertThat(repository.findBy(create("bar")), isAbsent());
     }
 
@@ -64,9 +66,9 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(1, Optional.of("TYPE"));
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("TYPE", create("foo"), mock(JobMonitor.class), now).stop());
-            createOrUpdate(newJobInfo("TYPE", create("foobar"), mock(JobMonitor.class), earlier));
-            createOrUpdate(newJobInfo("TYPE", create("bar"), mock(JobMonitor.class), muchEarlier).stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE", mock(JobMonitor.class), now).stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE", mock(JobMonitor.class), earlier));
+            createOrUpdate(newJobInfo(create("bar"), "TYPE", mock(JobMonitor.class), muchEarlier).stop());
         }};
         strategy.setJobRepository(repository);
         // when
@@ -76,7 +78,7 @@ public class KeepLastJobsTest {
         assertThat(repository.findBy(create("foobar")), isPresent());
         assertThat(repository.findBy(create("bar")), isAbsent());
 
-        assertThat(repository.size(), is(2));
+        assertThat(repository.size(), is(2L));
     }
 
     @Test
@@ -84,15 +86,15 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2, Optional.empty());
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("TYPE", create("foo"), mock(JobMonitor.class), now).error("bumm").stop());
-            createOrUpdate(newJobInfo("TYPE", create("foobar"), mock(JobMonitor.class), muchEarlier).stop());
-            createOrUpdate(newJobInfo("TYPE", create("bar"), mock(JobMonitor.class), earlier).error("bumm").stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE", mock(JobMonitor.class), now).error("bumm").stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE", mock(JobMonitor.class), muchEarlier).stop());
+            createOrUpdate(newJobInfo(create("bar"), "TYPE", mock(JobMonitor.class), earlier).error("bumm").stop());
         }};
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
-        assertThat(repository.size(), is(2));
+        assertThat(repository.size(), is(2L));
         assertThat(repository.findBy(create("foobar")), isPresent());
         assertThat(repository.findBy(create("foo")), isPresent());
         assertThat(repository.findBy(create("bar")), isAbsent());
@@ -103,15 +105,15 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(1, Optional.empty());
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("TYPE1", create("foo"), mock(JobMonitor.class), now).stop());
-            createOrUpdate(newJobInfo("TYPE2", create("foobar"), mock(JobMonitor.class), muchEarlier));
-            createOrUpdate(newJobInfo("TYPE2", create("bar"), mock(JobMonitor.class), earlier));
+            createOrUpdate(newJobInfo(create("foo"), "TYPE1", mock(JobMonitor.class), now).stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE2", mock(JobMonitor.class), muchEarlier));
+            createOrUpdate(newJobInfo(create("bar"), "TYPE2", mock(JobMonitor.class), earlier));
         }};
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
-        assertThat(repository.size(), is(3));
+        assertThat(repository.size(), is(3L));
         assertThat(repository.findByType("TYPE2"), hasSize(2));
     }
 
@@ -120,12 +122,12 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2, Optional.empty());
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("TYPE", create("foo"), mock(JobMonitor.class), now).stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE", mock(JobMonitor.class), now).stop());
         }};
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
-        assertThat(repository.size(), is(1));
+        assertThat(repository.size(), is(1L));
     }
 }

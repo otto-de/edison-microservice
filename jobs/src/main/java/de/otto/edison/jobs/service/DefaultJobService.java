@@ -84,12 +84,13 @@ public class DefaultJobService implements JobService {
 
     @Override
     public URI startAsyncJob(final JobRunnable jobRunnable) {
-        final JobInfo alreadyRunning = repository.findRunningJobByType(jobRunnable.getJobType());
-        if (isNull(alreadyRunning)) {
+        final Optional<JobInfo> alreadyRunning = repository.findRunningJobByType(jobRunnable.getJobType());
+        if (alreadyRunning == null || !alreadyRunning.isPresent()) {
             return startAsync(metered(jobRunnable));
         } else {
-            LOG.info("Job {} triggered but not started - still running.", alreadyRunning.getJobUri());
-            return alreadyRunning.getJobUri();
+            final URI jobUri = alreadyRunning.get().getJobUri();
+            LOG.info("Job {} triggered but not started - still running.", jobUri);
+            return jobUri;
         }
     }
 
@@ -117,7 +118,7 @@ public class DefaultJobService implements JobService {
     }
 
     private URI startAsync(final JobRunnable jobRunnable) {
-        final JobInfo jobInfo = newJobInfo(jobRunnable.getJobType(), newJobUri(), monitor, clock);
+        final JobInfo jobInfo = newJobInfo(newJobUri(), jobRunnable.getJobType(), monitor, clock);
         final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor);
         executor.execute(() -> jobRunner.start(jobRunnable));
         return jobInfo.getJobUri();

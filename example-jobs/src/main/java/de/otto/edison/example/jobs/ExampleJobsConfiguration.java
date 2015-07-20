@@ -1,7 +1,7 @@
 package de.otto.edison.example.jobs;
 
-import de.otto.edison.jobs.repository.KeepLastJobs;
-import de.otto.edison.jobs.repository.StopDeadJobs;
+import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
+import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

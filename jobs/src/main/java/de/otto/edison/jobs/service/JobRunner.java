@@ -16,7 +16,7 @@ public final class JobRunner {
     private static final Logger LOG = getLogger(JobRunner.class);
     public static final long PING_PERIOD = 1l;
 
-    private final JobInfo jobInfo;
+    private volatile JobInfo jobInfo;
     private final JobRepository jobRepository;
     private final ScheduledExecutorService executorService;
     private ScheduledFuture<?> pingJob;

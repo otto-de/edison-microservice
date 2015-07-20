@@ -1,4 +1,4 @@
-package de.otto.edison.jobs.repository;
+package de.otto.edison.jobs.repository.cleanup;
 
 /**
  * A strategy used to clean up old jobs from the JobRepository.

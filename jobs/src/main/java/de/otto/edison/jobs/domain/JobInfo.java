@@ -33,11 +33,22 @@ public class JobInfo {
 
     public enum JobStatus { OK, ERROR, DEAD;}
 
-    public static JobInfo newJobInfo(final String jobType,
-                                     final URI jobUri,
+    public static JobInfo newJobInfo(final URI jobUri, final String jobType,
                                      final JobMonitor monitor,
                                      final Clock clock) {
         return new JobInfo(jobType, jobUri, monitor, clock);
+    }
+
+    public static JobInfo newJobInfo(final URI jobUri,
+                                     final String jobType,
+                                     final OffsetDateTime started,
+                                     final OffsetDateTime lastUpdated,
+                                     final Optional<OffsetDateTime> stopped,
+                                     final JobStatus status,
+                                     final List<JobMessage> messages,
+                                     final JobMonitor monitor,
+                                     final Clock clock) {
+        return new JobInfo(jobUri, jobType, started, lastUpdated, stopped, status, messages, monitor, clock);
     }
 
     JobInfo(final String jobType,
@@ -54,6 +65,26 @@ public class JobInfo {
         this.lastUpdated = started;
         this.messages.add(jobMessage(Level.INFO, "Started " + jobType));
         this.monitor.update(this);
+    }
+
+    JobInfo(final URI jobUri,
+            final String jobType,
+            final OffsetDateTime started,
+            final OffsetDateTime lastUpdated,
+            final Optional<OffsetDateTime> stopped,
+            final JobStatus status,
+            final List<JobMessage> messages,
+            final JobMonitor monitor,
+            final Clock clock) {
+        this.clock = clock;
+        this.monitor = monitor;
+        this.jobUri = jobUri;
+        this.jobType = jobType;
+        this.started = started;
+        this.lastUpdated = lastUpdated;
+        this.stopped = stopped;
+        this.status = status;
+        this.messages.addAll(messages);
     }
 
     public synchronized boolean isStopped() {

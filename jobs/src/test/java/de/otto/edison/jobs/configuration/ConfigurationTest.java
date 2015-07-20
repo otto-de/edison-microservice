@@ -1,8 +1,8 @@
 package de.otto.edison.jobs.configuration;
 
-import de.otto.edison.jobs.repository.JobCleanupStrategy;
-import de.otto.edison.jobs.repository.KeepLastJobs;
-import de.otto.edison.jobs.repository.StopDeadJobs;
+import de.otto.edison.jobs.repository.cleanup.JobCleanupStrategy;
+import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
+import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.testsupport.applicationdriver.SpringTestBase;
 import org.testng.annotations.Test;
 

@@ -1,6 +1,7 @@
-package de.otto.edison.jobs.repository;
+package de.otto.edison.jobs.repository.inmem;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.repository.JobRepository;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -68,11 +69,11 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public JobInfo findRunningJobByType(String jobType) {
+    public Optional<JobInfo> findRunningJobByType(String jobType) {
         final List<JobInfo> runningJobsOfType = jobs.values().stream()
                 .filter(job -> job.getJobType().equals(jobType) && !job.getStopped().isPresent())
                 .collect(toList());
-        return runningJobsOfType.isEmpty() ? null : runningJobsOfType.get(0);
+        return Optional.ofNullable(runningJobsOfType.isEmpty() ? null : runningJobsOfType.get(0));
     }
 
     @Override
@@ -89,7 +90,7 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public int size() {
+    public long size() {
         return jobs.size();
     }
 

@@ -30,7 +30,7 @@ public class JobInfoTest {
         final URI jobUri = create("/foo/jobs/42");
         // when
         final JobMonitor monitor = mock(JobMonitor.class);
-        final JobInfo jobInfo = newJobInfo("TEST", create("foo"), monitor, systemDefaultZone());
+        final JobInfo jobInfo = newJobInfo(create("foo"), "TEST", monitor, systemDefaultZone());
         // then
         verify(monitor).update(jobInfo);
     }
@@ -38,7 +38,7 @@ public class JobInfoTest {
     @Test
     public void shouldInitializeCorrectly() {
         final Clock clock = fixed(now(), systemDefault());
-        final JobInfo job = newJobInfo("TEST", create("foo"), mock(JobMonitor.class), clock);
+        final JobInfo job = newJobInfo(create("foo"), "TEST", mock(JobMonitor.class), clock);
         assertThat(job.getStatus(), is(OK));
         assertThat(job.getJobUri(), is(create("foo")));
         assertThat(job.getJobType(), is("TEST"));
@@ -52,7 +52,7 @@ public class JobInfoTest {
     public void shouldStopAJob() {
         final Clock clock = fixed(now(), systemDefault());
         JobMonitor monitor = mock(JobMonitor.class);
-        final JobInfo job = newJobInfo("TEST", create("foo"), monitor, clock).stop();
+        final JobInfo job = newJobInfo(create("foo"), "TEST", monitor, clock).stop();
 
         assertThat(job.isStopped(), is(true));
         assertThat(job.getState(), is("STOPPED"));
@@ -64,7 +64,7 @@ public class JobInfoTest {
     public void shouldMarkAsDead() {
         final Clock clock = fixed(now(), systemDefault());
         final JobMonitor monitor = mock(JobMonitor.class);
-        final JobInfo job = newJobInfo("TEST", create("foo"), monitor, clock).dead();
+        final JobInfo job = newJobInfo(create("foo"), "TEST", monitor, clock).dead();
 
         assertThat(job.isStopped(), is(true));
         assertThat(job.getState(), is("STOPPED"));
@@ -77,7 +77,7 @@ public class JobInfoTest {
     public void shouldNotBeStopped() {
         final Clock clock = fixed(now(), systemDefault());
         JobMonitor monitor = mock(JobMonitor.class);
-        final JobInfo job = newJobInfo("TEST", create("foo"), monitor, clock);
+        final JobInfo job = newJobInfo(create("foo"), "TEST", monitor, clock);
 
         assertThat(job.isStopped(),is(false));
         assertThat(job.getStopped().isPresent(), is(false));

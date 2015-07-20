@@ -21,12 +21,12 @@ public interface JobRepository {
 
     List<JobInfo> findByType(String jobType);
 
-    JobInfo findRunningJobByType(String jobType);
+    Optional<JobInfo> findRunningJobByType(String jobType);
 
     void createOrUpdate(JobInfo job);
 
     void removeIfStopped(URI uri);
 
-    int size();
+    long size();
 
 }

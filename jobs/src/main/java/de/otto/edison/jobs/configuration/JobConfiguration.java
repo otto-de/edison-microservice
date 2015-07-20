@@ -1,14 +1,21 @@
 package de.otto.edison.jobs.configuration;
 
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.monitor.JobMonitor;
-import de.otto.edison.jobs.repository.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.jobs.repository.KeepLastJobs;
-import de.otto.edison.jobs.repository.StopDeadJobs;
+import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
+import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
+import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
+import de.otto.edison.jobs.repository.mongo.MongoJobRepository;
 import de.otto.edison.jobs.service.DefaultJobService;
 import de.otto.edison.jobs.service.JobService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -41,8 +48,15 @@ public class JobConfiguration {
     }
 
     @Bean
+    @ConditionalOnClass(MongoClient.class)
+    @ConditionalOnProperty("edison.mongo.db")
+    public JobRepository mongoJobRepository() {
+        return new MongoJobRepository();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(JobRepository.class)
-    public JobRepository jobRepository() {
+    public JobRepository inMemJobRepository() {
         return new InMemJobRepository();
     }
 

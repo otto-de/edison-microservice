@@ -2,6 +2,7 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.monitor.JobMonitor;
+import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -11,6 +12,7 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static java.net.URI.create;
@@ -37,12 +39,12 @@ public class InMemJobRepositoryTest {
         // given
         final URI testUri = create("test");
         repository.createOrUpdate(
-                newJobInfo("FOO", testUri, mock(JobMonitor.class), systemDefaultZone())
+                newJobInfo(testUri, "FOO", mock(JobMonitor.class), systemDefaultZone())
         );
         // when
         repository.removeIfStopped(testUri);
         // then
-        assertThat(repository.size(), is(1));
+        assertThat(repository.size(), is(1L));
     }
 
     @Test
@@ -56,19 +58,19 @@ public class InMemJobRepositoryTest {
     @Test
     public void shouldRemoveJob() throws Exception {
         final URI testUri = create("test");
-        final JobInfo jobInfo = newJobInfo("FOO", testUri, mock(JobMonitor.class), systemDefaultZone()).stop();
+        final JobInfo jobInfo = newJobInfo(testUri, "FOO", mock(JobMonitor.class), systemDefaultZone()).stop();
         repository.createOrUpdate(jobInfo);
 
         repository.removeIfStopped(jobInfo.getJobUri());
 
-        assertThat(repository.size(), is(0));
+        assertThat(repository.size(), is(0L));
     }
 
     @Test
     public void shouldFindAll() {
         // given
-        repository.createOrUpdate(newJobInfo("FOO", create("oldest"), mock(JobMonitor.class), fixed(Instant.now().minusSeconds(1), systemDefault())));
-        repository.createOrUpdate(newJobInfo("FOO", create("youngest"), mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("oldest"), "FOO", mock(JobMonitor.class), fixed(Instant.now().minusSeconds(1), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("youngest"), "FOO", mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
         // when
         final List<JobInfo> jobInfos = repository.findAll();
         // then
@@ -80,8 +82,8 @@ public class InMemJobRepositoryTest {
     @Test
     public void shouldFindRunningJobsWithoutUpdatedSinceSpecificDate() throws Exception {
         // given
-        repository.createOrUpdate(newJobInfo("FOO", create("deadJob"), mock(JobMonitor.class), fixed(Instant.now().minusSeconds(10), systemDefault())));
-        repository.createOrUpdate(newJobInfo("FOO", create("running"), mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("deadJob"), "FOO", mock(JobMonitor.class), fixed(Instant.now().minusSeconds(10), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("running"), "FOO", mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
 
         // when
         final List<JobInfo> jobInfos = repository.findRunningWithoutUpdateSince(OffsetDateTime.now().minus(5, ChronoUnit.SECONDS));
@@ -98,9 +100,9 @@ public class InMemJobRepositoryTest {
         final String otherType = "OTHERTEST";
 
 
-        repository.createOrUpdate(newJobInfo(type, create("oldest"), mock(JobMonitor.class), fixed(Instant.now().minusSeconds(10), systemDefault())));
-        repository.createOrUpdate(newJobInfo(otherType, create("other"), mock(JobMonitor.class), fixed(Instant.now().minusSeconds(5), systemDefault())));
-        repository.createOrUpdate(newJobInfo(type, create("youngest"), mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("oldest"), type, mock(JobMonitor.class), fixed(Instant.now().minusSeconds(10), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("other"), otherType, mock(JobMonitor.class), fixed(Instant.now().minusSeconds(5), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("youngest"), type, mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
 
         // when
         final List<JobInfo> jobInfos = repository.findLatestBy(type, 2);
@@ -116,9 +118,9 @@ public class InMemJobRepositoryTest {
         // given
         final String type = "TEST";
         final String otherType = "OTHERTEST";
-        repository.createOrUpdate(newJobInfo(type, create("oldest"), mock(JobMonitor.class), fixed(Instant.now().minusSeconds(10), systemDefault())));
-        repository.createOrUpdate(newJobInfo(otherType, create("other"), mock(JobMonitor.class), fixed(Instant.now().minusSeconds(5), systemDefault())));
-        repository.createOrUpdate(newJobInfo(type, create("youngest"), mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("oldest"), type, mock(JobMonitor.class), fixed(Instant.now().minusSeconds(10), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("other"), otherType, mock(JobMonitor.class), fixed(Instant.now().minusSeconds(5), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("youngest"), type, mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
 
         // when
         final List<JobInfo> jobInfos = repository.findLatest(2);
@@ -134,15 +136,15 @@ public class InMemJobRepositoryTest {
         // given
         final String type = "TEST";
         final String otherType = "OTHERTEST";
-        repository.createOrUpdate(newJobInfo(type, create("some/job/stopped"), mock(JobMonitor.class), fixed(Instant.now().minusSeconds(10), systemDefault())).stop());
-        repository.createOrUpdate(newJobInfo(otherType, create("some/job/other"), mock(JobMonitor.class), fixed(Instant.now().minusSeconds(5), systemDefault())));
-        repository.createOrUpdate(newJobInfo(type, create("some/job/running"), mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("some/job/stopped"), type, mock(JobMonitor.class), fixed(Instant.now().minusSeconds(10), systemDefault())).stop());
+        repository.createOrUpdate(newJobInfo(create("some/job/other"), otherType, mock(JobMonitor.class), fixed(Instant.now().minusSeconds(5), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("some/job/running"), type, mock(JobMonitor.class), fixed(Instant.now(), systemDefault())));
 
         // when
-        final JobInfo runningJob = repository.findRunningJobByType(type);
+        final Optional<JobInfo> runningJob = repository.findRunningJobByType(type);
 
         // then
-        assertThat(runningJob.getJobUri(), is(URI.create("some/job/running")));
+        assertThat(runningJob.get().getJobUri(), is(URI.create("some/job/running")));
     }
 
     @Test
@@ -150,10 +152,10 @@ public class InMemJobRepositoryTest {
         // given
         
         // when
-        final JobInfo runningJob = repository.findRunningJobByType("someType");
+        final Optional<JobInfo> runningJob = repository.findRunningJobByType("someType");
 
         // then
-        assertThat(runningJob, is(nullValue()));
+        assertThat(runningJob.isPresent(), is(false));
     }
 
     @Test
@@ -161,9 +163,9 @@ public class InMemJobRepositoryTest {
         // Given
         final String type = "TEST";
         final String otherType = "OTHERTEST";
-        repository.createOrUpdate(newJobInfo(type, create("1"), mock(JobMonitor.class), systemDefaultZone()).stop());
-        repository.createOrUpdate(newJobInfo(otherType, create("2"), mock(JobMonitor.class), systemDefaultZone()));
-        repository.createOrUpdate(newJobInfo(type, create("3"), mock(JobMonitor.class), systemDefaultZone()));
+        repository.createOrUpdate(newJobInfo(create("1"), type, mock(JobMonitor.class), systemDefaultZone()).stop());
+        repository.createOrUpdate(newJobInfo(create("2"), otherType, mock(JobMonitor.class), systemDefaultZone()));
+        repository.createOrUpdate(newJobInfo(create("3"), type, mock(JobMonitor.class), systemDefaultZone()));
 
         // When
         final List<JobInfo> jobsType1 = repository.findByType(type);
