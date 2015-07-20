@@ -10,6 +10,8 @@ import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.repository.mongo.MongoJobRepository;
 import de.otto.edison.jobs.service.DefaultJobService;
 import de.otto.edison.jobs.service.JobService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -32,6 +34,8 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 @EnableScheduling
 public class JobConfiguration {
 
+    public static final Logger LOG = LoggerFactory.getLogger(JobConfiguration.class);
+
     @Value("${edison.jobs.scheduler.thread-count:10}")
     int numberOfThreads;
 
@@ -51,12 +55,14 @@ public class JobConfiguration {
     @ConditionalOnClass(MongoClient.class)
     @ConditionalOnProperty("edison.mongo.db")
     public JobRepository mongoJobRepository() {
+        LOG.info("Using MongoDb JobRepository");
         return new MongoJobRepository();
     }
 
     @Bean
     @ConditionalOnMissingBean(JobRepository.class)
     public JobRepository inMemJobRepository() {
+        LOG.warn("Using in-memory JobRepository");
         return new InMemJobRepository();
     }
 
