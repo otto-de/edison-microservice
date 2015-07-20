@@ -2,6 +2,8 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.monitor.JobMonitor;
+import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
+import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.testng.annotations.Test;
 
 import java.net.URI;
@@ -29,9 +31,9 @@ public class StopDeadJobsTest {
         final Clock clock = fixed(Instant.now(), systemDefault());
         final Clock earlierClock = fixed(Instant.now().minusSeconds(25), systemDefault());
 
-        JobInfo runningJobToBeStopped = newJobInfo("TYPE", create("runningJobToBeStopped"), mock(JobMonitor.class), earlierClock);
-        JobInfo runningJob = newJobInfo("TYPE", create("runningJob"), mock(JobMonitor.class), clock);
-        JobInfo stoppedJob = newJobInfo("TYPE", create("stoppedJob"), mock(JobMonitor.class), earlierClock).stop();
+        JobInfo runningJobToBeStopped = newJobInfo(create("runningJobToBeStopped"), "TYPE", mock(JobMonitor.class), earlierClock);
+        JobInfo runningJob = newJobInfo(create("runningJob"), "TYPE", mock(JobMonitor.class), clock);
+        JobInfo stoppedJob = newJobInfo(create("stoppedJob"), "TYPE", mock(JobMonitor.class), earlierClock).stop();
 
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(runningJobToBeStopped);

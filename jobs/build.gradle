@@ -5,7 +5,15 @@ dependencies {
     compile libs.logging
     compile libs.jcip
 
+    compile project(":mongo")
+
+    testCompile libs.mongoDb
+    testCompile libs.fakeMongo
     testCompile project(":testsupport")
+}
+
+configurations {
+  runtime.exclude group: "de.otto.edison", module: "mongo"
 }
 
 artifacts {

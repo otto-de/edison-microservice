@@ -49,7 +49,7 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnJobIfJobExists() throws IOException {
         // given
-        final JobInfo expectedJob = newJobInfo("TEST", create("/test/42"), (j) -> {}, systemDefaultZone());
+        final JobInfo expectedJob = newJobInfo(create("/test/42"), "TEST", (j) -> {}, systemDefaultZone());
         final JobService jobService = mock(JobService.class);
         when(jobService.findJob(any(URI.class))).thenReturn(Optional.of(expectedJob));
 
@@ -70,8 +70,8 @@ public class JobsControllerTest {
     @Test
     public void shouldReturnAllJobs() throws IOException {
         // given
-        final JobInfo firstJob = newJobInfo("TEST", create("/test/42"), (j) -> {}, fixed(ofEpochMilli(0), systemDefault()));
-        final JobInfo secondJob = newJobInfo("TEST", create("/test/42"), (j) -> {}, fixed(ofEpochMilli(1), systemDefault()));
+        final JobInfo firstJob = newJobInfo(create("/test/42"), "TEST", (j) -> {}, fixed(ofEpochMilli(0), systemDefault()));
+        final JobInfo secondJob = newJobInfo(create("/test/42"), "TEST", (j) -> {}, fixed(ofEpochMilli(1), systemDefault()));
         final JobService service = mock(JobService.class);
         when(service.findJobs(Optional.<String>empty(), 100)).thenReturn(asList(firstJob, secondJob));
 
@@ -87,7 +87,7 @@ public class JobsControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldReturnAllJobsOfTypeAsHtml() {
-        final JobInfo firstJob = newJobInfo("SOME_TYPE", create("/test/42"), (j) -> {}, systemDefaultZone());
+        final JobInfo firstJob = newJobInfo(create("/test/42"), "SOME_TYPE", (j) -> {}, systemDefaultZone());
         final JobService service = mock(JobService.class);
         when(service.findJobs(Optional.of("SOME_TYPE"), 100)).thenReturn(asList(firstJob));
 

@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.testng.annotations.Test;
 
 import java.time.Clock;
@@ -23,7 +24,7 @@ public class InMemJobInfoRepositoryTest {
         final InMemJobRepository repository = new InMemJobRepository();
         // when
 
-        final JobInfo job = newJobInfo("MYJOB", create("/jobs/" + randomUUID()), (j)-> {}, clock);
+        final JobInfo job = newJobInfo(create("/jobs/" + randomUUID()), "MYJOB", (j)-> {}, clock);
         repository.createOrUpdate(job);
 
         // then

@@ -1,6 +1,7 @@
-package de.otto.edison.jobs.repository;
+package de.otto.edison.jobs.repository.cleanup;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
