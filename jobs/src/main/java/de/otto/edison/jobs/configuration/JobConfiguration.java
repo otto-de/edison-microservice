@@ -52,14 +52,6 @@ public class JobConfiguration {
     }
 
     @Bean
-    @ConditionalOnClass(MongoClient.class)
-    @ConditionalOnProperty("edison.mongo.db")
-    public JobRepository mongoJobRepository() {
-        LOG.info("Using MongoDb JobRepository");
-        return new MongoJobRepository();
-    }
-
-    @Bean
     @ConditionalOnMissingBean(JobRepository.class)
     public JobRepository inMemJobRepository() {
         LOG.warn("Using in-memory JobRepository");

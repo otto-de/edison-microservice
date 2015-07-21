@@ -65,7 +65,7 @@ public class DefaultJobServiceTest {
         // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
-        assertThat(jobRepository.findBy(jobUri), isPresent());
+        assertThat(jobRepository.findOne(jobUri), isPresent());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class DefaultJobServiceTest {
         // when:
         final URI jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
-        final JobInfo jobInfo = jobRepository.findBy(jobUri).get();
+        final JobInfo jobInfo = jobRepository.findOne(jobUri).get();
         assertThat(jobInfo.getStopped(), isPresent());
     }
 
@@ -94,7 +94,7 @@ public class DefaultJobServiceTest {
         // when:
         final URI jobUri = jobService.startAsyncJob("bar");
         // then:
-        final JobInfo jobInfo = jobRepository.findBy(jobUri).get();
+        final JobInfo jobInfo = jobRepository.findOne(jobUri).get();
         assertThat(jobInfo.getStopped(), isPresent());
     }
 

@@ -34,7 +34,7 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public Optional<JobInfo> findBy(final URI uri) {
+    public Optional<JobInfo> findOne(final URI uri) {
         return ofNullable(jobs.get(uri));
     }
 

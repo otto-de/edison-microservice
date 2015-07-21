@@ -1,25 +1,30 @@
 package de.otto.edison.jobs.repository.mongo;
 
-import com.mongodb.client.FindIterable;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.mongo.AbstractMongoRepository;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Repository;
 
 import java.net.URI;
 import java.time.Clock;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
@@ -33,126 +38,94 @@ import static java.util.Date.from;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
-public class MongoJobRepository implements JobRepository {
+@ConditionalOnClass(MongoClient.class)
+@ConditionalOnProperty("edison.mongo.db")
+@Repository
+public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> implements JobRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
     private static final int DESCENDING = -1;
+    private static final String COLLECTION_NAME = "jobs";
 
-    @Autowired
-    private MongoDatabase database;
-    @Autowired
-    private JobMonitor monitor;
+    private final JobMonitor monitor;
+    private final MongoCollection<Document> collection;
     private final Clock clock;
 
-    public MongoJobRepository() {
+
+    @Autowired
+    public MongoJobRepository(final MongoDatabase database, final JobMonitor monitor) {
+        this.collection = database.getCollection(COLLECTION_NAME);
+        this.monitor = monitor;
         this.clock = systemDefaultZone();
     }
 
-    public MongoJobRepository(final MongoDatabase database, final JobMonitor jobMonitor, final Clock clock) {
-        this.database = database;
+    MongoJobRepository(final MongoDatabase database, final JobMonitor jobMonitor, final Clock clock) {
+        this.collection = database.getCollection(COLLECTION_NAME);
         this.monitor = jobMonitor;
         this.clock = clock;
     }
 
-    public List<JobInfo> findAll() {
-        return jobs()
-                .find()
-                .map(this::toJobInfo)
-                .into(new ArrayList<>());
-    }
-
-    @Override
-    public Optional<JobInfo> findBy(final URI uri) {
-        return ofNullable(jobs()
-                .find(byId(uri))
-                .map(this::toJobInfo)
-                .first());
-    }
-
-    @Override
-    public void createOrUpdate(final JobInfo job) {
-        final Document document = toDocument(job);
-        final Document existing = jobs().find(byId(job.getJobUri())).first();
-        if (existing != null) {
-            jobs().replaceOne(byId(job.getJobUri()), document);
-        } else {
-            jobs().insertOne(document);
-        }
-    }
-
     @Override
     public void removeIfStopped(final URI uri) {
-        findBy(uri).ifPresent(jobInfo -> {
+        findOne(uri).ifPresent(jobInfo -> {
             if (jobInfo.isStopped()) {
-                jobs().deleteOne(byId(uri));
+                collection().deleteOne(byId(uri));
             }
         });
     }
 
     @Override
     public List<JobInfo> findLatest(final int maxCount) {
-        return jobs()
+        return collection()
                 .find()
                 .limit(maxCount)
                 .sort(orderByStarted(DESCENDING))
-                .map(this::toJobInfo)
+                .map(this::decode)
                 .into(new ArrayList<>());
     }
 
     @Override
     public List<JobInfo> findLatestBy(final String type, final int maxCount) {
-        return jobs()
+        return collection()
                 .find(byType(type))
                 .limit(maxCount)
                 .sort(orderByStarted(DESCENDING))
-                .map(this::toJobInfo)
+                .map(this::decode)
                 .into(new ArrayList<>());
     }
 
     @Override
     public List<JobInfo> findByType(final String type) {
-        return jobs()
+        return collection()
                 .find(byType(type))
                 .sort(orderByStarted(DESCENDING))
-                .map(this::toJobInfo)
+                .map(this::decode)
                 .into(new ArrayList<>());
     }
 
     @Override
     public List<JobInfo> findRunningWithoutUpdateSince(final OffsetDateTime timeOffset) {
-        return jobs()
+        return collection()
                 .find(new Document()
                         .append(STOPPED.key(), singletonMap("$exists", false))
                         .append(LAST_UPDATED.key(), singletonMap("$lt", from(timeOffset.toInstant()))))
-                .map(this::toJobInfo)
+                .map(this::decode)
                 .into(new ArrayList<>());
     }
 
     @Override
     public Optional<JobInfo> findRunningJobByType(final String jobType) {
-        return ofNullable(jobs()
+        return ofNullable(collection()
                 .find(new Document()
                         .append(STOPPED.key(), singletonMap("$exists", false))
                         .append(JOB_TYPE.key(), jobType))
                 .limit(1)
-                .map(this::toJobInfo)
+                .map(this::decode)
                 .first());
     }
 
     @Override
-    public long size() {
-        return jobs().count();
-    }
-
-    public void clear() {
-        jobs().deleteMany(matchAll());
-    }
-
-    private MongoCollection<Document> jobs() {
-        return database.getCollection("jobs");
-    }
-
-    private Document toDocument(final JobInfo job) {
+    protected final Document encode(final JobInfo job) {
         final Document document = new Document()
                 .append(ID.key(), job.getJobUri().toString())
                 .append(JOB_TYPE.key(), job.getJobType())
@@ -173,7 +146,8 @@ public class MongoJobRepository implements JobRepository {
         return document;
     }
 
-    private JobInfo toJobInfo(final Document document) {
+    @Override
+    protected final JobInfo decode(final Document document) {
         return newJobInfo(
                 URI.create(document.getString(ID.key())),
                 document.getString(JOB_TYPE.key()),
@@ -206,16 +180,22 @@ public class MongoJobRepository implements JobRepository {
         );
     }
 
-    private Document byId(final URI uri) {
-        return new Document(ID.key(), uri.toString());
+    @Override
+    protected final URI keyOf(JobInfo value) {
+        return value.getJobUri();
+    }
+
+    @Override
+    protected final MongoCollection<Document> collection() {
+        return collection;
+    }
+
+    @Override
+    protected final void ensureIndexes() {
     }
 
     private Document byType(final String type) {
         return new Document(JOB_TYPE.key(), type);
-    }
-
-    private Document matchAll() {
-        return new Document();
     }
 
     private Document orderByStarted(final int order) {

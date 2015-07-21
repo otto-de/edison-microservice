@@ -44,7 +44,7 @@ public class MongoJobRepositoryTest {
         final JobInfo foo = someJobInfo("http://localhost/foo");
         repo.createOrUpdate(foo);
         // when
-        final Optional<JobInfo> jobInfo = repo.findBy(URI.create("http://localhost/foo"));
+        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo"));
         // then
         assertThat(jobInfo.isPresent(), is(true));
         assertThat(jobInfo.get(), is(foo));
@@ -57,7 +57,7 @@ public class MongoJobRepositoryTest {
         repo.createOrUpdate(foo);
         repo.createOrUpdate(foo.info("some message"));
         // when
-        final Optional<JobInfo> jobInfo = repo.findBy(URI.create("http://localhost/foo"));
+        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo"));
         // then
         assertThat(jobInfo.get(), is(foo));
     }
@@ -68,7 +68,7 @@ public class MongoJobRepositoryTest {
         final JobInfo foo = someRunningJobInfo("http://localhost/foo", "SOME_JOB", now());
         repo.createOrUpdate(foo);
         // when
-        final Optional<JobInfo> jobInfo = repo.findBy(URI.create("http://localhost/foo"));
+        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo"));
         // then
         assertThat(jobInfo.get(), is(foo));
     }

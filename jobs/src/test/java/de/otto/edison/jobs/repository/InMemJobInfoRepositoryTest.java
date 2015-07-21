@@ -28,13 +28,13 @@ public class InMemJobInfoRepositoryTest {
         repository.createOrUpdate(job);
 
         // then
-        assertThat(repository.findBy(job.getJobUri()), isPresent());
+        assertThat(repository.findOne(job.getJobUri()), isPresent());
     }
 
     @Test
     public void shouldReturnAbsentStatus() {
         InMemJobRepository repository = new InMemJobRepository();
-        assertThat(repository.findBy(create("/foo/bar")), isAbsent());
+        assertThat(repository.findOne(create("/foo/bar")), isAbsent());
     }
 
 }

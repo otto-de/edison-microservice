@@ -9,24 +9,24 @@ import java.util.Optional;
 
 public interface JobRepository {
 
-    List<JobInfo> findLatest(int maxCount);
+    public List<JobInfo> findLatest(int maxCount);
 
-    Optional<JobInfo> findBy(URI uri);
+    public Optional<JobInfo> findOne(URI uri);
 
-    List<JobInfo> findLatestBy(String type, int maxCount);
+    public List<JobInfo> findLatestBy(String type, int maxCount);
 
-    List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset);
+    public List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset);
 
-    List<JobInfo> findAll();
+    public List<JobInfo> findAll();
 
-    List<JobInfo> findByType(String jobType);
+    public List<JobInfo> findByType(String jobType);
 
-    Optional<JobInfo> findRunningJobByType(String jobType);
+    public Optional<JobInfo> findRunningJobByType(String jobType);
 
-    void createOrUpdate(JobInfo job);
+    public void createOrUpdate(JobInfo job);
 
-    void removeIfStopped(URI uri);
+    public void removeIfStopped(URI uri);
 
-    long size();
+    public long size();
 
 }

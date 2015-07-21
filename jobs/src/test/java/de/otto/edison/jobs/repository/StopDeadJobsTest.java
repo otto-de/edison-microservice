@@ -48,9 +48,9 @@ public class StopDeadJobsTest {
         strategy.doCleanUp();
 
         //then
-        JobInfo toBeStopped = repository.findBy(URI.create("runningJobToBeStopped")).get();
-        JobInfo running = repository.findBy(URI.create("runningJob")).get();
-        JobInfo stopped = repository.findBy(URI.create("stoppedJob")).get();
+        JobInfo toBeStopped = repository.findOne(URI.create("runningJobToBeStopped")).get();
+        JobInfo running = repository.findOne(URI.create("runningJob")).get();
+        JobInfo stopped = repository.findOne(URI.create("stoppedJob")).get();
 
         assertThat(toBeStopped.getStopped().get(), is(OffsetDateTime.now(earlierClock)));
         assertThat(toBeStopped.getLastUpdated(), is(OffsetDateTime.now(earlierClock)));

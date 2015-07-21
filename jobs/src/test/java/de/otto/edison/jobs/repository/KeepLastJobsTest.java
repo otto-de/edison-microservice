@@ -58,7 +58,7 @@ public class KeepLastJobsTest {
         strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(2L));
-        assertThat(repository.findBy(create("bar")), isAbsent());
+        assertThat(repository.findOne(create("bar")), isAbsent());
     }
 
     @Test
@@ -74,9 +74,9 @@ public class KeepLastJobsTest {
         // when
         strategy.doCleanUp();
         // then
-        assertThat(repository.findBy(create("foo")), isPresent());
-        assertThat(repository.findBy(create("foobar")), isPresent());
-        assertThat(repository.findBy(create("bar")), isAbsent());
+        assertThat(repository.findOne(create("foo")), isPresent());
+        assertThat(repository.findOne(create("foobar")), isPresent());
+        assertThat(repository.findOne(create("bar")), isAbsent());
 
         assertThat(repository.size(), is(2L));
     }
@@ -95,9 +95,9 @@ public class KeepLastJobsTest {
         strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(2L));
-        assertThat(repository.findBy(create("foobar")), isPresent());
-        assertThat(repository.findBy(create("foo")), isPresent());
-        assertThat(repository.findBy(create("bar")), isAbsent());
+        assertThat(repository.findOne(create("foobar")), isPresent());
+        assertThat(repository.findOne(create("foo")), isPresent());
+        assertThat(repository.findOne(create("bar")), isAbsent());
     }
 
     @Test
