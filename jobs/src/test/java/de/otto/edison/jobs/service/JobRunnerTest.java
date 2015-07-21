@@ -64,7 +64,7 @@ public class JobRunnerTest {
         jobRunner.start(jobRunnable);
         // then
         verify(jobRunnable).execute(jobInfo);
-        final JobInfo persistedJobInfo = repository.findBy(jobUri).get();
+        final JobInfo persistedJobInfo = repository.findOne(jobUri).get();
         assertThat(persistedJobInfo.getStatus(), is(OK));
         assertThat(persistedJobInfo.getStopped(), isPresent());
     }
@@ -81,7 +81,7 @@ public class JobRunnerTest {
         // when
         jobRunner.start(new SomeJobRunnable());
         // then
-        final Optional<JobInfo> optionalJob = repository.findBy(jobUri);
+        final Optional<JobInfo> optionalJob = repository.findOne(jobUri);
         final JobInfo jobInfo = optionalJob.get();
         assertThat(jobInfo.getMessages(), hasSize(2));
         final JobMessage first = jobInfo.getMessages().get(0);

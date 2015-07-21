@@ -23,7 +23,6 @@ import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
 import static java.time.Clock.systemDefaultZone;
 import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
 import static java.util.UUID.randomUUID;
 
 /**
@@ -96,7 +95,7 @@ public class DefaultJobService implements JobService {
 
     @Override
     public Optional<JobInfo> findJob(final URI uri) {
-        return repository.findBy(uri);
+        return repository.findOne(uri);
     }
 
     @Override

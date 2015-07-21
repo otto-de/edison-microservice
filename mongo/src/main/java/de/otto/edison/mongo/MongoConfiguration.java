@@ -1,4 +1,4 @@
-package de.otto.edison.mongo.configuration;
+package de.otto.edison.mongo;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
