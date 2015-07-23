@@ -1,20 +1,22 @@
 
+configurations {
+  provided
+}
+
 dependencies {
 
     compile libs.springBootWeb
     compile libs.logging
     compile libs.jcip
 
-    compile project(":mongo")
+    provided project(":mongo")
 
-    testCompile libs.mongoDb
+    testCompile project(":mongo")
     testCompile libs.fakeMongo
     testCompile project(":testsupport")
 }
 
-configurations {
-  runtime.exclude group: "de.otto.edison", module: "mongo"
-}
+sourceSets.main.compileClasspath += [configurations.provided]
 
 artifacts {
     archives jar
