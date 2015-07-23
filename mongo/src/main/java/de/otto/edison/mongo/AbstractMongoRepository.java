@@ -59,7 +59,11 @@ public abstract class AbstractMongoRepository<K, V> {
         return collection().count();
     }
 
-    public void clear() {
+    public void delete(final K key) {
+        collection().deleteOne(byId(key));
+    }
+
+    public void deleteAll() {
         collection().deleteMany(matchAll());
     }
 
