@@ -36,7 +36,6 @@ import static java.util.Date.from;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
-@ConditionalOnProperty("edison.mongo.db")
 @Repository
 public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> implements JobRepository {
 
@@ -47,7 +46,6 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     private final JobMonitor monitor;
     private final MongoCollection<Document> collection;
     private final Clock clock;
-
 
     @Autowired
     public MongoJobRepository(final MongoDatabase database, final JobMonitor monitor) {

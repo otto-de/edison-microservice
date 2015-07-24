@@ -23,8 +23,6 @@ import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
-@ConditionalOnClass(MongoClient.class)
-@ConditionalOnProperty("edison.mongo.db")
 public class MongoConfiguration {
 
     private static final Logger LOG = getLogger(MongoConfiguration.class);
