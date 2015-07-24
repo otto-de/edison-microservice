@@ -1,10 +1,14 @@
 
 dependencies {
 
-    compile libs.springBootWeb
+    compile libs.springBoot
     compile libs.logging
     compile libs.jcip
 
+    compile project(":mongo")
+    compile project(":jobs")
+
+    testCompile libs.fakeMongo
     testCompile project(":testsupport")
 }
 
@@ -31,9 +35,9 @@ uploadArchives {
             }
 
             pom.project {
-                name 'jobs'
+                name 'jobs-mongo'
                 packaging 'jar'
-                description 'Jobs library of the edison-microservice project.'
+                description 'Jobs-Mongo library of the edison-microservice project.'
                 url 'http://github.com/otto-de/edison-microservice'
 
                 scm {
