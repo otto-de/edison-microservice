@@ -1,6 +1,5 @@
 package de.otto.edison.jobs.repository.mongo;
 
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.domain.JobInfo;
@@ -14,7 +13,6 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
@@ -38,14 +36,13 @@ import static java.util.Date.from;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
-@ConditionalOnClass(MongoClient.class)
 @ConditionalOnProperty("edison.mongo.db")
 @Repository
 public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> implements JobRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
     private static final int DESCENDING = -1;
-    private static final String COLLECTION_NAME = "jobs";
+    private static final String COLLECTION_NAME = "jobinfo";
 
     private final JobMonitor monitor;
     private final MongoCollection<Document> collection;
