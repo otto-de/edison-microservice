@@ -5,6 +5,8 @@ dependencies {
     compile libs.logging
     compile libs.jcip
 
+    compile project(":status")
+
     testCompile project(":testsupport")
 }
 

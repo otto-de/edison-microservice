@@ -6,6 +6,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
 import static java.time.format.DateTimeFormatter.ofLocalizedTime;
 import static java.time.format.FormatStyle.MEDIUM;
@@ -14,13 +15,15 @@ import static java.time.format.FormatStyle.SHORT;
 public class JobRepresentation {
 
     private final JobInfo job;
+    private final boolean humanReadable;
 
-    private JobRepresentation(final JobInfo job) {
+    private JobRepresentation(final JobInfo job, boolean humanReadable) {
         this.job = job;
+        this.humanReadable=humanReadable;
     }
 
-    public static JobRepresentation representationOf(final JobInfo job) {
-        return new JobRepresentation(job);
+    public static JobRepresentation representationOf(final JobInfo job, final boolean humanReadable) {
+        return new JobRepresentation(job, humanReadable);
     }
 
     public String getJobUri() {
@@ -60,19 +63,23 @@ public class JobRepresentation {
         ).collect(Collectors.toList());
     }
 
-    private String formatDateTime(OffsetDateTime dateTime) {
+    private String formatDateTime(final OffsetDateTime dateTime) {
         if (dateTime==null) {
             return null;
         } else {
-            return ofLocalizedDateTime(SHORT, MEDIUM).format(dateTime);
+            return humanReadable
+                    ? ofLocalizedDateTime(SHORT, MEDIUM).format(dateTime)
+                    : ISO_OFFSET_DATE_TIME.format(dateTime);
         }
     }
 
-    private String formatTime(OffsetDateTime dateTime) {
+    private String formatTime(final OffsetDateTime dateTime) {
         if (dateTime==null) {
             return null;
         } else {
-            return ofLocalizedTime(MEDIUM).format(dateTime);
+            return humanReadable
+                    ? ofLocalizedTime(MEDIUM).format(dateTime)
+                    : ISO_OFFSET_DATE_TIME.format(dateTime);
         }
     }
 
