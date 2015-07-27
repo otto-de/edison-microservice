@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static java.net.URI.create;
+import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -45,7 +46,10 @@ public class JobsController {
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")
     public ModelAndView getJobsAsHtml(@RequestParam(value = "type", required = false) String type) {
-        final List<JobRepresentation> jobRepresentations = getJobsAsJson(type, JOB_VIEW_COUNT);
+        final List<JobRepresentation> jobRepresentations = jobService.findJobs(Optional.ofNullable(type), JOB_VIEW_COUNT)
+                .stream()
+                .map((j) -> representationOf(j, true))
+                .collect(toList());
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
         return modelAndView;
@@ -56,8 +60,8 @@ public class JobsController {
                                                  @RequestParam(value = "count", defaultValue = "1") int count) {
         return jobService.findJobs(Optional.ofNullable(type), count)
                 .stream()
-                .map(JobRepresentation::representationOf)
-                .collect(Collectors.toList());
+                .map((j) -> representationOf(j, false))
+                .collect(toList());
     }
 
     @RequestMapping(value = "/internal/jobs", method = DELETE)
@@ -84,7 +88,7 @@ public class JobsController {
         final Optional<JobInfo> optionalJob = jobService.findJob(uri);
         if (optionalJob.isPresent()) {
             final ModelAndView modelAndView = new ModelAndView("job");
-            modelAndView.addObject("job", representationOf(optionalJob.get()));
+            modelAndView.addObject("job", representationOf(optionalJob.get(), true));
             return modelAndView;
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
@@ -100,7 +104,7 @@ public class JobsController {
 
         final Optional<JobInfo> optionalJob = jobService.findJob(uri);
         if (optionalJob.isPresent()) {
-            return representationOf(optionalJob.get());
+            return representationOf(optionalJob.get(), false);
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
             return null;

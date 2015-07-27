@@ -64,7 +64,7 @@ public class JobsControllerTest {
         final JobRepresentation job = jobsController.findJob(request, response);
 
         // then
-        assertThat(job, is(representationOf(expectedJob)));
+        assertThat(job, is(representationOf(expectedJob, false)));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class JobsControllerTest {
         Object job = jobsController.getJobsAsJson(null, 100);
 
         // then
-        assertThat(job, is(asList(representationOf(firstJob), representationOf(secondJob))));
+        assertThat(job, is(asList(representationOf(firstJob, false), representationOf(secondJob, false))));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class JobsControllerTest {
 
         ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE");
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
-        assertThat(jobs, is(asList(representationOf(firstJob))));
+        assertThat(jobs, is(asList(representationOf(firstJob, false))));
     }
 
 }
