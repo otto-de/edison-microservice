@@ -19,6 +19,8 @@ public class Slf4JReporterConfiguration extends MetricsConfigurerAdapter {
 
     @Value("${edison.metrics.slf4j.logger}")
     private String logger;
+    @Value("${edison.metrics.slf4j.period:5}")
+    private long periodMinutes = 5;
 
     @Override
     public void configureReporters(final MetricRegistry metricRegistry) {
@@ -27,7 +29,7 @@ public class Slf4JReporterConfiguration extends MetricsConfigurerAdapter {
                 .outputTo(getLogger(logger))
                 .withLoggingLevel(INFO)
                 .build()
-                .start(1, MINUTES);
+                .start(periodMinutes, MINUTES);
     }
 
 }
