@@ -6,21 +6,28 @@
 <body>
 <h1>Status</h1>
 <ul>
-    <li th:text="${name}" />
-    <li th:text="${status}" />
+    <li><strong>Name: </strong><span th:text="${name}">Name</span></li>
+    <li><strong>Status: </strong><span th:text="${status}">Status</span></li>
 </ul>
 <h1>System</h1>
 <ul>
-    <li th:text="${hostname}" />
+    <li><strong>Host: </strong><span th:text="${hostname}">Hostname</span></li>
+    <li><strong>System Time: </strong><span th:text="${systemtime}">Systemtime</span></li>
+    <li><strong>Start Started: </strong><span th:text="${systemstarttime}">Systemstarttime</span></li>
 </ul>
 <h1>Version</h1>
 <ul>
-    <li th:text="${version}" />
-    <li th:text="${commit}" />
+    <li><strong>Version: </strong><span th:text="${version}">Version</span></li>
+    <li><strong>Git Commit: </strong><span th:text="${commit}">Git commit</span></li>
 </ul>
 <h1>Details</h1>
 <ul th:each="statusDetail : ${statusDetails}">
-    <li th:text="${statusDetail.key} + ': ' + ${statusDetail.status} + ' (' + ${statusDetail.message} + ')'" />
+    <li><strong th:text="${statusDetail.key}"/>
+        <ul>
+            <li><strong>Status: </strong><span th:text="${statusDetail.status}">status</span></li>
+            <li><strong>Message: </strong><span th:text="${statusDetail.message}">message</span></li>
+        </ul>
+    </li>
 </ul>
 </body>
 </html>
