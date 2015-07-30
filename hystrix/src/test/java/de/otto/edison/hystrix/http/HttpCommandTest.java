@@ -42,7 +42,7 @@ public class HttpCommandTest {
     public void shouldThrowExceptionWhenExecutionFails() throws IOException {
         // given
         AsyncHttpClient.BoundRequestBuilder mockRequest = mock(AsyncHttpClient.BoundRequestBuilder.class);
-        when(mockRequest.execute()).thenThrow(new IOException());
+        when(mockRequest.execute()).thenThrow(new RuntimeException());
 
         // when
         httpCommand()
@@ -58,7 +58,7 @@ public class HttpCommandTest {
     public void shouldFallbackWhenExecutionFails() throws IOException {
         // given
         AsyncHttpClient.BoundRequestBuilder mockRequest = mock(AsyncHttpClient.BoundRequestBuilder.class);
-        when(mockRequest.execute()).thenThrow(new IOException());
+        when(mockRequest.execute()).thenThrow(new RuntimeException());
         // and
         Response fallbackResponse = mock(Response.class);
 
@@ -78,7 +78,7 @@ public class HttpCommandTest {
     public void shouldFallbackToStringWhenExecutionFails() throws IOException {
         // given
         AsyncHttpClient.BoundRequestBuilder mockRequest = mock(AsyncHttpClient.BoundRequestBuilder.class);
-        when(mockRequest.execute()).thenThrow(new IOException());
+        when(mockRequest.execute()).thenThrow(new RuntimeException());
         // and
         String fallbackResponse = "42";
 
