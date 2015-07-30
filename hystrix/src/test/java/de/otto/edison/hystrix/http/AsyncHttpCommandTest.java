@@ -51,7 +51,7 @@ public class AsyncHttpCommandTest {
         AsyncHandler asyncHandler = mock(AsyncHandler.class);
         // and
         AsyncHttpClient.BoundRequestBuilder mockRequest = mock(AsyncHttpClient.BoundRequestBuilder.class);
-        when(mockRequest.execute(asyncHandler)).thenThrow(new IOException());
+        when(mockRequest.execute(asyncHandler)).thenThrow(new RuntimeException());
 
         // when
         asyncHttpCommand()
@@ -65,12 +65,12 @@ public class AsyncHttpCommandTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldFallbackWhenExecutionFails() throws IOException, ExecutionException, InterruptedException {
+    public void shouldFallbackWhenExecutionFails() throws ExecutionException, InterruptedException {
         // given
         AsyncHandler<Future<Response>> asyncHandler = mock(AsyncHandler.class);
         // and
         AsyncHttpClient.BoundRequestBuilder mockRequest = mock(AsyncHttpClient.BoundRequestBuilder.class);
-        when(mockRequest.execute(asyncHandler)).thenThrow(new IOException());
+        when(mockRequest.execute(asyncHandler)).thenThrow(new RuntimeException());
         // and
         Response fallbackResponse = mock(Response.class);
 
