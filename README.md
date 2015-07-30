@@ -6,6 +6,9 @@ Common basis for some of otto.de's micro services using Spring Boot
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/health/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/health)
 
+[![Dependency Status](https://www.versioneye.com/user/projects/55ba6f016537620017001905/badge.svg?style=flat)](https://www.versioneye.com/user/projects/55ba6f016537620017001905)
+
+
 ## About
 This project contains a number of independent libraries that may be used to create microservices on top of Spring Boot. The libraries are used in different projects at OTTO. It's purpose is to provide a common implementation for cross-cutting requirements like:
 * Health checks that are used to tell the load balancer or mesos platform whether or not a service is healthy.
