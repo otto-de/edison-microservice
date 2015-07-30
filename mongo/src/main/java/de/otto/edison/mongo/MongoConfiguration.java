@@ -7,9 +7,7 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.mongodb.MongoCredential.createMongoCRCredential;
+import static com.mongodb.MongoCredential.createCredential;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -92,7 +90,7 @@ public class MongoConfiguration {
             return Collections.emptyList();
         }
         return asList(
-                createMongoCRCredential(
+                createCredential(
                         databaseUser,
                         databaseName,
                         databasePasswd.toCharArray()));
