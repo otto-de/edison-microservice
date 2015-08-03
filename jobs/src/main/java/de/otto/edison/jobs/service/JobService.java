@@ -12,13 +12,13 @@ import java.util.Optional;
  */
 public interface JobService {
 
-    public URI startAsyncJob(String jobType);
+    URI startAsyncJob(String jobType);
 
-    public URI startAsyncJob(JobRunnable jobRunnable);
+    URI startAsyncJob(JobRunnable jobRunnable);
 
-    public List<JobInfo> findJobs(Optional<String> type, int count);
+    List<JobInfo> findJobs(Optional<String> type, int count);
 
-    public Optional<JobInfo> findJob(URI uri);
+    Optional<JobInfo> findJob(URI uri);
 
-    public void deleteJobs(Optional<String> type);
+    void deleteJobs(Optional<String> type);
 }
