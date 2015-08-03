@@ -20,7 +20,8 @@ import static java.time.Clock.fixed;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertTrue;
 

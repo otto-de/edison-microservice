@@ -3,9 +3,7 @@ package de.otto.edison.status.indicator;
 import de.otto.edison.status.domain.StatusDetail;
 import org.testng.annotations.Test;
 
-import static de.otto.edison.status.domain.Status.ERROR;
-import static de.otto.edison.status.domain.Status.OK;
-import static de.otto.edison.status.domain.Status.WARNING;
+import static de.otto.edison.status.domain.Status.*;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.not;

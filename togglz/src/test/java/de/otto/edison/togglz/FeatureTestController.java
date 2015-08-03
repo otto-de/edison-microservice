@@ -1,6 +1,5 @@
 package de.otto.edison.togglz;
 
-import de.otto.edison.togglz.configuration.TogglzConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

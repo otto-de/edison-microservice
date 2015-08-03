@@ -9,7 +9,6 @@ import com.ning.http.client.Response;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.netflix.hystrix.HystrixCommand.Setter.withGroupKey;
