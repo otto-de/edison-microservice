@@ -2,8 +2,8 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.testsupport.util.TestClock;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeMethod;

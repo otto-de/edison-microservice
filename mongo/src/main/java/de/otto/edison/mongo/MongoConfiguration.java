@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static com.mongodb.MongoCredential.createCredential;
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 

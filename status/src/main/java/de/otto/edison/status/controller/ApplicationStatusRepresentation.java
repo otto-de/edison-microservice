@@ -3,22 +3,13 @@ package de.otto.edison.status.controller;
 import de.otto.edison.status.domain.ApplicationStatus;
 import de.otto.edison.status.domain.StatusDetail;
 import net.jcip.annotations.Immutable;
-import org.springframework.format.datetime.joda.LocalDateTimeParser;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.time.format.TextStyle;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static java.time.ZonedDateTime.now;
 import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
 import static java.time.format.FormatStyle.LONG;
-import static java.time.format.FormatStyle.MEDIUM;
 
 @Immutable
 final class ApplicationStatusRepresentation {

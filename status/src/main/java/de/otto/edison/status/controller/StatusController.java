@@ -8,24 +8,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.TextStyle;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.otto.edison.status.controller.ApplicationStatusRepresentation.statusRepresentationOf;
-import static java.time.ZoneId.systemDefault;
 import static java.time.ZonedDateTime.now;
 import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
-import static java.time.format.FormatStyle.FULL;
 import static java.time.format.FormatStyle.LONG;
-import static java.time.format.FormatStyle.MEDIUM;
-import static java.time.format.TextStyle.SHORT;
-import static java.util.Locale.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @ConfigurationProperties(value = "endpoints.status", ignoreUnknownFields = false)

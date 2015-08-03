@@ -1,7 +1,9 @@
 package de.otto.edison.status.configuration;
 
 import de.otto.edison.status.domain.VersionInfo;
-import de.otto.edison.status.indicator.*;
+import de.otto.edison.status.indicator.ApplicationStatusAggregator;
+import de.otto.edison.status.indicator.CachedApplicationStatusAggregator;
+import de.otto.edison.status.indicator.StatusDetailIndicator;
 import de.otto.edison.status.scheduler.CronScheduler;
 import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
 import de.otto.edison.status.scheduler.Scheduler;

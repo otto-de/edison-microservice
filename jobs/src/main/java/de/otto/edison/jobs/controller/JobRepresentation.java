@@ -6,9 +6,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
-import static java.time.format.DateTimeFormatter.ofLocalizedTime;
+import static java.time.format.DateTimeFormatter.*;
 import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
 

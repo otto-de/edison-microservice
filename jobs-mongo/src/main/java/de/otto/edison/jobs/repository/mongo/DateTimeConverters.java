@@ -1,12 +1,11 @@
 package de.otto.edison.jobs.repository.mongo;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 
-import static java.time.OffsetDateTime.*;
-import static java.time.ZoneId.*;
-import static java.util.Date.*;
+import static java.time.OffsetDateTime.ofInstant;
+import static java.time.ZoneId.systemDefault;
+import static java.util.Date.from;
 
 /**
  * Utility class used to convert java.time.* to and from mongoDB documents.
