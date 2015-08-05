@@ -35,6 +35,7 @@ public class MongoJobRepositoryTest {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         final MongoDatabase database = fongo.getDatabase("jobsinfo");
         monitor = mock(JobMonitor.class);
+
         repo = new MongoJobRepository(database, monitor, systemDefaultZone());
     }
 
