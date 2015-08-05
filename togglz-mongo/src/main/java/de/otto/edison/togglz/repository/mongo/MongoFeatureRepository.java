@@ -33,7 +33,7 @@ public class MongoFeatureRepository extends AbstractMongoRepository<String, Feat
     public MongoFeatureRepository(final MongoDatabase database,
                                   final FeatureClassProvider featureClassProvider) {
         this.featureClassProvider = featureClassProvider;
-        this.collection = database.getCollection("menuitemconfiguration");
+        this.collection = database.getCollection("togglz");
     }
 
     @Override
