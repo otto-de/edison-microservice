@@ -19,7 +19,7 @@ public abstract class AbstractEtaggableMongoRepository<K, V extends ETaggable> e
 
     protected static final String ETAG = "etag";
 
-    public V updateIfETagMatch(V value) {
+    public V updateIfETagMatch(final V value) {
         Bson query = queryWithOrWithoutETag(value);
 
         Document updatedETaggable = collection().findOneAndReplace(query, encode(value.copyAndAddETag()), new FindOneAndReplaceOptions().returnDocument(AFTER));
@@ -35,30 +35,30 @@ public abstract class AbstractEtaggableMongoRepository<K, V extends ETaggable> e
         return decode(updatedETaggable);
     }
 
-    private Bson queryWithOrWithoutETag(V value) {
+    private Bson queryWithOrWithoutETag(final V value) {
         if (!StringUtils.isEmpty(value.getETag())) {
             return and(eq("_id", keyOf(value)), eq(ETAG, value.getETag()));
         }
         return eq("_id", keyOf(value));
     }
 
-    public V createWithETag(V value) {
+    public V createWithETag(final V value) {
         super.create(value.copyAndAddETag());
         return findOne(keyOf(value)).get();
     }
 
     @Override
-    public void create(V value) {
+    public void create(final V value) {
         throw new UnsupportedOperationException("this is not supported if you use eTags: Please use createWithETag instead");
     }
 
     @Override
-    public void createOrUpdate(V value) {
+    public void createOrUpdate(final V value) {
         throw new UnsupportedOperationException("this is not supported if you use eTags: Please use updateIfETagMatch or createWithETag instead");
     }
 
     @Override
-    public void update(V value) {
+    public void update(final V value) {
         throw new UnsupportedOperationException("this is not supported if you use eTags: Please use updateIfETagMatch instead");
     }
 }
