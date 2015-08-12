@@ -6,7 +6,7 @@ public abstract class ETaggable {
 
     protected final String eTag;
 
-    protected ETaggable(String eTag) {
+    protected ETaggable(final String eTag) {
         this.eTag = eTag;
     }
 
