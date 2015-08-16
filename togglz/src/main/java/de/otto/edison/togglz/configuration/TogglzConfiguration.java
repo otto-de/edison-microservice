@@ -23,8 +23,6 @@ public class TogglzConfiguration {
     @Autowired
     private FeatureClassProvider featureClassProvider;
 
-
-
     @Bean
     @ConditionalOnMissingBean(UserProvider.class)
     public UserProvider getUserProvider() {
@@ -47,6 +45,4 @@ public class TogglzConfiguration {
     public DefaultTogglzConfig defaultTogglzConfig() {
         return new DefaultTogglzConfig(cacheTtlMilliseconds, stateRepository, getUserProvider(), featureClassProvider);
     }
-
-
 }
