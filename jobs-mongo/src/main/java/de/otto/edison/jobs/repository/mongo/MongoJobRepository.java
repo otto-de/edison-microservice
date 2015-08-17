@@ -122,7 +122,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     @Override
     protected final Document encode(final JobInfo job) {
         final Document document = new Document()
-                .append(ID.key(), job.getJobUri().toString())
+                .append(JobStructure.ID.key(), job.getJobUri().toString())
                 .append(JOB_TYPE.key(), job.getJobType())
                 .append(STARTED.key(), toDate(job.getStarted()))
                 .append(LAST_UPDATED.key(), toDate(job.getLastUpdated()))
@@ -144,7 +144,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     @Override
     protected final JobInfo decode(final Document document) {
         return newJobInfo(
-                URI.create(document.getString(ID.key())),
+                URI.create(document.getString(JobStructure.ID.key())),
                 document.getString(JOB_TYPE.key()),
                 toOffsetDateTime(document.getDate(STARTED.key())),
                 toOffsetDateTime(document.getDate(LAST_UPDATED.key())),
