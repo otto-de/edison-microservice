@@ -1,17 +1,25 @@
 package de.otto.edison.mongo;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.ReturnDocument.AFTER;
+import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 
 public abstract class AbstractMongoRepository<K, V> {
 
-    private static final String ID = "_id";
+    protected static final String ID = "_id";
+    protected static final String ETAG = "etag";
 
     public Optional<V> findOne(final K key) {
         return ofNullable(collection()
@@ -53,6 +61,20 @@ public abstract class AbstractMongoRepository<K, V> {
     public void update(final V value) {
         final K key = keyOf(value);
         collection().replaceOne(byId(key), encode(value));
+    }
+
+    public void updateIfMatch(final V value, final String eTag) {
+        Bson query = and(eq(AbstractMongoRepository.ID, keyOf(value)), eq(ETAG, eTag));
+
+        Document updatedETaggable = collection().findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
+        if (isNull(updatedETaggable)) {
+            Optional<V> findById = findOne(keyOf(value));
+            if (findById.isPresent()) {
+                throw new ConcurrentModificationException("Entity concurrently modified: " + keyOf(value));
+            }
+
+            throw new NotFoundException("Entity does not exist: " + keyOf(value));
+        }
     }
 
     public long size() {

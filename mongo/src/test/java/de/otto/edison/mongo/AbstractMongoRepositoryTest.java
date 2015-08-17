@@ -1,16 +1,15 @@
-package de.otto.edison.mongo.etag;
+package de.otto.edison.mongo;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import de.otto.edison.mongo.NotFoundException;
 import org.bson.Document;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.ConcurrentModificationException;
-import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -18,7 +17,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsNot.not;
 
 @Test
-public class AbstractEtaggableMongoRepositoryTest {
+public class AbstractMongoRepositoryTest {
 
     private TestRepository testee;
 
@@ -34,13 +33,14 @@ public class AbstractEtaggableMongoRepositoryTest {
     public void shouldUpdateIfETagMatch() throws Exception {
         // given
         TestObject testObject = new TestObject("someId", "someValue");
-        testee.createWithETag(testObject);
+        testee.create(testObject);
 
-        String etagFromCreated = testee.findOne("someId").get().getETag();
+        String etagFromCreated = testee.findOne("someId").get().eTag;
         TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue", etagFromCreated);
 
         // when
-        TestObject updatedTestObject = testee.updateIfETagMatch(testObjectToUpdate);
+        testee.updateIfMatch(testObjectToUpdate, etagFromCreated);
+        TestObject updatedTestObject = testee.findOne("someId").get();
 
         // then
         assertThat(updatedTestObject.eTag, notNullValue());
@@ -49,32 +49,15 @@ public class AbstractEtaggableMongoRepositoryTest {
         assertThat(updatedTestObject.value, is("someUpdatedValue"));
     }
 
-    @Test
-    public void shouldUpdateWithoutEtagButGenerateIt() throws Exception {
-        // given
-        TestObject testObject = new TestObject("someId", "someValue");
-        TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue");
-        testee.createWithETag(testObject);
-
-        // when
-        TestObject updatedTestObject = testee.updateIfETagMatch(testObjectToUpdate);
-        Optional<TestObject> campaignAfterUpdate = testee.findOne("someId");
-
-        // then
-        assertThat(updatedTestObject.eTag, notNullValue());
-        assertThat(updatedTestObject.id, is("someId"));
-        assertThat(updatedTestObject.value, is("someUpdatedValue"));
-    }
-
     @Test(expectedExceptions = ConcurrentModificationException.class)
     public void shouldNotUpdateIfEtagNotMatch() throws Exception {
         // given
         TestObject testObject = new TestObject("someId", "someValue", "someEtagWhichIsNotInTheDb");
-        testee.createWithETag(testObject);
+        testee.create(testObject);
 
         // when
         try {
-            testee.updateIfETagMatch(testObject);
+            testee.updateIfMatch(testObject, "someOtherETag");
             Assert.fail();
         } catch (ConcurrentModificationException e) {
             // then
@@ -89,7 +72,7 @@ public class AbstractEtaggableMongoRepositoryTest {
 
         // when
         try {
-            testee.updateIfETagMatch(testObject);
+            testee.updateIfMatch(testObject, "someETag");
             Assert.fail();
         } catch (NotFoundException e) {
             // then
@@ -97,7 +80,7 @@ public class AbstractEtaggableMongoRepositoryTest {
         }
     }
 
-    public class TestRepository extends AbstractEtaggableMongoRepository<String, TestObject> {
+    public class TestRepository extends AbstractMongoRepository<String, TestObject> {
 
         private final MongoCollection<Document> collection;
 
@@ -120,7 +103,7 @@ public class AbstractEtaggableMongoRepositoryTest {
             Document document = new Document();
 
             document.append("_id", value.id);
-            document.append("etag", value.eTag);
+            document.append("etag", UUID.randomUUID().toString());
             document.append("value", value.value);
 
             return document;
@@ -140,13 +123,15 @@ public class AbstractEtaggableMongoRepositoryTest {
         }
     }
 
-    public class TestObject extends ETaggable {
+    public class TestObject {
 
         private String id;
         private String value;
 
+        private String eTag;
+
         protected TestObject(String id, String value, String eTag) {
-            super(eTag);
+            this.eTag = eTag;
             this.id = id;
             this.value = value;
         }
@@ -155,9 +140,6 @@ public class AbstractEtaggableMongoRepositoryTest {
             this(id, value, null);
         }
 
-        @Override
-        public TestObject copyAndAddETag() {
-            return new TestObject(id, value, createETag());
-        }
+
     }
 }
