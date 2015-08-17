@@ -41,6 +41,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
     private static final int DESCENDING = -1;
     private static final String COLLECTION_NAME = "jobinfo";
+    public static final String NO_LOG_MESSAGE_FOUND = "No log message found";
 
     private final JobMonitor monitor;
     private final MongoCollection<Document> collection;
@@ -169,7 +170,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     private JobMessage toJobMessage(final Document document) {
         return jobMessage(
                 Level.valueOf(document.get(MSG_LEVEL.key()).toString()),
-                document.get(MSG_TEXT.key()).toString(),
+                getMessage(document),
                 toOffsetDateTime(document.getDate(MSG_TS.key()))
         );
     }
@@ -186,6 +187,10 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
 
     @Override
     protected final void ensureIndexes() {
+    }
+
+    private String getMessage(Document document) {
+        return document.get(MSG_TEXT.key()) == null ? NO_LOG_MESSAGE_FOUND : document.get(MSG_TEXT.key()).toString();
     }
 
     private Document byType(final String type) {

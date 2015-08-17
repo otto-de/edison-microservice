@@ -7,16 +7,16 @@ import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.monitor.JobMonitor;
+import org.bson.Document;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
+import static de.otto.edison.jobs.repository.mongo.JobStructure.*;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -170,6 +170,38 @@ public class MongoJobRepositoryTest {
         // then
         assertThat(repo.findAll(), hasSize(1));
         assertThat(repo.findAll(), contains(bar));
+    }
+
+    @Test
+    public void shouldNotFailInCaseLogMessageHasNoText() throws Exception {
+        //given
+        Map<String, Object> infoLog = new HashMap<String, Object>() {{
+            put(MSG_LEVEL.key(), "INFO");
+            put(MSG_TEXT.key(), "Some text");
+            put(MSG_TS.key(), new Date());
+        }};
+
+        Map<String, Object> errorLog = new HashMap<String, Object>() {{
+            put(MSG_LEVEL.key(), "ERROR");
+            put(MSG_TEXT.key(), null);
+            put(MSG_TS.key(), new Date());
+        }};
+
+        Document infoLogDocument = new Document(infoLog);
+        Document errorLogDocument = new Document(errorLog);
+
+        Map<String, Object> jobLogs = new HashMap<String, Object>() {{
+            put(MESSAGES.key(), asList(infoLogDocument, errorLogDocument));
+            put(JOB_TYPE.key(), "SomeType");
+            put(ID.key(), "/SomeType/ID");
+            put(STATUS.key(), JobStatus.ERROR.toString());
+        }};
+
+        //when
+        JobInfo jobInfo = repo.decode(new Document(jobLogs));
+
+        //then
+        assertThat(jobInfo.getMessages().size(), is(2));
     }
 
     private JobInfo someJobInfo(final String jobUri) {
