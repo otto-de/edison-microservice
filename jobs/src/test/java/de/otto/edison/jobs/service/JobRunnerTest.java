@@ -2,6 +2,7 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.testsupport.util.TestClock;
@@ -12,6 +13,7 @@ import org.testng.annotations.Test;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,6 +28,7 @@ import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.net.URI.create;
 import static java.time.Clock.fixed;
+import static java.time.OffsetDateTime.ofInstant;
 import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -90,6 +93,29 @@ public class JobRunnerTest {
         assertThat(second.getMessage(), is("a message"));
         assertThat(second.getLevel(), is(INFO));
         assertThat(second.getTimestamp(), is(notNullValue()));
+    }
+
+    @Test
+    public void shouldUpdateJobTimeStamp() {
+        //given
+        final URI jobUri = create("/foo/jobs/42");
+        final JobRepository repository = mock(JobRepository.class);
+
+        clock = mock(Clock.class);
+        when(clock.getZone()).thenReturn(systemDefault());
+        when(clock.instant()).thenReturn(Instant.ofEpochSecond(0L), Instant.ofEpochSecond(1L), Instant.ofEpochSecond(2L));
+
+        // when
+        final JobRunner jobRunner = newJobRunner(JobInfo.newJobInfo(jobUri, "JOBTYPE", mock(JobMonitor.class), clock), repository, executor);
+
+        // then
+        verify(repository, times(1)).createOrUpdate(any(JobInfo.class));
+
+        // when
+        jobRunner.start(new SomeJobRunnable());
+
+        // then
+        verify(repository, times(2)).createOrUpdate(any(JobInfo.class));
     }
 
     @Test

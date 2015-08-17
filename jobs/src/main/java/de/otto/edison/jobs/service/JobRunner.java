@@ -32,8 +32,9 @@ public final class JobRunner {
     public static JobRunner newJobRunner(final JobInfo job,
                                          final JobRepository jobRepository,
                                          final ScheduledExecutorService executorService) {
-        return new JobRunner(job, jobRepository, executorService);
-
+        final JobRunner jobRunner = new JobRunner(job, jobRepository, executorService);
+        jobRepository.createOrUpdate(jobRunner.jobInfo);
+        return jobRunner;
     }
 
     public void start(final JobRunnable runnable) {
@@ -49,7 +50,6 @@ public final class JobRunner {
 
     private void start() {
         synchronized (this) {
-            jobRepository.createOrUpdate(jobInfo);
             pingJob = executorService.scheduleAtFixedRate(this::ping, PING_PERIOD, PING_PERIOD, SECONDS);
 
             final String jobId = jobInfo.getJobUri().toString();
