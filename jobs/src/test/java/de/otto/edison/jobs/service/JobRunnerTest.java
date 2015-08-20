@@ -60,7 +60,8 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo jobInfo = newJobInfo(jobUri, "NAME", (j)-> {}, clock);
+        final JobInfo jobInfo = newJobInfo(jobUri, "NAME", (j) -> {
+        }, clock);
         final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor);
         // when
         JobRunnable jobRunnable = mock(JobRunnable.class);
@@ -78,7 +79,8 @@ public class JobRunnerTest {
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
         final JobRunner jobRunner = newJobRunner(
-                newJobInfo(jobUri, "NAME", (j)-> {}, clock),
+                newJobInfo(jobUri, "NAME", (j) -> {
+                }, clock),
                 repository,
                 executor);
         // when
@@ -125,7 +127,8 @@ public class JobRunnerTest {
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
         final JobRunner jobRunner = newJobRunner(
-                newJobInfo(jobUri, "NAME", (j)-> {}, testClock),
+                newJobInfo(jobUri, "NAME", (j) -> {
+                }, testClock),
                 repository,
                 executor);
         // when
@@ -137,6 +140,9 @@ public class JobRunnerTest {
 
         // given
         reset(repository);
+
+        when(repository.findStatus(jobUri)).thenReturn(JobInfo.JobStatus.OK);
+
         testClock.proceed(1, MINUTES);
         // when
         pingRunnableArgumentCaptor.getValue().run();
@@ -146,13 +152,46 @@ public class JobRunnerTest {
     }
 
     @Test
+    public void shouldCheckBeforeUpdatingJobStatusIfTheJobIsNotAlreadyDeadAndCancelPingIfDead() throws Exception {
+        //given
+        TestClock testClock = TestClock.now();
+        final URI jobUri = create("/foo/jobs/42");
+        final JobRepository repository = mock(JobRepository.class);
+        final JobRunner jobRunner = newJobRunner(
+                newJobInfo(jobUri, "NAME", (j) -> {
+                }, testClock),
+                repository,
+                executor);
+        // when
+        jobRunner.start(new SomeJobRunnable());
+        //then
+
+        ArgumentCaptor<Runnable> pingRunnableArgumentCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(executor).scheduleAtFixedRate(pingRunnableArgumentCaptor.capture(), eq(PING_PERIOD), eq(PING_PERIOD), eq(SECONDS));
+
+        // given
+        reset(repository);
+
+        when(repository.findStatus(jobUri)).thenReturn(JobInfo.JobStatus.DEAD);
+
+        testClock.proceed(1, MINUTES);
+        // when
+        pingRunnableArgumentCaptor.getValue().run();
+        // then
+
+        verify(scheduledJob, times(2)).cancel(false);
+        verify(repository, never()).createOrUpdate(any(JobInfo.class));
+    }
+
+    @Test
     public void shouldStopPeriodicallyUpdateJobTimestampWhenJobIsFinished() {
         //given
 
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
         final JobRunner jobRunner = newJobRunner(
-                newJobInfo(jobUri, "NAME", (j)-> {}, clock),
+                newJobInfo(jobUri, "NAME", (j) -> {
+                }, clock),
                 repository,
                 executor);
 

@@ -179,4 +179,19 @@ public class InMemJobRepositoryTest {
         assertThat(jobsType2.size(), is(1));
         assertTrue(jobsType2.stream().anyMatch(job -> job.getJobUri().equals(create("2"))));
     }
+
+    @Test
+    public void shouldFindStatusOfJob() throws Exception {
+        //Given
+        final String type = "TEST";
+        JobInfo jobInfo = newJobInfo(create("1"), type, mock(JobMonitor.class), systemDefaultZone());
+
+        repository.createOrUpdate(jobInfo);
+
+        //When
+        JobInfo.JobStatus status = repository.findStatus(create("1"));
+
+        //Then
+        assertThat(status, is(JobInfo.JobStatus.OK));
+    }
 }

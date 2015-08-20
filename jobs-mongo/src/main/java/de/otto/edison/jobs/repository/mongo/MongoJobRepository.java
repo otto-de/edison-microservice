@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.repository.mongo;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.domain.JobInfo;
@@ -67,6 +68,14 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
                 collection().deleteOne(byId(uri));
             }
         });
+    }
+
+    @Override
+    public JobStatus findStatus(URI jobUri) {
+        return JobStatus.valueOf(collection()
+                .find(byId(jobUri))
+                .projection(new Document(STATUS.key(), true))
+                .first().getString(STATUS.key()));
     }
 
     @Override

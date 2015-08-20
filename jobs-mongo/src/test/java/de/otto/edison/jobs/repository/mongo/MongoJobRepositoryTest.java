@@ -15,6 +15,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.repository.mongo.JobStructure.*;
 import static java.time.Clock.systemDefaultZone;
@@ -204,11 +205,24 @@ public class MongoJobRepositoryTest {
         assertThat(jobInfo.getMessages().size(), is(2));
     }
 
+    @Test
+    public void shouldFindStatusOfAJob() throws Exception {
+        //Given
+        final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");
+        repo.createOrUpdate(foo);
+
+        //When
+        JobStatus status = repo.findStatus(URI.create("http://localhost/foo"));
+
+        //Then
+        assertThat(status, is(OK));
+    }
+
     private JobInfo someJobInfo(final String jobUri) {
         return JobInfo.newJobInfo(
                 URI.create(jobUri),
                 "SOME_JOB",
-                now(), now(), Optional.of(now()), JobStatus.OK,
+                now(), now(), Optional.of(now()), OK,
                 asList(
                         jobMessage(Level.INFO, "foo"),
                         jobMessage(Level.WARNING, "bar")),
@@ -220,7 +234,7 @@ public class MongoJobRepositoryTest {
         return JobInfo.newJobInfo(
                 URI.create(jobUri),
                 type,
-                now(), now(), Optional.of(now()), JobStatus.OK,
+                now(), now(), Optional.of(now()), OK,
                 asList(
                         jobMessage(Level.INFO, "foo"),
                         jobMessage(Level.WARNING, "bar")),
@@ -232,7 +246,7 @@ public class MongoJobRepositoryTest {
         return JobInfo.newJobInfo(
                 URI.create(jobUri),
                 type,
-                started, started.plus(1, SECONDS), Optional.empty(), JobStatus.OK,
+                started, started.plus(1, SECONDS), Optional.empty(), OK,
                 Collections.<JobMessage>emptyList(),
                 monitor, systemDefaultZone()
         );

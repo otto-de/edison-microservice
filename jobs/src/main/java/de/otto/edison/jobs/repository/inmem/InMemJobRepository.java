@@ -94,4 +94,9 @@ public class InMemJobRepository implements JobRepository {
         return jobs.size();
     }
 
+    @Override
+    public JobInfo.JobStatus findStatus(URI jobUri) {
+        return jobs.get(jobUri).getStatus();
+    }
+
 }
