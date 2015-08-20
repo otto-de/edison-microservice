@@ -61,6 +61,10 @@ public final class JobRunner {
 
     private void ping() {
         synchronized (this) {
+            if (jobRepository.findStatus(jobInfo.getJobUri()).equals(JobInfo.JobStatus.DEAD)) {
+                pingJob.cancel(false);
+                return;
+            }
             jobInfo.ping();
             jobRepository.createOrUpdate(jobInfo);
         }
@@ -71,7 +75,7 @@ public final class JobRunner {
             assert !jobInfo.isStopped();
             jobInfo.error(e.getMessage());
             jobRepository.createOrUpdate(jobInfo);
-            LOG.error("Fatal error in job "+ jobInfo.getJobType()+" ("+ jobInfo.getJobUri()+")",e);
+            LOG.error("Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e);
         }
     }
 

@@ -29,4 +29,5 @@ public interface JobRepository {
 
     public long size();
 
+    JobInfo.JobStatus findStatus(URI jobUri);
 }
