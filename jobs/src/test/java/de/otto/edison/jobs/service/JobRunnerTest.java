@@ -13,7 +13,6 @@ import org.testng.annotations.Test;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,6 +20,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.service.JobRunner.PING_PERIOD;
@@ -28,7 +28,6 @@ import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.net.URI.create;
 import static java.time.Clock.fixed;
-import static java.time.OffsetDateTime.ofInstant;
 import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -141,7 +140,7 @@ public class JobRunnerTest {
         // given
         reset(repository);
 
-        when(repository.findStatus(jobUri)).thenReturn(JobInfo.JobStatus.OK);
+        when(repository.findStatus(jobUri)).thenReturn(OK);
 
         testClock.proceed(1, MINUTES);
         // when
@@ -152,14 +151,15 @@ public class JobRunnerTest {
     }
 
     @Test
-    public void shouldCheckBeforeUpdatingJobStatusIfTheJobIsNotAlreadyDeadAndCancelPingIfDead() throws Exception {
+    public void shouldUpdateJobInfoIfJobIsDead() throws Exception {
         //given
         TestClock testClock = TestClock.now();
         final URI jobUri = create("/foo/jobs/42");
         final JobRepository repository = mock(JobRepository.class);
+        JobInfo jobInfo = newJobInfo(jobUri, "NAME", (j) -> {
+        }, testClock);
         final JobRunner jobRunner = newJobRunner(
-                newJobInfo(jobUri, "NAME", (j) -> {
-                }, testClock),
+                jobInfo,
                 repository,
                 executor);
         // when
@@ -172,15 +172,15 @@ public class JobRunnerTest {
         // given
         reset(repository);
 
-        when(repository.findStatus(jobUri)).thenReturn(JobInfo.JobStatus.DEAD);
+        when(repository.findStatus(jobUri)).thenReturn(DEAD);
 
         testClock.proceed(1, MINUTES);
         // when
         pingRunnableArgumentCaptor.getValue().run();
         // then
 
-        verify(scheduledJob, times(2)).cancel(false);
-        verify(repository, never()).createOrUpdate(any(JobInfo.class));
+        assertThat(jobInfo.getStatus(), is(DEAD));
+        verify(repository).createOrUpdate(jobInfo);
     }
 
     @Test
