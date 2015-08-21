@@ -6,7 +6,6 @@ import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.GaugeService;
 
 import javax.annotation.PostConstruct;
@@ -45,22 +44,18 @@ public class DefaultJobService implements JobService {
     private List<JobRunnable> jobRunnables = emptyList();
 
 
-    @Value("${server.contextPath}")
-    private String serverContextPath;
     private final Clock clock;
 
     public DefaultJobService() {
         this.clock = systemDefaultZone();
     }
 
-    DefaultJobService(final String serverContextPath,
-                      final JobRepository repository,
+    DefaultJobService(final JobRepository repository,
                       final JobMonitor monitor,
                       final List<JobRunnable> jobRunnables,
                       final GaugeService gaugeService,
                       final Clock clock,
                       final ScheduledExecutorService executor) {
-        this.serverContextPath = serverContextPath;
         this.repository = repository;
         this.monitor = monitor;
         this.repository = repository;
@@ -144,6 +139,6 @@ public class DefaultJobService implements JobService {
     }
 
     private URI newJobUri() {
-        return create(serverContextPath + "/internal/jobs/" + randomUUID());
+        return create("/internal/jobs/" + randomUUID());
     }
 }
