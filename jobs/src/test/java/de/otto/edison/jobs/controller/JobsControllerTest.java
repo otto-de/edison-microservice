@@ -37,7 +37,7 @@ public class JobsControllerTest {
         final JobsController jobsController = new JobsController(jobService);
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("http://127.0.0.1/jobs/42");
+        when(request.getRequestURI()).thenReturn("http://127.0.0.1/internal/jobs/42");
 
         final HttpServletResponse response = mock(HttpServletResponse.class);
         // when
@@ -64,7 +64,7 @@ public class JobsControllerTest {
         final JobRepresentation job = jobsController.findJob(request, response);
 
         // then
-        assertThat(job, is(representationOf(expectedJob, false)));
+        assertThat(job, is(representationOf(expectedJob, false, "")));
     }
 
     @Test
@@ -78,10 +78,10 @@ public class JobsControllerTest {
         final JobsController jobsController = new JobsController(service);
 
         // when
-        Object job = jobsController.getJobsAsJson(null, 100);
+        Object job = jobsController.getJobsAsJson(null, 100, mock(HttpServletRequest.class));
 
         // then
-        assertThat(job, is(asList(representationOf(firstJob, false), representationOf(secondJob, false))));
+        assertThat(job, is(asList(representationOf(firstJob, false, ""), representationOf(secondJob, false, ""))));
     }
 
     @Test
@@ -93,9 +93,9 @@ public class JobsControllerTest {
 
         final JobsController jobsController = new JobsController(service);
 
-        ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE");
+        ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE", mock(HttpServletRequest.class));
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
-        assertThat(jobs, is(asList(representationOf(firstJob, false))));
+        assertThat(jobs, is(asList(representationOf(firstJob, false, ""))));
     }
 
 }

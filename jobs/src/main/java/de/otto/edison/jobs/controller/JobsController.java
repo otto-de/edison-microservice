@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
+import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
 import static java.net.URI.create;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -46,10 +47,11 @@ public class JobsController {
     }
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")
-    public ModelAndView getJobsAsHtml(@RequestParam(value = "type", required = false) String type) {
+    public ModelAndView getJobsAsHtml(@RequestParam(value = "type", required = false) String type,
+                                      HttpServletRequest request) {
         final List<JobRepresentation> jobRepresentations = jobService.findJobs(Optional.ofNullable(type), JOB_VIEW_COUNT)
                 .stream()
-                .map((j) -> representationOf(j, true))
+                .map((j) -> representationOf(j, true, baseUriOf(request)))
                 .collect(toList());
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
@@ -58,10 +60,11 @@ public class JobsController {
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "application/json")
     public List<JobRepresentation> getJobsAsJson(@RequestParam(value = "type", required = false) String type,
-                                                 @RequestParam(value = "count", defaultValue = "1") int count) {
+                                                 @RequestParam(value = "count", defaultValue = "1") int count,
+                                                 HttpServletRequest request) {
         return jobService.findJobs(Optional.ofNullable(type), count)
                 .stream()
-                .map((j) -> representationOf(j, false))
+                .map((j) -> representationOf(j, false, baseUriOf(request)))
                 .collect(toList());
     }
 
@@ -74,9 +77,10 @@ public class JobsController {
             value = "/internal/jobs/{jobType}",
             method = POST)
     public void startJob(final @PathVariable String jobType,
+                         final HttpServletRequest request,
                          final HttpServletResponse response) throws IOException {
         final URI jobUri = jobService.startAsyncJob(jobType);
-        response.setHeader("Location", jobUri.toString());
+        response.setHeader("Location", baseUriOf(request) + jobUri.toString());
         response.setStatus(SC_NO_CONTENT);
     }
 
@@ -84,12 +88,12 @@ public class JobsController {
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "text/html")
     public ModelAndView findJobAsHtml(final HttpServletRequest request,
                                       final HttpServletResponse response) throws IOException {
-        final URI uri = create(request.getRequestURI());
+        final URI uri = jobUriOf(request);
 
         final Optional<JobInfo> optionalJob = jobService.findJob(uri);
         if (optionalJob.isPresent()) {
             final ModelAndView modelAndView = new ModelAndView("job");
-            modelAndView.addObject("job", representationOf(optionalJob.get(), true));
+            modelAndView.addObject("job", representationOf(optionalJob.get(), true, baseUriOf(request)));
             return modelAndView;
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
@@ -101,14 +105,23 @@ public class JobsController {
     public JobRepresentation findJob(final HttpServletRequest request,
                                      final HttpServletResponse response) throws IOException {
 
-        final URI uri = create(request.getRequestURI());
+        final URI uri = jobUriOf(request);
 
         final Optional<JobInfo> optionalJob = jobService.findJob(uri);
         if (optionalJob.isPresent()) {
-            return representationOf(optionalJob.get(), false);
+            return representationOf(optionalJob.get(), false, baseUriOf(request));
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
             return null;
+        }
+    }
+
+    private URI jobUriOf(HttpServletRequest request) {
+        String servletPath = request.getServletPath() != null ? request.getServletPath() : "";
+        if (servletPath.contains(".")) {
+            return create(servletPath.substring(0, servletPath.lastIndexOf('.')));
+        } else {
+            return create(servletPath);
         }
     }
 
