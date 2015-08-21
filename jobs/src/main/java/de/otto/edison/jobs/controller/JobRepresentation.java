@@ -6,26 +6,30 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.otto.edison.jobs.controller.Link.link;
 import static java.time.format.DateTimeFormatter.*;
 import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
+import static java.util.Arrays.asList;
 
 public class JobRepresentation {
 
     private final JobInfo job;
     private final boolean humanReadable;
+    private final String baseUri;
 
-    private JobRepresentation(final JobInfo job, boolean humanReadable) {
+    private JobRepresentation(final JobInfo job, final boolean humanReadable, final String baseUri) {
         this.job = job;
         this.humanReadable=humanReadable;
+        this.baseUri = baseUri;
     }
 
-    public static JobRepresentation representationOf(final JobInfo job, final boolean humanReadable) {
-        return new JobRepresentation(job, humanReadable);
+    public static JobRepresentation representationOf(final JobInfo job, final boolean humanReadable, final String baseUri) {
+        return new JobRepresentation(job, humanReadable, baseUri);
     }
 
     public String getJobUri() {
-        return job.getJobUri().toString();
+        return baseUri + job.getJobUri().toString();
     }
 
     public String getJobType() {
@@ -59,6 +63,15 @@ public class JobRepresentation {
         return job.getMessages().stream().map((jobMessage) ->
             "[" + formatTime(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()
         ).collect(Collectors.toList());
+    }
+
+    public List<Link> getLinks() {
+        final String jobUri = baseUri + job.getJobUri().toString();
+        return asList(
+                link("self", jobUri, "Self"),
+                link("collection", jobUri.substring(0, jobUri.lastIndexOf("/")), "All Jobs"),
+                link("collection/" + getJobType(), jobUri.substring(0, jobUri.lastIndexOf("/")) + "?type=" + getJobType(), "All " + getJobType() + " Jobs")
+        );
     }
 
     private String formatDateTime(final OffsetDateTime dateTime) {
