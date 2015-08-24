@@ -78,6 +78,7 @@ public class DefaultJobService implements JobService {
 
     @Override
     public URI startAsyncJob(final JobRunnable jobRunnable) {
+        // TODO: use some kind of database lock so we can prevent race conditions
         final Optional<JobInfo> alreadyRunning = repository.findRunningJobByType(jobRunnable.getJobType());
         if (alreadyRunning == null || !alreadyRunning.isPresent()) {
             return startAsync(metered(jobRunnable));
