@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
+import static de.otto.edison.jobs.controller.Link.link;
 import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -24,6 +25,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class JobDefinitionsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobDefinitionsController.class);
+    public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions/";
 
     @Autowired(required = false)
     private List<JobDefinition> jobDefinitions = Collections.emptyList();
@@ -35,14 +37,21 @@ public class JobDefinitionsController {
         this.jobDefinitions = jobDefinitions;
     }
 
-    /*
-    @RequestMapping(value = "/internal/jobdefinitions", method = GET, produces = "application/json")
-    public Map<String,Object> getJobsDefinitions() {
-        return representationOf.(jobDefinitions);
+    @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "application/json")
+    public Map<String, List<Link>> getJobDefinitions(final HttpServletRequest request) {
+        return new LinkedHashMap<String,List<Link>>() {{
+            final String baseUri = baseUriOf(request);
+            put("jobdefinitions", jobDefinitions
+                    .stream()
+                    .map((def) -> link("jobdefinition", baseUri + INTERNAL_JOBDEFINITIONS + def.jobType(), def.jobName()))
+                    .collect(toList()));
+            put("links", asList(
+                    link("self", baseUriOf(request) + INTERNAL_JOBDEFINITIONS, "Self"))
+            );
+        }};
     }
-    */
 
-    @RequestMapping(value = "/internal/jobdefinitions/{jobType}", method = GET, produces = "application/json")
+    @RequestMapping(value = INTERNAL_JOBDEFINITIONS + "{jobType}", method = GET, produces = "application/json")
     public JobDefinitionRepresentation getJobDefinition(final @PathVariable String jobType,
                                                         final HttpServletRequest request,
                                                         final HttpServletResponse response) throws IOException {
@@ -55,5 +64,4 @@ public class JobDefinitionsController {
             return null;
         }
     }
-
 }

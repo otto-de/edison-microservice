@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
+import static de.otto.edison.jobs.controller.Link.link;
 import static java.net.URI.create;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,7 +28,8 @@ public class JobDefinitionsControllerTest {
         final JobDefinitionsController controller = new JobDefinitionsController();
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("http://127.0.0.1/internal/jobdefinitions/FooJob");
+        when(request.getRequestURL()).thenReturn(new StringBuffer("http://127.0.0.1/internal/jobdefinitions/FooJob"));
+        when(request.getServletPath()).thenReturn("/internal/jobdefinitions/FooJob");
 
         final HttpServletResponse response = mock(HttpServletResponse.class);
         // when
@@ -38,12 +42,13 @@ public class JobDefinitionsControllerTest {
     public void shouldReturnJobDefinitionIfJobExists() throws IOException {
         // given
         final String jobType = "FooJob";
-        final JobDefinition expectedDef = jobDefinition(jobType);
+        final JobDefinition expectedDef = jobDefinition(jobType, "Foo");
 
         final JobDefinitionsController controller = new JobDefinitionsController(asList(expectedDef));
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("http://127.0.0.1/internal/jobdefinitions/" + jobType);
+        when(request.getRequestURL()).thenReturn(new StringBuffer("http://127.0.0.1/internal/jobdefinitions/" + jobType));
+        when(request.getServletPath()).thenReturn("/internal/jobdefinitions/" + jobType);
 
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -51,40 +56,37 @@ public class JobDefinitionsControllerTest {
         final JobDefinitionRepresentation jobDefinition = controller.getJobDefinition(jobType, request, response);
 
         // then
-        assertThat(jobDefinition, is(representationOf(expectedDef, "")));
+        assertThat(jobDefinition, is(representationOf(expectedDef, "http://127.0.0.1")));
     }
 
-    /*
     @Test
-    public void shouldReturnAllJobs() throws IOException {
+    public void shouldReturnAllJobDefinitions() throws IOException {
         // given
-        final JobDefinition fooJobDef = jobDefinition("FooJob");
-        final JobDefinition barJobDef = jobDefinition("BarJob");
+        final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
+        final JobDefinition barJobDef = jobDefinition("BarJob", "Bar");
 
         final JobDefinitionsController controller = new JobDefinitionsController(asList(fooJobDef, barJobDef));
 
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURL()).thenReturn(new StringBuffer("http://127.0.0.1/internal/jobdefinitions/"));
+        when(request.getServletPath()).thenReturn("/internal/jobdefinitions/");
+
         // when
-        Object job = controller.getJobDefinitions(null, 100, mock(HttpServletRequest.class));
+        Map<String, List<Link>> defs = controller.getJobDefinitions(request);
 
         // then
-        assertThat(job, is(asList(representationOf(firstJob, ""), representationOf(secondJob, ""))));
+        assertThat(defs.get("jobdefinitions"), is(
+                asList(
+                        link("jobdefinition", "http://127.0.0.1/internal/jobdefinitions/FooJob", "Foo"),
+                        link("jobdefinition", "http://127.0.0.1/internal/jobdefinitions/BarJob", "Bar")))
+        );
+        assertThat(defs.get("links"), is(
+                asList(
+                        link("self", "http://127.0.0.1/internal/jobdefinitions/", "Self")))
+        );
     }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void shouldReturnAllJobsOfTypeAsHtml() {
-        final JobInfo firstJob = newJobInfo(create("/test/42"), "SOME_TYPE", (j) -> {}, systemDefaultZone());
-        final JobService service = mock(JobService.class);
-        when(service.findJobs(Optional.of("SOME_TYPE"), 100)).thenReturn(asList(firstJob));
-
-        final JobsController jobsController = new JobsController(service);
-
-        ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE", mock(HttpServletRequest.class));
-        List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
-        assertThat(jobs, is(asList(representationOf(firstJob, false, ""))));
-    }*/
-
-    private JobDefinition jobDefinition(final String jobType) {
+    private JobDefinition jobDefinition(final String jobType, final String name) {
         return new JobDefinition() {
 
             @Override
@@ -99,7 +101,7 @@ public class JobDefinitionsControllerTest {
 
             @Override
             public String jobName() {
-                return "Foo";
+                return name;
             }
         };
     }
