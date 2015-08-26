@@ -60,12 +60,16 @@ public final class JobRunner {
     }
 
     private void ping() {
-        synchronized (this) {
-            if (jobRepository.findStatus(jobInfo.getJobUri()).equals(JobInfo.JobStatus.DEAD)) {
-                jobInfo.dead();
+        try {
+            synchronized (this) {
+                if (jobRepository.findStatus(jobInfo.getJobUri()).equals(JobInfo.JobStatus.DEAD)) {
+                    jobInfo.dead();
+                }
+                jobInfo.ping();
+                jobRepository.createOrUpdate(jobInfo);
             }
-            jobInfo.ping();
-            jobRepository.createOrUpdate(jobInfo);
+        } catch (Exception e) {
+            error(e);
         }
     }
 
