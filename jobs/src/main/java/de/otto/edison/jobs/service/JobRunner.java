@@ -69,7 +69,8 @@ public final class JobRunner {
                 jobRepository.createOrUpdate(jobInfo);
             }
         } catch (Exception e) {
-            error(e);
+            assert !jobInfo.isStopped();
+            LOG.error("Fatal error in ping job for" + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e.getMessage());
         }
     }
 
