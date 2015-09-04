@@ -36,7 +36,7 @@ import static java.util.Date.from;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
-@Repository
+@Repository(value = "jobRepository")
 public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> implements JobRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
