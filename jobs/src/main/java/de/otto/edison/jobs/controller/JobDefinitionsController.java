@@ -25,7 +25,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class JobDefinitionsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobDefinitionsController.class);
-    public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions/";
+    public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";
 
     @Autowired(required = false)
     private List<JobDefinition> jobDefinitions = Collections.emptyList();
@@ -43,7 +43,7 @@ public class JobDefinitionsController {
             final String baseUri = baseUriOf(request);
             put("jobdefinitions", jobDefinitions
                     .stream()
-                    .map((def) -> link("jobdefinition", baseUri + INTERNAL_JOBDEFINITIONS + def.jobType(), def.jobName()))
+                    .map((def) -> link("jobdefinition", baseUri + INTERNAL_JOBDEFINITIONS + "/"  + def.jobType(), def.jobName()))
                     .collect(toList()));
             put("links", asList(
                     link("self", baseUriOf(request) + INTERNAL_JOBDEFINITIONS, "Self"))
@@ -51,7 +51,7 @@ public class JobDefinitionsController {
         }};
     }
 
-    @RequestMapping(value = INTERNAL_JOBDEFINITIONS + "{jobType}", method = GET, produces = "application/json")
+    @RequestMapping(value = INTERNAL_JOBDEFINITIONS + "/{jobType}", method = GET, produces = "application/json")
     public JobDefinitionRepresentation getJobDefinition(final @PathVariable String jobType,
                                                         final HttpServletRequest request,
                                                         final HttpServletResponse response) throws IOException {

@@ -85,7 +85,7 @@ public class JobDefinitionsControllerTest {
         );
         assertThat(defs.get("links"), is(
                 asList(
-                        link("self", "http://127.0.0.1/internal/jobdefinitions/", "Self")))
+                        link("self", "http://127.0.0.1/internal/jobdefinitions", "Self")))
         );
     }
 
