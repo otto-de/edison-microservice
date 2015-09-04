@@ -89,9 +89,9 @@ public class JobDefinitionRepresentation {
 
     private List<Link> linksOf(final JobDefinition jobDefinition, String baseUri) {
         return asList(
-                link("self", baseUri + jobDefinition.triggerUri().toString(), null),
+                link("self", baseUri + jobDefinition.triggerUrl().toString(), null),
                 link("collection", baseUri + "/internal/jobdefinitions", null),
-                link("trigger", baseUri + jobDefinition.triggerUri().toString(), null),
+                link("trigger", baseUri + jobDefinition.triggerUrl().toString(), null),
                 link("jobs", baseUri + "/internal/jobs?type=" + jobDefinition.jobType(), null)
         );
     }

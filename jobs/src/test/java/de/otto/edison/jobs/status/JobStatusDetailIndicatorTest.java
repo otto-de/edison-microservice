@@ -7,7 +7,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
@@ -17,6 +16,7 @@ import static de.otto.edison.jobs.status.JobStatusDetailIndicator.SUCCESS_MESSAG
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static java.time.Duration.ofHours;
+import static java.time.Duration.ofSeconds;
 import static java.time.OffsetDateTime.now;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -50,7 +50,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -72,7 +72,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", Duration.ofSeconds(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofSeconds(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -95,7 +95,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -117,13 +117,13 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getDetails(), hasEntry("uri", "someBaseUrl/some/uri"));
+        assertThat(status.getDetails(), hasEntry("uri", "/some/uri"));
     }
 
     @Test
@@ -139,13 +139,13 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getDetails(), hasEntry("uri", "someBaseUrl/some/uri"));
+        assertThat(status.getDetails(), hasEntry("uri", "/some/uri"));
     }
 
     @Test
@@ -153,7 +153,7 @@ public class JobStatusDetailIndicatorTest {
         // given
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of());
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -176,13 +176,13 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getDetails(), hasEntry("running", "someBaseUrl/some/uri"));
+        assertThat(status.getDetails(), hasEntry("running", "/some/uri"));
     }
 
     @Test
@@ -199,7 +199,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -221,7 +221,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -243,7 +243,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -265,7 +265,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.DEAD);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -287,7 +287,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.DEAD);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -309,7 +309,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType2", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType2", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -321,7 +321,7 @@ public class JobStatusDetailIndicatorTest {
     @Test
     public void shouldAcceptIfNoJobRan() {
         // given
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -333,7 +333,7 @@ public class JobStatusDetailIndicatorTest {
     @Test
     public void shouldHaveName() {
         // given
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", "someBaseUrl", ofHours(10));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();

@@ -34,7 +34,7 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
         this.versionInfo = versionInfo;
         this.indicators = unmodifiableList(new ArrayList<>(indicators));
         this.hostName = hostName();
-        this.cachedStatus = ApplicationStatus.applicationStatus(applicationName, hostName, versionInfo, Collections.<StatusDetail>emptyList());
+        this.cachedStatus = applicationStatus(applicationName, hostName, versionInfo, Collections.<StatusDetail>emptyList());
     }
 
     @Override
@@ -48,11 +48,11 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
     }
 
     private ApplicationStatus calcApplicationStatus() {
-        return applicationStatus(applicationName, hostName, versionInfo, indicators
-                        .stream()
-                        .map(StatusDetailIndicator::statusDetail)
-                        .collect(toList())
-        );
+        final List<StatusDetail> allDetails = indicators
+                .stream()
+                .flatMap(i->i.statusDetails().stream())
+                .collect(toList());
+        return applicationStatus(applicationName, hostName, versionInfo, allDetails);
     }
 
     private String hostName() {

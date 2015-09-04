@@ -1,6 +1,8 @@
 package de.otto.edison.jobs.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @author Guido Steinacker
@@ -21,5 +23,13 @@ public class UrlHelper {
         return requestUrl != null
                 ? requestUrl.substring(0, requestUrl.indexOf(request.getServletPath()))
                 : "";
+    }
+
+    public static URL url(final String url) {
+        try {
+            return new URL(url);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 }

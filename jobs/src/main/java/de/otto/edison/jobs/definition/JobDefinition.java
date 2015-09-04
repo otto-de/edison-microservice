@@ -1,14 +1,12 @@
 package de.otto.edison.jobs.definition;
 
-import java.net.URI;
+import java.net.URL;
 import java.time.Duration;
 import java.util.Optional;
 
 /**
- * A definition of a job, indicating how to start a job.
- *
  * @author Guido Steinacker
- * @since 20.08.15
+ * @since 25.08.15
  */
 public interface JobDefinition {
 
@@ -19,7 +17,7 @@ public interface JobDefinition {
      *
      * @return job trigger URL
      */
-    public URI triggerUri();
+    public URL triggerUrl();
 
     /**
      * The type of the job that is specified by this JobDefinition.
@@ -41,8 +39,8 @@ public interface JobDefinition {
      * A human-readable description of the job.
      *
      * @return job description
-    public String description();
      */
+    public String description();
 
     /*
      * The optional maximum duration after that a job is regarded as too old and a warning is indicated.
@@ -67,11 +65,15 @@ public interface JobDefinition {
 
     /**
      * Number of retries when starting a job is failing for some reason.
+     *
+     * @return number of retries
      */
     public default int retries() { return 0; };
 
     /**
      * The duration after that a retry should be scheduled.
+     *
+     * @return optional delay before retrying
      */
     public default Optional<Duration> retryDelay() { return Optional.empty(); };
 }

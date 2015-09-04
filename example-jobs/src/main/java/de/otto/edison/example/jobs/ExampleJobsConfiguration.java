@@ -6,10 +6,10 @@ import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.URI;
-import java.time.Duration;
 import java.util.Optional;
 
+import static de.otto.edison.jobs.controller.UrlHelper.url;
+import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofMinutes;
@@ -33,41 +33,13 @@ public class ExampleJobsConfiguration {
 
     @Bean
     public JobDefinition fooJobDefinition() {
-        return new JobDefinition() {
-            @Override
-            public URI triggerUri() {
-                return URI.create("/internal/jobs/FooJob");
-            }
-
-            @Override
-            public String jobType() {
-                return "FooJob";
-            }
-
-            @Override
-            public String jobName() {
-                return "An example job named Foo";
-            }
-
-            @Override
-            public Optional<Duration> fixedDelay() {
-                return Optional.of(ofHours(1));
-            }
-
-            @Override
-            public Optional<Duration> maxAge() {
-                return Optional.of(ofHours(3));
-            }
-
-            @Override
-            public int retries() {
-                return 6;
-            }
-
-            @Override
-            public Optional<Duration> retryDelay() {
-                return Optional.of(ofMinutes(10));
-            }
-        };
+        return fixedDelayJobDefinition(
+                "FooJob",
+                "Foo Job",
+                "An example job that is running for a while.",
+                url("http://localhost:8080/example/internal/jobs/FooJob"),
+                ofHours(1),
+                Optional.of(ofHours(3))
+        );
     }
 }
