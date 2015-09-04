@@ -8,11 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Optional;
 
-import static de.otto.edison.jobs.controller.UrlHelper.url;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.Duration.ofHours;
-import static java.time.Duration.ofMinutes;
 
 /**
  * @author Guido Steinacker
@@ -37,7 +35,6 @@ public class ExampleJobsConfiguration {
                 "FooJob",
                 "Foo Job",
                 "An example job that is running for a while.",
-                url("http://localhost:8080/example/internal/jobs/FooJob"),
                 ofHours(1),
                 Optional.of(ofHours(3))
         );
