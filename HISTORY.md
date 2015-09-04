@@ -1,5 +1,10 @@
 # Release History
 
+## Release 0.28.1
+
+Bugs fixed:
+* Fixed bugs that prevented the StatusDetails of jobs to be added to status page.
+
 ## Release 0.28.0
 
 New Features:

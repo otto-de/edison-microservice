@@ -9,6 +9,8 @@ import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.service.DefaultJobService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.jobs.status.JobStatusDetailIndicator;
+import de.otto.edison.status.domain.Status;
+import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.slf4j.Logger;
@@ -90,13 +92,16 @@ public class JobConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "edison.jobs.status.enabled", havingValue = "true", matchIfMissing = true)
-    @ConditionalOnExpression(value = "#jobDefinitions != null && jobDefinitions.size() > 0")
     public StatusDetailIndicator jobStatusDetailIndicator() {
-        return new CompositeStatusDetailIndicator("jobs",
-                jobDefinitions
-                        .stream()
-                        .map(d -> new JobStatusDetailIndicator(null, d.jobName(), d.jobType(), d.maxAge()))
-                        .collect(toList())
-        );
+        if (jobDefinitions == null || jobDefinitions.isEmpty()) {
+            return () -> StatusDetail.statusDetail("jobs", Status.OK, "No job definitions configured in application.");
+        } else {
+            return new CompositeStatusDetailIndicator("jobs",
+                    jobDefinitions
+                            .stream()
+                            .map(d -> new JobStatusDetailIndicator(jobRepository(), d.jobName(), d.jobType(), d.maxAge()))
+                            .collect(toList())
+            );
+        }
     }
 }
