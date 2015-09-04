@@ -14,7 +14,6 @@ import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
 import static de.otto.edison.jobs.controller.Link.link;
-import static de.otto.edison.jobs.controller.UrlHelper.url;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static java.time.Duration.ofHours;
 import static java.util.Arrays.asList;
@@ -91,7 +90,7 @@ public class JobDefinitionsControllerTest {
     }
 
     private DefaultJobDefinition jobDefinition(final String jobType, final String name) {
-        return fixedDelayJobDefinition(jobType, name, name, url("http://127.0.0.1/internal/jobdefinitions/" + jobType), ofHours(1), Optional.<Duration>empty());
+        return fixedDelayJobDefinition(jobType, name, name, ofHours(1), Optional.<Duration>empty());
     }
 
 }

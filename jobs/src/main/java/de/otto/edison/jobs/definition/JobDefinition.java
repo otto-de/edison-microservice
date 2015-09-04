@@ -1,6 +1,5 @@
 package de.otto.edison.jobs.definition;
 
-import java.net.URL;
 import java.time.Duration;
 import java.util.Optional;
 
@@ -9,15 +8,6 @@ import java.util.Optional;
  * @since 25.08.15
  */
 public interface JobDefinition {
-
-    /**
-     * The URL of the job trigger.
-     *
-     * Jobs can be triggered by sending an HTTP POST to the specified URL.
-     *
-     * @return job trigger URL
-     */
-    public URL triggerUrl();
 
     /**
      * The type of the job that is specified by this JobDefinition.
