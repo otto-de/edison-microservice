@@ -1,18 +1,22 @@
 package de.otto.edison.jobs.controller;
 
+import de.otto.edison.jobs.definition.DefaultJobDefinition;
 import de.otto.edison.jobs.definition.JobDefinition;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
 import static de.otto.edison.jobs.controller.Link.link;
-import static java.net.URI.create;
+import static de.otto.edison.jobs.controller.UrlHelper.url;
+import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
+import static java.time.Duration.ofHours;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -42,7 +46,7 @@ public class JobDefinitionsControllerTest {
     public void shouldReturnJobDefinitionIfJobExists() throws IOException {
         // given
         final String jobType = "FooJob";
-        final JobDefinition expectedDef = jobDefinition(jobType, "Foo");
+        final DefaultJobDefinition expectedDef = jobDefinition(jobType, "Foo");
 
         final JobDefinitionsController controller = new JobDefinitionsController(asList(expectedDef));
 
@@ -86,24 +90,8 @@ public class JobDefinitionsControllerTest {
         );
     }
 
-    private JobDefinition jobDefinition(final String jobType, final String name) {
-        return new JobDefinition() {
-
-            @Override
-            public URI triggerUri() {
-                return create("/internal/jobdefinitions/" + jobType);
-            }
-
-            @Override
-            public String jobType() {
-                return jobType;
-            }
-
-            @Override
-            public String jobName() {
-                return name;
-            }
-        };
+    private DefaultJobDefinition jobDefinition(final String jobType, final String name) {
+        return fixedDelayJobDefinition(jobType, name, name, url("http://127.0.0.1/internal/jobdefinitions/" + jobType), ofHours(1), Optional.<Duration>empty());
     }
 
 }
