@@ -1,5 +1,10 @@
 # Release History
 
+## Release 0.28.2
+
+Bugs fixed:
+* Fixed critical bug that prevented the startup of the server in combination with usage of edison jobs-mongo
+
 ## Release 0.28.1
 
 Bugs fixed:
