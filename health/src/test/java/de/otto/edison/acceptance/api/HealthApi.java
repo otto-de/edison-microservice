@@ -35,7 +35,7 @@ public class HealthApi extends SpringTestBase {
         return When.INSTANCE;
     }
 
-    private static void getResource(final String url, final Optional<String> mediaType) throws IOException {
+    private static void getResource(final String url, final Optional<String> mediaType) {
         final HttpHeaders headers = new HttpHeaders();
         if (mediaType.isPresent()) {
             headers.setAccept(asList(parseMediaType(mediaType.get())));

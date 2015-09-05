@@ -12,7 +12,7 @@ import static org.springframework.boot.actuate.health.Health.up;
 @Test
 public class GracefulShutdownHealthIndicatorTest {
 
-    public static final int SOME_LONG_WHICH_WE_DONT_CARE_ABOUT = 7;
+    private static final int SOME_LONG_WHICH_WE_DONT_CARE_ABOUT = 7;
 
     @Test
     public void shouldHealthyOnStartup() throws Exception {
