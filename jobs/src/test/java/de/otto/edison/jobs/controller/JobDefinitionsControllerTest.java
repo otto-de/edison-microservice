@@ -78,13 +78,9 @@ public class JobDefinitionsControllerTest {
         Map<String, List<Link>> defs = controller.getJobDefinitions(request);
 
         // then
-        assertThat(defs.get("jobdefinitions"), is(
-                asList(
-                        link("jobdefinition", "http://127.0.0.1/internal/jobdefinitions/FooJob", "Foo"),
-                        link("jobdefinition", "http://127.0.0.1/internal/jobdefinitions/BarJob", "Bar")))
-        );
-        assertThat(defs.get("links"), is(
-                asList(
+        assertThat(defs.get("links"), is(asList(
+                        link("http://github.com/otto-de/edison/link-relations/job/definition", "http://127.0.0.1/internal/jobdefinitions/FooJob", "Foo"),
+                        link("http://github.com/otto-de/edison/link-relations/job/definition", "http://127.0.0.1/internal/jobdefinitions/BarJob", "Bar"),
                         link("self", "http://127.0.0.1/internal/jobdefinitions", "Self")))
         );
     }

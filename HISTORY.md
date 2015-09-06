@@ -1,5 +1,13 @@
 # Release History
 
+## Release 0.28.3
+
+New Features:
+* Prepared integration with (upcoming) Edison JobTrigger
+
+Breaking Changes:
+* The format of job definitions and jobs has changed.
+
 ## Release 0.28.2
 
 Bugs fixed:
