@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -49,9 +50,9 @@ public class DefaultJobServiceTest {
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn("BAR");
         // when:
-        final URI jobUri = jobService.startAsyncJob(jobRunnable);
+        final Optional<URI> jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
-        assertThat(jobUri.toString(), startsWith("/internal/jobs/"));
+        assertThat(jobUri.get().toString(), startsWith("/internal/jobs/"));
     }
 
     @Test
@@ -63,9 +64,9 @@ public class DefaultJobServiceTest {
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn("BAR");
         // when:
-        final URI jobUri = jobService.startAsyncJob(jobRunnable);
+        final Optional<URI> jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
-        assertThat(jobRepository.findOne(jobUri), isPresent());
+        assertThat(jobRepository.findOne(jobUri.get()), isPresent());
     }
 
     @Test
@@ -77,9 +78,9 @@ public class DefaultJobServiceTest {
         when(jobRunnable.getJobType()).thenReturn("BAR");
         final DefaultJobService jobService = new DefaultJobService(jobRepository, (j)-> {}, emptyList(), mock(GaugeService.class), clock, executorService);
         // when:
-        final URI jobUri = jobService.startAsyncJob(jobRunnable);
+        final Optional<URI> jobUri = jobService.startAsyncJob(jobRunnable);
         // then:
-        final JobInfo jobInfo = jobRepository.findOne(jobUri).get();
+        final JobInfo jobInfo = jobRepository.findOne(jobUri.get()).get();
         assertThat(jobInfo.getStopped(), isPresent());
     }
 
@@ -92,9 +93,9 @@ public class DefaultJobServiceTest {
         when(jobRunnable.getJobType()).thenReturn("BAR");
         final DefaultJobService jobService = new DefaultJobService(jobRepository, (j)-> {}, asList(jobRunnable), mock(GaugeService.class), clock, executorService);
         // when:
-        final URI jobUri = jobService.startAsyncJob("bar");
+        final Optional<URI> jobUri = jobService.startAsyncJob("bar");
         // then:
-        final JobInfo jobInfo = jobRepository.findOne(jobUri).get();
+        final JobInfo jobInfo = jobRepository.findOne(jobUri.get()).get();
         assertThat(jobInfo.getStopped(), isPresent());
     }
 
@@ -105,13 +106,13 @@ public class DefaultJobServiceTest {
         final InMemJobRepository jobRepository = new InMemJobRepository();
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobType()).thenReturn("BAR");
-        URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
+        final URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
         jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", (j) -> {},  clock));
         final DefaultJobService jobService = new DefaultJobService(jobRepository, (j)-> {}, asList(jobRunnable), mock(GaugeService.class), clock, executorService);
         // when:
-        final URI jobUri = jobService.startAsyncJob("bar");
+        final Optional<URI> jobUri = jobService.startAsyncJob("bar");
         // then:
-        assertThat(jobUri, is(alreadyRunningJob));
+        assertThat(jobUri.isPresent(), is(false));
     }
 
     @Test
@@ -125,9 +126,9 @@ public class DefaultJobServiceTest {
         jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", (j) -> {},  clock));
         final DefaultJobService jobService = new DefaultJobService(jobRepository, (j)-> {}, asList(jobRunnable), mock(GaugeService.class), clock, executorService);
         // when:
-        final URI jobUri = jobService.startAsyncJob("foo");
+        final Optional<URI> jobUri = jobService.startAsyncJob("foo");
         // then:
-        assertThat(jobUri, is(not(alreadyRunningJob)));
+        assertThat(jobUri.get(), is(not(alreadyRunningJob)));
     }
 
     @Test

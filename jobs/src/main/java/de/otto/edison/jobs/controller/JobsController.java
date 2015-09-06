@@ -23,6 +23,7 @@ import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
 import static java.net.URI.create;
 import static java.util.stream.Collectors.toList;
+import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -73,15 +74,31 @@ public class JobsController {
         jobService.deleteJobs(Optional.ofNullable(type));
     }
 
+    /**
+     * Starts a new job of the specifed type, if no such job is currently running.
+     *
+     * The method will return immediately, without waiting for the job to complete.
+     *
+     * If a job with same type is running, the response will have HTTP status 409 CONFLICT,
+     * otherwise HTTP 204 NO CONTENT is returned, together with the response header 'Location',
+     * containing the full URL of the running job.
+     *
+     * @param jobType the type of the job
+     * @throws IOException
+     */
     @RequestMapping(
             value = "/internal/jobs/{jobType}",
             method = POST)
     public void startJob(final @PathVariable String jobType,
                          final HttpServletRequest request,
                          final HttpServletResponse response) throws IOException {
-        final URI jobUri = jobService.startAsyncJob(jobType);
-        response.setHeader("Location", baseUriOf(request) + jobUri.toString());
-        response.setStatus(SC_NO_CONTENT);
+        final Optional<URI> jobUri = jobService.startAsyncJob(jobType);
+        if (jobUri.isPresent()) {
+            response.setHeader("Location", baseUriOf(request) + jobUri.toString());
+            response.setStatus(SC_NO_CONTENT);
+        } else {
+            response.sendError(SC_CONFLICT);
+        }
     }
 
 

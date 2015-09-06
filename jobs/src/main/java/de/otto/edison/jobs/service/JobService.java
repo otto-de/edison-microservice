@@ -12,9 +12,9 @@ import java.util.Optional;
  */
 public interface JobService {
 
-    URI startAsyncJob(String jobType);
+    Optional<URI> startAsyncJob(String jobType);
 
-    URI startAsyncJob(JobRunnable jobRunnable);
+    Optional<URI> startAsyncJob(JobRunnable jobRunnable);
 
     List<JobInfo> findJobs(Optional<String> type, int count);
 
