@@ -17,6 +17,7 @@ import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.represe
 import static de.otto.edison.jobs.controller.Link.link;
 import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -39,16 +40,17 @@ public class JobDefinitionsController {
 
     @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "application/json")
     public Map<String, List<Link>> getJobDefinitions(final HttpServletRequest request) {
-        return new LinkedHashMap<String,List<Link>>() {{
-            final String baseUri = baseUriOf(request);
-            put("jobdefinitions", jobDefinitions
-                    .stream()
-                    .map((def) -> link("jobdefinition", baseUri + INTERNAL_JOBDEFINITIONS + "/"  + def.jobType(), def.jobName()))
-                    .collect(toList()));
-            put("links", asList(
-                    link("self", baseUriOf(request) + INTERNAL_JOBDEFINITIONS, "Self"))
-            );
-        }};
+        final String baseUri = baseUriOf(request);
+        return singletonMap("links", new ArrayList<Link>() {{
+                addAll(jobDefinitions
+                        .stream()
+                        .map((def) -> link(
+                                "http://github.com/otto-de/edison/link-relations/job/definition",
+                                baseUri + INTERNAL_JOBDEFINITIONS + "/" + def.jobType(),
+                                def.jobName()))
+                        .collect(toList()));
+                add(link("self", baseUriOf(request) + INTERNAL_JOBDEFINITIONS, "Self"));
+        }});
     }
 
     @RequestMapping(value = INTERNAL_JOBDEFINITIONS + "/{jobType}", method = GET, produces = "application/json")

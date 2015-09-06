@@ -69,6 +69,7 @@ public class JobRepresentation {
         final String jobUri = baseUri + job.getJobUri().toString();
         return asList(
                 link("self", jobUri, "Self"),
+                link("http://github.com/otto-de/edison/link-relations/job/definition", baseUri + "/internal/jobdefinitions/" + job.getJobType(), "Job Definition"),
                 link("collection", jobUri.substring(0, jobUri.lastIndexOf("/")), "All Jobs"),
                 link("collection/" + getJobType(), jobUri.substring(0, jobUri.lastIndexOf("/")) + "?type=" + getJobType(), "All " + getJobType() + " Jobs")
         );

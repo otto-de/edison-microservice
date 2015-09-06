@@ -91,8 +91,7 @@ public class JobDefinitionRepresentation {
         return asList(
                 link("self", baseUri + "/internal/jobsdefinitions/" + jobDefinition.jobType(), null),
                 link("collection", baseUri + "/internal/jobdefinitions", null),
-                link("trigger", baseUri + "/internal/jobs/" + jobDefinition.jobType(), null),
-                link("jobs", baseUri + "/internal/jobs?type=" + jobDefinition.jobType(), null)
+                link("http://github.com/otto-de/edison/link-relations/job/trigger", baseUri + "/internal/jobs/" + jobDefinition.jobType(), null)
         );
     }
 
