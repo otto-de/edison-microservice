@@ -71,21 +71,21 @@ public class DefaultJobService implements JobService {
     }
 
     @Override
-    public URI startAsyncJob(String jobType) {
+    public Optional<URI> startAsyncJob(String jobType) {
         final Optional<JobRunnable> jobRunnable = jobRunnables.stream().filter((r) -> r.getJobType().equalsIgnoreCase(jobType)).findFirst();
         return startAsyncJob(jobRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for" + jobType)));
     }
 
     @Override
-    public URI startAsyncJob(final JobRunnable jobRunnable) {
+    public Optional<URI> startAsyncJob(final JobRunnable jobRunnable) {
         // TODO: use some kind of database lock so we can prevent race conditions
         final Optional<JobInfo> alreadyRunning = repository.findRunningJobByType(jobRunnable.getJobType());
         if (alreadyRunning == null || !alreadyRunning.isPresent()) {
-            return startAsync(metered(jobRunnable));
+            return Optional.of(startAsync(metered(jobRunnable)));
         } else {
             final URI jobUri = alreadyRunning.get().getJobUri();
             LOG.info("Job {} triggered but not started - still running.", jobUri);
-            return jobUri;
+            return Optional.empty();
         }
     }
 
