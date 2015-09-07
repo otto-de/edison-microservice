@@ -103,9 +103,10 @@ public class JobsController {
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "text/html")
     public ModelAndView findJobAsHtml(final HttpServletRequest request,
                                       final HttpServletResponse response) throws IOException {
-        final URI uri = jobUriOf(request);
 
-        final Optional<JobInfo> optionalJob = jobService.findJob(uri);
+        setCorsHeaders(response);
+
+        final Optional<JobInfo> optionalJob = jobService.findJob(jobUriOf(request));
         if (optionalJob.isPresent()) {
             final ModelAndView modelAndView = new ModelAndView("job");
             modelAndView.addObject("job", representationOf(optionalJob.get(), true, baseUriOf(request)));
@@ -120,9 +121,9 @@ public class JobsController {
     public JobRepresentation findJob(final HttpServletRequest request,
                                      final HttpServletResponse response) throws IOException {
 
-        final URI uri = jobUriOf(request);
-
-        final Optional<JobInfo> optionalJob = jobService.findJob(uri);
+        setCorsHeaders(response);
+        
+        final Optional<JobInfo> optionalJob = jobService.findJob(jobUriOf(request));
         if (optionalJob.isPresent()) {
             return representationOf(optionalJob.get(), false, baseUriOf(request));
         } else {
