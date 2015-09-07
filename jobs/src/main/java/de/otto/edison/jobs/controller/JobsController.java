@@ -131,6 +131,11 @@ public class JobsController {
         }
     }
 
+    private void setCorsHeaders(final HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Methods", "GET");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+    }
+
     private URI jobUriOf(HttpServletRequest request) {
         String servletPath = request.getServletPath() != null ? request.getServletPath() : "";
         if (servletPath.contains(".")) {
