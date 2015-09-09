@@ -75,7 +75,7 @@ public class JobDefinitionsControllerTest {
         when(request.getServletPath()).thenReturn("/internal/jobdefinitions/");
 
         // when
-        Map<String, List<Link>> defs = controller.getJobDefinitions(request);
+        Map<String, List<Link>> defs = controller.getJobDefinitionsAsJson(request);
 
         // then
         assertThat(defs.get("links"), is(asList(

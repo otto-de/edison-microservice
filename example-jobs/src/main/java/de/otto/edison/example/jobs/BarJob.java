@@ -15,11 +15,7 @@ import static java.lang.Thread.sleep;
 @Component
 public class BarJob implements JobRunnable {
 
-    private BarJob() {
-    }
-
-    public static BarJob fooJob() {
-        return new BarJob();
+    public BarJob() {
     }
 
     public String getJobType() {

@@ -15,15 +15,11 @@ import static java.lang.Thread.sleep;
 @Component
 public class FooJob implements JobRunnable {
 
-    private FooJob() {
-    }
-
-    public static FooJob fooJob() {
-        return new FooJob();
+    public FooJob() {
     }
 
     public String getJobType() {
-        return "FOO";
+        return "Foo";
     }
 
     @Override

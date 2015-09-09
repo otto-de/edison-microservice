@@ -20,39 +20,45 @@
 <body>
 <ol class="breadcrumb">
     <li><a th:href="${baseUri} + '/internal'">Internal</a></li>
-    <li><a th:href="${baseUri} + '/internal/jobs.html'">Job Overview</a></li>
-    <li class="active">Job</li>
+    <li class="active">Job Definitions Overview</li>
 </ol>
 <div class="container">
-
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title" th:text="${job.jobType}">title</h3>
+            <h3 class="panel-title">Job Definitions</h3>
         </div>
         <div class="panel-body">
-            <dl class="dl-horizontal">
-                <dt>Status</dt>
-                <dd>
-                    <span th:if="${job.status} == 'OK'"  class="label label-success"><span th:text="${job.status}"></span></span>
-                    <span th:if="${job.status} != 'OK'"  class="label label-danger"><span th:text="${job.status}"></span></span>
-                </dd>
-                <dt>State</dt>
-                <dd th:text="${job.state}">&nbsp;</dd>
-                <dt>Started</dt>
-                <dd th:text="${job.started}">&nbsp;</dd>
-                <dt>Stopped</dt>
-                <dd th:text="${job.stopped}">&nbsp;</dd>
-                <dt>Definition</dt>
-                <dd><a th:href="'../jobdefinitions/' + ${job.jobType}">Open Definition</a></dd>
-                <dt>Last Updated</dt>
-                <dd th:text="${job.lastUpdated}">&nbsp;</dd>
-                <dt>Messages</dt>
-                <dd>
-<pre class=".pre-scrollable">
-<span th:each="message : ${job.messages}" th:text="${message}" />
-</pre>
-                </dd>
-            </dl>
+            <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>JobType</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Max Age</th>
+                    <th>Frequency</th>
+                    <th>Retry</th>
+                    <th>Last Runs</th>
+                    <th>Trigger</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="def : ${jobdefinitions}">
+                    <td th:text="${def.jobType}">&nbsp;</td>
+                    <td th:text="${def.name}">&nbsp;</td>
+                    <td th:text="${def.description}">&nbsp;</td>
+                    <td th:text="${def.maxAge}">&nbsp;</td>
+                    <td th:text="${def.frequency}">&nbsp;</td>
+                    <td th:text="${def.retry}">&nbsp;</td>
+                    <td><a th:href="'jobs?type=' + ${def.jobType} + '&amp;backUri=jobdefinitions&amp;backName=Job Definitions'">Open</a></td>
+                    <td><form th:action="'jobs/' + ${def.jobType}" method="post">
+                        <button class="btn btn-sm btn-primary" type="submit">Trigger &raquo;</button>
+                    </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
         </div>
     </div>
 

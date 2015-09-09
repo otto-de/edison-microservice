@@ -37,7 +37,8 @@
                     <th>State</th>
                     <th>Started</th>
                     <th>Stopped</th>
-                    <th>URL</th>
+                    <th>Definition</th>
+                    <th>Details</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -50,13 +51,17 @@
                     <td th:text="${job.state}">&nbsp;</td>
                     <td th:text="${job.started}">&nbsp;</td>
                     <td th:text="${job.stopped}">&nbsp;</td>
-                    <td><a th:href="${job.jobUri} + '.html'">Open</a></td>
+                    <td><a th:href="'jobdefinitions/' + ${job.jobType}">Open Definition</a></td>
+                    <td><a th:href="${job.jobUri}">Open Details</a></td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(jobs)}"><td colspan="6">No Jobs</td></tr>
                 </tbody>
             </table>
             </div>
         </div>
+    </div>
+    <div th:if="${backUri} != null">
+        <a th:href="${backUri}" th:text="'Back to ' + ${backName} + ' &raquo;'" class="btn btn-sm btn-primary">Back</a>
     </div>
 
 </div> <!-- /container -->
