@@ -1,6 +1,7 @@
 package de.otto.edison.togglz.configuration;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,7 @@ public class TogglzWebConfiguration {
     }
 
     @Bean
-    public ServletRegistrationBean togglzServlet() {
-        return new ServletRegistrationBean(new TogglzConsoleServlet(), "/internal/togglz/*");
+    public ServletRegistrationBean togglzServlet(@Value("${management.context-path:/internal}") String prefix) {
+        return new ServletRegistrationBean(new TogglzConsoleServlet(), prefix + "/togglz/*");
     }
 }

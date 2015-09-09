@@ -1,6 +1,6 @@
 package de.otto.edison.togglz.controller;
 
-import de.otto.edison.togglz.Features;
+import de.otto.edison.togglz.configuration.TogglzConfiguration;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -16,7 +16,7 @@ public class TogglzRepresentationTest {
 
     @Test
     public void testGetTogglzState() {
-        testee = togglzRepresentation(() -> Features.class);
+        testee = togglzRepresentation(() -> TogglzConfiguration.Features.class);
 
         final Map<String, Boolean> togglzState = testee.getTogglzState();
         assertThat(togglzState.get("TEST"), is(true));

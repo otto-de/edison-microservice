@@ -54,6 +54,7 @@ public class JobsController {
                 .collect(toList());
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
+        modelAndView.addObject("baseUri", baseUriOf(request));
         return modelAndView;
     }
 
@@ -110,6 +111,7 @@ public class JobsController {
         if (optionalJob.isPresent()) {
             final ModelAndView modelAndView = new ModelAndView("job");
             modelAndView.addObject("job", representationOf(optionalJob.get(), true, baseUriOf(request)));
+            modelAndView.addObject("baseUri", baseUriOf(request));
             return modelAndView;
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
@@ -122,7 +124,7 @@ public class JobsController {
                                      final HttpServletResponse response) throws IOException {
 
         setCorsHeaders(response);
-        
+
         final Optional<JobInfo> optionalJob = jobService.findJob(jobUriOf(request));
         if (optionalJob.isPresent()) {
             return representationOf(optionalJob.get(), false, baseUriOf(request));

@@ -19,12 +19,6 @@ import java.util.Map;
 public class InMemoryFeatureStateRepositoryConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(FeatureClassProvider.class)
-    public FeatureClassProvider features() {
-        return () -> Features.class;
-    }
-
-    @Bean
     @ConditionalOnMissingBean(StateRepository.class)
     public StateRepository stateRepository() {
         return createInMemoryStateRepository();
@@ -54,15 +48,4 @@ public class InMemoryFeatureStateRepositoryConfiguration {
         };
     }
 
-
-
-    public enum Features implements Feature {
-
-        @Label("test")
-        TEST;
-
-        public boolean isActive() {
-            return FeatureContext.getFeatureManager().isActive(this);
-        }
-    }
 }

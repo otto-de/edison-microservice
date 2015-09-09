@@ -2,6 +2,7 @@ package de.otto.edison.togglz;
 
 import de.otto.edison.testsupport.applicationdriver.SpringTestBase;
 import de.otto.edison.togglz.configuration.InMemoryFeatureStateRepositoryConfiguration;
+import de.otto.edison.togglz.configuration.TogglzConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.togglz.core.manager.TogglzConfig;
@@ -27,7 +28,7 @@ public class DefaultTogglzConfigTest extends SpringTestBase {
     @Test
     public void shouldCreateTogglzConfigBySpring() {
         assertThat(togglzConfig, is(not(nullValue())));
-        assertThat(togglzConfig.getFeatureClass(), typeCompatibleWith(InMemoryFeatureStateRepositoryConfiguration.Features.class));
+        assertThat(togglzConfig.getFeatureClass(), typeCompatibleWith(TogglzConfiguration.Features.class));
         assertThat(togglzConfig.getStateRepository(),is(not(nullValue())));
         assertThat(togglzConfig.getStateRepository(),is(instanceOf(CachingStateRepository.class)));
         assertThat(togglzConfig.getUserProvider(),is(not(nullValue())));
@@ -35,6 +36,6 @@ public class DefaultTogglzConfigTest extends SpringTestBase {
 
     @Test
     public void shouldProvideToggleStateWhichIsActiveByDefaultInTests() {
-        assertThat(InMemoryFeatureStateRepositoryConfiguration.Features.TEST.isActive(),is(true));
+        assertThat(TogglzConfiguration.Features.TEST.isActive(),is(true));
     }
 }
