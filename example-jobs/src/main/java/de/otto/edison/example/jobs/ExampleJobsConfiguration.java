@@ -39,4 +39,15 @@ public class ExampleJobsConfiguration {
                 Optional.of(ofHours(3))
         );
     }
+
+    @Bean
+    public JobDefinition barJobDefinition() {
+        return fixedDelayJobDefinition(
+                "BarJob",
+                "Bar Job",
+                "An example job that is running for a while.",
+                ofHours(1),
+                Optional.of(ofHours(3))
+        );
+    }
 }

@@ -1,4 +1,4 @@
-package de.otto.edison.jobs.controller;
+package de.otto.edison.status.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;

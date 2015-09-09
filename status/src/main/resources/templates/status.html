@@ -1,33 +1,110 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Status</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Edison Status</title>
+
+    <!-- Bootstrap -->
+    <link th:href="${baseUri} + '/webjars/bootstrap/3.3.5/css/bootstrap.min.css'" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
-<h1>Status</h1>
-<ul>
-    <li><strong>Name: </strong><span th:text="${name}">Name</span></li>
-    <li><strong>Status: </strong><span th:text="${status}">Status</span></li>
-</ul>
-<h1>System</h1>
-<ul>
-    <li><strong>Host: </strong><span th:text="${hostname}">Hostname</span></li>
-    <li><strong>System Time: </strong><span th:text="${systemtime}">Systemtime</span></li>
-    <li><strong>Start Started: </strong><span th:text="${systemstarttime}">Systemstarttime</span></li>
-</ul>
-<h1>Version</h1>
-<ul>
-    <li><strong>Version: </strong><span th:text="${version}">Version</span></li>
-    <li><strong>Git Commit: </strong><span th:text="${commit}">Git commit</span></li>
-</ul>
-<h1>Details</h1>
-<ul th:each="statusDetail : ${statusDetails}">
-    <li><strong th:text="${statusDetail.key}"/>
-        <ul>
-            <li><strong>Status: </strong><span th:text="${statusDetail.status}">status</span></li>
-            <li><strong>Message: </strong><span th:text="${statusDetail.message}">message</span></li>
-        </ul>
-    </li>
-</ul>
+<ol class="breadcrumb">
+    <li><a th:href="${baseUri} + '/internal'">Internal</a></li>
+    <li class="active">Status</li>
+</ol>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Status</h3>
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>Name:</dt>
+                        <dd th:text="${name}">Name</dd>
+                        <dt>Status:</dt>
+                        <dd th:text="${status}">Status</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Version</h3>
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>Version:</dt>
+                        <dd th:text="${version}">Version</dd>
+                        <dt>Git Commit:</dt>
+                        <dd th:text="${commit}">Git commit</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">System</h3>
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>Host:</dt>
+                        <dd th:text="${hostname}">Hostname</dd>
+                        <dt>System Time:</dt>
+                        <dd th:text="${systemtime}">Systemtime</dd>
+                        <dt>System Started</dt>
+                        <dd th:text="${systemstarttime}">Systemstarttime</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Details</h3>
+                </div>
+                <div class="panel-body">
+
+                    <div class="list-group">
+                        <div class="list-group-item" th:each="statusDetail : ${statusDetails}">
+                            <h4 class="list-group-item-heading" th:text="${statusDetail.key}">List group item heading</h4>
+                            <dl class="list-group-item-text dl-horizontal">
+                                <dt>Status:</dt>
+                                <dd th:text="${statusDetail.status}"></dd>
+                                <dt>Message:</dt>
+                                <dd th:text="${statusDetail.message}"></dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- /container -->
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script th:src="${baseUri} + '/webjars/jquery/1.11.1/jquery.min.js'"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script th:src="${baseUri} + '/webjars/bootstrap/3.3.5/js/bootstrap.min.js'"></script>
 </body>
 </html>
+
