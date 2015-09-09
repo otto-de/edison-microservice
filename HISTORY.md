@@ -1,9 +1,12 @@
 # Release History
 
-## Release 0.28.3
+## Release 0.29.0
 
 New Features:
 * Prepared integration with (upcoming) Edison JobTrigger
+* Added Bootstrap UIs for Jobs and /internal
+* Added edison-service for typical microservices, including jobs, health, status,
+* Using webjars in edison-service to include bootstrap and jquery
 
 Breaking Changes:
 * The format of job definitions and jobs has changed.
