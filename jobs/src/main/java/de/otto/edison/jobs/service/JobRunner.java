@@ -48,53 +48,45 @@ public final class JobRunner {
         }
     }
 
-    private void start() {
-        synchronized (this) {
-            pingJob = executorService.scheduleAtFixedRate(this::ping, PING_PERIOD, PING_PERIOD, SECONDS);
+    private synchronized void start() {
+        pingJob = executorService.scheduleAtFixedRate(this::ping, PING_PERIOD, PING_PERIOD, SECONDS);
 
-            final String jobId = jobInfo.getJobUri().toString();
-            MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
-            MDC.put("job_type", jobInfo.getJobType());
-            LOG.info("[started]");
-        }
+        final String jobId = jobInfo.getJobUri().toString();
+        MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
+        MDC.put("job_type", jobInfo.getJobType());
+        LOG.info("[started]");
     }
 
-    private void ping() {
+    private synchronized void ping() {
         try {
-            synchronized (this) {
-                if (jobRepository.findStatus(jobInfo.getJobUri()).equals(JobInfo.JobStatus.DEAD)) {
-                    jobInfo.dead();
-                }
-                jobInfo.ping();
-                jobRepository.createOrUpdate(jobInfo);
+            if (jobRepository.findStatus(jobInfo.getJobUri()).equals(JobInfo.JobStatus.DEAD)) {
+                jobInfo.dead();
             }
+            jobInfo.ping();
+            jobRepository.createOrUpdate(jobInfo);
         } catch (Exception e) {
             assert !jobInfo.isStopped();
-            LOG.error("Fatal error in ping job for" + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e.getMessage());
+            LOG.error("Fatal error in ping job for" + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e);
         }
     }
 
-    private void error(final Exception e) {
-        synchronized (this) {
-            assert !jobInfo.isStopped();
-            jobInfo.error(e.getMessage());
+    private synchronized void error(final Exception e) {
+        assert !jobInfo.isStopped();
+        jobInfo.error(e.getMessage());
+        jobRepository.createOrUpdate(jobInfo);
+        LOG.error("Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e);
+    }
+
+    private synchronized void stop() {
+        pingJob.cancel(false);
+
+        assert !jobInfo.isStopped();
+        try {
+            LOG.info("stopped job {}", jobInfo);
+            jobInfo.stop();
             jobRepository.createOrUpdate(jobInfo);
-            LOG.error("Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e);
-        }
-    }
-
-    private void stop() {
-        synchronized (this) {
-            pingJob.cancel(false);
-
-            assert !jobInfo.isStopped();
-            try {
-                LOG.info("stopped job {}", jobInfo);
-                jobInfo.stop();
-                jobRepository.createOrUpdate(jobInfo);
-            } finally {
-                MDC.clear();
-            }
+        } finally {
+            MDC.clear();
         }
     }
 
