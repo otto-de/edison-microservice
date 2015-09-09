@@ -1,9 +1,6 @@
 
 dependencies {
-    compile project(":health")
-    compile project(":metrics")
-
-    compile libs.springBootThymeleaf
+    compile project(":edison-service")
 
     testCompile project(":testsupport")
 }

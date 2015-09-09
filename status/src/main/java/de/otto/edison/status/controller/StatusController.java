@@ -66,14 +66,14 @@ public class StatusController {
         }};
     }
 
-    private Collection<Map<String, String>> statusDetails(ApplicationStatus applicationStatus) {
+    private Collection<Map<String, ?>> statusDetails(ApplicationStatus applicationStatus) {
         return applicationStatus.getStatusDetails().stream()
                 .map(detail ->
-                            new LinkedHashMap<String, String>() {{
+                            new LinkedHashMap<String, Object>() {{
                                 put("key", detail.getName());
                                 put("status", detail.getStatus().name());
                                 put("message", detail.getMessage());
-                                putAll(detail.getDetails());
+                                put("additionalDetails", detail.getDetails());
                             }})
                 .collect(Collectors.toList());
     }

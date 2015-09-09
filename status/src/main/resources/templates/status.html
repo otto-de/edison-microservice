@@ -91,6 +91,10 @@
                                 <dd th:text="${statusDetail.status}"></dd>
                                 <dt>Message:</dt>
                                 <dd th:text="${statusDetail.message}"></dd>
+                                <span th:each="key : ${statusDetail.additionalDetails.keySet()}">
+                                    <dt th:text="${key} + ':'">Message:</dt>
+                                    <dd th:text="${statusDetail.additionalDetails.get(key)}"></dd>
+                                </span>
                             </dl>
                         </div>
                     </div>
