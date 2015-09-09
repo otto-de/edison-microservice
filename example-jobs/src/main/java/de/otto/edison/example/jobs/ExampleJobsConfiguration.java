@@ -9,8 +9,11 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Optional;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
+import static de.otto.edison.jobs.definition.DefaultJobDefinition.retryableFixedDelayJobDefinition;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.Duration.ofHours;
+import static java.time.Duration.ofMinutes;
+import static java.time.Duration.ofSeconds;
 
 /**
  * @author Guido Steinacker
@@ -32,7 +35,7 @@ public class ExampleJobsConfiguration {
     @Bean
     public JobDefinition fooJobDefinition() {
         return fixedDelayJobDefinition(
-                "FooJob",
+                "Foo",
                 "Foo Job",
                 "An example job that is running for a while.",
                 ofHours(1),
@@ -42,12 +45,14 @@ public class ExampleJobsConfiguration {
 
     @Bean
     public JobDefinition barJobDefinition() {
-        return fixedDelayJobDefinition(
-                "BarJob",
+        return retryableFixedDelayJobDefinition(
+                "Bar",
                 "Bar Job",
-                "An example job that is running for a while.",
-                ofHours(1),
-                Optional.of(ofHours(3))
+                "An example job that is running for a while and has a long long long long long long long long long long long long long long long long long long long long description.",
+                ofMinutes(2),
+                3,
+                Optional.of(ofMinutes(2)),
+                Optional.of(ofMinutes(20))
         );
     }
 }

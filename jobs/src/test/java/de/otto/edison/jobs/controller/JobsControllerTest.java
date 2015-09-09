@@ -41,7 +41,7 @@ public class JobsControllerTest {
 
         final HttpServletResponse response = mock(HttpServletResponse.class);
         // when
-        jobsController.findJob(request, response);
+        jobsController.getJob(request, response);
         // then
         verify(response).sendError(eq(404), anyString());
     }
@@ -61,7 +61,7 @@ public class JobsControllerTest {
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
         // when
-        final JobRepresentation job = jobsController.findJob(request, response);
+        final JobRepresentation job = jobsController.getJob(request, response);
 
         // then
         assertThat(job, is(representationOf(expectedJob, false, "")));
@@ -93,7 +93,7 @@ public class JobsControllerTest {
 
         final JobsController jobsController = new JobsController(service);
 
-        ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE", mock(HttpServletRequest.class));
+        ModelAndView modelAndView = jobsController.getJobsAsHtml(null, null, "SOME_TYPE", 100, mock(HttpServletRequest.class));
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
         assertThat(jobs, is(asList(representationOf(firstJob, false, ""))));
     }

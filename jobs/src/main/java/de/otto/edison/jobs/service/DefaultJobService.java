@@ -73,7 +73,7 @@ public class DefaultJobService implements JobService {
     @Override
     public Optional<URI> startAsyncJob(String jobType) {
         final Optional<JobRunnable> jobRunnable = jobRunnables.stream().filter((r) -> r.getJobType().equalsIgnoreCase(jobType)).findFirst();
-        return startAsyncJob(jobRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for" + jobType)));
+        return startAsyncJob(jobRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for " + jobType)));
     }
 
     @Override

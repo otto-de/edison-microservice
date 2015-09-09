@@ -30,7 +30,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class JobsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsController.class);
-    public static final int JOB_VIEW_COUNT = 100;
 
     @Autowired
     private JobService jobService;
@@ -46,21 +45,26 @@ public class JobsController {
     }
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")
-    public ModelAndView getJobsAsHtml(@RequestParam(value = "type", required = false) String type,
+    public ModelAndView getJobsAsHtml(final @RequestParam(required = false) String backUri,
+                                      final @RequestParam(required = false) String backName,
+                                      @RequestParam(value = "type", required = false) String type,
+                                      @RequestParam(value = "count", defaultValue = "100") int count,
                                       HttpServletRequest request) {
-        final List<JobRepresentation> jobRepresentations = jobService.findJobs(Optional.ofNullable(type), JOB_VIEW_COUNT)
+        final List<JobRepresentation> jobRepresentations = jobService.findJobs(Optional.ofNullable(type), count)
                 .stream()
                 .map((j) -> representationOf(j, true, baseUriOf(request)))
                 .collect(toList());
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
         modelAndView.addObject("baseUri", baseUriOf(request));
+        modelAndView.addObject("backUri", backUri);
+        modelAndView.addObject("backName", backName);
         return modelAndView;
     }
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "application/json")
     public List<JobRepresentation> getJobsAsJson(@RequestParam(value = "type", required = false) String type,
-                                                 @RequestParam(value = "count", defaultValue = "1") int count,
+                                                 @RequestParam(value = "count", defaultValue = "100") int count,
                                                  HttpServletRequest request) {
         return jobService.findJobs(Optional.ofNullable(type), count)
                 .stream()
@@ -102,8 +106,8 @@ public class JobsController {
 
 
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "text/html")
-    public ModelAndView findJobAsHtml(final HttpServletRequest request,
-                                      final HttpServletResponse response) throws IOException {
+    public ModelAndView getJobAsHtml(final HttpServletRequest request,
+                                     final HttpServletResponse response) throws IOException {
 
         setCorsHeaders(response);
 
@@ -120,8 +124,8 @@ public class JobsController {
     }
 
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "application/json")
-    public JobRepresentation findJob(final HttpServletRequest request,
-                                     final HttpServletResponse response) throws IOException {
+    public JobRepresentation getJob(final HttpServletRequest request,
+                                    final HttpServletResponse response) throws IOException {
 
         setCorsHeaders(response);
 
