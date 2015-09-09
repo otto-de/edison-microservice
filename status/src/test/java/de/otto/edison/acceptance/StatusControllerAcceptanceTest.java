@@ -71,7 +71,7 @@ public class StatusControllerAcceptanceTest {
         then(
                 assertThat(the_status_code().value(), is(200)),
                 and(
-                    assertThat(the_returned_content(), startsWith("<html"))
+                    assertThat(the_returned_content(), startsWith("<!DOCTYPE html>"))
                 )
         );
     }
