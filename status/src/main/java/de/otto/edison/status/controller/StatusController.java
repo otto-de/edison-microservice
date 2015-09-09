@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.otto.edison.status.controller.ApplicationStatusRepresentation.statusRepresentationOf;
+import static de.otto.edison.status.controller.UrlHelper.baseUriOf;
 import static java.time.ZonedDateTime.now;
 import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
 import static java.time.format.FormatStyle.LONG;
@@ -49,7 +51,7 @@ public class StatusController {
             produces = "text/html",
             method = GET
     )
-    public ModelAndView getStatusAsHtml() {
+    public ModelAndView getStatusAsHtml(final HttpServletRequest request) {
         final ApplicationStatus applicationStatus = aggregator.aggregatedStatus();
         return new ModelAndView("status") {{
             addObject("status", applicationStatus.getStatus().name());
@@ -60,6 +62,7 @@ public class StatusController {
             addObject("version", applicationStatus.getVersionInfo().getVersion());
             addObject("commit", applicationStatus.getVersionInfo().getCommit());
             addObject("statusDetails", statusDetails(applicationStatus));
+            addObject("baseUri", baseUriOf(request));
         }};
     }
 

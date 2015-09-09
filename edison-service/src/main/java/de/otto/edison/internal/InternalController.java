@@ -6,7 +6,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
+import static de.otto.edison.util.UrlHelper.baseUriOf;
 
 /**
  * Controller to get /internal/index.html as an overview of all internal tools.
