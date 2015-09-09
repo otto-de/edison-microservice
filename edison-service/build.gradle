@@ -6,6 +6,8 @@ dependencies {
     compile project(":metrics")
     compile project(":togglz")
 
+    compile libs.bootstrap
+
     compile libs.springBootThymeleaf
 
     testCompile project(":testsupport")
