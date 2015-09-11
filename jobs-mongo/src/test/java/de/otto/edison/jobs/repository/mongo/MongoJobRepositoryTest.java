@@ -97,6 +97,7 @@ public class MongoJobRepositoryTest {
         // when
         final List<JobInfo> jobInfos = repo.findLatest(2);
         // then
+        assertThat(jobInfos, hasSize(2));
         assertThat(jobInfos, containsInAnyOrder(later, evenLater));
     }
 
