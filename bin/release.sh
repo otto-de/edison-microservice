@@ -19,6 +19,7 @@ check_configuration() {
     check_configured "signing.secretKeyRingFile" "This is the gpg secret key file, e.g. ~/.gnupg/secring.gpg. If this doesn't exist, generate a key: gpg --gen-key"
     check_configured "signing.keyId" "This is the id of your key (e.g. 72FE5380). Use gpg --list-keys to find yours"
     check_configured "signing.password" "This is the password you defined for your gpg key"
+    # gpg --send-keys --keyserver keyserver.ubuntu.com yourKeyId
 }
 
 check_configuration
