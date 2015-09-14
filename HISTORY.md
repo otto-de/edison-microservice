@@ -1,5 +1,9 @@
 # Release History
 
+## Release 0.33.0
+* Added UIs for Status pages
+* Nicer internal pages, including reworked jobs and job-definitions
+
 ## Release 0.29.0
 
 New Features:
