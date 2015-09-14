@@ -45,9 +45,7 @@ public class JobsController {
     }
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")
-    public ModelAndView getJobsAsHtml(final @RequestParam(required = false) String backUri,
-                                      final @RequestParam(required = false) String backName,
-                                      @RequestParam(value = "type", required = false) String type,
+    public ModelAndView getJobsAsHtml(@RequestParam(value = "type", required = false) String type,
                                       @RequestParam(value = "count", defaultValue = "100") int count,
                                       HttpServletRequest request) {
         final List<JobRepresentation> jobRepresentations = jobService.findJobs(Optional.ofNullable(type), count)
@@ -57,8 +55,6 @@ public class JobsController {
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
         modelAndView.addObject("baseUri", baseUriOf(request));
-        modelAndView.addObject("backUri", backUri);
-        modelAndView.addObject("backName", backName);
         return modelAndView;
     }
 

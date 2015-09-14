@@ -93,7 +93,7 @@ public class JobsControllerTest {
 
         final JobsController jobsController = new JobsController(service);
 
-        ModelAndView modelAndView = jobsController.getJobsAsHtml(null, null, "SOME_TYPE", 100, mock(HttpServletRequest.class));
+        ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE", 100, mock(HttpServletRequest.class));
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
         assertThat(jobs, is(asList(representationOf(firstJob, false, ""))));
     }
