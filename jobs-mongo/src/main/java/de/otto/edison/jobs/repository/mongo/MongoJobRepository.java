@@ -1,6 +1,5 @@
 package de.otto.edison.jobs.repository.mongo;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.domain.JobInfo;
