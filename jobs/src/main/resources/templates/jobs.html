@@ -51,19 +51,16 @@
                     <td th:text="${job.state}">&nbsp;</td>
                     <td th:text="${job.started}">&nbsp;</td>
                     <td th:text="${job.stopped}">&nbsp;</td>
-                    <td><a th:href="'jobdefinitions/' + ${job.jobType}">Open Definition</a></td>
-                    <td><a th:href="${job.jobUri}">Open Details</a></td>
+                    <td><a th:href="'jobdefinitions/' + ${job.jobType}" class="btn btn-xs btn-primary">Open Definition &raquo;</a></td>
+                    <td><a th:href="${job.jobUri}" class="btn btn-xs btn-primary">Open Details &raquo;</a></td>
                 </tr>
-                <tr th:if="${#lists.isEmpty(jobs)}"><td colspan="6">No Jobs</td></tr>
+                <tr th:if="${#lists.isEmpty(jobs)}"><td colspan="7">No Jobs</td></tr>
                 </tbody>
             </table>
             </div>
         </div>
     </div>
-    <div th:if="${backUri} != null">
-        <a th:href="${backUri}" th:text="'Back to ' + ${backName} + ' &raquo;'" class="btn btn-sm btn-primary">Back</a>
-    </div>
-
+    <a th:href="${baseUri} + '/internal/jobdefinitions'" class="btn btn-sm btn-primary">Open Job Definitions &raquo;</a>
 </div> <!-- /container -->
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

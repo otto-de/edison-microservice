@@ -43,7 +43,7 @@
                 <dt>Stopped</dt>
                 <dd th:text="${job.stopped}">&nbsp;</dd>
                 <dt>Definition</dt>
-                <dd><a th:href="'../jobdefinitions/' + ${job.jobType}">Open Definition</a></dd>
+                <dd><a th:href="'../jobdefinitions/' + ${job.jobType}" class="btn btn-xs btn-primary">Open Definition &raquo;</a></dd>
                 <dt>Last Updated</dt>
                 <dd th:text="${job.lastUpdated}">&nbsp;</dd>
                 <dt>Messages</dt>
@@ -55,7 +55,7 @@
             </dl>
         </div>
     </div>
-
+    <a th:href="${baseUri} + '/internal/jobdefinitions'" class="btn btn-sm btn-primary">Open Job Definitions &raquo;</a>
 </div> <!-- /container -->
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
