@@ -116,7 +116,7 @@ public class JobInfo {
     }
 
     public synchronized List<JobMessage> getMessages() {
-        return messages;
+        return new ArrayList<>(messages);
     }
 
     public synchronized OffsetDateTime getLastUpdated() {
