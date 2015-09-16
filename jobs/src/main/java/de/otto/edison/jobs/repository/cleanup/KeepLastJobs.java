@@ -30,7 +30,7 @@ import static java.util.stream.Collectors.toList;
 public class KeepLastJobs implements JobCleanupStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeepLastJobs.class);
-    private static final long KEEP_LAST_JOBS_CLEANUP_INTERVAL = 60L * 60L * 1000L;
+    private static final long KEEP_LAST_JOBS_CLEANUP_INTERVAL = 10L * 60L * 1000L;
 
     private final int numberOfJobsToKeep;
     private final Optional<String> jobType;
