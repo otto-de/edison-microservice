@@ -43,7 +43,7 @@
                 <dt>Stopped</dt>
                 <dd th:text="${job.stopped}">&nbsp;</dd>
                 <dt>Definition</dt>
-                <dd><a th:href="'../jobdefinitions/' + ${job.jobType}" class="btn btn-xs btn-primary">Open Definition &raquo;</a></dd>
+                <dd><a th:href="${baseUri} + '/internal/jobdefinitions/' + ${job.jobType}" class="btn btn-xs btn-primary">Open Definition &raquo;</a></dd>
                 <dt>Last Updated</dt>
                 <dd th:text="${job.lastUpdated}">&nbsp;</dd>
                 <dt>Messages</dt>
