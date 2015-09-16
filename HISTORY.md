@@ -1,5 +1,18 @@
 # Release History
 
+## Release 0.35.0
+
+New Features:
+* New library servicediscovery-client introduced to provide basic ServiceDiscovery features for Edison Microservices.
+This lib may be used to register services at an Edison JobTrigger.
+
+Bug Fixes:
+* Fixed possible ConcurrentModificationException if job messages are accessed from JobInfo.
+
+Breaking Changes:
+* application.properties is not using server.context-path instead of server.contextPath.
+* application.properties is not using edison.application.name instead of application.name.
+
 ## Release 0.33.0
 * Added UIs for Status pages
 * Nicer internal pages, including reworked jobs and job-definitions

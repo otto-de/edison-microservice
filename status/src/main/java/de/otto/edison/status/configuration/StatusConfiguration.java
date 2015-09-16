@@ -29,7 +29,7 @@ public class StatusConfiguration {
     @Autowired
     private VersionInfo versionInfo;
 
-    @Value("${application.name}")
+    @Value("${edison.application.name}")
     private String applicationName;
 
     @Bean

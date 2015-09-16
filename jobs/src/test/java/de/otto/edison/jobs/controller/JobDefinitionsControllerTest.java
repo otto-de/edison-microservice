@@ -2,6 +2,7 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.DefaultJobDefinition;
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.service.JobDefinitionService;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,7 @@ public class JobDefinitionsControllerTest {
     @Test
     public void shouldReturn404IfJobDefinitionIsUnknown() throws IOException {
         // given
-        final JobDefinitionsController controller = new JobDefinitionsController();
+        final JobDefinitionsController controller = new JobDefinitionsController(new JobDefinitionService());
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURL()).thenReturn(new StringBuffer("http://127.0.0.1/internal/jobdefinitions/FooJob"));
@@ -47,7 +48,8 @@ public class JobDefinitionsControllerTest {
         final String jobType = "FooJob";
         final DefaultJobDefinition expectedDef = jobDefinition(jobType, "Foo");
 
-        final JobDefinitionsController controller = new JobDefinitionsController(asList(expectedDef));
+        final JobDefinitionService service = new JobDefinitionService(asList(expectedDef));
+        final JobDefinitionsController controller = new JobDefinitionsController(service);
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURL()).thenReturn(new StringBuffer("http://127.0.0.1/internal/jobdefinitions/" + jobType));
@@ -68,7 +70,8 @@ public class JobDefinitionsControllerTest {
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
         final JobDefinition barJobDef = jobDefinition("BarJob", "Bar");
 
-        final JobDefinitionsController controller = new JobDefinitionsController(asList(fooJobDef, barJobDef));
+        final JobDefinitionService service = new JobDefinitionService(asList(fooJobDef, barJobDef));
+        final JobDefinitionsController controller = new JobDefinitionsController(service);
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURL()).thenReturn(new StringBuffer("http://127.0.0.1/internal/jobdefinitions/"));

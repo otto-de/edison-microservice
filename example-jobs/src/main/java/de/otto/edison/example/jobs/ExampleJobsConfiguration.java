@@ -1,5 +1,8 @@
 package de.otto.edison.example.jobs;
 
+import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.AsyncHttpClientConfig;
+import com.ning.http.client.AsyncHttpClientConfigBean;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
@@ -21,6 +24,12 @@ import static java.time.Duration.ofSeconds;
  */
 @Configuration
 public class ExampleJobsConfiguration {
+
+    @Bean
+    public AsyncHttpClient httpClient() {
+        return new AsyncHttpClient(new AsyncHttpClientConfig.Builder()
+                .build());
+    }
 
     @Bean
     public KeepLastJobs keepLast10FooJobsCleanupStrategy() {
