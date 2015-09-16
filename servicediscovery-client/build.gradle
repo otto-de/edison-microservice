@@ -1,14 +1,12 @@
-
 dependencies {
-
-    compile libs.springBootWeb
+    compile libs.springBoot
+    compile libs.asyncHttp
     compile libs.logging
     compile libs.jcip
-    compile libs.asyncHttp
 
-    compile project(":status")
-
+    testCompile libs.testUnit
     testCompile project(":testsupport")
+
 }
 
 artifacts {
@@ -34,9 +32,9 @@ uploadArchives {
             }
 
             pom.project {
-                name 'jobs'
+                name 'servicediscovery-client'
                 packaging 'jar'
-                description 'Jobs library of the edison-microservice project.'
+                description 'Library to access discovery services.'
                 url 'http://github.com/otto-de/edison-microservice'
 
                 scm {

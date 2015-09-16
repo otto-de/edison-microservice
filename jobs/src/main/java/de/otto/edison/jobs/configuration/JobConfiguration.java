@@ -7,6 +7,7 @@ import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.service.DefaultJobService;
+import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.jobs.status.JobStatusDetailIndicator;
 import de.otto.edison.status.domain.Status;
@@ -50,8 +51,6 @@ public class JobConfiguration {
     @Value("${edison.jobs.cleanup.mark-dead-after:20}")
     int secondsToMarkJobsAsDead;
 
-    @Autowired(required = false)
-    List<JobDefinition> jobDefinitions = new ArrayList<>();
 
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
@@ -92,8 +91,11 @@ public class JobConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "edison.jobs.status.enabled", havingValue = "true", matchIfMissing = true)
-    public StatusDetailIndicator jobStatusDetailIndicator() {
-        if (jobDefinitions == null || jobDefinitions.isEmpty()) {
+    public StatusDetailIndicator jobStatusDetailIndicator(final JobDefinitionService service) {
+
+        final List<JobDefinition> jobDefinitions = service.getJobDefinitions();
+
+        if (jobDefinitions.isEmpty()) {
             return () -> StatusDetail.statusDetail("jobs", Status.OK, "No job definitions configured in application.");
         } else {
             return new CompositeStatusDetailIndicator("jobs",

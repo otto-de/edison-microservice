@@ -33,7 +33,7 @@ public class JobsController {
 
     @Autowired
     private JobService jobService;
-    @Value("${server.contextPath}")
+    @Value("${server.context-path}")
     private String serverContextPath;
 
 

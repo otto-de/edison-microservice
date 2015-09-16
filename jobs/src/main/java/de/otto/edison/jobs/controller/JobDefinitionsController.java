@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.service.JobDefinitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,14 @@ public class JobDefinitionsController {
     private static final Logger LOG = LoggerFactory.getLogger(JobDefinitionsController.class);
     public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";
 
-    @Autowired(required = false)
-    private List<JobDefinition> jobDefinitions = Collections.emptyList();
+    @Autowired
+    private JobDefinitionService jobDefinitions;
 
     public JobDefinitionsController() {
     }
 
-    public JobDefinitionsController(final List<JobDefinition> jobDefinitions) {
-        this.jobDefinitions = jobDefinitions;
+    public JobDefinitionsController(final JobDefinitionService service) {
+        this.jobDefinitions = service;
     }
 
     @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "application/json")
@@ -44,7 +45,7 @@ public class JobDefinitionsController {
     public Map<String, List<Link>> getJobDefinitionsAsJson(final HttpServletRequest request) {
         final String baseUri = baseUriOf(request);
         return singletonMap("links", new ArrayList<Link>() {{
-                addAll(jobDefinitions
+                addAll(jobDefinitions.getJobDefinitions()
                         .stream()
                         .map((def) -> link(
                                 "http://github.com/otto-de/edison/link-relations/job/definition",
@@ -59,17 +60,17 @@ public class JobDefinitionsController {
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
-            put("jobdefinitions", jobDefinitions
-                        .stream()
-                        .map((def) -> new HashMap<String, Object>() {{
-                            put("jobType", def.jobType());
-                            put("name", def.jobName());
-                            put("description", def.description());
-                            put("maxAge", def.maxAge().isPresent() ? def.maxAge().get().toMinutes() + " Minutes" : "unlimited");
-                            put("frequency", frequencyOf(def));
-                            put("retry", retryOf(def));
-                        }})
-                        .collect(toList()));
+            put("jobdefinitions", jobDefinitions.getJobDefinitions()
+                    .stream()
+                    .map((def) -> new HashMap<String, Object>() {{
+                        put("jobType", def.jobType());
+                        put("name", def.jobName());
+                        put("description", def.description());
+                        put("maxAge", def.maxAge().isPresent() ? def.maxAge().get().toMinutes() + " Minutes" : "unlimited");
+                        put("frequency", frequencyOf(def));
+                        put("retry", retryOf(def));
+                    }})
+                    .collect(toList()));
         }});
     }
 
@@ -79,7 +80,7 @@ public class JobDefinitionsController {
                                                         final HttpServletRequest request,
                                                         final HttpServletResponse response) throws IOException {
 
-        Optional<JobDefinition> jobDefinition = jobDefinitions.stream().filter((j) -> j.jobType().equals(jobType)).findAny();
+        Optional<JobDefinition> jobDefinition = jobDefinitions.getJobDefinition(jobType);
         if (jobDefinition.isPresent()) {
             return representationOf(jobDefinition.get(), baseUriOf(request));
         } else {
@@ -92,10 +93,7 @@ public class JobDefinitionsController {
     public ModelAndView getJobDefinitionAsHtml(final @PathVariable String jobType,
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) throws IOException {
-        final Optional<HashMap<String, Object>> optionalResult = jobDefinitions
-                .stream()
-                .filter(def -> def.jobType().equals(jobType))
-                .findAny()
+        final Optional<HashMap<String, Object>> optionalResult = jobDefinitions.getJobDefinition(jobType)
                 .map((def) -> new HashMap<String, Object>() {{
                     put("jobType", def.jobType());
                     put("name", def.jobName());

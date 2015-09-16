@@ -32,7 +32,6 @@ ext.libs = [
                 "org.hamcrest:hamcrest-core:1.3",
                 "org.hamcrest:hamcrest-library:1.3",
                 "org.mockito:mockito-core:1.10.19"],
-        // TODO: Should be replaced by spring-boot-web-starter once P13N is converted to Spring Boot
         servlet:
                 "javax.servlet:javax.servlet-api:3.1.0",
         togglz     : [
