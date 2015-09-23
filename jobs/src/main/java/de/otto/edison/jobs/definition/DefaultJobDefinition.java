@@ -23,11 +23,11 @@ public final class DefaultJobDefinition implements JobDefinition {
     /**
      * Create a JobDefinition that is using a cron expression to specify, when and how often the job should be triggered.
      *
-     * @param jobType The type of the Job
-     * @param jobName A human readable name of the Job
+     * @param jobType     The type of the Job
+     * @param jobName     A human readable name of the Job
      * @param description A human readable description of the Job.
-     * @param cron The cron expression
-     * @param maxAge Maximum age of the latest job after that we want to get a warning
+     * @param cron        The cron expression
+     * @param maxAge      Maximum age of the latest job after that we want to get a warning
      * @return JobDefinition
      */
     public static JobDefinition cronJobDefinition(final String jobType,
@@ -35,39 +35,53 @@ public final class DefaultJobDefinition implements JobDefinition {
                                                   final String description,
                                                   final String cron,
                                                   final Optional<Duration> maxAge) {
-        return new DefaultJobDefinition(jobType, jobName, description, maxAge, Optional.<Duration>empty(), Optional.of(cron), 0, Optional.<Duration>empty());
+        return new DefaultJobDefinition(jobType, jobName, description, maxAge, Optional.empty(), Optional.of(cron), 0, Optional.empty());
+    }
+
+    /**
+     * Create a JobDefinition that will not be triggered.
+     *
+     * @param jobType     The type of the Job
+     * @param jobName     A human readable name of the Job
+     * @param description A human readable description of the Job.
+     * @return JobDefinition
+     */
+    public static JobDefinition notTriggerableJobDefinition(final String jobType,
+                                                            final String jobName,
+                                                            final String description) {
+        return new DefaultJobDefinition(jobType, jobName, description, Optional.empty(), Optional.empty(), Optional.empty(), 0, Optional.empty());
     }
 
     /**
      * Create a JobDefinition that is using a cron expression to specify, when and how often the job should be triggered.
      *
-     * @param jobType The type of the Job
-     * @param jobName A human readable name of the Job
+     * @param jobType     The type of the Job
+     * @param jobName     A human readable name of the Job
      * @param description A human readable description of the Job.
-     * @param cron The cron expression
-     * @param maxAge Maximum age of the latest job after that we want to get a warning
-     * @param retries Specifies how often a job trigger should retry to start the job if triggering fails for some reason.
-     * @param retryDelay The optional delay between retries.
+     * @param cron        The cron expression
+     * @param maxAge      Maximum age of the latest job after that we want to get a warning
+     * @param retries     Specifies how often a job trigger should retry to start the job if triggering fails for some reason.
+     * @param retryDelay  The optional delay between retries.
      * @return JobDefinition
      */
     public static JobDefinition retryableCronJobDefinition(final String jobType,
-                                                  final String jobName,
-                                                  final String description,
-                                                  final String cron,
-                                                  final int retries,
-                                                  final Duration retryDelay,
-                                                  final Optional<Duration> maxAge) {
-        return new DefaultJobDefinition(jobType, jobName, description, maxAge, Optional.<Duration>empty(), Optional.of(cron), retries, Optional.of(retryDelay));
+                                                           final String jobName,
+                                                           final String description,
+                                                           final String cron,
+                                                           final int retries,
+                                                           final Duration retryDelay,
+                                                           final Optional<Duration> maxAge) {
+        return new DefaultJobDefinition(jobType, jobName, description, maxAge, Optional.empty(), Optional.of(cron), retries, Optional.of(retryDelay));
     }
 
     /**
      * Create a JobDefinition that is using fixed delays specify, when and how often the job should be triggered.
      *
-     * @param jobType The type of the Job
-     * @param jobName A human readable name of the Job
+     * @param jobType     The type of the Job
+     * @param jobName     A human readable name of the Job
      * @param description A human readable description of the Job.
-     * @param fixedDelay The delay duration between to executions of the Job
-     * @param maxAge Maximum age of the latest job after that we want to get a warning
+     * @param fixedDelay  The delay duration between to executions of the Job
+     * @param maxAge      Maximum age of the latest job after that we want to get a warning
      * @return JobDefinition
      */
     public static DefaultJobDefinition fixedDelayJobDefinition(final String jobType,
@@ -75,19 +89,19 @@ public final class DefaultJobDefinition implements JobDefinition {
                                                                final String description,
                                                                final Duration fixedDelay,
                                                                final Optional<Duration> maxAge) {
-        return new DefaultJobDefinition(jobType, jobName, description, maxAge, Optional.of(fixedDelay), Optional.<String>empty(), 0, Optional.<Duration>empty());
+        return new DefaultJobDefinition(jobType, jobName, description, maxAge, Optional.of(fixedDelay), Optional.empty(), 0, Optional.empty());
     }
 
     /**
      * Create a JobDefinition that is using fixed delays specify, when and how often the job should be triggered.
      *
-     * @param jobType The type of the Job
-     * @param jobName A human readable name of the Job
+     * @param jobType     The type of the Job
+     * @param jobName     A human readable name of the Job
      * @param description A human readable description of the Job.
-     * @param fixedDelay The delay duration between to executions of the Job
-     * @param maxAge Maximum age of the latest job after that we want to get a warning
-     * @param retries Specifies how often a job trigger should retry to start the job if triggering fails for some reason.
-     * @param retryDelay The optional delay between retries.
+     * @param fixedDelay  The delay duration between to executions of the Job
+     * @param maxAge      Maximum age of the latest job after that we want to get a warning
+     * @param retries     Specifies how often a job trigger should retry to start the job if triggering fails for some reason.
+     * @param retryDelay  The optional delay between retries.
      * @return JobDefinition
      */
     public static DefaultJobDefinition retryableFixedDelayJobDefinition(final String jobType,
@@ -97,7 +111,7 @@ public final class DefaultJobDefinition implements JobDefinition {
                                                                         final int retries,
                                                                         final Optional<Duration> retryDelay,
                                                                         final Optional<Duration> maxAge) {
-        return new DefaultJobDefinition(jobType, jobName, description, maxAge, Optional.of(fixedDelay), Optional.<String>empty(), retries, retryDelay);
+        return new DefaultJobDefinition(jobType, jobName, description, maxAge, Optional.of(fixedDelay), Optional.empty(), retries, retryDelay);
     }
 
     private DefaultJobDefinition(final String jobType,
@@ -120,7 +134,7 @@ public final class DefaultJobDefinition implements JobDefinition {
 
     /**
      * The type of the job that is specified by this JobDefinition.
-     *
+     * <p>
      * Only one JobDefinition per type is supported.
      *
      * @return job type
@@ -158,7 +172,7 @@ public final class DefaultJobDefinition implements JobDefinition {
     @Override
     public Optional<Duration> maxAge() {
         return maxAge;
-    };
+    }
 
     /**
      * Optional fixed delay after that a job is triggered again.
@@ -168,7 +182,7 @@ public final class DefaultJobDefinition implements JobDefinition {
     @Override
     public Optional<Duration> fixedDelay() {
         return fixedDelay;
-    };
+    }
 
     /**
      * Optional cron expression used to specify when a job should be triggered.
@@ -178,7 +192,7 @@ public final class DefaultJobDefinition implements JobDefinition {
     @Override
     public Optional<String> cron() {
         return cron;
-    };
+    }
 
     /**
      * Number of retries when starting a job is failing for some reason.
@@ -186,7 +200,9 @@ public final class DefaultJobDefinition implements JobDefinition {
      * @return number of retries
      */
     @Override
-    public int retries() { return retries; };
+    public int retries() {
+        return retries;
+    }
 
     /**
      * The duration after that a retry should be scheduled.
@@ -194,5 +210,5 @@ public final class DefaultJobDefinition implements JobDefinition {
     @Override
     public Optional<Duration> retryDelay() {
         return retryDelay;
-    };
+    }
 }
