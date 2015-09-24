@@ -10,8 +10,8 @@ Bug Fixes:
 * Fixed possible ConcurrentModificationException if job messages are accessed from JobInfo.
 
 Breaking Changes:
-* application.properties is not using server.context-path instead of server.contextPath.
-* application.properties is not using edison.application.name instead of application.name.
+* application.properties is now using server.context-path instead of server.contextPath.
+* application.properties is now using edison.application.name instead of application.name.
 
 ## Release 0.33.0
 * Added UIs for Status pages
