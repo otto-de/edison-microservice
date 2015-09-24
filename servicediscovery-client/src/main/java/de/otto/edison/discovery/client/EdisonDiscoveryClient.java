@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -22,6 +23,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
  * @since 16.09.15
  */
 @Component
+@ConditionalOnProperty("edison.servicediscovery.servers")
 public class EdisonDiscoveryClient implements DiscoveryClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(EdisonDiscoveryClient.class);

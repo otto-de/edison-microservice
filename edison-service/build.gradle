@@ -5,6 +5,7 @@ dependencies {
     compile project(":jobs")
     compile project(":metrics")
     compile project(":togglz")
+    compile project(":servicediscovery-client")
 
     compile libs.bootstrap
 
