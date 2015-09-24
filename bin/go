@@ -13,7 +13,7 @@ function ensure_requirements {
 }
 
 function release {
-    ${SCRIPT_DIR}/release-snapshot.sh
+    ${SCRIPT_DIR}/release.sh
 }
 
 function help {
