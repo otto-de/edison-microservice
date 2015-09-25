@@ -1,5 +1,18 @@
 # Release History
 
+## Release 0.39.1
+* Fixed possible broken links on /internal pages
+
+## Release 0.39.0
+* Added servicediscovery-client to edison-microservice
+* ServiceDiscovery is only used if edison.servicediscovery.* properties are available
+
+## Release 0.38.0
+* JobDefinitions extended to support jobs that are not triggered automatically.
+
+## Release 0.37.0
+* Fixed links on internal pages
+
 ## Release 0.35.0
 
 New Features:
@@ -13,19 +26,6 @@ Breaking Changes:
 * application.properties is now using server.context-path instead of server.contextPath.
 * application.properties is now using edison.application.name instead of application.name.
 
-## Release 0.39.0
-* Added servicediscovery-client to edison-microservice
-* ServiceDiscovery is only used if edison.servicediscovery.* properties are available
-
-## Release 0.38.0
-* JobDefinitions extended to support jobs that are not triggered automatically.
-
-## Release 0.37.0
-* Fixed links on internal pages
-
-## Release 0.35.0
-* Support for edison-jobtrigger
-* Fixed possible ConcurrentModificationException in JobInfo + MongoJobRepository
 
 ## Release 0.34.0
 * Added ID to panel with job messages for identification in JobTrigger
