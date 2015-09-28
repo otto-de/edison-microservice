@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.39.2
+* Cleaned up link construction on internal status and job pages
+
 ## Release 0.39.1
 * Fixed possible broken links on /internal pages
 

@@ -54,7 +54,6 @@ public class JobsController {
                 .collect(toList());
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
-        modelAndView.addObject("baseUri", baseUriOf(request));
         return modelAndView;
     }
 
@@ -74,16 +73,13 @@ public class JobsController {
     }
 
     /**
-     * Starts a new job of the specifed type, if no such job is currently running.
+     * Starts a new job of the specified type, if no such job is currently running.
      *
      * The method will return immediately, without waiting for the job to complete.
      *
      * If a job with same type is running, the response will have HTTP status 409 CONFLICT,
      * otherwise HTTP 204 NO CONTENT is returned, together with the response header 'Location',
      * containing the full URL of the running job.
-     *
-     * @param jobType the type of the job
-     * @throws IOException
      */
     @RequestMapping(
             value = "/internal/jobs/{jobType}",
@@ -111,7 +107,6 @@ public class JobsController {
         if (optionalJob.isPresent()) {
             final ModelAndView modelAndView = new ModelAndView("job");
             modelAndView.addObject("job", representationOf(optionalJob.get(), true, baseUriOf(request)));
-            modelAndView.addObject("baseUri", baseUriOf(request));
             return modelAndView;
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");

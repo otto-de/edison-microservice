@@ -104,7 +104,6 @@ public class JobDefinitionsController {
                 }});
         if (optionalResult.isPresent()) {
             return new ModelAndView("jobdefinition", new HashMap<String, Object>() {{
-                put("baseUri", baseUriOf(request));
                 put("def", optionalResult.get()
                 );
             }});

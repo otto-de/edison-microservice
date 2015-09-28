@@ -19,8 +19,6 @@ public class InternalController {
 
     @RequestMapping("/internal")
     public ModelAndView getInternal(final HttpServletRequest request) {
-        return new ModelAndView("internal/index") {{
-            addObject("baseUri", baseUriOf(request));
-        }};
+        return new ModelAndView("internal/index");
     }
 }
