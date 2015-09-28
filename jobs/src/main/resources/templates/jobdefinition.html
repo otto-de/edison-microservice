@@ -8,7 +8,7 @@
     <title>Edison Jobs</title>
 
     <!-- Bootstrap -->
-    <link th:href="${baseUri} + '/webjars/bootstrap/3.3.5/css/bootstrap.min.css'" rel="stylesheet" />
+    <link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" />
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -19,8 +19,8 @@
 </head>
 <body>
 <ol class="breadcrumb">
-    <li><a th:href="${baseUri} + '/internal'">Internal</a></li>
-    <li><a th:href="${baseUri} + '/internal/jobdefinitions'">Job Definitions Overview</a></li>
+    <li><a th:href="@{/internal}">Internal</a></li>
+    <li><a th:href="@{/internal/jobdefinitions}">Job Definitions Overview</a></li>
     <li class="active">Job Definition</li>
 </ol>
 <div class="container">
@@ -43,7 +43,7 @@
                 <dt>Retry:</dt>
                 <dd th:text="${def.retry}">&nbsp;</dd>
                 <dt>Last Runs:</dt>
-                <dd><a th:href="'../jobs?type=' + ${def.jobType}" class="btn btn-xs btn-primary">Open &raquo;</a></dd>
+                <dd><a th:href="@{|/internal/jobs?type=${def.jobType}|}" class="btn btn-xs btn-primary">Open &raquo;</a></dd>
                 <dt>Trigger:</dt>
                 <dd>
                     <button type="button" id="triggerButton"
@@ -61,9 +61,9 @@
 </div> <!-- /container -->
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script th:src="${baseUri} + '/webjars/jquery/1.11.1/jquery.min.js'"></script>
+<script th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script th:src="${baseUri} + '/webjars/bootstrap/3.3.5/js/bootstrap.min.js'"></script>
+<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 <script>
     $('#triggerButton').on('click', function () {
         var $btn = $(this).button('loading');

@@ -62,7 +62,6 @@ public class StatusController {
             addObject("version", applicationStatus.getVersionInfo().getVersion());
             addObject("commit", applicationStatus.getVersionInfo().getCommit());
             addObject("statusDetails", statusDetails(applicationStatus));
-            addObject("baseUri", baseUriOf(request));
         }};
     }
 
