@@ -1,3 +1,4 @@
+apply plugin: 'spring-boot'
 
 dependencies {
     compile project(":edison-service")
