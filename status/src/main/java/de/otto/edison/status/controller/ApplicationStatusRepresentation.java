@@ -4,6 +4,7 @@ import de.otto.edison.status.domain.ApplicationStatus;
 import de.otto.edison.status.domain.StatusDetail;
 import net.jcip.annotations.Immutable;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -14,8 +15,7 @@ import static java.time.format.FormatStyle.LONG;
 @Immutable
 final class ApplicationStatusRepresentation {
 
-
-    private static final String SYSTEM_START_TIME = now().format(ofLocalizedDateTime(LONG));
+    private static final Date SYSTEM_START_TIME = new Date();
 
     private final ApplicationStatus applicationStatus;
 
@@ -32,7 +32,7 @@ final class ApplicationStatusRepresentation {
             put("status", applicationStatus.getStatus().name());
             put("name", applicationStatus.getName());
             put("hostname", applicationStatus.getHostName());
-            put("systemtime", now().format(ofLocalizedDateTime(LONG)));
+            put("systemtime", new Date());
             put("systemstarttime", SYSTEM_START_TIME);
             put("commit", applicationStatus.getVersionInfo().getCommit());
             put("version", applicationStatus.getVersionInfo().getVersion());

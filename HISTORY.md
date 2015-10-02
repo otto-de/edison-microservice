@@ -2,6 +2,7 @@
 
 ## Release 0.39.2
 * Cleaned up link construction on internal status and job pages
+* Timestamps in JSON status representation are now in ISO-8601 date format (including timezone)
 
 ## Release 0.39.1
 * Fixed possible broken links on /internal pages
