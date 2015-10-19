@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.40.0
+* Update togglz library to 2.2.0
+
 ## Release 0.39.2
 * Cleaned up link construction on internal status and job pages
 * Timestamps in JSON status representation are now in ISO-8601 date format (including timezone)
