@@ -1,13 +1,13 @@
 ext.libs = [
 
         springBoot: [
-                "org.springframework.boot:spring-boot:1.2.5.RELEASE",
-                "org.springframework.boot:spring-boot-autoconfigure:1.2.5.RELEASE"],
+                "org.springframework.boot:spring-boot:" + springBootVersion,
+                "org.springframework.boot:spring-boot-autoconfigure:" + springBootVersion],
         springBootWeb: [
-                "org.springframework.boot:spring-boot-starter-web:1.2.5.RELEASE",
-                "org.springframework.boot:spring-boot-starter-actuator:1.2.5.RELEASE"],
+                "org.springframework.boot:spring-boot-starter-web:" + springBootVersion,
+                "org.springframework.boot:spring-boot-starter-actuator:" + springBootVersion],
         springBootThymeleaf:
-                "org.springframework.boot:spring-boot-starter-thymeleaf:1.2.5.RELEASE",
+                "org.springframework.boot:spring-boot-starter-thymeleaf:" + springBootVersion,
         bootstrap:
                 "org.webjars:bootstrap:3.3.5",
         hystrix: [

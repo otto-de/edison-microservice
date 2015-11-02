@@ -4,12 +4,14 @@ apply plugin: 'eclipse'
 apply from: 'dependencies.gradle'
 
 buildscript {
+    ext.springBootVersion = "1.2.7.RELEASE"
+
     repositories {
         maven { url "http://repo.spring.io/libs-snapshot" }
         mavenLocal()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.4.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:"+springBootVersion)
     }
 }
 
