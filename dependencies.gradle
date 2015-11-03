@@ -41,7 +41,7 @@ ext.libs = [
         testTogglz:
                 "org.togglz:togglz-testing:2.2.0.Final",
         mongoDb: [
-                "org.mongodb:mongodb-driver:3.1.0"],
+                "org.mongodb:mongodb-driver:3.0.4"],
         fakeMongo:
                 "com.github.fakemongo:fongo:2.0.3"
 ]

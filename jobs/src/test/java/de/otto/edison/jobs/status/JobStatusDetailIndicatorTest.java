@@ -8,9 +8,9 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 
-import static com.google.common.collect.ImmutableList.of;
 import static de.otto.edison.jobs.status.JobStatusDetailIndicator.ERROR_MESSAGE;
 import static de.otto.edison.jobs.status.JobStatusDetailIndicator.SUCCESS_MESSAGE;
 import static de.otto.edison.status.domain.Status.OK;
@@ -48,7 +48,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.of(now));
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -70,7 +70,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(21));
         when(someJob.getStopped()).thenReturn(Optional.of(now.minusSeconds(20)));
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofSeconds(10)));
 
@@ -93,7 +93,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -115,7 +115,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -137,7 +137,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.of(now));
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -151,7 +151,7 @@ public class JobStatusDetailIndicatorTest {
     @Test
     public void shouldNotHaveUriOrRunningIfNoJobPresent() {
         // given
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of());
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList());
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -174,7 +174,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -197,7 +197,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.of(now));
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -219,7 +219,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -241,7 +241,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -263,7 +263,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.DEAD);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -285,7 +285,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now);
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.DEAD);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
 
@@ -307,7 +307,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(of(someJob));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType2", Optional.of(ofHours(10)));
 
