@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 
 import static java.util.Arrays.stream;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * Simple Edison implementation of a DiscoveryClient.
@@ -53,7 +55,9 @@ public class EdisonDiscoveryClient implements DiscoveryClient {
 
     @Override
     public void registerService() {
-        stream(discoveryServers.split(",")).forEach(discoveryServer -> {
+        stream(discoveryServers.split(","))
+                .filter(server -> !isEmpty(server))
+                .forEach(discoveryServer -> {
                 try {
                     LOG.debug("Updating registration of service at " + discoveryServer);
                     httpClient
