@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 
@@ -49,7 +48,7 @@ public class EdisonDiscoveryClient implements DiscoveryClient {
 
     @PostConstruct
     public void postConstruct() {
-        LOG.info("Scheduling registration at Edison JobTrigger every {} minutes.", refreshAfterMinutes);
+        LOG.info("Scheduling registration at Edison JobTrigger every '{}' minutes.", refreshAfterMinutes);
         newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::registerService, 0, refreshAfterMinutes, MINUTES);
     }
 
@@ -58,43 +57,43 @@ public class EdisonDiscoveryClient implements DiscoveryClient {
         stream(discoveryServers.split(","))
                 .filter(server -> !isEmpty(server))
                 .forEach(discoveryServer -> {
-                try {
-                    LOG.debug("Updating registration of service at " + discoveryServer);
-                    httpClient
-                            .preparePut(discoveryServer + "/environments/" + applicationEnvironment + "/" + applicationName)
-                            .setHeader("Content-Type", "application/vnd.otto.edison.links+json")
-                            .setHeader("Accept", "application/vnd.otto.edison.links+json")
-                            .setBody(
-                                    "{\n" +
-                                            "   \"groups\":[\"" + applicationGroup + "\"],\n" +
-                                            "   \"expire\":" + expireAfterMinutes + ",\n" +
-                                            "   \"links\":[{\n" +
-                                            "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +
-                                            "      \"href\" : \"" + serviceUrl + "\",\n" +
-                                            "      \"title\":\"" + applicationName + "\"\n" +
-                                            "   }]  \n" +
-                                            "}"
-                            )
-                            .execute(new AsyncCompletionHandler<Integer>() {
-                                @Override
-                                public Integer onCompleted(final Response response) throws Exception {
-                                    if (response.getStatusCode() < 300) {
-                                        LOG.info("Successfully updated registration at " + discoveryServer);
-                                    } else {
-                                        LOG.warn("Failed to update registration at " + discoveryServer + ": Status=" + response.getStatusCode() + " " + response.getStatusText());
+                    try {
+                        LOG.debug("Updating registration of service at '{}'", discoveryServer);
+                        httpClient
+                                .preparePut(discoveryServer + "/environments/" + applicationEnvironment + "/" + applicationName)
+                                .setHeader("Content-Type", "application/vnd.otto.edison.links+json")
+                                .setHeader("Accept", "application/vnd.otto.edison.links+json")
+                                .setBody(
+                                        "{\n" +
+                                                "   \"groups\":[\"" + applicationGroup + "\"],\n" +
+                                                "   \"expire\":" + expireAfterMinutes + ",\n" +
+                                                "   \"links\":[{\n" +
+                                                "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +
+                                                "      \"href\" : \"" + serviceUrl + "\",\n" +
+                                                "      \"title\":\"" + applicationName + "\"\n" +
+                                                "   }]  \n" +
+                                                "}"
+                                )
+                                .execute(new AsyncCompletionHandler<Integer>() {
+                                    @Override
+                                    public Integer onCompleted(final Response response) throws Exception {
+                                        if (response.getStatusCode() < 300) {
+                                            LOG.info("Successfully updated registration at " + discoveryServer);
+                                        } else {
+                                            LOG.warn("Failed to update registration at '{}': Status='{}' '{}'", discoveryServer, response.getStatusCode(), response.getStatusText());
+                                        }
+                                        return response.getStatusCode();
                                     }
-                                    return response.getStatusCode();
-                                }
 
-                                @Override
-                                public void onThrowable(final Throwable t) {
-                                    LOG.error("Failed to register at " + discoveryServer + ": " + t.getMessage());
-                                }
-                            });
-                } catch (final Exception e) {
-                    LOG.error("Error updating registration: " + e.getMessage());
-                }
-            });
+                                    @Override
+                                    public void onThrowable(final Throwable t) {
+                                        LOG.error("Failed to register at '{}'", discoveryServer, t);
+                                    }
+                                });
+                    } catch (final Exception e) {
+                        LOG.error("Error updating registration", e);
+                    }
+                });
     }
 
 }

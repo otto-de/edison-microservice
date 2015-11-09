@@ -11,6 +11,6 @@ public interface DiscoveryClient {
     /**
      * Registers the service at a configured ServiceDiscovery.
      */
-    public void registerService();
+    void registerService();
 
 }
