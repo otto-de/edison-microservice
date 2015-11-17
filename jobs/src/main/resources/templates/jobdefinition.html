@@ -66,14 +66,13 @@
 <script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 <script>
     $('#triggerButton').on('click', function () {
-        var $btn = $(this).button('loading');
         $.ajax({
             type: "POST",
             url: $(this).data("trigger-url"),
             data: {},
             dataType: "json",
             error: function(data, status, error){
-                if (error == 'Conflict') {
+                if (error === 'Conflict') {
                     alert("Job is currently running or blocked by a different job.")
                 } else {
                     alert("Failed to trigger job. \n\nStatus: " + status + "\nError: " + error);
@@ -84,7 +83,6 @@
                 window.location.href = xhr.getResponseHeader("Location");
             }
         });
-        $btn.button('reset');
     });
 
 </script>

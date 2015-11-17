@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +19,6 @@ import java.util.*;
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
 import static de.otto.edison.jobs.controller.Link.link;
 import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
-import static java.util.Arrays.asList;
-import static java.util.Collections.frequency;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -30,12 +30,9 @@ public class JobDefinitionsController {
     private static final Logger LOG = LoggerFactory.getLogger(JobDefinitionsController.class);
     public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";
 
-    @Autowired
     private JobDefinitionService jobDefinitions;
 
-    public JobDefinitionsController() {
-    }
-
+    @Autowired
     public JobDefinitionsController(final JobDefinitionService service) {
         this.jobDefinitions = service;
     }
@@ -45,14 +42,14 @@ public class JobDefinitionsController {
     public Map<String, List<Link>> getJobDefinitionsAsJson(final HttpServletRequest request) {
         final String baseUri = baseUriOf(request);
         return singletonMap("links", new ArrayList<Link>() {{
-                addAll(jobDefinitions.getJobDefinitions()
-                        .stream()
-                        .map((def) -> link(
-                                "http://github.com/otto-de/edison/link-relations/job/definition",
-                                baseUri + INTERNAL_JOBDEFINITIONS + "/" + def.jobType(),
-                                def.jobName()))
-                        .collect(toList()));
-                add(link("self", baseUriOf(request) + INTERNAL_JOBDEFINITIONS, "Self"));
+            addAll(jobDefinitions.getJobDefinitions()
+                    .stream()
+                    .map((def) -> link(
+                            "http://github.com/otto-de/edison/link-relations/job/definition",
+                            baseUri + INTERNAL_JOBDEFINITIONS + "/" + def.jobType(),
+                            def.jobName()))
+                    .collect(toList()));
+            add(link("self", baseUriOf(request) + INTERNAL_JOBDEFINITIONS, "Self"));
         }});
     }
 
@@ -104,8 +101,8 @@ public class JobDefinitionsController {
                 }});
         if (optionalResult.isPresent()) {
             return new ModelAndView("jobdefinition", new HashMap<String, Object>() {{
-                put("def", optionalResult.get()
-                );
+                put("baseUri", baseUriOf(request));
+                put("def", optionalResult.get());
             }});
         } else {
             response.sendError(SC_NOT_FOUND, "JobDefinition " + jobType + " not found.");
