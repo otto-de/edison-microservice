@@ -113,7 +113,7 @@ public class JobDefinitionsController {
     private String frequencyOf(final JobDefinition def) {
         return def.cron().isPresent()
                 ? def.cron().get()
-                : "Every " + def.fixedDelay().get().toMinutes() + " Minutes";
+                : (def.fixedDelay().isPresent()) ? "Every " + def.fixedDelay().get().toMinutes() + " Minutes" : "Never";
     }
 
     private String retryOf(final JobDefinition def) {
