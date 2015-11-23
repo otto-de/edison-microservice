@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.43.0
+* Updated spring-boot to version [1.3.0](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3-Release-Notes), hystrix to 1.4.21 and metrics library dependency to 3.1.3
+
 ## Release 0.40.0
 * Update togglz library to 2.2.0
 

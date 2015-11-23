@@ -3,6 +3,8 @@ ext.libs = [
         springBoot: [
                 "org.springframework.boot:spring-boot:" + springBootVersion,
                 "org.springframework.boot:spring-boot-autoconfigure:" + springBootVersion],
+        springBootDev: [
+                "org.springframework.boot:spring-boot-devtools:" + springBootVersion],
         springBootWeb: [
                 "org.springframework.boot:spring-boot-starter-web:" + springBootVersion,
                 "org.springframework.boot:spring-boot-starter-actuator:" + springBootVersion],
