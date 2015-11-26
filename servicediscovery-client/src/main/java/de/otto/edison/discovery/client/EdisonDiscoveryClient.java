@@ -29,6 +29,9 @@ public class EdisonDiscoveryClient implements DiscoveryClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(EdisonDiscoveryClient.class);
 
+    @Value("${spring.application.name}")
+    private String applicationName;
+
     @Autowired
     private AsyncHttpClient httpClient;
     @Value("${edison.servicediscovery.servers}")
@@ -39,8 +42,6 @@ public class EdisonDiscoveryClient implements DiscoveryClient {
     private long expireAfterMinutes;
     @Value("${edison.servicediscovery.refresh-after:5}")
     private long refreshAfterMinutes;
-    @Value("${edison.application.name}")
-    private String applicationName;
     @Value("${edison.servicediscovery.environment:unknown}")
     private String applicationEnvironment;
     @Value("${edison.servicediscovery.group:default}")

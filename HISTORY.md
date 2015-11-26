@@ -9,6 +9,11 @@ New Features:
 
 Bug Fixes:
 * Allow also a value without key to be given to ```AbstractMongoRepository#createOrUpdate``` without throwing a NPE
+* ```application.properties```: renamed ````edison.application.name```` (introduced in Release 0.35.0) back into ```application.name```
+  (see [ContextIdApplicationContextInitializer](https://github.com/spring-projects/spring-boot/blob/v1.3.0.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/ContextIdApplicationContextInitializer.java)
+  for details on identifying your application)
+
+
 
 ## Release 0.43.0
 * Updated spring-boot to version [1.3.0](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3-Release-Notes), hystrix to 1.4.21 and metrics library dependency to 3.1.3
