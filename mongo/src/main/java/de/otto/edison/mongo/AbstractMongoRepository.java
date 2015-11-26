@@ -44,18 +44,22 @@ public abstract class AbstractMongoRepository<K, V> {
                 .into(new ArrayList<>());
     }
 
-    public void createOrUpdate(final V value) {
+    public V createOrUpdate(final V value) {
         final K key = keyOf(value);
         final Document existing = collection().find(byId(key)).first();
+        Document doc = encode(value);
         if (existing != null) {
-            collection().replaceOne(byId(key), encode(value));
+            collection().replaceOne(byId(key), doc);
         } else {
-            collection().insertOne(encode(value));
+            collection().insertOne(doc);
         }
+        return decode(doc);
     }
 
-    public void create(final V value) {
-        collection().insertOne(encode(value));
+    public V create(final V value) {
+        Document doc = encode(value);
+        collection().insertOne(doc);
+        return decode(doc);
     }
 
     public void update(final V value) {
@@ -90,7 +94,7 @@ public abstract class AbstractMongoRepository<K, V> {
     }
 
     protected Document byId(final K key) {
-        return new Document(ID, key.toString());
+        return key != null ? new Document(ID, key.toString()) : new Document();
     }
 
     protected Document matchAll() {

@@ -66,7 +66,7 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test(expectedExceptions = NotFoundException.class)
-    public void shouldNotUpdateIfCampaignNotExists() throws Exception {
+    public void shouldNotUpdateIfEtagNotExists() throws Exception {
         // given
         TestObject testObject = new TestObject("someId", "someValue");
 
@@ -79,6 +79,35 @@ public class AbstractMongoRepositoryTest {
             throw e;
         }
     }
+
+    @Test
+    public void shouldCreateOrUpdateWithMissingId() throws Exception {
+        // given
+        TestObject testObject = new TestObject(null, "someValue");
+
+        // when
+        TestObject resultingObject = testee.createOrUpdate(testObject);
+
+        // then
+        assertThat(resultingObject, notNullValue());
+        assertThat(resultingObject.eTag, notNullValue());
+    }
+
+    @Test
+    public void shouldCreateWithMissingId() throws Exception {
+        // given
+        TestObject testObject = new TestObject(null, "someValue");
+
+        // when
+        TestObject resultingObject = testee.create(testObject);
+
+        // then
+        assertThat(resultingObject, notNullValue());
+        assertThat(resultingObject.eTag, notNullValue());
+    }
+
+
+    // ~~
 
     public class TestRepository extends AbstractMongoRepository<String, TestObject> {
 
@@ -139,7 +168,6 @@ public class AbstractMongoRepositoryTest {
         protected TestObject(String id, String value) {
             this(id, value, null);
         }
-
 
     }
 }

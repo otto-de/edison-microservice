@@ -43,25 +43,25 @@ public class MongoJobRepositoryTest {
     @Test
     public void shouldStoreAndRetrieveJobInfo() {
         // given
-        final JobInfo foo = someJobInfo("http://localhost/foo");
-        repo.createOrUpdate(foo);
+        final JobInfo foo = someJobInfo("http://localhost/foo/A");
+        final JobInfo writtenFoo = repo.create(foo);
         // when
-        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo"));
+        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo/A"));
         // then
         assertThat(jobInfo.isPresent(), is(true));
-        assertThat(jobInfo.get(), is(foo));
+        assertThat(jobInfo.get(), is(writtenFoo));
     }
 
     @Test
     public void shouldUpdateJobInfo() {
         // given
-        final JobInfo foo = someJobInfo("http://localhost/foo");
+        final JobInfo foo = someJobInfo("http://localhost/foo/B");
         repo.createOrUpdate(foo);
-        repo.createOrUpdate(foo.info("some message"));
+        final JobInfo writtenFoo = repo.createOrUpdate(foo.info("some message"));
         // when
-        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo"));
+        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo/B"));
         // then
-        assertThat(jobInfo.get(), is(foo));
+        assertThat(jobInfo.get(), is(writtenFoo));
     }
 
     @Test

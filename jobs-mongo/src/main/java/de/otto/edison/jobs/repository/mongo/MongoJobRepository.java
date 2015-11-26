@@ -135,7 +135,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
                 .append(STARTED.key(), toDate(job.getStarted()))
                 .append(LAST_UPDATED.key(), toDate(job.getLastUpdated()))
                 .append(MESSAGES.key(), job.getMessages().stream()
-                        .map(jm -> new LinkedHashMap<String, Object>() {{
+                        .map(jm -> new Document() {{
                             put(MSG_LEVEL.key(), jm.getLevel().name());
                             put(MSG_TS.key(), toDate(jm.getTimestamp()));
                             put(MSG_TEXT.key(), jm.getMessage());

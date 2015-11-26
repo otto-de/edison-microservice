@@ -1,5 +1,15 @@
 # Release History
 
+## Release 0.44.0
+
+New Features:
+* MongoDB persistence: Allow to retrieve the object (including key) when it is created.
+  Changed signature of ```create``` and  ```createOrUpdate``` in ```AbstractMongoRepository```
+  to return the object instead of void
+
+Bug Fixes:
+* Allow also a value without key to be given to ```AbstractMongoRepository#createOrUpdate``` without throwing a NPE
+
 ## Release 0.43.0
 * Updated spring-boot to version [1.3.0](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3-Release-Notes), hystrix to 1.4.21 and metrics library dependency to 3.1.3
 

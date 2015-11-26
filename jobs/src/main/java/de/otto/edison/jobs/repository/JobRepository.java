@@ -23,7 +23,7 @@ public interface JobRepository {
 
     Optional<JobInfo> findRunningJobByType(String jobType);
 
-    void createOrUpdate(JobInfo job);
+    JobInfo createOrUpdate(JobInfo job);
 
     void removeIfStopped(URI uri);
 

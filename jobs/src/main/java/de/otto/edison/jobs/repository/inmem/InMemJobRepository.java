@@ -77,8 +77,9 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public void createOrUpdate(final JobInfo job) {
+    public JobInfo createOrUpdate(final JobInfo job) {
         jobs.put(job.getJobUri(), job);
+        return job;
     }
 
     @Override
