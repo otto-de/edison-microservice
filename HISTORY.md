@@ -9,7 +9,7 @@ New Features:
 
 Bug Fixes:
 * Allow also a value without key to be given to ```AbstractMongoRepository#createOrUpdate``` without throwing a NPE
-* ```application.properties```: renamed ````edison.application.name```` (introduced in Release 0.35.0) back into ```application.name```
+* ```application.properties```: renamed ````edison.application.name```` (introduced in Release 0.35.0) back into ```spring.application.name```
   (see [ContextIdApplicationContextInitializer](https://github.com/spring-projects/spring-boot/blob/v1.3.0.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/ContextIdApplicationContextInitializer.java)
   for details on identifying your application)
 * Added dummy feature toggle implementations (for ```FeatureClassProvider```) to example projects, which can now
