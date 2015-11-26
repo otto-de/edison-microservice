@@ -12,7 +12,8 @@ Bug Fixes:
 * ```application.properties```: renamed ````edison.application.name```` (introduced in Release 0.35.0) back into ```application.name```
   (see [ContextIdApplicationContextInitializer](https://github.com/spring-projects/spring-boot/blob/v1.3.0.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/ContextIdApplicationContextInitializer.java)
   for details on identifying your application)
-
+* Added dummy feature toggle implementations (for ```FeatureClassProvider```) to example projects, which can now
+  be run on its own again (ie. ```gradle example-jobs:bootRun```)
 
 
 ## Release 0.43.0
