@@ -10,13 +10,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.*;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.WARNING;
 import static java.time.OffsetDateTime.now;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
+/**
+ * Information about a single job execution.
+ *
+ * A JobInfo instance is created for every job execution. It is constantly updated by the background job and
+ * persisted in the JobRepository.
+ */
 @ThreadSafe
 public class JobInfo {
     private static final String JOB_DEAD_MESSAGE = "Job didn't receive updates for a while, considering it dead";
@@ -32,6 +40,7 @@ public class JobInfo {
     private OffsetDateTime lastUpdated;
 
     public enum JobStatus { OK, ERROR, DEAD;}
+    public enum JobState {}
 
     public static JobInfo newJobInfo(final URI jobUri, final String jobType,
                                      final JobMonitor monitor,
@@ -87,48 +96,87 @@ public class JobInfo {
         this.messages.addAll(messages);
     }
 
+    /**
+     *
+     * @return true if the job is finished, false, if it is still in execution.
+     */
     public synchronized boolean isStopped() {
         return stopped.isPresent();
     }
 
+    /**
+     *
+     * @return the URI of the job
+     */
     public URI getJobUri() {
         return jobUri;
     }
 
+    /**
+     *
+     * @return the job type
+     */
     public String getJobType() {
         return jobType;
     }
 
+    /**
+     *
+     * @return timestamp when the job was started
+     */
     public OffsetDateTime getStarted() {
         return started;
     }
 
+    /**
+     *
+     * @return the current status of the job: OK, ERROR or DEAD
+     */
     public synchronized JobStatus getStatus() {
         return status;
     }
 
-    public synchronized String getState() {
-        return isStopped() ? "STOPPED" : "RUNNING";
-    }
-
+    /**
+     *
+     * @return the timestamp when the job was stopped, of empty, if the job is still running.
+     */
     public synchronized Optional<OffsetDateTime> getStopped() {
         return stopped;
     }
 
+    /**
+     *
+     * @return list of job messages, containing human-readable information about what happened during execution.
+     */
     public synchronized List<JobMessage> getMessages() {
         return new ArrayList<>(messages);
     }
 
+    /**
+     *
+     * @return last updated timestamp
+     */
     public synchronized OffsetDateTime getLastUpdated() {
         return lastUpdated;
     }
 
-
+    /**
+     * Send a ping to the job and update the lastUpdated timestamp.
+     *
+     * This is used to determine whether or not a job is still running of a different server.
+     */
     public synchronized void ping() {
         lastUpdated = now(clock);
         monitor.update(this);
     }
 
+    /**
+     * Add an INFO message to the job messages.
+     *
+     * Updates the lastUpdated timestamp and sends an update to the {@link JobMonitor}
+     * @param message a message string
+     * @return the updated JobInfo
+     */
     public synchronized JobInfo info(final String message) {
         messages.add(jobMessage(Level.INFO, message));
         lastUpdated = now(clock);
@@ -136,6 +184,15 @@ public class JobInfo {
         return this;
     }
 
+    /**
+     * Add an ERROR message to the job messages.
+     *
+     * Updates the lastUpdated timestamp and sends an update to the {@link JobMonitor}. The
+     * Status of the job is set to ERROR.
+     *
+     * @param message a message string
+     * @return the updated JobInfo
+     */
     public synchronized JobInfo error(final String message) {
         messages.add(jobMessage(Level.ERROR, message));
         lastUpdated = now(clock);
@@ -144,6 +201,12 @@ public class JobInfo {
         return this;
     }
 
+    /**
+     * This is called if the job was finished.
+     *
+     * Updates the lastUpdated and stopped timestamp and sends an update to the {@link JobMonitor}
+     * @return the updated JobInfo
+     */
     public synchronized JobInfo stop() {
         lastUpdated = now(clock);
         stopped = of(lastUpdated);
@@ -151,6 +214,13 @@ public class JobInfo {
         return this;
     }
 
+    /**
+     * This is called if the job was identified to be dead.
+     *
+     * Updates the lastUpdated and stopped timestamp and sends an update to the {@link JobMonitor}.
+     * The job status is set to DEAD
+     * @return the updated JobInfo
+     */
     public synchronized JobInfo dead() {
         messages.add(jobMessage(WARNING, JOB_DEAD_MESSAGE));
         lastUpdated = now(clock);
@@ -160,6 +230,10 @@ public class JobInfo {
         return this;
     }
 
+    /**
+     *
+     * @return JobMonitor
+     */
     JobMonitor getMonitor() {
         return monitor;
     }

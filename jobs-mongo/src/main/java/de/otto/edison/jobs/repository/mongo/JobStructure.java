@@ -11,8 +11,7 @@ enum JobStructure {
     MSG_TS("ts"),
     MSG_TEXT("msg"),
     MSG_LEVEL("level"),
-    LAST_UPDATED("lastUpdated"),
-    STATE("state");
+    LAST_UPDATED("lastUpdated");
 
     private final String key;
 

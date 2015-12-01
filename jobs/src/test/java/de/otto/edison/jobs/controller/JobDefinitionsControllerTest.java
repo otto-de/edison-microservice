@@ -1,9 +1,8 @@
 package de.otto.edison.jobs.controller;
 
-import de.otto.edison.jobs.definition.DefaultJobDefinition;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.service.JobDefinitionService;
-
+import de.otto.edison.jobs.service.JobRunnable;
 import org.springframework.web.servlet.ModelAndView;
 import org.testng.annotations.Test;
 
@@ -22,11 +21,13 @@ import static de.otto.edison.jobs.definition.DefaultJobDefinition.notTriggerable
 import static java.time.Duration.ofHours;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @Test
 public class JobDefinitionsControllerTest {
@@ -53,7 +54,10 @@ public class JobDefinitionsControllerTest {
         final String jobType = "FooJob";
         final JobDefinition expectedDef = jobDefinition(jobType, "Foo");
 
-        final JobDefinitionService service = new JobDefinitionService(asList(expectedDef));
+        final JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobDefinition()).thenReturn(expectedDef);
+
+        final JobDefinitionService service = new JobDefinitionService(asList(jobRunnable));
         final JobDefinitionsController controller = new JobDefinitionsController(service);
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -75,7 +79,14 @@ public class JobDefinitionsControllerTest {
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
         final JobDefinition barJobDef = jobDefinition("BarJob", "Bar");
 
-        final JobDefinitionService service = new JobDefinitionService(asList(fooJobDef, barJobDef));
+        final JobRunnable fooJobRunnable = mock(JobRunnable.class);
+        when(fooJobRunnable.getJobDefinition()).thenReturn(fooJobDef);
+
+        final JobRunnable barJobRunnable = mock(JobRunnable.class);
+        when(barJobRunnable.getJobDefinition()).thenReturn(barJobDef);
+
+        final JobDefinitionService service = new JobDefinitionService(asList(fooJobRunnable, barJobRunnable));
+
         final JobDefinitionsController controller = new JobDefinitionsController(service);
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -99,7 +110,14 @@ public class JobDefinitionsControllerTest {
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
         final JobDefinition barJobDef = notTriggerableDefinition("BarJob", "Bar");
 
-        final JobDefinitionService service = new JobDefinitionService(asList(fooJobDef, barJobDef));
+        final JobRunnable fooJobRunnable = mock(JobRunnable.class);
+        when(fooJobRunnable.getJobDefinition()).thenReturn(fooJobDef);
+
+        final JobRunnable barJobRunnable = mock(JobRunnable.class);
+        when(barJobRunnable.getJobDefinition()).thenReturn(barJobDef);
+
+        final JobDefinitionService service = new JobDefinitionService(asList(fooJobRunnable, barJobRunnable));
+
         final JobDefinitionsController controller = new JobDefinitionsController(service);
 
         final HttpServletRequest request = mock(HttpServletRequest.class);

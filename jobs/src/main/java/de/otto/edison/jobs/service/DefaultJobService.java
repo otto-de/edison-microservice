@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.service;
 
+import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
@@ -25,6 +26,7 @@ import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
 /**
+ *
  * @author Guido Steinacker
  * @since 15.02.15
  */
@@ -67,19 +69,14 @@ public class DefaultJobService implements JobService {
 
     @PostConstruct
     public void postConstruct() {
-        LOG.info("Found {} JobRunnables: {}", +jobRunnables.size(), jobRunnables.stream().map(JobRunnable::getJobType).collect(Collectors.toList()));
+        LOG.info("Found {} JobRunnables: {}", +jobRunnables.size(), jobRunnables.stream().map(j -> j.getJobDefinition().jobType()).collect(Collectors.toList()));
     }
 
     @Override
     public Optional<URI> startAsyncJob(String jobType) {
-        final Optional<JobRunnable> jobRunnable = jobRunnables.stream().filter((r) -> r.getJobType().equalsIgnoreCase(jobType)).findFirst();
-        return startAsyncJob(jobRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for " + jobType)));
-    }
-
-    @Override
-    public Optional<URI> startAsyncJob(final JobRunnable jobRunnable) {
+        final JobRunnable jobRunnable = findJobRunnable(jobType);
         // TODO: use some kind of database lock so we can prevent race conditions
-        final Optional<JobInfo> alreadyRunning = repository.findRunningJobByType(jobRunnable.getJobType());
+        final Optional<JobInfo> alreadyRunning = repository.findRunningJobByType(jobRunnable.getJobDefinition().jobType());
         if (alreadyRunning == null || !alreadyRunning.isPresent()) {
             return Optional.of(startAsync(metered(jobRunnable)));
         } else {
@@ -112,8 +109,13 @@ public class DefaultJobService implements JobService {
         }
     }
 
+    private JobRunnable findJobRunnable(String jobType) {
+        final Optional<JobRunnable> optionalRunnable = jobRunnables.stream().filter((r) -> r.getJobDefinition().jobType().equalsIgnoreCase(jobType)).findFirst();
+        return optionalRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for " + jobType));
+    }
+
     private URI startAsync(final JobRunnable jobRunnable) {
-        final JobInfo jobInfo = newJobInfo(newJobUri(), jobRunnable.getJobType(), monitor, clock);
+        final JobInfo jobInfo = newJobInfo(newJobUri(), jobRunnable.getJobDefinition().jobType(), monitor, clock);
         final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor);
         executor.execute(() -> jobRunner.start(jobRunnable));
         return jobInfo.getJobUri();
@@ -121,9 +123,10 @@ public class DefaultJobService implements JobService {
 
     private JobRunnable metered(final JobRunnable delegate) {
         return new JobRunnable() {
+
             @Override
-            public String getJobType() {
-                return delegate.getJobType();
+            public JobDefinition getJobDefinition() {
+                return delegate.getJobDefinition();
             }
 
             @Override
@@ -134,7 +137,7 @@ public class DefaultJobService implements JobService {
             }
 
             private String gaugeName() {
-                return "gauge.jobs.runtime." + delegate.getJobType().toLowerCase();
+                return "gauge.jobs.runtime." + delegate.getJobDefinition().jobType().toLowerCase();
             }
         };
     }

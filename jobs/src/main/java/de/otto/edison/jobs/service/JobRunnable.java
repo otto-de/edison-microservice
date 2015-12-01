@@ -1,15 +1,26 @@
 package de.otto.edison.jobs.service;
 
+import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 
 /**
+ * The executable part of a Job that is executing background tasks in Edison microservices.
+ *
  * @author Guido Steinacker
  * @since 15.02.15
  */
 public interface JobRunnable {
 
-    String getJobType();
+    /**
+     * Returns the definition of the job, specifying when a job should be executed.
+     * @return JobDefinition
+     */
+    JobDefinition getJobDefinition();
 
+    /**
+     * Executes the background task of the job and updates the JobInfo during execution.
+     * @param jobInfo the information about the job in execution.
+     */
     void execute(JobInfo jobInfo);
 
 }

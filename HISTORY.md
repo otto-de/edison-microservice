@@ -1,5 +1,14 @@
 # Release History
 
+## Release 1.0.0 "Samuel Ogden Edison, Jr."
+
+New Features:
+* Broken Jobs are automatically restarted according to the number of retries specified in the ```JobDefintion```.
+
+Breaking Changes:
+* Every ```JobRunnable``` now needs to provide a ```JobDefinition```
+* Removed ```JobRunnable#getJobType```. The job type is accessed by the ```JobDefinition```
+
 ## Release 0.44.0
 
 New Features:

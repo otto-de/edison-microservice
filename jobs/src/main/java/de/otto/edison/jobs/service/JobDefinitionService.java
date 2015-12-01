@@ -25,26 +25,29 @@ public class JobDefinitionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobDefinitionService.class);
 
+
     @Autowired(required = false)
+    private List<JobRunnable> jobRunnables = new ArrayList<>();
     private List<JobDefinition> jobDefinitions = new ArrayList<>();
 
+    // Used by Spring
     public JobDefinitionService() {
     }
 
-    public JobDefinitionService(final List<JobDefinition> jobDefinitions) {
-        this.jobDefinitions = jobDefinitions;
+    // Used by tests
+    public JobDefinitionService(final List<JobRunnable> jobRunnables) {
+        this.jobRunnables = jobRunnables;
+        postConstruct();
     }
 
     @PostConstruct
-    public void postConstruct() {
+    void postConstruct() {
         LOG.info("Initializing JobDefinitionService...");
-        if (jobDefinitions == null) {
+        if (jobRunnables == null || jobRunnables.isEmpty()) {
             jobDefinitions = emptyList();
-        }
-        if (jobDefinitions.size() == 0) {
             LOG.info("No JobDefinitions found in microservice.");
-            return;
         } else {
+            this.jobDefinitions = jobRunnables.stream().map(JobRunnable::getJobDefinition).collect(toList());
             LOG.info("Found " + jobDefinitions.size() + " JobDefinitions: " + jobDefinitions.stream().map(JobDefinition::jobType).collect(toList()));
         }
     }

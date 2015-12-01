@@ -19,7 +19,6 @@ import java.net.URI;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -141,7 +140,6 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
                             put(MSG_TEXT.key(), jm.getMessage());
                         }})
                         .collect(toList()))
-                .append(STATE.key(), job.getState())
                 .append(STATUS.key(), job.getStatus().name());
         if (job.isStopped()) {
             document.append(STOPPED.key(), toDate(job.getStopped().get()));

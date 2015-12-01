@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.service;
 
+import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.monitor.JobMonitor;
@@ -19,8 +20,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.service.JobRunner.PING_PERIOD;
@@ -212,8 +213,23 @@ public class JobRunnerTest {
 
     private static class SomeJobRunnable implements JobRunnable {
         @Override
-        public String getJobType() {
-            return "NAME";
+        public JobDefinition getJobDefinition() {
+            return new JobDefinition() {
+                @Override
+                public String jobType() {
+                    return "SOME_TYPE";
+                }
+
+                @Override
+                public String jobName() {
+                    return "NAME";
+                }
+
+                @Override
+                public String description() {
+                    return "";
+                }
+            };
         }
 
         @Override

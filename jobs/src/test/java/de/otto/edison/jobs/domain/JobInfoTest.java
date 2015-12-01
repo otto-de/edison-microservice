@@ -20,7 +20,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class JobInfoTest {
 
@@ -55,7 +57,6 @@ public class JobInfoTest {
         final JobInfo job = newJobInfo(create("foo"), "TEST", monitor, clock).stop();
 
         assertThat(job.isStopped(), is(true));
-        assertThat(job.getState(), is("STOPPED"));
         assertThat(job.getStatus(), is(OK));
         verify(monitor, times(2)).update(any(JobInfo.class));
     }
@@ -67,7 +68,6 @@ public class JobInfoTest {
         final JobInfo job = newJobInfo(create("foo"), "TEST", monitor, clock).dead();
 
         assertThat(job.isStopped(), is(true));
-        assertThat(job.getState(), is("STOPPED"));
         assertThat(job.getStatus(), is(DEAD));
         assertThat(job.getStopped().get(), is(OffsetDateTime.now(clock)));
         verify(monitor, times(2)).update(any(JobInfo.class));

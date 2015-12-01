@@ -41,7 +41,7 @@ public class JobRepresentation {
     }
 
     public String getState() {
-        return job.getState();
+        return job.isStopped() ? "Stopped" : "Running";
     }
 
     public String getStarted() {
