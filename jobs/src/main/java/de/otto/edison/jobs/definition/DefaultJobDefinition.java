@@ -39,7 +39,7 @@ public final class DefaultJobDefinition implements JobDefinition {
     }
 
     /**
-     * Create a JobDefinition that will not be triggered.
+     * Create a JobDefinition that will not be triggered automatically.
      *
      * @param jobType     The type of the Job
      * @param jobName     A human readable name of the Job
