@@ -10,6 +10,7 @@ Breaking Changes:
 * The factory methods of the ```DefaultJobDefinition``` now have an additional parameter for the number of restarts.
 * Every ```JobRunnable``` now needs to provide a ```JobDefinition```
 * Removed ```JobRunnable#getJobType```. The job type is accessed by the ```JobDefinition```
+* Removed hystrix module
 
 ## Release 0.44.0
 
