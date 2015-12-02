@@ -8,6 +8,7 @@ import java.time.Clock;
 import java.time.OffsetDateTime;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isAbsent;
@@ -59,6 +60,33 @@ public class JobInfoTest {
         assertThat(job.isStopped(), is(true));
         assertThat(job.getStatus(), is(OK));
         verify(monitor, times(2)).update(any(JobInfo.class));
+    }
+
+    @Test
+    public void shouldMarkAsError() {
+        final Clock clock = fixed(now(), systemDefault());
+        JobMonitor monitor = mock(JobMonitor.class);
+        final JobInfo job = newJobInfo(create("foo"), "TEST", monitor, clock);
+        job.info("first");
+        job.error("BUMMMMMM");
+        job.info("last");
+        job.stop();
+        assertThat(job.isStopped(), is(true));
+        assertThat(job.getStatus(), is(ERROR));
+        verify(monitor, times(5)).update(any(JobInfo.class));
+    }
+
+    @Test
+    public void shouldMarkAsOkAfterRestart() {
+        final Clock clock = fixed(now(), systemDefault());
+        JobMonitor monitor = mock(JobMonitor.class);
+        final JobInfo job = newJobInfo(create("foo"), "TEST", monitor, clock);
+        job.error("BUMMMMMM");
+        job.restart();
+        job.stop();
+        assertThat(job.isStopped(), is(true));
+        assertThat(job.getStatus(), is(OK));
+        verify(monitor, times(4)).update(any(JobInfo.class));
     }
 
     @Test

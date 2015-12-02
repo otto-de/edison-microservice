@@ -14,7 +14,9 @@ import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
+import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.domain.Level.WARNING;
+import static java.lang.String.format;
 import static java.time.OffsetDateTime.now;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -38,9 +40,9 @@ public class JobInfo {
     private Optional<OffsetDateTime> stopped;
     private JobStatus status;
     private OffsetDateTime lastUpdated;
+    private int restarts = 0;
 
     public enum JobStatus { OK, ERROR, DEAD;}
-    public enum JobState {}
 
     public static JobInfo newJobInfo(final URI jobUri, final String jobType,
                                      final JobMonitor monitor,
@@ -72,7 +74,7 @@ public class JobInfo {
         this.status = OK;
         this.monitor = monitor;
         this.lastUpdated = started;
-        this.messages.add(jobMessage(Level.INFO, "Started " + jobType));
+        this.messages.add(jobMessage(INFO, "Started " + jobType));
         this.monitor.update(this);
     }
 
@@ -178,7 +180,7 @@ public class JobInfo {
      * @return the updated JobInfo
      */
     public synchronized JobInfo info(final String message) {
-        messages.add(jobMessage(Level.INFO, message));
+        messages.add(jobMessage(INFO, message));
         lastUpdated = now(clock);
         monitor.update(this);
         return this;
@@ -197,6 +199,20 @@ public class JobInfo {
         messages.add(jobMessage(Level.ERROR, message));
         lastUpdated = now(clock);
         status = ERROR;
+        monitor.update(this);
+        return this;
+    }
+
+    /**
+     * Jobs can be restarted after an ERROR or if an Exception occured during execution if
+     * the {@link de.otto.edison.jobs.definition.JobDefinition#}
+     * @return
+     */
+    public synchronized JobInfo restart() {
+        ++restarts;
+        messages.add(jobMessage(WARNING, format("{}. restart of Job after error.", restarts)));
+        lastUpdated = now(clock);
+        status = OK;
         monitor.update(this);
         return this;
     }
