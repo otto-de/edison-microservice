@@ -349,7 +349,7 @@ public class JobRunnerTest {
             }
 
             @Override
-            public int retries() {
+            public int restarts() {
                 return 1;
             }
         };
