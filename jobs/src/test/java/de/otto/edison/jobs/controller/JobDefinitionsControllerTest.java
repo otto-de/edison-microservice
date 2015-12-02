@@ -9,10 +9,8 @@ import org.testng.annotations.Test;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
 import static de.otto.edison.jobs.controller.Link.link;
@@ -20,6 +18,7 @@ import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobD
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.notTriggerableJobDefinition;
 import static java.time.Duration.ofHours;
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -126,6 +125,7 @@ public class JobDefinitionsControllerTest {
 
         // when
         ModelAndView modelAndView = controller.getJobDefinitionsAsHtml(request);
+        @SuppressWarnings("unchecked")
         List<Object> jobdefinitions = (List<Object>) modelAndView.getModel().get("jobdefinitions");
  
         // then
@@ -135,11 +135,11 @@ public class JobDefinitionsControllerTest {
    }
 
     private JobDefinition jobDefinition(final String jobType, final String name) {
-        return fixedDelayJobDefinition(jobType, name, name, ofHours(1), Optional.<Duration>empty());
+        return fixedDelayJobDefinition(jobType, name, name, ofHours(1), 0, empty());
     }
 
     private JobDefinition notTriggerableDefinition(final String jobType, final String name) {
-        return notTriggerableJobDefinition(jobType, name, name);
+        return notTriggerableJobDefinition(jobType, name, name, 0, empty());
     }
 
 }

@@ -33,6 +33,7 @@ public class BarJob implements JobRunnable {
                 "Bar Job",
                 "An example job that is running for a while and has a long long long long long long long long long long long long long long long long long long long long description.",
                 ofMinutes(2),
+                0,
                 3,
                 Optional.of(ofMinutes(2)),
                 Optional.of(ofMinutes(20))

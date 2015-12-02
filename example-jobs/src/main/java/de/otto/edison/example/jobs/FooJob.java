@@ -29,6 +29,7 @@ public class FooJob implements JobRunnable {
                 "Foo Job",
                 "An example job that is running for a while.",
                 ofHours(1),
+                0,
                 Optional.of(ofHours(3))
         );
     }
