@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.domain;
 
+import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.monitor.JobMonitor;
 import net.jcip.annotations.ThreadSafe;
 
@@ -205,8 +206,9 @@ public class JobInfo {
 
     /**
      * Jobs can be restarted after an ERROR or if an Exception occured during execution if
-     * the {@link de.otto.edison.jobs.definition.JobDefinition#}
-     * @return
+     * the {@link JobDefinition#restarts()} is greater 0.
+     *
+     * @return the updated JobInfo
      */
     public synchronized JobInfo restart() {
         ++restarts;
@@ -221,6 +223,7 @@ public class JobInfo {
      * This is called if the job was finished.
      *
      * Updates the lastUpdated and stopped timestamp and sends an update to the {@link JobMonitor}
+     *
      * @return the updated JobInfo
      */
     public synchronized JobInfo stop() {
@@ -235,6 +238,7 @@ public class JobInfo {
      *
      * Updates the lastUpdated and stopped timestamp and sends an update to the {@link JobMonitor}.
      * The job status is set to DEAD
+     *
      * @return the updated JobInfo
      */
     public synchronized JobInfo dead() {
