@@ -19,13 +19,6 @@ import static java.time.Duration.ofMinutes;
 @Component
 public class BarJob implements JobRunnable {
 
-    public BarJob() {
-    }
-
-    public String getJobType() {
-        return "Bar";
-    }
-
     @Override
     public JobDefinition getJobDefinition() {
         return retryableFixedDelayJobDefinition(
@@ -33,7 +26,7 @@ public class BarJob implements JobRunnable {
                 "Bar Job",
                 "An example job that is running for a while and has a long long long long long long long long long long long long long long long long long long long long description.",
                 ofMinutes(2),
-                0,
+                1,
                 3,
                 Optional.of(ofMinutes(2)),
                 Optional.of(ofMinutes(20))
@@ -42,6 +35,9 @@ public class BarJob implements JobRunnable {
 
     @Override
     public void execute(final JobInfo jobInfo) {
+        if (new Random().nextBoolean()) {
+            jobInfo.error("Some random error occured.");
+        }
         for (int i = 0; i < 10; ++i) {
             doSomeHardWork(jobInfo);
         }

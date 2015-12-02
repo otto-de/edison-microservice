@@ -210,7 +210,7 @@ public class JobInfo {
      */
     public synchronized JobInfo restart() {
         ++restarts;
-        messages.add(jobMessage(WARNING, format("{}. restart of Job after error.", restarts)));
+        messages.add(jobMessage(WARNING, format("%s. restart of Job after error.", restarts)));
         lastUpdated = now(clock);
         status = OK;
         monitor.update(this);

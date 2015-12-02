@@ -19,9 +19,6 @@ import static java.time.Duration.ofHours;
 @Component
 public class FooJob implements JobRunnable {
 
-    public FooJob() {
-    }
-
     @Override
     public JobDefinition getJobDefinition() {
         return fixedDelayJobDefinition(

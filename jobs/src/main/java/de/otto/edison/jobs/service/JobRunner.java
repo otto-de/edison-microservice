@@ -8,6 +8,7 @@ import org.slf4j.MDC;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -40,11 +41,24 @@ public final class JobRunner {
     public void start(final JobRunnable runnable) {
         start();
         try {
-            runnable.execute(jobInfo);
+            final int restarts = runnable.getJobDefinition().restarts();
+            executeAndRetry(runnable, restarts);
         } catch (final RuntimeException e) {
             error(e);
         } finally {
             stop();
+        }
+    }
+
+    private synchronized void executeAndRetry(final JobRunnable runnable, final int restarts) {
+        try {
+            runnable.execute(jobInfo);
+        } catch (final RuntimeException e) {
+            error(e);
+        }
+        if (jobInfo.getStatus() == ERROR && restarts > 0) {
+            restart();
+            executeAndRetry(runnable, restarts-1);
         }
     }
 
@@ -75,6 +89,12 @@ public final class JobRunner {
         jobInfo.error(e.getMessage());
         jobRepository.createOrUpdate(jobInfo);
         LOG.error("Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e);
+    }
+
+    private synchronized void restart() {
+        jobInfo.restart();
+        jobRepository.createOrUpdate(jobInfo);
+        LOG.warn("Retrying job ");
     }
 
     private synchronized void stop() {

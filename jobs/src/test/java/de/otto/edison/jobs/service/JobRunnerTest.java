@@ -19,18 +19,24 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
+import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.domain.Level.ERROR;
 import static de.otto.edison.jobs.domain.Level.INFO;
+import static de.otto.edison.jobs.domain.Level.WARNING;
 import static de.otto.edison.jobs.service.JobRunner.PING_PERIOD;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.net.URI.create;
 import static java.time.Clock.fixed;
+import static java.time.Duration.ofSeconds;
 import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MINUTES;
+import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -60,11 +66,11 @@ public class JobRunnerTest {
         // given
         final URI jobUri = create("/foo/jobs/42");
         final InMemJobRepository repository = new InMemJobRepository();
-        final JobInfo jobInfo = newJobInfo(jobUri, "NAME", (j) -> {
-        }, clock);
+        final JobInfo jobInfo = newJobInfo(jobUri, "NAME", (j) -> {}, clock);
         final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor);
         // when
         JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobDefinition()).thenReturn(fixedDelayJobDefinition("NAME", "", "", ofSeconds(2), 0, empty()));
         jobRunner.start(jobRunnable);
         // then
         verify(jobRunnable).execute(jobInfo);
@@ -95,6 +101,93 @@ public class JobRunnerTest {
         assertThat(second.getMessage(), is("a message"));
         assertThat(second.getLevel(), is(INFO));
         assertThat(second.getTimestamp(), is(notNullValue()));
+    }
+
+    @Test
+    public void shouldRestartJobOnException() {
+        // given
+        final URI jobUri = create("/foo/jobs/42");
+        final InMemJobRepository repository = new InMemJobRepository();
+        final JobRunner jobRunner = newJobRunner(
+                newJobInfo(jobUri, "NAME", (j) -> {
+                }, clock),
+                repository,
+                executor);
+
+        final SomeJobRunnable someFailingJob = new SomeJobRunnable(j -> {
+            throw new RuntimeException("some error");
+        });
+
+        // when
+        jobRunner.start(someFailingJob);
+
+        // then
+        final Optional<JobInfo> optionalJob = repository.findOne(jobUri);
+        final JobInfo jobInfo = optionalJob.get();
+
+        // JobRunnable.execute was called 2 times (1 retry):
+        assertThat(someFailingJob.executions, is(2));
+
+        final JobMessage startedMessage = jobInfo.getMessages().get(0);
+        assertThat(startedMessage.getMessage(), is("Started NAME"));
+
+        final JobMessage firstError = jobInfo.getMessages().get(1);
+        assertThat(firstError.getMessage(), is("some error"));
+        assertThat(firstError.getLevel(), is(ERROR));
+
+        final JobMessage restartedMessage = jobInfo.getMessages().get(2);
+        assertThat(restartedMessage.getMessage(), is("1. restart of Job after error."));
+        assertThat(restartedMessage.getLevel(), is(WARNING));
+
+        final JobMessage secondError = jobInfo.getMessages().get(3);
+        assertThat(secondError.getMessage(), is("some error"));
+        assertThat(secondError.getLevel(), is(ERROR));
+
+        assertThat(jobInfo.getMessages(), hasSize(4));
+    }
+
+    @Test
+    public void shouldRestartJobOnError() {
+        // given
+        final URI jobUri = create("/foo/jobs/42");
+        final InMemJobRepository repository = new InMemJobRepository();
+        final JobRunner jobRunner = newJobRunner(
+                newJobInfo(jobUri, "NAME", (j) -> {
+                }, clock),
+                repository,
+                executor);
+
+        final SomeJobRunnable someFailingJob = new SomeJobRunnable(j -> {
+            j.error("some error");
+            return null;
+        });
+
+        // when
+        jobRunner.start(someFailingJob);
+
+        // then
+        final Optional<JobInfo> optionalJob = repository.findOne(jobUri);
+        final JobInfo jobInfo = optionalJob.get();
+
+        // JobRunnable.execute was called 2 times (1 retry):
+        assertThat(someFailingJob.executions, is(2));
+
+        final JobMessage startedMessage = jobInfo.getMessages().get(0);
+        assertThat(startedMessage.getMessage(), is("Started NAME"));
+
+        final JobMessage firstError = jobInfo.getMessages().get(1);
+        assertThat(firstError.getMessage(), is("some error"));
+        assertThat(firstError.getLevel(), is(ERROR));
+
+        final JobMessage restartedMessage = jobInfo.getMessages().get(2);
+        assertThat(restartedMessage.getMessage(), is("1. restart of Job after error."));
+        assertThat(restartedMessage.getLevel(), is(WARNING));
+
+        final JobMessage secondError = jobInfo.getMessages().get(3);
+        assertThat(secondError.getMessage(), is("some error"));
+        assertThat(secondError.getLevel(), is(ERROR));
+
+        assertThat(jobInfo.getMessages(), hasSize(4));
     }
 
     @Test
@@ -203,7 +296,6 @@ public class JobRunnerTest {
         verify(scheduledJob).cancel(false);
     }
 
-
     private List<JobInfo> historyOfSavedJobInfos(JobRepository repository, int wantedNumberOfInvocations) {
         ArgumentCaptor<JobInfo> jobInfoArgumentCaptor = ArgumentCaptor.forClass(JobInfo.class);
         verify(repository, times(wantedNumberOfInvocations)).createOrUpdate(jobInfoArgumentCaptor.capture());
@@ -212,29 +304,54 @@ public class JobRunnerTest {
     }
 
     private static class SomeJobRunnable implements JobRunnable {
+
+        final Function<JobInfo, Void> execution;
+        int executions = 0;
+
+        SomeJobRunnable() {
+            execution = jobInfo -> {
+                jobInfo.info("a message");
+                return null;
+            };
+        }
+
+        SomeJobRunnable(Function<JobInfo, Void> execution) {
+            this.execution = execution;
+        }
+
         @Override
         public JobDefinition getJobDefinition() {
-            return new JobDefinition() {
-                @Override
-                public String jobType() {
-                    return "SOME_TYPE";
-                }
-
-                @Override
-                public String jobName() {
-                    return "NAME";
-                }
-
-                @Override
-                public String description() {
-                    return "";
-                }
-            };
+            return someJobDefinition();
         }
 
         @Override
         public void execute(final JobInfo jobInfo) {
-            jobInfo.info("a message");
+            ++executions;
+            execution.apply(jobInfo);
         }
+    }
+
+    private static JobDefinition someJobDefinition() {
+        return new JobDefinition() {
+            @Override
+            public String jobType() {
+                return "SOME_TYPE";
+            }
+
+            @Override
+            public String jobName() {
+                return "NAME";
+            }
+
+            @Override
+            public String description() {
+                return "";
+            }
+
+            @Override
+            public int retries() {
+                return 1;
+            }
+        };
     }
 }
