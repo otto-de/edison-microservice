@@ -1,5 +1,8 @@
 package de.otto.edison.cachestatistics;
 
+import de.otto.edison.annotations.Beta;
+
+@Beta
 public class CacheStatistics {
     private final String name;
     private final Long maxCacheCapacity;

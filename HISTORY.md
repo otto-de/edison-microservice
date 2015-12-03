@@ -7,6 +7,7 @@ New Features:
 * ```JobDefinition``` now has a new field ```restarts```, specifying how often a job is restarted if it failed because of an error.
 
 Breaking Changes:
+* Renamed libraries: all libs now have the prefix "edison-".
 * The factory methods of the ```DefaultJobDefinition``` now have an additional parameter for the number of restarts.
 * Every ```JobRunnable``` now needs to provide a ```JobDefinition```
 * Removed ```JobRunnable#getJobType```. The job type is accessed by the ```JobDefinition```

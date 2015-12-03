@@ -1,5 +1,6 @@
 package de.otto.edison.cachestatistics;
 
+import de.otto.edison.annotations.Beta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,13 +15,13 @@ import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@RequestMapping("/internal")
+@Beta
 public class CacheStatisticsController {
 
     @Autowired(required = false)
     private List<CacheStatisticsProvider> cacheStatisticsProviders;
 
-    @RequestMapping(value = "/cachestatistics", method = GET)
+    @RequestMapping(value = "/internal/cachestatistics", method = GET)
     public ModelAndView getStats(final HttpServletResponse response) {
         response.setHeader(CACHE_CONTROL, "no-store");
 

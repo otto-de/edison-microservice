@@ -38,11 +38,3 @@ The examples can be started with gradle:
 `gradle clean example-jobs:bootRun`
 `gradle clean example-metrics:bootRun`
 `gradle clean example-status:bootRun`
-
-
-## Development
-
-While beeing actively used in production, the library is currently not stable.
-Every version may contain breaking changes.
-
-Call `bin/go help` for commonly used commands

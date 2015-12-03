@@ -5,7 +5,6 @@ import org.testng.annotations.Test;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
 
 public class CacheStatisticsControllerTest {
 
