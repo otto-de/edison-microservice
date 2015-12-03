@@ -1,18 +1,14 @@
-
 dependencies {
     compile project(":edison-core")
-    compile project(":edison-health")
-    compile project(":edison-status")
-    compile project(":edison-jobs")
-    compile project(":edison-metrics")
-    compile project(":edison-togglz")
-    compile project(":edison-servicediscovery-client")
 
-    compile libs.bootstrap
+    compile libs.springBoot
+    compile libs.asyncHttp
+    compile libs.logging
+    compile libs.jcip
 
-    compile libs.springBootThymeleaf
-
+    testCompile libs.testUnit
     testCompile project(":edison-testsupport")
+
 }
 
 artifacts {
@@ -38,9 +34,9 @@ uploadArchives {
             }
 
             pom.project {
-                name 'edison-service'
+                name 'servicediscovery-client'
                 packaging 'jar'
-                description 'Base library for typical Edison microservices, containing health, status, jobs, togglz and bootstrap webjars.'
+                description 'Library to access discovery services.'
                 url 'http://github.com/otto-de/edison-microservice'
 
                 scm {

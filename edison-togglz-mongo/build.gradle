@@ -1,17 +1,15 @@
 
 dependencies {
+
+    compile libs.springBoot
+    compile libs.logging
+    compile libs.jcip
+
     compile project(":edison-core")
-    compile project(":edison-health")
-    compile project(":edison-status")
-    compile project(":edison-jobs")
-    compile project(":edison-metrics")
+    compile project(":edison-mongo")
     compile project(":edison-togglz")
-    compile project(":edison-servicediscovery-client")
 
-    compile libs.bootstrap
-
-    compile libs.springBootThymeleaf
-
+    testCompile libs.fakeMongo
     testCompile project(":edison-testsupport")
 }
 
@@ -38,9 +36,9 @@ uploadArchives {
             }
 
             pom.project {
-                name 'edison-service'
+                name 'togglz-mongo'
                 packaging 'jar'
-                description 'Base library for typical Edison microservices, containing health, status, jobs, togglz and bootstrap webjars.'
+                description 'Togglz-Mongo library of the edison-microservice project.'
                 url 'http://github.com/otto-de/edison-microservice'
 
                 scm {
