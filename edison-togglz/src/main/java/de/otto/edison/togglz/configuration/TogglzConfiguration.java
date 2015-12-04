@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.togglz.core.Feature;
+import org.togglz.core.context.FeatureContext;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
@@ -22,6 +24,12 @@ public class TogglzConfiguration {
 
     @Autowired
     private FeatureClassProvider featureClassProvider;
+
+    @Bean
+    @ConditionalOnMissingBean(FeatureClassProvider.class)
+    public FeatureClassProvider getFeatureClassProvider() {
+        return () -> Features.class;
+    }
 
     @Bean
     @ConditionalOnMissingBean(UserProvider.class)
@@ -46,4 +54,10 @@ public class TogglzConfiguration {
         return new DefaultTogglzConfig(cacheTtlMilliseconds, stateRepository, getUserProvider(), featureClassProvider);
     }
 
+    static enum Features implements Feature {
+        NONE;
+        public boolean isActive() {
+            return FeatureContext.getFeatureManager().isActive(this);
+        }
+    }
 }
