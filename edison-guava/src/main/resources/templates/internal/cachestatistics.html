@@ -5,10 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Edison Jobs</title>
+    <title>Cache Statistics</title>
 
     <!-- Bootstrap -->
     <link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <style>
+        body { padding-top: 70px; }
+    </style>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -18,51 +22,18 @@
     <![endif]-->
 </head>
 <body>
-<ol class="breadcrumb">
-    <li><a th:href="@{/internal}">Internal</a></li>
-    <li class="active">cache statistics</li>
-</ol>
-<div class="container">
-    <h1>Cache Statistics</h1>
 
+<div th:replace="fragments/navigation :: navigation" />
+
+<div class="container">
     <div th:each="cacheInfo : ${cacheInfos}" class="panel-body">
-        <div class="panel panel-primary">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h2 class="panel-title" th:text="${cacheInfo['name']}">Cache Name</h2>
             </div>
             <div class="panel-body">
-
                 <div class="row">
                     <div class="col-md-6">
-                        <h3>General Information</h3>
-
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                <th>Configuration</th>
-                                <th>Value</th>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>Max Cache Capacity</td>
-                                    <td th:text="${cacheInfo.getMaxCacheCapacity()}"></td>
-                                </tr>
-                                <tr>
-                                    <td>Cache Size</td>
-                                    <td th:text="${cacheInfo.getCacheSize()}"></td>
-                                </tr>
-                                <tr>
-                                    <td>Cache Expiration time [secs]</td>
-                                    <td th:text="${cacheInfo.getCacheExpiresTimeInSeconds()}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <h3>Statistics</h3>
-
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -119,6 +90,30 @@
                                     </td>
                                     <td th:text="${cacheInfo.getEvictionCount()} + ' times'"></td>
                                     <td><span/></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <th>Configuration</th>
+                                <th>Value</th>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Max Cache Capacity</td>
+                                    <td th:text="${cacheInfo.getMaxCacheCapacity()}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Cache Size</td>
+                                    <td th:text="${cacheInfo.getCacheSize()}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Cache Expiration time [secs]</td>
+                                    <td th:text="${cacheInfo.getCacheExpiresTimeInSeconds()}"></td>
                                 </tr>
                                 </tbody>
                             </table>
