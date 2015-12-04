@@ -1,23 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
-    <!-- ============================================================================ -->
-    <!-- This content is only used for static prototyping purposes (natural templates)-->
-    <!-- and is therefore entirely optional, as this markup fragment will be included -->
-    <!-- from "fragments/header.html" at runtime.                                     -->
-    <!-- ============================================================================ -->
     <div class="navbar navbar-inverse navbar-fixed-top" th:fragment="navigation">
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand" th:href="@{/internal}">Edison Administration</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a th:href="@{/internal}">Internal</a></li>
+                <ul class="nav navbar-nav" th:with="url=${#httpServletRequest.getRequestURI()}">
+                    <li th:classappend="${url.endsWith('/internal') ? 'active' : ''}"><a th:href="@{/internal}">Internal</a></li>
                 </ul>
             </div>
         </div>
     </div>
-
 </body>
 </html>
