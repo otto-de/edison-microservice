@@ -1,10 +1,6 @@
 # edison-microservice
 Common basis for some of otto.de's micro services using Spring Boot
 
-## Release 1.0.0 "Samuel Ogden Edison, Jr."
-
-Release 1.0.0 is dedicated to Thomas Alva Edison's father Samuel Ogden Edison, Jr. for no special reason.
-
 ## Status
 [![Build Status](https://travis-ci.org/otto-de/edison-microservice.svg)](https://travis-ci.org/otto-de/edison-microservice)
 

@@ -1,6 +1,6 @@
 # Release History
 
-## Release 1.0.0 "Samuel Ogden Edison, Jr."
+## Release 0.45.0
 
 New Features:
 * Broken Jobs are automatically restarted according to the number of retries specified in the ```JobDefintion```.
