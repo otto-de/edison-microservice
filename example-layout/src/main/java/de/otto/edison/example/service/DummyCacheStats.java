@@ -23,8 +23,8 @@ public class DummyCacheStats implements CacheStatisticsProvider {
                 .withHitCount(8L)
                 .withMissCount(3L)
                 .withLoadSuccessCount(2L)
-                .withLoadExceptionCount(3L)
-                .withTotalLoadTime(4L)
+                .withLoadExceptionCount(1L)
+                .withTotalLoadTime(42L)
                 .withEvictionCount(5L)
                 .build();
         cachingStats.add(statForCache);
@@ -36,7 +36,7 @@ public class DummyCacheStats implements CacheStatisticsProvider {
                 .withCacheExpiresTimeInSeconds(120L)
                 .withHitCount(3L)
                 .withMissCount(4L)
-                .withLoadSuccessCount(7L)
+                .withLoadSuccessCount(4L)
                 .withLoadExceptionCount(3L)
                 .withTotalLoadTime(4L)
                 .withEvictionCount(5L)

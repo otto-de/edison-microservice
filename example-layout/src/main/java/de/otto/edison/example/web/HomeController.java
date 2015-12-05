@@ -11,7 +11,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  * @since 13.02.15
  */
 @RestController
-public class ExampleController {
+public class HomeController {
 
     @RequestMapping(
             value = "/",
@@ -19,7 +19,7 @@ public class ExampleController {
             method = GET)
     public ModelAndView sayHelloAsHtml() {
 
-        return new ModelAndView("/internal/index");
+        return new ModelAndView("index");
     }
 
 }

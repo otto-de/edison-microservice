@@ -4,8 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Controller to get /internal/index.html as an overview of all internal tools.
  *
@@ -16,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 public class InternalController {
 
     @RequestMapping("/internal")
-    public ModelAndView getInternal(final HttpServletRequest request) {
+    public ModelAndView getInternal() {
         return new ModelAndView("internal/index");
     }
 }

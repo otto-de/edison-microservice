@@ -1,98 +1,95 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head th:replace="fragments/head :: head" />
+<head th:replace="fragments/head  :: head" />
 
 <body>
 
-<div th:replace="fragments/navigation :: navigation" />
+    <div th:replace="fragments/navigation  :: navigation" />
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Status</h3>
-                </div>
-                <div class="panel-body">
-                    <dl class="dl-horizontal">
-                        <dt>Name:</dt>
-                        <dd th:text="${name}">Name</dd>
-                        <dt>Status:</dt>
-                        <dd th:text="${status}">Status</dd>
-                    </dl>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Version</h3>
-                </div>
-                <div class="panel-body">
-                    <dl class="dl-horizontal">
-                        <dt>Version:</dt>
-                        <dd th:text="${version}">Version</dd>
-                        <dt>Git Commit:</dt>
-                        <dd th:text="${commit}">Git commit</dd>
-                    </dl>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">System</h3>
-                </div>
-                <div class="panel-body">
-                    <dl class="dl-horizontal">
-                        <dt>Host:</dt>
-                        <dd th:text="${hostname}">Hostname</dd>
-                        <dt>System Time:</dt>
-                        <dd th:text="${systemtime}">Systemtime</dd>
-                        <dt>System Started</dt>
-                        <dd th:text="${systemstarttime}">Systemstarttime</dd>
-                    </dl>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Details</h3>
-                </div>
-                <div class="panel-body">
-
-                    <div class="list-group">
-                        <div class="list-group-item" th:each="statusDetail : ${statusDetails}">
-                            <h4 class="list-group-item-heading" th:text="${statusDetail.key}">List group item heading</h4>
-                            <dl class="list-group-item-text dl-horizontal">
-                                <dt>Status:</dt>
-                                <dd th:text="${statusDetail.status}"></dd>
-                                <dt>Message:</dt>
-                                <dd th:text="${statusDetail.message}"></dd>
-                                <span th:each="key : ${statusDetail.additionalDetails.keySet()}">
-                                    <dt th:text="${key} + ':'">Message:</dt>
-                                    <dd th:text="${statusDetail.additionalDetails.get(key)}"></dd>
-                                </span>
-                            </dl>
-                        </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Status</h3>
                     </div>
-
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                            <dt>Name:</dt>
+                            <dd th:text="${name}">Name</dd>
+                            <dt>Status:</dt>
+                            <dd th:text="${status}">Status</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Version</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                            <dt>Version:</dt>
+                            <dd th:text="${version}">Version</dd>
+                            <dt>Git Commit:</dt>
+                            <dd th:text="${commit}">Git commit</dd>
+                        </dl>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div> <!-- /container -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">System</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                            <dt>Host:</dt>
+                            <dd th:text="${hostname}">Hostname</dd>
+                            <dt>System Time:</dt>
+                            <dd th:text="${systemtime}">Systemtime</dd>
+                            <dt>System Started</dt>
+                            <dd th:text="${systemstarttime}">Systemstarttime</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Details</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="list-group">
+                            <div class="list-group-item" th:each="statusDetail : ${statusDetails}">
+                                <h4 class="list-group-item-heading" th:text="${statusDetail.key}">List group item heading</h4>
+                                <dl class="list-group-item-text dl-horizontal">
+                                    <dt>Status:</dt>
+                                    <dd th:text="${statusDetail.status}"></dd>
+                                    <dt>Message:</dt>
+                                    <dd th:text="${statusDetail.message}"></dd>
+                                    <span th:each="key : ${statusDetail.additionalDetails.keySet()}">
+                                        <dt th:text="${key} + ':'">Message:</dt>
+                                        <dd th:text="${statusDetail.additionalDetails.get(key)}"></dd>
+                                    </span>
+                                </dl>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- /container -->
+
+    <span th:replace="fragments/footer :: footer" />
 </body>
 </html>

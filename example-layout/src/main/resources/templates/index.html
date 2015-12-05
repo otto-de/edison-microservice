@@ -1,0 +1,24 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head  :: head" />
+
+<body>
+
+    <div th:replace="fragments/navigation  :: navigation" />
+
+    <div class="container">
+
+        <div class="jumbotron">
+            <h3>Layout Example</h3>
+            <p>This is an example for a Edison Microservice that is customizing the layout of the
+                internal pages using Thymeleaf layouts.</p>
+            <p><a class="btn btn-primary btn-lg" href="http://www.thymeleaf.org/doc/articles/layouts.html" role="button">Learn more</a></p>
+        </div>
+
+    </div> <!-- /container -->
+
+<span th:replace="fragments/footer :: footer" />
+
+</body>
+</html>
+
