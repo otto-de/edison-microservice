@@ -3,30 +3,31 @@
 ## Release 0.45.0
 
 New Features:
-* Broken Jobs are automatically restarted according to the number of retries specified in the ```JobDefintion```.
-* ```JobDefinition``` now has a new field ```restarts```, specifying how often a job is restarted if it failed because of an error.
+* Broken Jobs are automatically restarted according to the number of retries specified in the `JobDefintion`.
+* `JobDefinition` now has a new field `restarts`, specifying how often a job is restarted if it failed because of an error.
 
 Breaking Changes:
 * Renamed libraries: all libs now have the prefix "edison-".
-* The factory methods of the ```DefaultJobDefinition``` now have an additional parameter for the number of restarts.
-* Every ```JobRunnable``` now needs to provide a ```JobDefinition```
-* Removed ```JobRunnable#getJobType```. The job type is accessed by the ```JobDefinition```
+* The factory methods of the `DefaultJobDefinition` now have an additional parameter for the number of restarts.
+* Every `JobRunnable` now needs to provide a `JobDefinition`
+* Removed `JobRunnable#getJobType`. The job type is accessed by the `JobDefinition`
+* Renamed to `DefaultJobDefinition#notTriggerableJobDefinition` to `manuallyTriggerableJobDefinition` to clarify purpose
 * Removed hystrix module
 
 ## Release 0.44.0
 
 New Features:
 * MongoDB persistence: Allow to retrieve the object (including key) when it is created.
-  Changed signature of ```create``` and  ```createOrUpdate``` in ```AbstractMongoRepository```
+  Changed signature of `create` and  `createOrUpdate` in `AbstractMongoRepository`
   to return the object instead of void
 
 Bug Fixes:
-* Allow also a value without key to be given to ```AbstractMongoRepository#createOrUpdate``` without throwing a NPE
-* ```application.properties```: renamed ````edison.application.name```` (introduced in Release 0.35.0) back into ```spring.application.name```
+* Allow also a value without key to be given to `AbstractMongoRepository#createOrUpdate` without throwing a NPE
+* `application.properties`: renamed ``edison.application.name`` (introduced in Release 0.35.0) back into `spring.application.name`
   (see [ContextIdApplicationContextInitializer](https://github.com/spring-projects/spring-boot/blob/v1.3.0.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/ContextIdApplicationContextInitializer.java)
   for details on identifying your application)
-* Added dummy feature toggle implementations (for ```FeatureClassProvider```) to example projects, which can now
-  be run on its own again (ie. ```gradle example-jobs:bootRun```)
+* Added dummy feature toggle implementations (for `FeatureClassProvider`) to example projects, which can now
+  be run on its own again (ie. `gradle example-jobs:bootRun`)
 
 
 ## Release 0.43.0

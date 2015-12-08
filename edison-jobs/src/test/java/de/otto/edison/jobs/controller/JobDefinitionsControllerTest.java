@@ -15,7 +15,7 @@ import java.util.Map;
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
 import static de.otto.edison.jobs.controller.Link.link;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
-import static de.otto.edison.jobs.definition.DefaultJobDefinition.notTriggerableJobDefinition;
+import static de.otto.edison.jobs.definition.DefaultJobDefinition.manuallyTriggerableJobDefinition;
 import static java.time.Duration.ofHours;
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
@@ -139,7 +139,7 @@ public class JobDefinitionsControllerTest {
     }
 
     private JobDefinition notTriggerableDefinition(final String jobType, final String name) {
-        return notTriggerableJobDefinition(jobType, name, name, 0, empty());
+        return manuallyTriggerableJobDefinition(jobType, name, name, 0, empty());
     }
 
 }
