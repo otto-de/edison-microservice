@@ -1,8 +1,5 @@
 package de.otto.edison.status.controller;
 
-import de.otto.edison.testsupport.util.JsonMap;
-import org.testng.annotations.Test;
-
 import static de.otto.edison.status.controller.ApplicationStatusRepresentation.statusRepresentationOf;
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.Status.OK;
@@ -14,6 +11,13 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.testng.annotations.Test;
+
+import de.otto.edison.testsupport.util.JsonMap;
 
 public class ApplicationStatusRepresentationTest {
 
@@ -65,10 +69,12 @@ public class ApplicationStatusRepresentationTest {
     @Test
     public void shouldCreateStatusRepresentationWithMultipleDetails() {
         // given
+    	final Map<String,String> detailMap = new HashMap<String,String>();
+    	detailMap.put("Count", "1000");
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
                 applicationStatus("app", "localhost", versionInfo("", ""), asList(
-                                statusDetail("someDetail", OK, "perfect"),
-                                statusDetail("someOtherDetail", WARNING, "detailed warning"))
+                                statusDetail("Some Detail", OK, "perfect"),
+                                statusDetail("Some Other Detail", WARNING, "detailed warning", detailMap))
                 )
         );
         // when
@@ -78,5 +84,6 @@ public class ApplicationStatusRepresentationTest {
         assertThat(jsonMap.getString("status"), is("WARNING"));
         assertThat(jsonMap.get("statusDetails").get("someDetail").getString("status"), is("OK"));
         assertThat(jsonMap.get("statusDetails").get("someOtherDetail").getString("status"), is("WARNING"));
+        assertThat(jsonMap.get("statusDetails").get("someOtherDetail").getString("count"), is("1000"));
     }
 }
