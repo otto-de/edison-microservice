@@ -30,6 +30,6 @@ public class CacheStatisticsController {
             cacheStatisticsProviders.forEach(cachingStatsProvider -> cacheValues.addAll(cachingStatsProvider.getStats()));
         }
 
-        return new ModelAndView("/internal/cachestatistics", new ModelMap("cacheInfos", cacheValues));
+        return new ModelAndView("internal/cachestatistics", new ModelMap("cacheInfos", cacheValues));
     }
 }
