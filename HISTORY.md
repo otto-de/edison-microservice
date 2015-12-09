@@ -1,5 +1,11 @@
 # Release History
 
+## Release 0.45.1
+
+New Features:
+* Show the runtime of the job to identify the complete exports with actions.
+* Format details in status.json to camel case key names
+
 ## Release 0.45.0
 
 New Features:
