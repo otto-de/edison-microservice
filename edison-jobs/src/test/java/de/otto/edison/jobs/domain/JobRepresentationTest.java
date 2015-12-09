@@ -28,9 +28,10 @@ public class JobRepresentationTest {
     @Test()
     public void shouldCalculateRuntime() throws InterruptedException {
         final Clock clock = fixed(Instant.now(), systemDefault());
-        final OffsetDateTime finishedTime = now(clock).plus(90, ChronoUnit.SECONDS);
+        final OffsetDateTime startTime = now(clock);
+        final OffsetDateTime finishedTime = startTime.plus(90, ChronoUnit.SECONDS);
         JobMonitor monitor = mock(JobMonitor.class);
-        final JobInfo job = newJobInfo(create("foo"), "TEST", now(clock), finishedTime, of(finishedTime), OK, emptyList(), monitor, clock);
+        final JobInfo job = newJobInfo(create("foo"), "TEST", startTime, finishedTime, of(finishedTime), OK, emptyList(), monitor, clock);
 
         final JobRepresentation jobRepresentation = representationOf(job, true, "");
         assertThat(jobRepresentation.getStatus(), is("OK"));
