@@ -2,14 +2,15 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.otto.edison.jobs.controller.Link.link;
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
-import static java.time.format.DateTimeFormatter.ofLocalizedTime;
+import static java.time.format.DateTimeFormatter.*;
 import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
 import static java.util.Arrays.asList;
@@ -57,7 +58,13 @@ public class JobRepresentation {
                 : "";
     }
 
-    public String getLastUpdated() {
+    public String getRuntime() {
+        return job.isStopped()
+                ? formatRuntime(job.getStarted(), job.getStopped().get())
+                : "";
+    }
+
+	public String getLastUpdated() {
         return formatTime(job.getLastUpdated());
     }
 
@@ -76,6 +83,14 @@ public class JobRepresentation {
                 link("collection/" + getJobType(), jobUri.substring(0, jobUri.lastIndexOf("/")) + "?type=" + getJobType(), "All " + getJobType() + " Jobs")
         );
     }
+
+	private String formatRuntime(OffsetDateTime started, OffsetDateTime stopped) {
+		Duration duration = Duration.between(started, stopped);
+		LocalTime dateTime = LocalTime.ofSecondOfDay(duration.getSeconds());
+        return humanReadable
+                ? ofLocalizedTime(MEDIUM).format(dateTime)
+                : ISO_OFFSET_DATE_TIME.format(dateTime);
+	}
 
     private String formatDateTime(final OffsetDateTime dateTime) {
         if (dateTime==null) {
@@ -97,7 +112,7 @@ public class JobRepresentation {
         }
     }
 
-    @Override
+   @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
