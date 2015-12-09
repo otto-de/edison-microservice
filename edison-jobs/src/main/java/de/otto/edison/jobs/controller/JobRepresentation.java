@@ -88,8 +88,8 @@ public class JobRepresentation {
 		Duration duration = Duration.between(started, stopped);
 		LocalTime dateTime = LocalTime.ofSecondOfDay(duration.getSeconds());
         return humanReadable
-                ? ofLocalizedTime(MEDIUM).format(dateTime)
-                : ISO_OFFSET_DATE_TIME.format(dateTime);
+                ? ofPattern("HH:mm:ss").format(dateTime)
+                : ofPattern("HH:mm:ss").format(dateTime);
 	}
 
     private String formatDateTime(final OffsetDateTime dateTime) {
