@@ -28,7 +28,7 @@
                                         <td><span
                                                 title="requestCount: the number of times Cache lookup methods have returned either a cached or uncached value">requestCount</span>
                                         </td>
-                                        <td th:text="${cacheInfo.requestCount()}"></td>
+                                        <td th:text="${cacheInfo.getRequestCount()}"></td>
                                         <td><span/></td>
                                     </tr>
                                     <tr>
@@ -36,14 +36,14 @@
                                                 title="hitCount: the ratio of cache requests which were hits">hitCount</span>
                                         </td>
                                         <td th:text="${cacheInfo.getHitCount()} + ' times'"></td>
-                                        <td th:text="${#numbers.formatDecimal(cacheInfo.hitRate() * 100, 0, 2)} + '%'"></td>
+                                        <td th:text="${#numbers.formatDecimal(cacheInfo.getHitRate() * 100, 0, 2)} + '%'"></td>
                                     </tr>
                                     <tr>
                                         <td><span
                                                 title="missCount: the number of times Cache lookup methods have returned an uncached (newly loaded) value, or null">missCount</span>
                                         </td>
                                         <td th:text="${cacheInfo.getMissCount()} + ' times'"></td>
-                                        <td th:text="${#numbers.formatDecimal(cacheInfo.missRate() * 100, 0, 2)} + '%'"></td>
+                                        <td th:text="${#numbers.formatDecimal(cacheInfo.getMissRate() * 100, 0, 2)} + '%'"></td>
                                     </tr>
                                     <tr>
                                         <td><span
@@ -57,7 +57,7 @@
                                                 title="loadExceptionCount: the ratio of cache loading attempts which threw exceptions">loadExceptionCount</span>
                                         </td>
                                         <td th:text="${cacheInfo.getLoadExceptionCount()} + ' times'"></td>
-                                        <td th:text="${#numbers.formatDecimal(cacheInfo.loadExceptionRate() * 100, 0, 2)} + '%'"></td>
+                                        <td th:text="${#numbers.formatDecimal(cacheInfo.getLoadExceptionRate() * 100, 0, 2)} + '%'"></td>
                                     </tr>
                                     <tr>
                                         <td><span

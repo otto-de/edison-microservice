@@ -1,5 +1,6 @@
 package de.otto.edison.example.service;
 
+import com.google.common.cache.CacheStats;
 import de.otto.edison.cachestatistics.CacheStatistics;
 import de.otto.edison.cachestatistics.CacheStatisticsProvider;
 import org.springframework.stereotype.Component;
@@ -20,12 +21,7 @@ public class DummyCacheStats implements CacheStatisticsProvider {
                 .withMaxCacheCapacity(337L)
                 .withCacheSize(37L)
                 .withCacheExpiresTimeInSeconds(137L)
-                .withHitCount(8L)
-                .withMissCount(3L)
-                .withLoadSuccessCount(2L)
-                .withLoadExceptionCount(1L)
-                .withTotalLoadTime(42L)
-                .withEvictionCount(5L)
+                .withGuavaCacheStats(new CacheStats(8L, 3L, 2L, 1L, 42L, 5L))
                 .build();
         cachingStats.add(statForCache);
 
@@ -34,12 +30,7 @@ public class DummyCacheStats implements CacheStatisticsProvider {
                 .withMaxCacheCapacity(987L)
                 .withCacheSize(44L)
                 .withCacheExpiresTimeInSeconds(120L)
-                .withHitCount(3L)
-                .withMissCount(4L)
-                .withLoadSuccessCount(4L)
-                .withLoadExceptionCount(3L)
-                .withTotalLoadTime(4L)
-                .withEvictionCount(5L)
+                .withGuavaCacheStats(new CacheStats(3L, 4L, 4L, 3L, 4L, 5L))
                 .build();
         cachingStats.add(statForCacheTwo);
 
