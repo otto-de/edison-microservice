@@ -1,5 +1,12 @@
 # Release History
 
+## Release 0.46.3
+* Fixed default JobMonitor to save log messages in JobRepository for every message.
+
+## Release 0.45.2
+* Minor bugfixes
+* Using Guava CacheStats in CacheStatistics
+
 ## Release 0.45.1
 
 New Features:

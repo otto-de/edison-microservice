@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.domain;
 
 import de.otto.edison.jobs.monitor.JobMonitor;
+import org.mockito.verification.VerificationMode;
 import org.testng.annotations.Test;
 
 import java.net.URI;
@@ -30,9 +31,8 @@ public class JobInfoTest {
     @Test
     public void shouldUpdateJobInfoInConstructor() {
         // given
-        final URI jobUri = create("/foo/jobs/42");
-        // when
         final JobMonitor monitor = mock(JobMonitor.class);
+        // when
         final JobInfo jobInfo = newJobInfo(create("foo"), "TEST", monitor, systemDefaultZone());
         // then
         verify(monitor).update(jobInfo);
@@ -50,6 +50,16 @@ public class JobInfoTest {
         assertThat(job.getMessages(), hasSize(1));
     }
 
+    @Test
+    public void shouldSendMessageToJobMonitor() {
+        // given
+        final JobMonitor monitor = mock(JobMonitor.class);
+        final JobInfo jobInfo = newJobInfo(create("foo"), "TEST", monitor, systemDefaultZone());
+        // when
+        jobInfo.info("some message");
+        // then
+        verify(monitor, times(2)).update(jobInfo);
+    }
 
     @Test
     public void shouldStopAJob() {

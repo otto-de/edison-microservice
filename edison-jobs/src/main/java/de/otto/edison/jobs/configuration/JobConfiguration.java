@@ -82,8 +82,8 @@ public class JobConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JobMonitor.class)
-    public JobMonitor jobMonitor() {
-        return jobInfo -> { /* no-op */ };
+    public JobMonitor jobMonitor(final JobRepository jobRepository) {
+        return jobRepository::createOrUpdate;
     }
 
     @Bean
