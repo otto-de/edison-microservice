@@ -38,20 +38,20 @@ public class PersistenceJobEventListener implements JobEventListener {
                 // currently ignored
                 break;
 
+            case STILL_ALIVE:
+                updateJobIfPresent(event.getJobUri(), JobInfo::ping);
+                break;
+
             case RESTART:
                 updateJobIfPresent(event.getJobUri(), JobInfo::restart);
                 break;
 
             case DEAD:
-                // TODO
+                updateJobIfPresent(event.getJobUri(), JobInfo::dead);
                 break;
 
             case STOP:
-                // TODO
-                break;
-
-            case STILL_ALIVE:
-                updateJobIfPresent(event.getJobUri(), JobInfo::ping);
+                updateJobIfPresent(event.getJobUri(), JobInfo::stop);
                 break;
         }
     }

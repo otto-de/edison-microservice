@@ -75,4 +75,36 @@ public class PersistenceJobEventListenerTest {
         verify(jobInfo).restart();
         verify(jobRepository).createOrUpdate(jobInfo);
     }
+
+    @Test
+    public void shouldPersistDeadEvent() throws Exception {
+        // given
+        StateChangeEvent stateChangeEvent = StateChangeEvent.newStateChangeEvent(this, URI.create("some/job"), "someJobType", DEAD);
+        JobInfo jobInfo = mock(JobInfo.class);
+        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
+
+        // when
+        testee.consumeStateChange(stateChangeEvent);
+
+        // then
+        verify(jobRepository).findOne(URI.create("some/job"));
+        verify(jobInfo).dead();
+        verify(jobRepository).createOrUpdate(jobInfo);
+    }
+
+    @Test
+    public void shouldPersistStopEvent() throws Exception {
+        // given
+        StateChangeEvent stateChangeEvent = StateChangeEvent.newStateChangeEvent(this, URI.create("some/job"), "someJobType", STOP);
+        JobInfo jobInfo = mock(JobInfo.class);
+        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
+
+        // when
+        testee.consumeStateChange(stateChangeEvent);
+
+        // then
+        verify(jobRepository).findOne(URI.create("some/job"));
+        verify(jobInfo).stop();
+        verify(jobRepository).createOrUpdate(jobInfo);
+    }
 }
