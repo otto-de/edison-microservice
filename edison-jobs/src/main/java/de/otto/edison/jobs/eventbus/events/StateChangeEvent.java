@@ -59,6 +59,7 @@ public class StateChangeEvent extends ApplicationEvent {
     public enum State {
         START,
         STOP,
+        RESTART,
         STILL_ALIVE
     }
 }

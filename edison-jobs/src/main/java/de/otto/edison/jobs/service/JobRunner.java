@@ -11,9 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
-import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.INFO;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.START;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STILL_ALIVE;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -107,7 +105,7 @@ public final class JobRunner {
         jobInfo.restart();
         jobRepository.createOrUpdate(jobInfo);
         LOG.warn("Retrying job ");
-        eventPublisher.message(this, jobInfo.getJobUri(), INFO, "restarting job ..");
+        eventPublisher.stateChanged(this, jobInfo.getJobUri(), RESTART);
     }
 
     private synchronized void stop() {
