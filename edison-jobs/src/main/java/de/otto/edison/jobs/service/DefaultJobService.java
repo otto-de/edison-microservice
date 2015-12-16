@@ -2,6 +2,7 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.eventbus.EventPublisher;
 import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
@@ -26,7 +27,6 @@ import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
 /**
- *
  * @author Guido Steinacker
  * @since 15.02.15
  */
@@ -34,6 +34,8 @@ public class DefaultJobService implements JobService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJobService.class);
 
+    @Autowired
+    private EventPublisher eventPublisher;
     @Autowired
     private JobMonitor monitor;
     @Autowired
@@ -57,7 +59,8 @@ public class DefaultJobService implements JobService {
                       final List<JobRunnable> jobRunnables,
                       final GaugeService gaugeService,
                       final Clock clock,
-                      final ScheduledExecutorService executor) {
+                      final ScheduledExecutorService executor,
+                      final EventPublisher eventPublisher) {
         this.repository = repository;
         this.monitor = monitor;
         this.repository = repository;
@@ -65,6 +68,7 @@ public class DefaultJobService implements JobService {
         this.gaugeService = gaugeService;
         this.clock = clock;
         this.executor = executor;
+        this.eventPublisher = eventPublisher;
     }
 
     @PostConstruct
@@ -103,9 +107,9 @@ public class DefaultJobService implements JobService {
     @Override
     public void deleteJobs(final Optional<String> type) {
         if (type.isPresent()) {
-            repository.findByType(type.get()).forEach((j)-> repository.removeIfStopped(j.getJobUri()));
+            repository.findByType(type.get()).forEach((j) -> repository.removeIfStopped(j.getJobUri()));
         } else {
-            repository.findAll().forEach((j)-> repository.removeIfStopped(j.getJobUri()));
+            repository.findAll().forEach((j) -> repository.removeIfStopped(j.getJobUri()));
         }
     }
 
@@ -116,7 +120,7 @@ public class DefaultJobService implements JobService {
 
     private URI startAsync(final JobRunnable jobRunnable) {
         final JobInfo jobInfo = newJobInfo(newJobUri(), jobRunnable.getJobDefinition().jobType(), monitor, clock);
-        final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor);
+        final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor, eventPublisher);
         executor.execute(() -> jobRunner.start(jobRunnable));
         return jobInfo.getJobUri();
     }
@@ -130,10 +134,10 @@ public class DefaultJobService implements JobService {
             }
 
             @Override
-            public void execute(final JobInfo jobInfo) {
+            public void execute(final JobInfo jobInfo, final EventPublisher eventPublisher) {
                 long ts = currentTimeMillis();
-                delegate.execute(jobInfo);
-                gaugeService.submit(gaugeName(), (currentTimeMillis()-ts)/1000L);
+                delegate.execute(jobInfo, eventPublisher);
+                gaugeService.submit(gaugeName(), (currentTimeMillis() - ts) / 1000L);
             }
 
             private String gaugeName() {

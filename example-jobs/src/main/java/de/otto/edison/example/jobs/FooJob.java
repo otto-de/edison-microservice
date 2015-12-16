@@ -2,6 +2,7 @@ package de.otto.edison.example.jobs;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.eventbus.EventPublisher;
 import de.otto.edison.jobs.service.JobRunnable;
 import org.springframework.stereotype.Component;
 
@@ -32,14 +33,15 @@ public class FooJob implements JobRunnable {
     }
 
     @Override
-    public void execute(final JobInfo jobInfo) {
+    public void execute(final JobInfo jobInfo, final EventPublisher eventPublisher) {
         for (int i = 0; i < 10; ++i) {
-            doSomeHardWork(jobInfo);
+            doSomeHardWork(jobInfo, eventPublisher);
         }
     }
 
-    private void doSomeHardWork(final JobInfo jobInfo) {
+    private void doSomeHardWork(final JobInfo jobInfo, final EventPublisher eventPublisher) {
         try {
+            eventPublisher.info(this, jobInfo.getJobUri(), "Still doing some hard work...");
             jobInfo.info("Still doing some hard work...");
             sleep(new Random(42).nextInt(2000));
         } catch (final InterruptedException e) {

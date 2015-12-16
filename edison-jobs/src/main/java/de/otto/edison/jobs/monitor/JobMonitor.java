@@ -7,5 +7,9 @@ import de.otto.edison.jobs.domain.JobInfo;
  * @since 16.07.15
  */
 public interface JobMonitor {
+    /**
+     * @deprecated use EventPublisher instead.
+     */
+    @Deprecated
     void update(JobInfo jobInfo);
 }

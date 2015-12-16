@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.eventbus.EventPublisher;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -17,6 +18,7 @@ public final class JobRunner {
     private static final Logger LOG = getLogger(JobRunner.class);
     public static final long PING_PERIOD = 1l;
 
+    private EventPublisher eventPublisher;
     private volatile JobInfo jobInfo;
     private final JobRepository jobRepository;
     private final ScheduledExecutorService executorService;
@@ -24,16 +26,19 @@ public final class JobRunner {
 
     private JobRunner(final JobInfo jobInfo,
                       final JobRepository jobRepository,
-                      final ScheduledExecutorService executorService) {
+                      final ScheduledExecutorService executorService,
+                      final EventPublisher eventPublisher) {
         this.jobInfo = jobInfo;
         this.jobRepository = jobRepository;
         this.executorService = executorService;
+        this.eventPublisher = eventPublisher;
     }
 
     public static JobRunner newJobRunner(final JobInfo job,
                                          final JobRepository jobRepository,
-                                         final ScheduledExecutorService executorService) {
-        final JobRunner jobRunner = new JobRunner(job, jobRepository, executorService);
+                                         final ScheduledExecutorService executorService,
+                                         final EventPublisher eventPublisher) {
+        final JobRunner jobRunner = new JobRunner(job, jobRepository, executorService, eventPublisher);
         jobRepository.createOrUpdate(jobRunner.jobInfo);
         return jobRunner;
     }
@@ -52,13 +57,13 @@ public final class JobRunner {
 
     private synchronized void executeAndRetry(final JobRunnable runnable, final int restarts) {
         try {
-            runnable.execute(jobInfo);
+            runnable.execute(jobInfo, eventPublisher);
         } catch (final RuntimeException e) {
             error(e);
         }
         if (jobInfo.getStatus() == ERROR && restarts > 0) {
             restart();
-            executeAndRetry(runnable, restarts-1);
+            executeAndRetry(runnable, restarts - 1);
         }
     }
 
@@ -69,6 +74,7 @@ public final class JobRunner {
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
         MDC.put("job_type", jobInfo.getJobType());
         LOG.info("[started]");
+        eventPublisher.started(this, jobInfo.getJobUri());
     }
 
     private synchronized void ping() {
@@ -76,6 +82,7 @@ public final class JobRunner {
             if (jobRepository.findStatus(jobInfo.getJobUri()).equals(JobInfo.JobStatus.DEAD)) {
                 jobInfo.dead();
             }
+            eventPublisher.ping(this, jobInfo.getJobUri());
             jobInfo.ping();
             jobRepository.createOrUpdate(jobInfo);
         } catch (Exception e) {
@@ -88,6 +95,7 @@ public final class JobRunner {
         assert !jobInfo.isStopped();
         jobInfo.error(e.getMessage());
         jobRepository.createOrUpdate(jobInfo);
+        eventPublisher.error(this, jobInfo.getJobUri(), "Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ") " + e.getMessage());
         LOG.error("Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e);
     }
 
@@ -95,6 +103,7 @@ public final class JobRunner {
         jobInfo.restart();
         jobRepository.createOrUpdate(jobInfo);
         LOG.warn("Retrying job ");
+        eventPublisher.info(this, jobInfo.getJobUri(), "restarting job ..");
     }
 
     private synchronized void stop() {
@@ -109,5 +118,4 @@ public final class JobRunner {
             MDC.clear();
         }
     }
-
 }

@@ -35,7 +35,7 @@ subprojects {
     apply plugin: 'signing'
 
     group = 'de.otto.edison'
-    version = '0.45.3'
+    version = '0.45.4-SNAPSHOT'
 
     repositories {
         mavenCentral()
