@@ -43,7 +43,7 @@ public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
     @Test
     public void shouldSendAndReceiveStopEvent() throws Exception {
         // when
-        eventPublisher.stateChanged(createJobRunnable(), new URI("some/stopped/job"), STOP);
+        eventPublisher.stateChanged(createJobRunnable(), new URI("some/stopped/job"), "someJobType", STOP);
 
         // then
         assertThat(inMemoryEventRubbishBin.getStateChangedEvents().get(0), is("some/stopped/job"));

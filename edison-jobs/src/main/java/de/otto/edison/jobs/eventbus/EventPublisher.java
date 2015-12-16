@@ -17,8 +17,8 @@ public class EventPublisher {
         this.applicationContext = applicationContext;
     }
 
-    public void stateChanged(final Object source, final URI jobUri, final StateChangeEvent.State state) {
-        applicationContext.publishEvent(newStateChangeEvent(source, jobUri, state));
+    public void stateChanged(final Object source, final URI jobUri, final String jobType, final StateChangeEvent.State state) {
+        applicationContext.publishEvent(newStateChangeEvent(source, jobUri, jobType, state));
     }
 
     public void message(final Object source, final URI jobUri, final MessageEvent.Level level, final String message) {

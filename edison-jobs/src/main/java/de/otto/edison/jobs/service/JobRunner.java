@@ -35,13 +35,14 @@ public final class JobRunner {
         this.jobRepository = jobRepository;
         this.executorService = executorService;
         this.eventPublisher = eventPublisher;
+        eventPublisher.stateChanged(this, jobInfo.getJobUri(), jobInfo.getJobType(), CREATE);
     }
 
-    public static JobRunner newJobRunner(final JobInfo job,
+    public static JobRunner newJobRunner(final JobInfo jobInfo,
                                          final JobRepository jobRepository,
                                          final ScheduledExecutorService executorService,
                                          final EventPublisher eventPublisher) {
-        final JobRunner jobRunner = new JobRunner(job, jobRepository, executorService, eventPublisher);
+        final JobRunner jobRunner = new JobRunner(jobInfo, jobRepository, executorService, eventPublisher);
         jobRepository.createOrUpdate(jobRunner.jobInfo);
         return jobRunner;
     }
@@ -65,7 +66,7 @@ public final class JobRunner {
             error(e);
         }
         if (jobInfo.getStatus() == ERROR && restarts > 0) {
-            eventPublisher.stateChanged(this, jobInfo.getJobUri(), RESTART);
+            eventPublisher.stateChanged(this, jobInfo.getJobUri(), jobInfo.getJobType(), RESTART);
             jobInfo.restart();
             jobRepository.createOrUpdate(jobInfo);
             LOG.warn("Retrying job ");
@@ -74,7 +75,7 @@ public final class JobRunner {
     }
 
     private synchronized void start() {
-        eventPublisher.stateChanged(this, jobInfo.getJobUri(), START);
+        eventPublisher.stateChanged(this, jobInfo.getJobUri(), jobInfo.getJobType(), START);
         pingJob = executorService.scheduleAtFixedRate(this::ping, PING_PERIOD, PING_PERIOD, SECONDS);
 
         final String jobId = jobInfo.getJobUri().toString();
@@ -86,10 +87,10 @@ public final class JobRunner {
     private synchronized void ping() {
         try {
             if (jobRepository.findStatus(jobInfo.getJobUri()).equals(JobInfo.JobStatus.DEAD)) {
-                eventPublisher.stateChanged(this, jobInfo.getJobUri(), StateChangeEvent.State.DEAD);
+                eventPublisher.stateChanged(this, jobInfo.getJobUri(), jobInfo.getJobType(), StateChangeEvent.State.DEAD);
                 jobInfo.dead();
             }
-            eventPublisher.stateChanged(this, jobInfo.getJobUri(), STILL_ALIVE);
+            eventPublisher.stateChanged(this, jobInfo.getJobUri(), jobInfo.getJobType(), STILL_ALIVE);
             jobInfo.ping();
             jobRepository.createOrUpdate(jobInfo);
         } catch (Exception e) {
@@ -111,7 +112,7 @@ public final class JobRunner {
 
         assert !jobInfo.isStopped();
         try {
-            eventPublisher.stateChanged(this, jobInfo.getJobUri(), STOP);
+            eventPublisher.stateChanged(this, jobInfo.getJobUri(), jobInfo.getJobType(), STOP);
             LOG.info("stopped job {}", jobInfo);
             jobInfo.stop();
             jobRepository.createOrUpdate(jobInfo);

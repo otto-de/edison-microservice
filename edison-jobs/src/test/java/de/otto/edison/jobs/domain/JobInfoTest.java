@@ -47,7 +47,6 @@ public class JobInfoTest {
         assertThat(job.getJobType(), is("TEST"));
         assertThat(job.getStarted().toInstant(), is(clock.instant()));
         assertThat(job.getStopped(), isAbsent());
-        assertThat(job.getMessages(), hasSize(1));
     }
 
     @Test

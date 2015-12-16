@@ -71,9 +71,13 @@ public class JobInfo {
         this.started = now(clock);
         this.stopped = empty();
         this.status = OK;
-        this.monitor = monitor;
+        if (null != monitor) {
+            this.monitor = monitor;
+        } else {
+            this.monitor = jobInfo -> {
+            };
+        }
         this.lastUpdated = started;
-        this.messages.add(jobMessage(INFO, "Started " + jobType));
         this.monitor.update(this);
     }
 

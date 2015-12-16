@@ -19,8 +19,8 @@ public class EventbusConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(JobEventListener.class)
-    public JobEventListener logEventListener() {
+    @ConditionalOnMissingBean(LogJobEventListener.class)
+    public LogJobEventListener logEventListener() {
         return new LogJobEventListener();
     }
 }

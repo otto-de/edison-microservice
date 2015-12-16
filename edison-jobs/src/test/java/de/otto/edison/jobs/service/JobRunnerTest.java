@@ -13,6 +13,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
@@ -27,6 +28,7 @@ import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.Level.*;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.CREATE;
 import static de.otto.edison.jobs.service.JobRunner.PING_PERIOD;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
@@ -82,7 +84,7 @@ public class JobRunnerTest {
     }
 
     @Test
-    public void shouldAddMessageToJobInfo() {
+    public void shouldAddMessageToJobInfo() throws URISyntaxException {
         // given
         URI jobUri = create("/foo/jobs/42");
         InMemJobRepository repository = new InMemJobRepository();
@@ -97,13 +99,13 @@ public class JobRunnerTest {
         // then
         Optional<JobInfo> optionalJob = repository.findOne(jobUri);
         JobInfo jobInfo = optionalJob.get();
-        assertThat(jobInfo.getMessages(), hasSize(2));
-        JobMessage first = jobInfo.getMessages().get(0);
-        JobMessage second = jobInfo.getMessages().get(1);
-        assertThat(first.getMessage(), is("Started NAME"));
-        assertThat(second.getMessage(), is("a message"));
-        assertThat(second.getLevel(), is(INFO));
-        assertThat(second.getTimestamp(), is(notNullValue()));
+        assertThat(jobInfo.getMessages(), hasSize(1));
+        JobMessage msg = jobInfo.getMessages().get(0);
+        assertThat(msg.getMessage(), is("a message"));
+        assertThat(msg.getLevel(), is(INFO));
+        assertThat(msg.getTimestamp(), is(notNullValue()));
+
+        verify(eventPublisher).stateChanged(jobRunner, create("/foo/jobs/42"), "NAME", CREATE);
     }
 
     @Test
@@ -132,22 +134,21 @@ public class JobRunnerTest {
         // JobRunnable.execute was called 2 times (1 retry):
         assertThat(someFailingJob.executions, is(2));
 
-        JobMessage startedMessage = jobInfo.getMessages().get(0);
-        assertThat(startedMessage.getMessage(), is("Started NAME"));
-
-        JobMessage firstError = jobInfo.getMessages().get(1);
+        JobMessage firstError = jobInfo.getMessages().get(0);
         assertThat(firstError.getMessage(), is("some error"));
         assertThat(firstError.getLevel(), is(ERROR));
 
-        JobMessage restartedMessage = jobInfo.getMessages().get(2);
+        JobMessage restartedMessage = jobInfo.getMessages().get(1);
         assertThat(restartedMessage.getMessage(), is("1. restart of Job after error."));
         assertThat(restartedMessage.getLevel(), is(WARNING));
 
-        JobMessage secondError = jobInfo.getMessages().get(3);
+        JobMessage secondError = jobInfo.getMessages().get(2);
         assertThat(secondError.getMessage(), is("some error"));
         assertThat(secondError.getLevel(), is(ERROR));
 
-        assertThat(jobInfo.getMessages(), hasSize(4));
+        assertThat(jobInfo.getMessages(), hasSize(3));
+
+        verify(eventPublisher).stateChanged(jobRunner, create("/foo/jobs/42"), "NAME", CREATE);
     }
 
     @Test
@@ -177,22 +178,21 @@ public class JobRunnerTest {
         // JobRunnable.execute was called 2 times (1 retry):
         assertThat(someFailingJob.executions, is(2));
 
-        JobMessage startedMessage = jobInfo.getMessages().get(0);
-        assertThat(startedMessage.getMessage(), is("Started NAME"));
-
-        JobMessage firstError = jobInfo.getMessages().get(1);
+        JobMessage firstError = jobInfo.getMessages().get(0);
         assertThat(firstError.getMessage(), is("some error"));
         assertThat(firstError.getLevel(), is(ERROR));
 
-        JobMessage restartedMessage = jobInfo.getMessages().get(2);
+        JobMessage restartedMessage = jobInfo.getMessages().get(1);
         assertThat(restartedMessage.getMessage(), is("1. restart of Job after error."));
         assertThat(restartedMessage.getLevel(), is(WARNING));
 
-        JobMessage secondError = jobInfo.getMessages().get(3);
+        JobMessage secondError = jobInfo.getMessages().get(2);
         assertThat(secondError.getMessage(), is("some error"));
         assertThat(secondError.getLevel(), is(ERROR));
 
-        assertThat(jobInfo.getMessages(), hasSize(4));
+        assertThat(jobInfo.getMessages(), hasSize(3));
+
+        verify(eventPublisher).stateChanged(jobRunner, create("/foo/jobs/42"), "NAME", CREATE);
     }
 
     @Test
