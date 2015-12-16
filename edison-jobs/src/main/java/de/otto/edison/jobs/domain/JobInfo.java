@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.domain;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.monitor.JobMonitor;
 import net.jcip.annotations.ThreadSafe;
 
 import java.net.URI;
@@ -30,7 +29,6 @@ import static java.util.Optional.of;
 public class JobInfo {
     private static final String JOB_DEAD_MESSAGE = "Job didn't receive updates for a while, considering it dead";
 
-    private final JobMonitor monitor;
     private final Clock clock;
     private final URI jobUri;
     private final String jobType;
@@ -44,9 +42,8 @@ public class JobInfo {
     public enum JobStatus {OK, ERROR, DEAD;}
 
     public static JobInfo newJobInfo(final URI jobUri, final String jobType,
-                                     final JobMonitor monitor,
                                      final Clock clock) {
-        return new JobInfo(jobType, jobUri, monitor, clock);
+        return new JobInfo(jobType, jobUri, clock);
     }
 
     public static JobInfo newJobInfo(final URI jobUri,
@@ -56,42 +53,31 @@ public class JobInfo {
                                      final Optional<OffsetDateTime> stopped,
                                      final JobStatus status,
                                      final List<JobMessage> messages,
-                                     final JobMonitor monitor,
                                      final Clock clock) {
-        return new JobInfo(jobUri, jobType, started, lastUpdated, stopped, status, messages, monitor, clock);
+        return new JobInfo(jobUri, jobType, started, lastUpdated, stopped, status, messages, clock);
     }
 
-    JobInfo(final String jobType,
-            final URI jobUri,
-            final JobMonitor monitor,
-            final Clock clock) {
+    private JobInfo(final String jobType,
+                    final URI jobUri,
+                    final Clock clock) {
         this.clock = clock;
         this.jobUri = jobUri;
         this.jobType = jobType;
         this.started = now(clock);
         this.stopped = empty();
         this.status = OK;
-        if (null != monitor) {
-            this.monitor = monitor;
-        } else {
-            this.monitor = jobInfo -> {
-            };
-        }
         this.lastUpdated = started;
-        this.monitor.update(this);
     }
 
-    JobInfo(final URI jobUri,
-            final String jobType,
-            final OffsetDateTime started,
-            final OffsetDateTime lastUpdated,
-            final Optional<OffsetDateTime> stopped,
-            final JobStatus status,
-            final List<JobMessage> messages,
-            final JobMonitor monitor,
-            final Clock clock) {
+    private JobInfo(final URI jobUri,
+                    final String jobType,
+                    final OffsetDateTime started,
+                    final OffsetDateTime lastUpdated,
+                    final Optional<OffsetDateTime> stopped,
+                    final JobStatus status,
+                    final List<JobMessage> messages,
+                    final Clock clock) {
         this.clock = clock;
-        this.monitor = monitor;
         this.jobUri = jobUri;
         this.jobType = jobType;
         this.started = started;
@@ -164,13 +150,12 @@ public class JobInfo {
      */
     public synchronized void ping() {
         lastUpdated = now(clock);
-        monitor.update(this);
     }
 
     /**
      * Add an INFO message to the job messages.
      * <p>
-     * Updates the lastUpdated timestamp and sends an update to the {@link JobMonitor}
+     * Updates the lastUpdated timestamp
      *
      * @param message a message string
      * @return the updated JobInfo
@@ -178,14 +163,13 @@ public class JobInfo {
     public synchronized JobInfo info(final String message) {
         messages.add(jobMessage(INFO, message));
         lastUpdated = now(clock);
-        monitor.update(this);
         return this;
     }
 
     /**
      * Add an ERROR message to the job messages.
      * <p>
-     * Updates the lastUpdated timestamp and sends an update to the {@link JobMonitor}. The
+     * Updates the lastUpdated timestamp. The
      * Status of the job is set to ERROR.
      *
      * @param message a message string
@@ -195,7 +179,6 @@ public class JobInfo {
         messages.add(jobMessage(Level.ERROR, message));
         lastUpdated = now(clock);
         status = ERROR;
-        monitor.update(this);
         return this;
     }
 
@@ -210,28 +193,26 @@ public class JobInfo {
         messages.add(jobMessage(WARNING, format("%s. restart of Job after error.", restarts)));
         lastUpdated = now(clock);
         status = OK;
-        monitor.update(this);
         return this;
     }
 
     /**
      * This is called if the job was finished.
      * <p>
-     * Updates the lastUpdated and stopped timestamp and sends an update to the {@link JobMonitor}
+     * Updates the lastUpdated and stopped timestamp
      *
      * @return the updated JobInfo
      */
     public synchronized JobInfo stop() {
         lastUpdated = now(clock);
         stopped = of(lastUpdated);
-        monitor.update(this);
         return this;
     }
 
     /**
      * This is called if the job was identified to be dead.
      * <p>
-     * Updates the lastUpdated and stopped timestamp and sends an update to the {@link JobMonitor}.
+     * Updates the lastUpdated and stopped timestamp.
      * The job status is set to DEAD
      *
      * @return the updated JobInfo
@@ -241,15 +222,7 @@ public class JobInfo {
         lastUpdated = now(clock);
         stopped = of(lastUpdated);
         status = DEAD;
-        monitor.update(this);
         return this;
-    }
-
-    /**
-     * @return JobMonitor
-     */
-    JobMonitor getMonitor() {
-        return monitor;
     }
 
     @Override

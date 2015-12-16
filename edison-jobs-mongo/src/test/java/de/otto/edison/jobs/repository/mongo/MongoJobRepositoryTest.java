@@ -6,7 +6,6 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.jobs.monitor.JobMonitor;
 import org.bson.Document;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -23,24 +22,17 @@ import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
+import static org.hamcrest.Matchers.*;
 
 public class MongoJobRepositoryTest {
 
     private MongoJobRepository repo;
-    private JobMonitor monitor;
 
     @BeforeMethod
     public void setup() {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         final MongoDatabase database = fongo.getDatabase("jobsinfo");
-        monitor = mock(JobMonitor.class);
-
-        repo = new MongoJobRepository(database, monitor, systemDefaultZone());
+        repo = new MongoJobRepository(database, systemDefaultZone());
     }
 
     @Test
@@ -230,7 +222,7 @@ public class MongoJobRepositoryTest {
                 asList(
                         jobMessage(Level.INFO, "foo"),
                         jobMessage(Level.WARNING, "bar")),
-                monitor, systemDefaultZone()
+                systemDefaultZone()
         );
     }
 
@@ -242,7 +234,7 @@ public class MongoJobRepositoryTest {
                 asList(
                         jobMessage(Level.INFO, "foo"),
                         jobMessage(Level.WARNING, "bar")),
-                monitor, systemDefaultZone()
+                systemDefaultZone()
         );
     }
 
@@ -252,7 +244,7 @@ public class MongoJobRepositoryTest {
                 type,
                 started, started.plus(1, SECONDS), Optional.empty(), OK,
                 Collections.<JobMessage>emptyList(),
-                monitor, systemDefaultZone()
+                systemDefaultZone()
         );
     }
 

@@ -41,7 +41,7 @@ public class PersistenceJobEventListenerTest {
         testee.consumeStateChange(stateChangeEvent);
 
         // then
-        verify(jobRepository).createOrUpdate(newJobInfo(new URI("some/job"), "someJobType", null, clock));
+        verify(jobRepository).createOrUpdate(newJobInfo(new URI("some/job"), "someJobType", clock));
     }
 
     @Test

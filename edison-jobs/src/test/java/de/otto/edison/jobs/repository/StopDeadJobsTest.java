@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.testng.annotations.Test;
@@ -19,7 +18,6 @@ import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
 
 @Test
 public class StopDeadJobsTest {
@@ -31,9 +29,9 @@ public class StopDeadJobsTest {
         final Clock clock = fixed(Instant.now(), systemDefault());
         final Clock earlierClock = fixed(Instant.now().minusSeconds(25), systemDefault());
 
-        JobInfo runningJobToBeStopped = newJobInfo(create("runningJobToBeStopped"), "TYPE", mock(JobMonitor.class), earlierClock);
-        JobInfo runningJob = newJobInfo(create("runningJob"), "TYPE", mock(JobMonitor.class), clock);
-        JobInfo stoppedJob = newJobInfo(create("stoppedJob"), "TYPE", mock(JobMonitor.class), earlierClock).stop();
+        JobInfo runningJobToBeStopped = newJobInfo(create("runningJobToBeStopped"), "TYPE", earlierClock);
+        JobInfo runningJob = newJobInfo(create("runningJob"), "TYPE", clock);
+        JobInfo stoppedJob = newJobInfo(create("stoppedJob"), "TYPE", earlierClock).stop();
 
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(runningJobToBeStopped);
@@ -55,7 +53,7 @@ public class StopDeadJobsTest {
         assertThat(toBeStopped.getStopped().get(), is(OffsetDateTime.now(earlierClock)));
         assertThat(toBeStopped.getLastUpdated(), is(OffsetDateTime.now(earlierClock)));
         assertThat(toBeStopped.getStatus(), is(DEAD));
-        assertThat(toBeStopped.getMessages().get(0).getMessage(),is(notNullValue()));
+        assertThat(toBeStopped.getMessages().get(0).getMessage(), is(notNullValue()));
         assertThat(running, is(runningJob));
         assertThat(stopped, is(stoppedJob));
 

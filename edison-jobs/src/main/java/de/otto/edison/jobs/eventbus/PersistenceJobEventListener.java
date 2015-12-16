@@ -31,7 +31,7 @@ public class PersistenceJobEventListener implements JobEventListener {
         switch (event.getState()) {
 
             case CREATE:
-                jobRepository.createOrUpdate(newJobInfo(event.getJobUri(), event.getJobType(), null, clock));
+                jobRepository.createOrUpdate(newJobInfo(event.getJobUri(), event.getJobType(), clock));
                 break;
 
             case START:

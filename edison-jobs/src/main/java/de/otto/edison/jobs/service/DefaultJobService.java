@@ -3,7 +3,6 @@ package de.otto.edison.jobs.service;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.eventbus.EventPublisher;
-import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +36,6 @@ public class DefaultJobService implements JobService {
     @Autowired
     private EventPublisher eventPublisher;
     @Autowired
-    private JobMonitor monitor;
-    @Autowired
     private JobRepository repository;
     @Autowired
     private ScheduledExecutorService executor;
@@ -55,14 +52,12 @@ public class DefaultJobService implements JobService {
     }
 
     DefaultJobService(final JobRepository repository,
-                      final JobMonitor monitor,
                       final List<JobRunnable> jobRunnables,
                       final GaugeService gaugeService,
                       final Clock clock,
                       final ScheduledExecutorService executor,
                       final EventPublisher eventPublisher) {
         this.repository = repository;
-        this.monitor = monitor;
         this.repository = repository;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
@@ -119,7 +114,7 @@ public class DefaultJobService implements JobService {
     }
 
     private URI startAsync(final JobRunnable jobRunnable) {
-        final JobInfo jobInfo = newJobInfo(newJobUri(), jobRunnable.getJobDefinition().jobType(), monitor, clock);
+        final JobInfo jobInfo = newJobInfo(newJobUri(), jobRunnable.getJobDefinition().jobType(), clock);
         final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor, eventPublisher);
         executor.execute(() -> jobRunner.start(jobRunnable));
         return jobInfo.getJobUri();

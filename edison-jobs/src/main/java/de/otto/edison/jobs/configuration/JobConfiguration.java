@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.configuration;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
@@ -78,13 +77,6 @@ public class JobConfiguration {
     @ConditionalOnMissingBean(StopDeadJobs.class)
     public StopDeadJobs deadJobStrategy() {
         return new StopDeadJobs(secondsToMarkJobsAsDead, systemDefaultZone());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(JobMonitor.class)
-    public JobMonitor jobMonitor() {
-        return jobInfo -> {
-        };
     }
 
     @Bean

@@ -1,6 +1,12 @@
 # Release History
 
-## Release 0.46.3
+## Release 0.46.0
+* Rebuild job state architecture due to introduce an event bus to separate the JobInfo and the
+  JobRepository. From now on the JobRunner and the specific jobs will report changes (states and messages) to
+  an EventPublisher, which will propagate the events to the JobEventListeners (e.g. persist them or log them).
+  You can register your own JobEventListeners. The JobMonitor is removed.
+
+## Release 0.45.3
 * Fixed default JobMonitor to save log messages in JobRepository for every message.
 
 ## Release 0.45.2

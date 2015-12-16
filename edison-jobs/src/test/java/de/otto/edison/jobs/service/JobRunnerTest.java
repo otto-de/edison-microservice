@@ -4,7 +4,6 @@ import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.eventbus.EventPublisher;
-import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.testsupport.util.TestClock;
@@ -69,8 +68,7 @@ public class JobRunnerTest {
         // given
         URI jobUri = create("/foo/jobs/42");
         InMemJobRepository repository = new InMemJobRepository();
-        JobInfo jobInfo = newJobInfo(jobUri, "NAME", (j) -> {
-        }, clock);
+        JobInfo jobInfo = newJobInfo(jobUri, "NAME", clock);
         JobRunner jobRunner = newJobRunner(jobInfo, repository, executor, eventPublisher);
         // when
         JobRunnable jobRunnable = mock(JobRunnable.class);
@@ -89,8 +87,7 @@ public class JobRunnerTest {
         URI jobUri = create("/foo/jobs/42");
         InMemJobRepository repository = new InMemJobRepository();
         JobRunner jobRunner = newJobRunner(
-                newJobInfo(jobUri, "NAME", (j) -> {
-                }, clock),
+                newJobInfo(jobUri, "NAME", clock),
                 repository,
                 executor,
                 eventPublisher);
@@ -114,8 +111,7 @@ public class JobRunnerTest {
         URI jobUri = create("/foo/jobs/42");
         InMemJobRepository repository = new InMemJobRepository();
         JobRunner jobRunner = newJobRunner(
-                newJobInfo(jobUri, "NAME", (j) -> {
-                }, clock),
+                newJobInfo(jobUri, "NAME", clock),
                 repository,
                 executor,
                 eventPublisher);
@@ -157,8 +153,7 @@ public class JobRunnerTest {
         URI jobUri = create("/foo/jobs/42");
         InMemJobRepository repository = new InMemJobRepository();
         JobRunner jobRunner = newJobRunner(
-                newJobInfo(jobUri, "NAME", (j) -> {
-                }, clock),
+                newJobInfo(jobUri, "NAME", clock),
                 repository,
                 executor,
                 eventPublisher);
@@ -206,7 +201,7 @@ public class JobRunnerTest {
         when(clock.instant()).thenReturn(Instant.ofEpochSecond(0L), Instant.ofEpochSecond(1L), Instant.ofEpochSecond(2L));
 
         // when
-        JobRunner jobRunner = newJobRunner(JobInfo.newJobInfo(jobUri, "JOBTYPE", mock(JobMonitor.class), clock), repository, executor, eventPublisher);
+        JobRunner jobRunner = newJobRunner(JobInfo.newJobInfo(jobUri, "JOBTYPE", clock), repository, executor, eventPublisher);
 
         // then
         verify(repository, times(1)).createOrUpdate(any(JobInfo.class));
@@ -225,8 +220,7 @@ public class JobRunnerTest {
         URI jobUri = create("/foo/jobs/42");
         JobRepository repository = mock(JobRepository.class);
         JobRunner jobRunner = newJobRunner(
-                newJobInfo(jobUri, "NAME", (j) -> {
-                }, testClock),
+                newJobInfo(jobUri, "NAME", testClock),
                 repository,
                 executor,
                 eventPublisher);
@@ -256,8 +250,7 @@ public class JobRunnerTest {
         TestClock testClock = TestClock.now();
         URI jobUri = create("/foo/jobs/42");
         JobRepository repository = mock(JobRepository.class);
-        JobInfo jobInfo = newJobInfo(jobUri, "NAME", (j) -> {
-        }, testClock);
+        JobInfo jobInfo = newJobInfo(jobUri, "NAME", testClock);
         JobRunner jobRunner = newJobRunner(
                 jobInfo,
                 repository,
@@ -291,8 +284,7 @@ public class JobRunnerTest {
         URI jobUri = create("/foo/jobs/42");
         JobRepository repository = mock(JobRepository.class);
         JobRunner jobRunner = newJobRunner(
-                newJobInfo(jobUri, "NAME", (j) -> {
-                }, clock),
+                newJobInfo(jobUri, "NAME", clock),
                 repository,
                 executor,
                 eventPublisher);

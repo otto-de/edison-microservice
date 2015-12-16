@@ -3,7 +3,6 @@ package de.otto.edison.jobs.service;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.eventbus.EventPublisher;
-import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.mockito.invocation.InvocationOnMock;
@@ -53,7 +52,7 @@ public class DefaultJobServiceTest {
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         JobRepository jobRepository = mock(JobRepository.class);
         when(jobRepository.findRunningJobByType(anyString())).thenReturn(Optional.<JobInfo>empty());
-        DefaultJobService jobService = new DefaultJobService(jobRepository, mock(JobMonitor.class), asList(jobRunnable), mock(GaugeService.class), clock, executorService, eventPublisher);
+        DefaultJobService jobService = new DefaultJobService(jobRepository, asList(jobRunnable), mock(GaugeService.class), clock, executorService, eventPublisher);
         // when:
         Optional<URI> jobUri = jobService.startAsyncJob("BAR");
         // then:
@@ -67,8 +66,15 @@ public class DefaultJobServiceTest {
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         InMemJobRepository jobRepository = new InMemJobRepository();
-        DefaultJobService jobService = new DefaultJobService(jobRepository, (j) -> {
-        }, asList(jobRunnable), mock(GaugeService.class), clock, executorService, eventPublisher);
+        DefaultJobService jobService = new DefaultJobService(
+                jobRepository,
+                asList(jobRunnable),
+                mock(GaugeService.class),
+                clock,
+                executorService,
+                eventPublisher
+        );
+
         // when:
         Optional<URI> jobUri = jobService.startAsyncJob("BAR");
         // then:
@@ -82,8 +88,15 @@ public class DefaultJobServiceTest {
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         InMemJobRepository jobRepository = new InMemJobRepository();
-        DefaultJobService jobService = new DefaultJobService(jobRepository, (j) -> {
-        }, asList(jobRunnable), mock(GaugeService.class), clock, executorService, eventPublisher);
+        DefaultJobService jobService = new DefaultJobService(
+                jobRepository,
+                asList(jobRunnable),
+                mock(GaugeService.class),
+                clock,
+                executorService,
+                eventPublisher
+        );
+
         // when:
         Optional<URI> jobUri = jobService.startAsyncJob("bar");
         // then:
@@ -98,11 +111,16 @@ public class DefaultJobServiceTest {
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         InMemJobRepository jobRepository = new InMemJobRepository();
-        DefaultJobService jobService = new DefaultJobService(jobRepository, (j) -> {
-        }, asList(jobRunnable), mock(GaugeService.class), clock, executorService, eventPublisher);
+        DefaultJobService jobService = new DefaultJobService(
+                jobRepository,
+                asList(jobRunnable),
+                mock(GaugeService.class),
+                clock,
+                executorService,
+                eventPublisher
+        );
         URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
-        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", (j) -> {
-        }, clock));
+        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", clock));
         // when:
         Optional<URI> jobUri = jobService.startAsyncJob("bar");
         // then:
@@ -117,10 +135,16 @@ public class DefaultJobServiceTest {
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("FOO"));
         URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
-        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", (j) -> {
-        }, clock));
-        DefaultJobService jobService = new DefaultJobService(jobRepository, (j) -> {
-        }, asList(jobRunnable), mock(GaugeService.class), clock, executorService, eventPublisher);
+        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", clock));
+        DefaultJobService jobService = new DefaultJobService(
+                jobRepository,
+                asList(jobRunnable),
+                mock(GaugeService.class),
+                clock,
+                executorService,
+                eventPublisher
+        );
+
         // when:
         Optional<URI> jobUri = jobService.startAsyncJob("foo");
         // then:
@@ -136,7 +160,7 @@ public class DefaultJobServiceTest {
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
 
         GaugeService mock = mock(GaugeService.class);
-        DefaultJobService jobService = new DefaultJobService(mock(JobRepository.class), mock(JobMonitor.class), asList(jobRunnable), mock, clock, executorService, eventPublisher);
+        DefaultJobService jobService = new DefaultJobService(mock(JobRepository.class), asList(jobRunnable), mock, clock, executorService, eventPublisher);
         // when:
         jobService.startAsyncJob("BAR");
         // then:

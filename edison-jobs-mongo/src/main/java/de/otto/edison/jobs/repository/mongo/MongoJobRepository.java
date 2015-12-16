@@ -6,7 +6,6 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.jobs.monitor.JobMonitor;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.mongo.AbstractMongoRepository;
 import org.bson.Document;
@@ -42,20 +41,17 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     private static final String COLLECTION_NAME = "jobinfo";
     public static final String NO_LOG_MESSAGE_FOUND = "No log message found";
 
-    private final JobMonitor monitor;
     private final MongoCollection<Document> collection;
     private final Clock clock;
 
     @Autowired
-    public MongoJobRepository(final MongoDatabase database, final JobMonitor monitor) {
+    public MongoJobRepository(final MongoDatabase database) {
         this.collection = database.getCollection(COLLECTION_NAME);
-        this.monitor = monitor;
         this.clock = systemDefaultZone();
     }
 
-    MongoJobRepository(final MongoDatabase database, final JobMonitor jobMonitor, final Clock clock) {
+    MongoJobRepository(final MongoDatabase database, final Clock clock) {
         this.collection = database.getCollection(COLLECTION_NAME);
-        this.monitor = jobMonitor;
         this.clock = clock;
     }
 
@@ -157,7 +153,6 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
                 ofNullable(toOffsetDateTime(document.getDate(STOPPED.key()))),
                 JobStatus.valueOf(document.getString(STATUS.key())),
                 getMessagesFrom(document),
-                monitor,
                 clock);
     }
 

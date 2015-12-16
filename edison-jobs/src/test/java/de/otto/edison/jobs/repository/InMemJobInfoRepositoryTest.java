@@ -21,10 +21,10 @@ public class InMemJobInfoRepositoryTest {
     @Test
     public void shouldFindJobInfoByUri() {
         // given
-        final InMemJobRepository repository = new InMemJobRepository();
+        InMemJobRepository repository = new InMemJobRepository();
         // when
 
-        final JobInfo job = newJobInfo(create("/jobs/" + randomUUID()), "MYJOB", (j)-> {}, clock);
+        JobInfo job = newJobInfo(create("/jobs/" + randomUUID()), "MYJOB", clock);
         repository.createOrUpdate(job);
 
         // then
@@ -36,5 +36,4 @@ public class InMemJobInfoRepositoryTest {
         InMemJobRepository repository = new InMemJobRepository();
         assertThat(repository.findOne(create("/foo/bar")), isAbsent());
     }
-
 }
