@@ -11,8 +11,7 @@ import java.time.Clock;
 import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.CREATE;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STILL_ALIVE;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static java.time.Clock.fixed;
 import static java.time.Instant.now;
 import static java.time.ZoneId.systemDefault;
@@ -36,7 +35,7 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistCreateEvent() throws Exception {
         // given
-        StateChangeEvent stateChangeEvent = StateChangeEvent.newStateChangeEvent(this, new URI("some/job"), "someJobType", CREATE);
+        StateChangeEvent stateChangeEvent = StateChangeEvent.newStateChangeEvent(this, URI.create("some/job"), "someJobType", CREATE);
 
         // when
         testee.consumeStateChange(stateChangeEvent);
@@ -48,16 +47,32 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistStillAliveEvent() throws Exception {
         // given
-        StateChangeEvent stateChangeEvent = StateChangeEvent.newStateChangeEvent(this, new URI("some/job"), "someJobType", STILL_ALIVE);
+        StateChangeEvent stateChangeEvent = StateChangeEvent.newStateChangeEvent(this, URI.create("some/job"), "someJobType", STILL_ALIVE);
         JobInfo jobInfo = mock(JobInfo.class);
-        when(jobRepository.findOne(new URI("some/job"))).thenReturn(Optional.of(jobInfo));
+        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeStateChange(stateChangeEvent);
 
         // then
-        verify(jobRepository).findOne(new URI("some/job"));
-        verify(jobRepository).createOrUpdate(jobInfo);
+        verify(jobRepository).findOne(URI.create("some/job"));
         verify(jobInfo).ping();
+        verify(jobRepository).createOrUpdate(jobInfo);
+    }
+
+    @Test
+    public void shouldPersistRestartEvent() throws Exception {
+        // given
+        StateChangeEvent stateChangeEvent = StateChangeEvent.newStateChangeEvent(this, URI.create("some/job"), "someJobType", RESTART);
+        JobInfo jobInfo = mock(JobInfo.class);
+        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
+
+        // when
+        testee.consumeStateChange(stateChangeEvent);
+
+        // then
+        verify(jobRepository).findOne(URI.create("some/job"));
+        verify(jobInfo).restart();
+        verify(jobRepository).createOrUpdate(jobInfo);
     }
 }

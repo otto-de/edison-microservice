@@ -19,7 +19,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public final class JobRunner {
 
     private static final Logger LOG = getLogger(JobRunner.class);
-    public static final long PING_PERIOD = 1l;
+    public static final long PING_PERIOD = 5l;
 
     private EventPublisher eventPublisher;
     private volatile JobInfo jobInfo;
