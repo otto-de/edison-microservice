@@ -4,13 +4,7 @@ import de.otto.edison.jobs.eventbus.events.*;
 
 public interface JobEventListener {
 
-    void consumeStarted(StartedEvent startedEvent);
+    void consumeStateChange(StateChangeEvent stateChangeEvent);
 
-    void consumeStopped(StoppedEvent stoppedEvent);
-
-    void consumeError(ErrorEvent errorEvent);
-
-    void consumeInfo(InfoEvent infoEvent);
-
-    void consumePing(PingEvent pingEvent);
+    void consumeMessage(MessageEvent messageEvent);
 }

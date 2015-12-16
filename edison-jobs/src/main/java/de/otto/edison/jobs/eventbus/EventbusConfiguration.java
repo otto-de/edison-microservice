@@ -20,7 +20,7 @@ public class EventbusConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JobEventListener.class)
-    public LogJobEventListener logEventListener() {
+    public JobEventListener logEventListener() {
         return new LogJobEventListener();
     }
 }

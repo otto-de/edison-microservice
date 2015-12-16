@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.eventbus;
 
-import de.otto.edison.jobs.eventbus.events.*;
+import de.otto.edison.jobs.eventbus.events.MessageEvent;
+import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -11,31 +12,22 @@ public class LogJobEventListener implements JobEventListener {
 
     @Override
     @EventListener
-    public void consumeStarted(final StartedEvent startedEvent) {
-        LOG.info("job '{}' started", startedEvent.getJobUri());
+    public void consumeStateChange(final StateChangeEvent stateChangeEvent) {
+        LOG.info("job state changed to '{}'", stateChangeEvent.getJobUri(), stateChangeEvent.getState());
     }
 
     @Override
     @EventListener
-    public void consumeStopped(final StoppedEvent stoppedEvent) {
-        LOG.info("job '{}' stopped", stoppedEvent.getJobUri());
-    }
-
-    @Override
-    @EventListener
-    public void consumeError(final ErrorEvent errorEvent) {
-        LOG.error("error '{}' in job '{}'", errorEvent.getMessage(), errorEvent.getJobUri());
-    }
-
-    @Override
-    @EventListener
-    public void consumeInfo(final InfoEvent infoEvent) {
-        LOG.error("'{}': '{}'", infoEvent.getMessage(), infoEvent.getJobUri());
-    }
-
-    @Override
-    @EventListener
-    public void consumePing(final PingEvent pingEvent) {
-        LOG.info("job '{}' pings", pingEvent.getJobUri());
+    public void consumeMessage(final MessageEvent messageEvent) {
+        switch (messageEvent.getLevel()) {
+            case INFO:
+                LOG.info("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobUri());
+                break;
+            case WARN:
+                LOG.warn("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobUri());
+                break;
+            case ERROR:
+                LOG.error("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobUri());
+        }
     }
 }

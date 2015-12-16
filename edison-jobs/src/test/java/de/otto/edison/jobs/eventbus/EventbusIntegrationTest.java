@@ -11,6 +11,8 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 
+import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.ERROR;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -32,19 +34,19 @@ public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
     @Test
     public void shouldSendAndReceiveStartEvent() throws Exception {
         // when
-        eventPublisher.started(createJobRunnable(), new URI("some/started/job"));
+        eventPublisher.message(createJobRunnable(), new URI("some/job"), ERROR, "some message");
 
         // then
-        assertThat(inMemoryEventRubbishBin.getStartedEvents().get(0), is("some/started/job"));
+        assertThat(inMemoryEventRubbishBin.getMessageEvents().get(0), is("some/job"));
     }
 
     @Test
     public void shouldSendAndReceiveStopEvent() throws Exception {
         // when
-        eventPublisher.stopped(createJobRunnable(), new URI("some/stopped/job"));
+        eventPublisher.stateChanged(createJobRunnable(), new URI("some/stopped/job"), STOP);
 
         // then
-        assertThat(inMemoryEventRubbishBin.getStoppedEvents().get(0), is("some/stopped/job"));
+        assertThat(inMemoryEventRubbishBin.getStateChangedEvents().get(0), is("some/stopped/job"));
     }
 
     private JobRunnable createJobRunnable() {

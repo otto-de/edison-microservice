@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
+import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.INFO;
 import static java.lang.Thread.sleep;
 import static java.time.Duration.ofHours;
 
@@ -41,7 +42,7 @@ public class FooJob implements JobRunnable {
 
     private void doSomeHardWork(final JobInfo jobInfo, final EventPublisher eventPublisher) {
         try {
-            eventPublisher.info(this, jobInfo.getJobUri(), "Still doing some hard work...");
+            eventPublisher.message(this, jobInfo.getJobUri(), INFO, "Still doing some hard work...");
             jobInfo.info("Still doing some hard work...");
             sleep(new Random(42).nextInt(2000));
         } catch (final InterruptedException e) {

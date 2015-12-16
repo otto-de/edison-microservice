@@ -1,31 +1,28 @@
 package de.otto.edison.jobs.eventbus.events;
 
-import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
 import org.springframework.context.ApplicationEvent;
 
 import java.net.URI;
 
 @Immutable
-public class ErrorEvent extends ApplicationEvent {
+public class StateChangeEvent extends ApplicationEvent {
 
     private final URI jobUri;
-    private final String message;
+    private final State state;
 
-    private ErrorEvent(final Object source,
-                       final URI jobUri,
-                       final String message) {
+    private StateChangeEvent(final Object source, final URI jobUri, final State state) {
         super(source);
         this.jobUri = jobUri;
-        this.message = message;
+        this.state = state;
     }
 
     public URI getJobUri() {
         return jobUri;
     }
 
-    public String getMessage() {
-        return message;
+    public State getState() {
+        return state;
     }
 
     @Override
@@ -33,29 +30,35 @@ public class ErrorEvent extends ApplicationEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ErrorEvent that = (ErrorEvent) o;
+        StateChangeEvent that = (StateChangeEvent) o;
 
         if (jobUri != null ? !jobUri.equals(that.jobUri) : that.jobUri != null) return false;
-        return !(message != null ? !message.equals(that.message) : that.message != null);
+        return state == that.state;
 
     }
 
     @Override
     public int hashCode() {
         int result = jobUri != null ? jobUri.hashCode() : 0;
-        result = 31 * result + (message != null ? message.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "ErrorEvent{" +
+        return "StateChangeEvent{" +
                 "jobUri=" + jobUri +
-                ", message='" + message + '\'' +
+                ", state=" + state +
                 '}';
     }
 
-    public static ErrorEvent newErrorEvent(final Object source, final URI jobUri, final String message) {
-        return new ErrorEvent(source, jobUri, message);
+    public static StateChangeEvent newStateChangeEvent(final Object source, final URI jobUri, final State state) {
+        return new StateChangeEvent(source, jobUri, state);
+    }
+
+    public enum State {
+        START,
+        STOP,
+        STILL_ALIVE
     }
 }
