@@ -3,6 +3,7 @@ package de.otto.edison.jobs.service;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.eventbus.EventPublisher;
 import de.otto.edison.jobs.eventbus.events.MessageEvent;
+import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -64,24 +65,28 @@ public final class JobRunner {
             error(e);
         }
         if (jobInfo.getStatus() == ERROR && restarts > 0) {
-            restart();
+            eventPublisher.stateChanged(this, jobInfo.getJobUri(), RESTART);
+            jobInfo.restart();
+            jobRepository.createOrUpdate(jobInfo);
+            LOG.warn("Retrying job ");
             executeAndRetry(runnable, restarts - 1);
         }
     }
 
     private synchronized void start() {
+        eventPublisher.stateChanged(this, jobInfo.getJobUri(), START);
         pingJob = executorService.scheduleAtFixedRate(this::ping, PING_PERIOD, PING_PERIOD, SECONDS);
 
         final String jobId = jobInfo.getJobUri().toString();
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
         MDC.put("job_type", jobInfo.getJobType());
         LOG.info("[started]");
-        eventPublisher.stateChanged(this, jobInfo.getJobUri(), START);
     }
 
     private synchronized void ping() {
         try {
             if (jobRepository.findStatus(jobInfo.getJobUri()).equals(JobInfo.JobStatus.DEAD)) {
+                eventPublisher.stateChanged(this, jobInfo.getJobUri(), StateChangeEvent.State.DEAD);
                 jobInfo.dead();
             }
             eventPublisher.stateChanged(this, jobInfo.getJobUri(), STILL_ALIVE);
@@ -95,17 +100,10 @@ public final class JobRunner {
 
     private synchronized void error(final Exception e) {
         assert !jobInfo.isStopped();
+        eventPublisher.message(this, jobInfo.getJobUri(), MessageEvent.Level.ERROR, "Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ") " + e.getMessage());
         jobInfo.error(e.getMessage());
         jobRepository.createOrUpdate(jobInfo);
-        eventPublisher.message(this, jobInfo.getJobUri(), MessageEvent.Level.ERROR, "Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ") " + e.getMessage());
         LOG.error("Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e);
-    }
-
-    private synchronized void restart() {
-        jobInfo.restart();
-        jobRepository.createOrUpdate(jobInfo);
-        LOG.warn("Retrying job ");
-        eventPublisher.stateChanged(this, jobInfo.getJobUri(), RESTART);
     }
 
     private synchronized void stop() {
@@ -113,6 +111,7 @@ public final class JobRunner {
 
         assert !jobInfo.isStopped();
         try {
+            eventPublisher.stateChanged(this, jobInfo.getJobUri(), STOP);
             LOG.info("stopped job {}", jobInfo);
             jobInfo.stop();
             jobRepository.createOrUpdate(jobInfo);

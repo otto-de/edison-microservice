@@ -60,6 +60,7 @@ public class StateChangeEvent extends ApplicationEvent {
         START,
         STOP,
         RESTART,
-        STILL_ALIVE
+        STILL_ALIVE,
+        DEAD
     }
 }
