@@ -50,10 +50,10 @@ public class JobStatusDetailIndicator implements StatusDetailIndicator {
         String message;
 
         if (JobInfo.JobStatus.OK.equals(jobInfo.getStatus()) && jobTooOld(jobInfo)) {
-            status =  WARNING;
-            message = JOB_TOO_OLD_MESSAGE + maxAge;
-        }else if (JobInfo.JobStatus.OK.equals(jobInfo.getStatus())) {
-            status =  OK;
+            status = WARNING;
+            message = JOB_TOO_OLD_MESSAGE + (maxAge.isPresent() ? maxAge.get() : "N/A");
+        } else if (JobInfo.JobStatus.OK.equals(jobInfo.getStatus())) {
+            status = OK;
             message = SUCCESS_MESSAGE;
         } else {
             status = WARNING;
