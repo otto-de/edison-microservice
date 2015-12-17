@@ -5,12 +5,14 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobRunnable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
 
+import static de.otto.edison.jobs.eventbus.EventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.ERROR;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,7 +23,7 @@ import static org.hamcrest.core.Is.is;
 public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
-    private EventPublisher eventPublisher;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     private InMemoryEventRubbishBin inMemoryEventRubbishBin;
@@ -33,8 +35,11 @@ public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void shouldSendAndReceiveStartEvent() throws Exception {
+        // given
+        EventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/job"), "someJobType");
+
         // when
-        eventPublisher.message(createJobRunnable(), new URI("some/job"), ERROR, "some message");
+        testee.message(ERROR, "some message");
 
         // then
         assertThat(inMemoryEventRubbishBin.getMessageEvents().get(0), is("some/job"));
@@ -42,8 +47,11 @@ public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void shouldSendAndReceiveStopEvent() throws Exception {
+        // given
+        EventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/stopped/job"), "someJobType");
+
         // when
-        eventPublisher.stateChanged(createJobRunnable(), new URI("some/stopped/job"), "someJobType", STOP);
+        testee.stateChanged(STOP);
 
         // then
         assertThat(inMemoryEventRubbishBin.getStateChangedEvents().get(0), is("some/stopped/job"));

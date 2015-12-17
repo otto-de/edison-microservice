@@ -47,7 +47,6 @@ public class JobConfiguration {
     @Value("${edison.jobs.cleanup.mark-dead-after:20}")
     int secondsToMarkJobsAsDead;
 
-
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
     public ScheduledExecutorService scheduledExecutorService() {

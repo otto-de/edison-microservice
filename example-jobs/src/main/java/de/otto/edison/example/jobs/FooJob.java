@@ -42,7 +42,7 @@ public class FooJob implements JobRunnable {
 
     private void doSomeHardWork(final JobInfo jobInfo, final EventPublisher eventPublisher) {
         try {
-            eventPublisher.message(this, jobInfo.getJobUri(), INFO, "Still doing some hard work...");
+            eventPublisher.message(INFO, "Still doing some hard work...");
             jobInfo.info("Still doing some hard work...");
             sleep(new Random(42).nextInt(2000));
         } catch (final InterruptedException e) {

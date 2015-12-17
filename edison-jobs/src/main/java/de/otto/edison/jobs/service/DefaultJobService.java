@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.GaugeService;
+import org.springframework.context.ApplicationEventPublisher;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
@@ -18,6 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.eventbus.EventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
@@ -34,7 +36,7 @@ public class DefaultJobService implements JobService {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJobService.class);
 
     @Autowired
-    private EventPublisher eventPublisher;
+    private ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     private JobRepository repository;
     @Autowired
@@ -56,14 +58,14 @@ public class DefaultJobService implements JobService {
                       final GaugeService gaugeService,
                       final Clock clock,
                       final ScheduledExecutorService executor,
-                      final EventPublisher eventPublisher) {
+                      final ApplicationEventPublisher applicationEventPublisher) {
         this.repository = repository;
         this.repository = repository;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
         this.clock = clock;
         this.executor = executor;
-        this.eventPublisher = eventPublisher;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @PostConstruct
@@ -114,8 +116,14 @@ public class DefaultJobService implements JobService {
     }
 
     private URI startAsync(final JobRunnable jobRunnable) {
-        final JobInfo jobInfo = newJobInfo(newJobUri(), jobRunnable.getJobDefinition().jobType(), clock);
-        final JobRunner jobRunner = newJobRunner(jobInfo, repository, executor, eventPublisher);
+        final URI jobUri = newJobUri();
+        final JobInfo jobInfo = newJobInfo(jobUri, jobRunnable.getJobDefinition().jobType(), clock);
+        final JobRunner jobRunner = newJobRunner(
+                jobInfo,
+                repository,
+                executor,
+                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobUri, jobRunnable.getJobDefinition().jobType())
+        );
         executor.execute(() -> jobRunner.start(jobRunnable));
         return jobInfo.getJobUri();
     }

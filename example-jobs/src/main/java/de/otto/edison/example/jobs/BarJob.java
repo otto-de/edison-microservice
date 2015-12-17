@@ -35,7 +35,7 @@ public class BarJob implements JobRunnable {
     @Override
     public void execute(final JobInfo jobInfo, final EventPublisher eventPublisher) {
         if (new Random().nextBoolean()) {
-            eventPublisher.message(this, jobInfo.getJobUri(), ERROR, "Some random error occured");
+            eventPublisher.message(ERROR, "Some random error occured");
             jobInfo.error("Some random error occured.");
         }
         for (int i = 0; i < 10; ++i) {
@@ -45,7 +45,7 @@ public class BarJob implements JobRunnable {
 
     private void doSomeHardWork(final JobInfo jobInfo, final EventPublisher eventPublisher) {
         try {
-            eventPublisher.message(this, jobInfo.getJobUri(), INFO, "Still doing some hard work...");
+            eventPublisher.message(INFO, "Still doing some hard work...");
             jobInfo.info("Still doing some hard work...");
             sleep(new Random(42).nextInt(2000));
         } catch (final InterruptedException e) {

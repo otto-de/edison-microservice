@@ -102,7 +102,7 @@ public class JobRunnerTest {
         assertThat(msg.getLevel(), is(INFO));
         assertThat(msg.getTimestamp(), is(notNullValue()));
 
-        verify(eventPublisher).stateChanged(jobRunner, create("/foo/jobs/42"), "NAME", CREATE);
+        verify(eventPublisher).stateChanged(CREATE);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class JobRunnerTest {
 
         assertThat(jobInfo.getMessages(), hasSize(3));
 
-        verify(eventPublisher).stateChanged(jobRunner, create("/foo/jobs/42"), "NAME", CREATE);
+        verify(eventPublisher).stateChanged(CREATE);
     }
 
     @Test
@@ -187,7 +187,7 @@ public class JobRunnerTest {
 
         assertThat(jobInfo.getMessages(), hasSize(3));
 
-        verify(eventPublisher).stateChanged(jobRunner, create("/foo/jobs/42"), "NAME", CREATE);
+        verify(eventPublisher).stateChanged(CREATE);
     }
 
     @Test
