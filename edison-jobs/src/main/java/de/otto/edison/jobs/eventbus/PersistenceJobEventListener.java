@@ -6,7 +6,6 @@ import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
 
 import java.net.URI;
 import java.time.Clock;
@@ -59,7 +58,18 @@ public class PersistenceJobEventListener implements JobEventListener {
 
     @Override
     public void consumeMessage(final MessageEvent messageEvent) {
-        // TODO
+        MessageEvent.Level level = messageEvent.getLevel();
+        switch (level) {
+            case ERROR:
+                updateJobIfPresent(messageEvent.getJobUri(), jobInfo -> jobInfo.error(messageEvent.getMessage()));
+                break;
+            case WARN:
+                updateJobIfPresent(messageEvent.getJobUri(), jobInfo -> jobInfo.warn(messageEvent.getMessage()));
+                break;
+            case INFO:
+                updateJobIfPresent(messageEvent.getJobUri(), jobInfo -> jobInfo.info(messageEvent.getMessage()));
+                break;
+        }
     }
 
     private void updateJobIfPresent(final URI jobUri, final Consumer<JobInfo> consumer) {

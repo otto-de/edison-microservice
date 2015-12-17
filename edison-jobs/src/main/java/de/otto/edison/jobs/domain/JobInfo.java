@@ -166,6 +166,12 @@ public class JobInfo {
         return this;
     }
 
+    public synchronized JobInfo warn(String message) {
+        messages.add(jobMessage(WARNING, message));
+        lastUpdated = now(clock);
+        return this;
+    }
+
     /**
      * Add an ERROR message to the job messages.
      * <p>
