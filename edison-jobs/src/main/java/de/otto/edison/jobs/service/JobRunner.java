@@ -78,7 +78,7 @@ public final class JobRunner {
         LOG.info("[started]");
     }
 
-    private synchronized void ping() {
+    public void ping() {
         try {
             jobEventPublisher.stateChanged(STILL_ALIVE);
         } catch (Exception e) {

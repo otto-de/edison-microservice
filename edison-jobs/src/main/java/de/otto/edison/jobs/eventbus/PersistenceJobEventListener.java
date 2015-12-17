@@ -6,6 +6,7 @@ import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 
 import java.net.URI;
 import java.time.Clock;

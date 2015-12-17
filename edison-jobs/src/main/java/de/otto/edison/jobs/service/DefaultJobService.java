@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
-import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,9 +21,9 @@ import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublishe
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
-import static java.time.Clock.systemDefaultZone;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * @author Guido Steinacker
@@ -46,23 +45,18 @@ public class DefaultJobService implements JobService {
     private List<JobRunnable> jobRunnables = emptyList();
 
 
-    private final Clock clock;
-
     public DefaultJobService() {
-        this.clock = systemDefaultZone();
     }
 
     DefaultJobService(final JobRepository repository,
                       final List<JobRunnable> jobRunnables,
                       final GaugeService gaugeService,
-                      final Clock clock,
                       final ScheduledExecutorService executor,
                       final ApplicationEventPublisher applicationEventPublisher) {
         this.repository = repository;
         this.repository = repository;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
-        this.clock = clock;
         this.executor = executor;
         this.applicationEventPublisher = applicationEventPublisher;
     }

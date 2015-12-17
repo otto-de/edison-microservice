@@ -34,7 +34,7 @@ public class FooJob implements JobRunnable {
 
     @Override
     public void execute(final JobEventPublisher jobEventPublisher) {
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 60; ++i) {
             doSomeHardWork(jobEventPublisher);
         }
     }

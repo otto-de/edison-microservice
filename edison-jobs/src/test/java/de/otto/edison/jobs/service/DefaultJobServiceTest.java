@@ -46,12 +46,11 @@ public class DefaultJobServiceTest {
     @Test
     public void shouldReturnCreatedJobUri() {
         // given:
-        Clock clock = fixed(Instant.now(), systemDefault());
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         JobRepository jobRepository = mock(JobRepository.class);
         when(jobRepository.findRunningJobByType(anyString())).thenReturn(Optional.<JobInfo>empty());
-        DefaultJobService jobService = new DefaultJobService(jobRepository, asList(jobRunnable), mock(GaugeService.class), clock, executorService, applicationEventPublisher);
+        DefaultJobService jobService = new DefaultJobService(jobRepository, asList(jobRunnable), mock(GaugeService.class), executorService, applicationEventPublisher);
         // when:
         Optional<URI> jobUri = jobService.startAsyncJob("BAR");
         // then:
@@ -61,7 +60,6 @@ public class DefaultJobServiceTest {
     @Test
     public void shouldRunJob() {
         // given:
-        Clock clock = fixed(Instant.now(), systemDefault());
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         InMemJobRepository jobRepository = new InMemJobRepository();
@@ -69,7 +67,6 @@ public class DefaultJobServiceTest {
                 jobRepository,
                 asList(jobRunnable),
                 mock(GaugeService.class),
-                clock,
                 executorService,
                 applicationEventPublisher
         );
@@ -92,7 +89,6 @@ public class DefaultJobServiceTest {
                 jobRepository,
                 asList(jobRunnable),
                 mock(GaugeService.class),
-                clock,
                 executorService,
                 applicationEventPublisher
         );
@@ -117,7 +113,6 @@ public class DefaultJobServiceTest {
                 jobRepository,
                 asList(jobRunnable),
                 mock(GaugeService.class),
-                clock,
                 executorService,
                 applicationEventPublisher
         );
@@ -131,13 +126,11 @@ public class DefaultJobServiceTest {
     @Test
     public void shouldReportRuntime() {
         // given:
-        Clock clock = fixed(Instant.now(), systemDefault());
-
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
 
         GaugeService mock = mock(GaugeService.class);
-        DefaultJobService jobService = new DefaultJobService(mock(JobRepository.class), asList(jobRunnable), mock, clock, executorService, applicationEventPublisher);
+        DefaultJobService jobService = new DefaultJobService(mock(JobRepository.class), asList(jobRunnable), mock, executorService, applicationEventPublisher);
         // when:
         jobService.startAsyncJob("BAR");
         // then:
