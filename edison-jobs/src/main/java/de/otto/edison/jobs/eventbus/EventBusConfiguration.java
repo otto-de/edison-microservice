@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import static java.time.Clock.systemDefaultZone;
 
 @Configuration
-public class EventbusConfiguration {
+public class EventBusConfiguration {
 
     @Autowired
     private JobRepository jobRepository;

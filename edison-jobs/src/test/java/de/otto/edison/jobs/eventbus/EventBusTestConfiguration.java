@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class EventbusTestConfiguration {
+public class EventBusTestConfiguration {
 
     @Bean
     public InMemoryEventRubbishBin testInMemoryEventListener() {

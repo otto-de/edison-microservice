@@ -18,8 +18,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 @Test
-@SpringApplicationConfiguration(classes = {EventbusConfiguration.class, EventbusTestConfiguration.class})
-public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
+@SpringApplicationConfiguration(classes = {EventBusConfiguration.class, EventBusTestConfiguration.class})
+public class EventBusIntegrationTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
