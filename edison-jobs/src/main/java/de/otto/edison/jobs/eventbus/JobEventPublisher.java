@@ -47,4 +47,38 @@ public class JobEventPublisher {
                 jobType
         );
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        JobEventPublisher that = (JobEventPublisher) o;
+
+        if (applicationEventPublisher != null ? !applicationEventPublisher.equals(that.applicationEventPublisher) : that.applicationEventPublisher != null)
+            return false;
+        if (source != null ? !source.equals(that.source) : that.source != null) return false;
+        if (jobUri != null ? !jobUri.equals(that.jobUri) : that.jobUri != null) return false;
+        return !(jobType != null ? !jobType.equals(that.jobType) : that.jobType != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = applicationEventPublisher != null ? applicationEventPublisher.hashCode() : 0;
+        result = 31 * result + (source != null ? source.hashCode() : 0);
+        result = 31 * result + (jobUri != null ? jobUri.hashCode() : 0);
+        result = 31 * result + (jobType != null ? jobType.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "JobEventPublisher{" +
+                "applicationEventPublisher=" + applicationEventPublisher +
+                ", source=" + source +
+                ", jobUri=" + jobUri +
+                ", jobType='" + jobType + '\'' +
+                '}';
+    }
 }

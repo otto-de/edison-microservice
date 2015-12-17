@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobRunnable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -65,7 +64,7 @@ public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
             }
 
             @Override
-            public void execute(JobInfo jobInfo, JobEventPublisher jobEventPublisher) {
+            public void execute(JobEventPublisher jobEventPublisher) {
             }
         };
     }

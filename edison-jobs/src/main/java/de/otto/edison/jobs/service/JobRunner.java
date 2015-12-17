@@ -1,17 +1,14 @@
 package de.otto.edison.jobs.service;
 
-import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.eventbus.events.MessageEvent;
-import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
-import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
+import java.net.URI;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -19,31 +16,30 @@ import static org.slf4j.LoggerFactory.getLogger;
 public final class JobRunner {
 
     private static final Logger LOG = getLogger(JobRunner.class);
-    public static final long PING_PERIOD = 5l;
+    public static final long PING_PERIOD = 20l;
 
-    private JobEventPublisher jobEventPublisher;
-    private volatile JobInfo jobInfo;
-    private final JobRepository jobRepository;
+    private final JobEventPublisher jobEventPublisher;
+    private final URI jobUri;
+    private final String jobType;
     private final ScheduledExecutorService executorService;
     private ScheduledFuture<?> pingJob;
 
-    private JobRunner(final JobInfo jobInfo,
-                      final JobRepository jobRepository,
+    private JobRunner(final URI jobUri,
+                      final String jobType,
                       final ScheduledExecutorService executorService,
                       final JobEventPublisher jobEventPublisher) {
-        this.jobInfo = jobInfo;
-        this.jobRepository = jobRepository;
+        this.jobUri = jobUri;
+        this.jobType = jobType;
         this.executorService = executorService;
         this.jobEventPublisher = jobEventPublisher;
         jobEventPublisher.stateChanged(CREATE);
     }
 
-    public static JobRunner newJobRunner(final JobInfo jobInfo,
-                                         final JobRepository jobRepository,
+    public static JobRunner newJobRunner(final URI jobUri,
+                                         final String jobType,
                                          final ScheduledExecutorService executorService,
                                          final JobEventPublisher jobEventPublisher) {
-        final JobRunner jobRunner = new JobRunner(jobInfo, jobRepository, executorService, jobEventPublisher);
-        jobRepository.createOrUpdate(jobRunner.jobInfo);
+        final JobRunner jobRunner = new JobRunner(jobUri, jobType, executorService, jobEventPublisher);
         return jobRunner;
     }
 
@@ -61,16 +57,14 @@ public final class JobRunner {
 
     private synchronized void executeAndRetry(final JobRunnable runnable, final int restarts) {
         try {
-            runnable.execute(jobInfo, jobEventPublisher);
+            runnable.execute(jobEventPublisher);
         } catch (final RuntimeException e) {
             error(e);
-        }
-        if (jobInfo.getStatus() == ERROR && restarts > 0) {
-            jobEventPublisher.stateChanged(RESTART);
-            jobInfo.restart();
-            jobRepository.createOrUpdate(jobInfo);
-            LOG.warn("Retrying job ");
-            executeAndRetry(runnable, restarts - 1);
+            if (restarts > 0) {
+                jobEventPublisher.stateChanged(RESTART);
+                LOG.warn("Retrying job ");
+                executeAndRetry(runnable, restarts - 1);
+            }
         }
     }
 
@@ -78,44 +72,31 @@ public final class JobRunner {
         jobEventPublisher.stateChanged(START);
         pingJob = executorService.scheduleAtFixedRate(this::ping, PING_PERIOD, PING_PERIOD, SECONDS);
 
-        final String jobId = jobInfo.getJobUri().toString();
+        final String jobId = jobUri.toString();
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
-        MDC.put("job_type", jobInfo.getJobType());
+        MDC.put("job_type", jobType);
         LOG.info("[started]");
     }
 
     private synchronized void ping() {
         try {
-            if (jobRepository.findStatus(jobInfo.getJobUri()).equals(JobInfo.JobStatus.DEAD)) {
-                jobEventPublisher.stateChanged(StateChangeEvent.State.DEAD);
-                jobInfo.dead();
-            }
             jobEventPublisher.stateChanged(STILL_ALIVE);
-            jobInfo.ping();
-            jobRepository.createOrUpdate(jobInfo);
         } catch (Exception e) {
-            assert !jobInfo.isStopped();
-            LOG.error("Fatal error in ping job for" + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e);
+            LOG.error("Fatal error in ping job for" + jobType + " (" + jobUri + ")", e);
         }
     }
 
     private synchronized void error(final Exception e) {
-        assert !jobInfo.isStopped();
-        jobEventPublisher.message(MessageEvent.Level.ERROR, "Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ") " + e.getMessage());
-        jobInfo.error(e.getMessage());
-        jobRepository.createOrUpdate(jobInfo);
-        LOG.error("Fatal error in job " + jobInfo.getJobType() + " (" + jobInfo.getJobUri() + ")", e);
+        jobEventPublisher.message(MessageEvent.Level.ERROR, "Fatal error in job " + jobType + " (" + jobUri + ") " + e.getMessage());
+        LOG.error("Fatal error in job " + jobType + " (" + jobUri + ")", e.getMessage());
     }
 
     private synchronized void stop() {
         pingJob.cancel(false);
 
-        assert !jobInfo.isStopped();
         try {
             jobEventPublisher.stateChanged(STOP);
-            LOG.info("stopped job {}", jobInfo);
-            jobInfo.stop();
-            jobRepository.createOrUpdate(jobInfo);
+            LOG.info("stopped job {}", jobUri);
         } finally {
             MDC.clear();
         }

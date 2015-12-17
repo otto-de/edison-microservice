@@ -34,6 +34,7 @@ public class StopDeadJobs implements JobCleanupStrategy {
         this.jobRepository = jobRepository;
     }
 
+    @Override
     @Scheduled(fixedRate = STOP_DEAD_JOBS_CLEANUP_INTERVAL)
     public void doCleanUp() {
         OffsetDateTime now = now(clock);
@@ -41,6 +42,7 @@ public class StopDeadJobs implements JobCleanupStrategy {
         LOG.info(format("JobCleanup: Looking for jobs older than %s ", timeToMarkJobAsStopped));
         final List<JobInfo> deadJobs = jobRepository.findRunningWithoutUpdateSince(timeToMarkJobAsStopped);
         deadJobs.forEach((j) -> {
+            // TODO send dead event instead of updating repository directly!
             j.dead();
             jobRepository.createOrUpdate(j);
         });

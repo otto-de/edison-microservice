@@ -44,7 +44,7 @@ public class JobConfiguration {
     @Value("${edison.jobs.cleanup.number-to-keep:100}")
     int numberOfJobsToKeep;
 
-    @Value("${edison.jobs.cleanup.mark-dead-after:20}")
+    @Value("${edison.jobs.cleanup.mark-dead-after:30}")
     int secondsToMarkJobsAsDead;
 
     @Bean

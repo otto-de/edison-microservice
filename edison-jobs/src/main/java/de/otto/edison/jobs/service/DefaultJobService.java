@@ -18,7 +18,6 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
-import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.System.currentTimeMillis;
@@ -117,15 +116,15 @@ public class DefaultJobService implements JobService {
 
     private URI startAsync(final JobRunnable jobRunnable) {
         final URI jobUri = newJobUri();
-        final JobInfo jobInfo = newJobInfo(jobUri, jobRunnable.getJobDefinition().jobType(), clock);
+        final String jobType = jobRunnable.getJobDefinition().jobType();
         final JobRunner jobRunner = newJobRunner(
-                jobInfo,
-                repository,
+                jobUri,
+                jobType,
                 executor,
-                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobUri, jobRunnable.getJobDefinition().jobType())
+                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobUri, jobType)
         );
         executor.execute(() -> jobRunner.start(jobRunnable));
-        return jobInfo.getJobUri();
+        return jobUri;
     }
 
     private JobRunnable metered(final JobRunnable delegate) {
@@ -137,9 +136,9 @@ public class DefaultJobService implements JobService {
             }
 
             @Override
-            public void execute(final JobInfo jobInfo, final JobEventPublisher jobEventPublisher) {
+            public void execute(final JobEventPublisher jobEventPublisher) {
                 long ts = currentTimeMillis();
-                delegate.execute(jobInfo, jobEventPublisher);
+                delegate.execute(jobEventPublisher);
                 gaugeService.submit(gaugeName(), (currentTimeMillis() - ts) / 1000L);
             }
 

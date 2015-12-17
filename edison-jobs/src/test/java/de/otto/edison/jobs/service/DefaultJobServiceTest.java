@@ -19,7 +19,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.time.Clock.fixed;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
@@ -60,7 +59,7 @@ public class DefaultJobServiceTest {
     }
 
     @Test
-    public void shouldPersistJobs() {
+    public void shouldRunJob() {
         // given:
         Clock clock = fixed(Instant.now(), systemDefault());
         JobRunnable jobRunnable = mock(JobRunnable.class);
@@ -76,32 +75,10 @@ public class DefaultJobServiceTest {
         );
 
         // when:
-        Optional<URI> jobUri = jobService.startAsyncJob("BAR");
-        // then:
-        assertThat(jobRepository.findOne(jobUri.get()), isPresent());
-    }
+        jobService.startAsyncJob("bar");
 
-    @Test
-    public void shouldRunJobs() {
-        // given:
-        Clock clock = fixed(Instant.now(), systemDefault());
-        JobRunnable jobRunnable = mock(JobRunnable.class);
-        when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
-        InMemJobRepository jobRepository = new InMemJobRepository();
-        DefaultJobService jobService = new DefaultJobService(
-                jobRepository,
-                asList(jobRunnable),
-                mock(GaugeService.class),
-                clock,
-                executorService,
-                applicationEventPublisher
-        );
-
-        // when:
-        Optional<URI> jobUri = jobService.startAsyncJob("bar");
         // then:
-        JobInfo jobInfo = jobRepository.findOne(jobUri.get()).get();
-        assertThat(jobInfo.getStopped(), isPresent());
+        verify(executorService).execute(any(Runnable.class));
     }
 
     @Test

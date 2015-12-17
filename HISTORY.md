@@ -5,6 +5,7 @@
   JobRepository. From now on the JobRunner and the specific jobs will report changes (states and messages) to
   an EventPublisher, which will propagate the events to the JobEventListeners (e.g. persist them or log them).
   You can register your own JobEventListeners. The JobMonitor is removed.
+* If your job has an error, you should throw a RuntimeException with an errorMessage. Then the job will be retriggered (if retry configured).
 
 ## Release 0.45.3
 * Fixed default JobMonitor to save log messages in JobRepository for every message.

@@ -1,7 +1,6 @@
 package de.otto.edison.example.jobs;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.service.JobRunnable;
 import org.springframework.stereotype.Component;
@@ -33,23 +32,21 @@ public class BarJob implements JobRunnable {
     }
 
     @Override
-    public void execute(final JobInfo jobInfo, final JobEventPublisher jobEventPublisher) {
+    public void execute(final JobEventPublisher jobEventPublisher) {
         if (new Random().nextBoolean()) {
             jobEventPublisher.message(ERROR, "Some random error occured");
-            jobInfo.error("Some random error occured.");
         }
         for (int i = 0; i < 10; ++i) {
-            doSomeHardWork(jobInfo, jobEventPublisher);
+            doSomeHardWork(jobEventPublisher);
         }
     }
 
-    private void doSomeHardWork(final JobInfo jobInfo, final JobEventPublisher jobEventPublisher) {
+    private void doSomeHardWork(final JobEventPublisher jobEventPublisher) {
         try {
             jobEventPublisher.message(INFO, "Still doing some hard work...");
-            jobInfo.info("Still doing some hard work...");
             sleep(new Random(42).nextInt(2000));
         } catch (final InterruptedException e) {
-            jobInfo.error(e.getMessage());
+            jobEventPublisher.message(ERROR, e.getMessage());
         }
     }
 
