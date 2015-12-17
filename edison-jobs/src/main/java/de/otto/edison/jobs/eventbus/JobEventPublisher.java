@@ -11,17 +11,17 @@ import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 
 @Immutable
-public class EventPublisher {
+public class JobEventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;
     private final Object source;
     private final URI jobUri;
     private final String jobType;
 
-    private EventPublisher(final ApplicationEventPublisher applicationEventPublisher,
-                           final Object source,
-                           final URI jobUri,
-                           final String jobType) {
+    private JobEventPublisher(final ApplicationEventPublisher applicationEventPublisher,
+                              final Object source,
+                              final URI jobUri,
+                              final String jobType) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.source = source;
         this.jobUri = jobUri;
@@ -36,11 +36,11 @@ public class EventPublisher {
         applicationEventPublisher.publishEvent(newMessageEvent(source, jobUri, level, message));
     }
 
-    public static EventPublisher newJobEventPublisher(final ApplicationEventPublisher applicationEventPublisher,
-                                                      final Object source,
-                                                      final URI jobUri,
-                                                      final String jobType) {
-        return new EventPublisher(
+    public static JobEventPublisher newJobEventPublisher(final ApplicationEventPublisher applicationEventPublisher,
+                                                         final Object source,
+                                                         final URI jobUri,
+                                                         final String jobType) {
+        return new JobEventPublisher(
                 applicationEventPublisher,
                 source,
                 jobUri,

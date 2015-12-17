@@ -2,7 +2,7 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.eventbus.EventPublisher;
+import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
-import static de.otto.edison.jobs.eventbus.EventPublisher.newJobEventPublisher;
+import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
@@ -137,9 +137,9 @@ public class DefaultJobService implements JobService {
             }
 
             @Override
-            public void execute(final JobInfo jobInfo, final EventPublisher eventPublisher) {
+            public void execute(final JobInfo jobInfo, final JobEventPublisher jobEventPublisher) {
                 long ts = currentTimeMillis();
-                delegate.execute(jobInfo, eventPublisher);
+                delegate.execute(jobInfo, jobEventPublisher);
                 gaugeService.submit(gaugeName(), (currentTimeMillis() - ts) / 1000L);
             }
 

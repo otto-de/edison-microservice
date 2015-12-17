@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 
-import static de.otto.edison.jobs.eventbus.EventPublisher.newJobEventPublisher;
+import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.ERROR;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,7 +36,7 @@ public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
     @Test
     public void shouldSendAndReceiveStartEvent() throws Exception {
         // given
-        EventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/job"), "someJobType");
+        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/job"), "someJobType");
 
         // when
         testee.message(ERROR, "some message");
@@ -48,7 +48,7 @@ public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
     @Test
     public void shouldSendAndReceiveStopEvent() throws Exception {
         // given
-        EventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/stopped/job"), "someJobType");
+        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/stopped/job"), "someJobType");
 
         // when
         testee.stateChanged(STOP);
@@ -65,7 +65,7 @@ public class EventbusIntegrationTest extends AbstractTestNGSpringContextTests {
             }
 
             @Override
-            public void execute(JobInfo jobInfo, EventPublisher eventPublisher) {
+            public void execute(JobInfo jobInfo, JobEventPublisher jobEventPublisher) {
             }
         };
     }

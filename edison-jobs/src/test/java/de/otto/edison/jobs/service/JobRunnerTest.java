@@ -3,7 +3,7 @@ package de.otto.edison.jobs.service;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.eventbus.EventPublisher;
+import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.testsupport.util.TestClock;
@@ -50,13 +50,13 @@ public class JobRunnerTest {
     private Clock clock;
     private ScheduledExecutorService executor;
     private ScheduledFuture scheduledJob;
-    private EventPublisher eventPublisher;
+    private JobEventPublisher jobEventPublisher;
 
     @BeforeMethod
     public void setUp() throws Exception {
         clock = fixed(Instant.now(), systemDefault());
         executor = mock(ScheduledExecutorService.class);
-        eventPublisher = mock(EventPublisher.class);
+        jobEventPublisher = mock(JobEventPublisher.class);
 
         scheduledJob = mock(ScheduledFuture.class);
         doReturn(scheduledJob)
@@ -69,13 +69,13 @@ public class JobRunnerTest {
         URI jobUri = create("/foo/jobs/42");
         InMemJobRepository repository = new InMemJobRepository();
         JobInfo jobInfo = newJobInfo(jobUri, "NAME", clock);
-        JobRunner jobRunner = newJobRunner(jobInfo, repository, executor, eventPublisher);
+        JobRunner jobRunner = newJobRunner(jobInfo, repository, executor, jobEventPublisher);
         // when
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(fixedDelayJobDefinition("NAME", "", "", ofSeconds(2), 0, empty()));
         jobRunner.start(jobRunnable);
         // then
-        verify(jobRunnable).execute(jobInfo, eventPublisher);
+        verify(jobRunnable).execute(jobInfo, jobEventPublisher);
         JobInfo persistedJobInfo = repository.findOne(jobUri).get();
         assertThat(persistedJobInfo.getStatus(), is(OK));
         assertThat(persistedJobInfo.getStopped(), isPresent());
@@ -90,7 +90,7 @@ public class JobRunnerTest {
                 newJobInfo(jobUri, "NAME", clock),
                 repository,
                 executor,
-                eventPublisher);
+                jobEventPublisher);
         // when
         jobRunner.start(new SomeJobRunnable());
         // then
@@ -102,7 +102,7 @@ public class JobRunnerTest {
         assertThat(msg.getLevel(), is(INFO));
         assertThat(msg.getTimestamp(), is(notNullValue()));
 
-        verify(eventPublisher).stateChanged(CREATE);
+        verify(jobEventPublisher).stateChanged(CREATE);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class JobRunnerTest {
                 newJobInfo(jobUri, "NAME", clock),
                 repository,
                 executor,
-                eventPublisher);
+                jobEventPublisher);
 
         SomeJobRunnable someFailingJob = new SomeJobRunnable(j -> {
             throw new RuntimeException("some error");
@@ -144,7 +144,7 @@ public class JobRunnerTest {
 
         assertThat(jobInfo.getMessages(), hasSize(3));
 
-        verify(eventPublisher).stateChanged(CREATE);
+        verify(jobEventPublisher).stateChanged(CREATE);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class JobRunnerTest {
                 newJobInfo(jobUri, "NAME", clock),
                 repository,
                 executor,
-                eventPublisher);
+                jobEventPublisher);
 
         SomeJobRunnable someFailingJob = new SomeJobRunnable(j -> {
             j.error("some error");
@@ -187,7 +187,7 @@ public class JobRunnerTest {
 
         assertThat(jobInfo.getMessages(), hasSize(3));
 
-        verify(eventPublisher).stateChanged(CREATE);
+        verify(jobEventPublisher).stateChanged(CREATE);
     }
 
     @Test
@@ -201,7 +201,7 @@ public class JobRunnerTest {
         when(clock.instant()).thenReturn(Instant.ofEpochSecond(0L), Instant.ofEpochSecond(1L), Instant.ofEpochSecond(2L));
 
         // when
-        JobRunner jobRunner = newJobRunner(JobInfo.newJobInfo(jobUri, "JOBTYPE", clock), repository, executor, eventPublisher);
+        JobRunner jobRunner = newJobRunner(JobInfo.newJobInfo(jobUri, "JOBTYPE", clock), repository, executor, jobEventPublisher);
 
         // then
         verify(repository, times(1)).createOrUpdate(any(JobInfo.class));
@@ -223,7 +223,7 @@ public class JobRunnerTest {
                 newJobInfo(jobUri, "NAME", testClock),
                 repository,
                 executor,
-                eventPublisher);
+                jobEventPublisher);
         // when
         jobRunner.start(new SomeJobRunnable());
         //then
@@ -255,7 +255,7 @@ public class JobRunnerTest {
                 jobInfo,
                 repository,
                 executor,
-                eventPublisher);
+                jobEventPublisher);
         // when
         jobRunner.start(new SomeJobRunnable());
         //then
@@ -287,7 +287,7 @@ public class JobRunnerTest {
                 newJobInfo(jobUri, "NAME", clock),
                 repository,
                 executor,
-                eventPublisher);
+                jobEventPublisher);
 
         // when
         jobRunner.start(new SomeJobRunnable());
@@ -325,7 +325,7 @@ public class JobRunnerTest {
         }
 
         @Override
-        public void execute(JobInfo jobInfo, EventPublisher eventPublisher) {
+        public void execute(JobInfo jobInfo, JobEventPublisher jobEventPublisher) {
             ++executions;
             execution.apply(jobInfo);
         }
