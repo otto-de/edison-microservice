@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+
+                <ul class="nav navbar-nav" th:with="url=${#httpServletRequest.getRequestURI()}" th:fragment="main">
+                    <li th:classappend="${url.endsWith('/') ? 'active' : ''}"><a th:href="@{/}">Home</a></li>
+                    <li th:classappend="${url.endsWith('/status') ? 'active' : ''}"><a th:href="@{/internal/status}">Status</a></li>
+                    <li th:classappend="${url.endsWith('/metrics') ? 'active' : ''}"><a th:href="@{/internal/metrics}">Metrics (JSON)</a></li>
+                </ul>
+
+</body>
+</html>

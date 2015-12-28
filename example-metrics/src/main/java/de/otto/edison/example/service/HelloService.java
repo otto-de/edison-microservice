@@ -22,6 +22,6 @@ public class HelloService {
 
     @Counted(name = "HelloService.getMessage", absolute = true, monotonic = true)
     public String getMessage() {
-        return "Hello Microservice!";
+        return "Hello Edison Microservice!";
     }
 }

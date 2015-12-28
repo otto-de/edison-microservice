@@ -15,7 +15,7 @@ import static java.util.Collections.singletonMap;
 public class HelloService implements StatusDetailIndicator {
 
     public String getMessage() {
-        return "Hello Microservice!";
+        return "Hello Edison Microservice!";
     }
 
     @Override

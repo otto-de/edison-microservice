@@ -1,17 +1,26 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Example Microservice</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
-<body>
-    <h1>Example</h1>
-    <p th:text="${hello}" />
 
-    <h1>Some Links</h1>
-    <ul>
-        <li><a href="/example/internal/health">Application Health</a></li>
-        <li><a href="/example/internal/metrics">Application Metrics</a></li>
-    </ul>
+<head th:replace="fragments/head  :: head" />
+
+<body>
+
+<div th:replace="fragments/navigation  :: navigation" />
+
+    <div class="container">
+
+        <div class="jumbotron">
+            <h3>Example</h3>
+            <p th:text="${hello}" />
+
+            <h3>Some Links</h3>
+            <ul>
+                <li><a href="/example/internal/status">Status Page</a></li>
+                <li><a href="/example/internal/health">Application Health</a></li>
+            </ul>
+        </div>
+    </div>
+
+<span th:replace="fragments/footer :: footer" />
 
 </body>
 </html>
