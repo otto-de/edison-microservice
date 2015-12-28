@@ -29,13 +29,8 @@ public class PersistenceJobEventListener implements JobEventListener {
     @Override
     public void consumeStateChange(final StateChangeEvent event) {
         switch (event.getState()) {
-
-            case CREATE:
-                jobRepository.createOrUpdate(newJobInfo(event.getJobUri(), event.getJobType(), clock));
-                break;
-
             case START:
-                // currently ignored
+                jobRepository.createOrUpdate(newJobInfo(event.getJobUri(), event.getJobType(), clock));
                 break;
 
             case STILL_ALIVE:

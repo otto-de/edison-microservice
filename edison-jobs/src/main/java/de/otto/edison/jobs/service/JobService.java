@@ -57,7 +57,6 @@ public class JobService {
                final ScheduledExecutorService executor,
                final ApplicationEventPublisher applicationEventPublisher) {
         this.repository = repository;
-        this.repository = repository;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
         this.executor = executor;

@@ -9,7 +9,10 @@ import java.net.URI;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.RESTART;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.START;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STILL_ALIVE;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -32,15 +35,13 @@ public final class JobRunner {
         this.jobType = jobType;
         this.executorService = executorService;
         this.jobEventPublisher = jobEventPublisher;
-        jobEventPublisher.stateChanged(CREATE);
     }
 
     public static JobRunner newJobRunner(final URI jobUri,
                                          final String jobType,
                                          final ScheduledExecutorService executorService,
                                          final JobEventPublisher jobEventPublisher) {
-        final JobRunner jobRunner = new JobRunner(jobUri, jobType, executorService, jobEventPublisher);
-        return jobRunner;
+        return new JobRunner(jobUri, jobType, executorService, jobEventPublisher);
     }
 
     public void start(final JobRunnable runnable) {

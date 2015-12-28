@@ -44,9 +44,9 @@ public class PersistenceJobEventListenerTest {
     }
 
     @Test
-    public void shouldPersistCreateEvent() throws Exception {
+    public void shouldPersistStartEvent() throws Exception {
         // given
-        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), URI.create("some/job"), CREATE);
+        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), URI.create("some/job"), START);
 
         // when
         testee.consumeStateChange(stateChangeEvent);

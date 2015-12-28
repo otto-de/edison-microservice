@@ -17,7 +17,10 @@ import java.util.concurrent.TimeUnit;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.manuallyTriggerableJobDefinition;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.RESTART;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.START;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STILL_ALIVE;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
 import static de.otto.edison.jobs.service.JobRunner.PING_PERIOD;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.net.URI.create;
@@ -102,7 +105,7 @@ public class JobRunnerTest {
         jobRunner.start(jobRunnable);
 
         // then
-        verify(jobEventPublisher).stateChanged(CREATE);
+        verify(jobEventPublisher).stateChanged(START);
         verify(jobRunnable, times(3)).execute(jobEventPublisher);
         verify(jobEventPublisher, times(2)).stateChanged(RESTART);
         verify(jobEventPublisher).stateChanged(STOP);
