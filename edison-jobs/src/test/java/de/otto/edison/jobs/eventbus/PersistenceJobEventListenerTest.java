@@ -58,7 +58,7 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistStillAliveEvent() throws Exception {
         // given
-        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), URI.create("some/job"), STILL_ALIVE);
+        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), URI.create("some/job"), KEEP_ALIVE);
         JobInfo jobInfo = mock(JobInfo.class);
         when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
 

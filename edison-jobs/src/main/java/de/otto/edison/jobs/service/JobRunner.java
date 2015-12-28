@@ -9,9 +9,9 @@ import java.net.URI;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.KEEP_ALIVE;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.RESTART;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.START;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STILL_ALIVE;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -81,7 +81,7 @@ public final class JobRunner {
 
     public void ping() {
         try {
-            jobEventPublisher.stateChanged(STILL_ALIVE);
+            jobEventPublisher.stateChanged(KEEP_ALIVE);
         } catch (Exception e) {
             LOG.error("Fatal error in ping job for" + jobType + " (" + jobUri + ")", e);
         }

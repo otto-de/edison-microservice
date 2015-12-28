@@ -33,7 +33,7 @@ public class PersistenceJobEventListener implements JobEventListener {
                 jobRepository.createOrUpdate(newJobInfo(event.getJobUri(), event.getJobType(), clock));
                 break;
 
-            case STILL_ALIVE:
+            case KEEP_ALIVE:
                 updateJobIfPresent(event.getJobUri(), JobInfo::ping);
                 break;
 
