@@ -1,5 +1,12 @@
 # Release History
 
+## Release 0.46.2
+* Removed StateChangeEvent.State.CREATE, replaced it by START
+* Renamed State.STILL_ALIVE to KEEP_ALIVE
+
+## Release 0.46.1
+* Minor refactorings in handling of job events.
+
 ## Release 0.46.0
 * Rebuild job state architecture due to introduce an event bus to separate the JobInfo and the
   JobRepository. From now on the JobRunner and the specific jobs will report changes (states and messages) to
