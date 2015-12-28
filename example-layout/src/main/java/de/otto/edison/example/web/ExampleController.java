@@ -11,7 +11,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  * @since 13.02.15
  */
 @RestController
-public class HomeController {
+public class ExampleController {
 
     @RequestMapping(
             value = "/",
