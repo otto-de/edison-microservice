@@ -1,27 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Edison Jobs</title>
 
-    <!-- Bootstrap -->
-    <link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" />
+<head th:replace="fragments/head  :: head" />
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-</head>
 <body>
-<ol class="breadcrumb">
-    <li><a th:href="@{/internal}">Internal</a></li>
-    <li class="active">Job Overview</li>
-</ol>
+
+<div th:replace="fragments/navigation  :: navigation" />
+
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -65,10 +50,9 @@
     <a th:href="@{/internal/jobdefinitions}" class="btn btn-sm btn-primary">Open Job Definitions &raquo;</a>
 </div> <!-- /container -->
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+
+<span th:replace="fragments/footer :: footer" />
+
 </body>
 </html>
 

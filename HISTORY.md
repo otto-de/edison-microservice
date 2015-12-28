@@ -3,6 +3,7 @@
 ## Release 0.46.2
 * Removed StateChangeEvent.State.CREATE, replaced it by START
 * Renamed State.STILL_ALIVE to KEEP_ALIVE
+* Job HTML templates are now using the Thymeleaf navigation fragments so µServices have a common menu on all pages.
 
 ## Release 0.46.1
 * Minor refactorings in handling of job events.
