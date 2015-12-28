@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.eventbus.events;
 
+import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
 import org.springframework.context.ApplicationEvent;
 
@@ -12,11 +13,11 @@ public class MessageEvent extends ApplicationEvent {
     private final Level level;
     private final String message;
 
-    private MessageEvent(final Object source,
+    private MessageEvent(final JobRunnable jobRunnable,
                         final URI jobUri,
                         final Level level,
                         final String message) {
-        super(source);
+        super(jobRunnable);
         this.jobUri = jobUri;
         this.level = level;
         this.message = message;
@@ -64,8 +65,8 @@ public class MessageEvent extends ApplicationEvent {
                 '}';
     }
 
-    public static MessageEvent newMessageEvent(final Object source, final URI jobUri, final Level level, final String message) {
-        return new MessageEvent(source, jobUri, level, message);
+    public static MessageEvent newMessageEvent(final JobRunnable jobRunnable, final URI jobUri, final Level level, final String message) {
+        return new MessageEvent(jobRunnable, jobUri, level, message);
     }
 
     public enum Level {

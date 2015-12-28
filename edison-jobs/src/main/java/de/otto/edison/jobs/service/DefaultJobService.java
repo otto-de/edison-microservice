@@ -23,7 +23,6 @@ import static java.lang.System.currentTimeMillis;
 import static java.net.URI.create;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * @author Guido Steinacker
@@ -115,7 +114,7 @@ public class DefaultJobService implements JobService {
                 jobUri,
                 jobType,
                 executor,
-                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobUri, jobType)
+                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobUri)
         );
         executor.execute(() -> jobRunner.start(jobRunnable));
         return jobUri;

@@ -35,7 +35,7 @@ public class EventBusIntegrationTest extends AbstractTestNGSpringContextTests {
     @Test
     public void shouldSendAndReceiveStartEvent() throws Exception {
         // given
-        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/job"), "someJobType");
+        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/job"));
 
         // when
         testee.message(ERROR, "some message");
@@ -47,7 +47,7 @@ public class EventBusIntegrationTest extends AbstractTestNGSpringContextTests {
     @Test
     public void shouldSendAndReceiveStopEvent() throws Exception {
         // given
-        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/stopped/job"), "someJobType");
+        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/stopped/job"));
 
         // when
         testee.stateChanged(STOP);
@@ -60,7 +60,22 @@ public class EventBusIntegrationTest extends AbstractTestNGSpringContextTests {
         return new JobRunnable() {
             @Override
             public JobDefinition getJobDefinition() {
-                return null;
+                return new JobDefinition() {
+                    @Override
+                    public String jobType() {
+                        return "someJobType";
+                    }
+
+                    @Override
+                    public String jobName() {
+                        return "";
+                    }
+
+                    @Override
+                    public String description() {
+                        return "";
+                    }
+                };
             }
 
             @Override

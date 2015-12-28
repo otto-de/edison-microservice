@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.eventbus.events;
 
+import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
 import org.springframework.context.ApplicationEvent;
 
@@ -12,13 +13,12 @@ public class StateChangeEvent extends ApplicationEvent {
     private final String jobType;
     private final State state;
 
-    private StateChangeEvent(final Object source,
+    private StateChangeEvent(final JobRunnable jobRunnable,
                              final URI jobUri,
-                             final String jobType,
                              final State state) {
-        super(source);
+        super(jobRunnable);
         this.jobUri = jobUri;
-        this.jobType = jobType;
+        this.jobType = jobRunnable.getJobDefinition().jobType();
         this.state = state;
     }
 
@@ -64,11 +64,10 @@ public class StateChangeEvent extends ApplicationEvent {
                 '}';
     }
 
-    public static StateChangeEvent newStateChangeEvent(final Object source,
+    public static StateChangeEvent newStateChangeEvent(final JobRunnable jobRunnable,
                                                        final URI jobUri,
-                                                       final String jobType,
                                                        final State state) {
-        return new StateChangeEvent(source, jobUri, jobType, state);
+        return new StateChangeEvent(jobRunnable, jobUri, state);
     }
 
     public enum State {
