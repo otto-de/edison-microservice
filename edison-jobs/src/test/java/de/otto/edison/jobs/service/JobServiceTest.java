@@ -23,12 +23,13 @@ import static java.time.Clock.fixed;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-public class DefaultJobServiceTest {
+public class JobServiceTest {
 
     private ScheduledExecutorService executorService;
     private ApplicationEventPublisher applicationEventPublisher;
@@ -50,7 +51,7 @@ public class DefaultJobServiceTest {
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         JobRepository jobRepository = mock(JobRepository.class);
         when(jobRepository.findRunningJobByType(anyString())).thenReturn(Optional.<JobInfo>empty());
-        DefaultJobService jobService = new DefaultJobService(jobRepository, asList(jobRunnable), mock(GaugeService.class), executorService, applicationEventPublisher);
+        JobService jobService = new JobService(jobRepository, asList(jobRunnable), mock(GaugeService.class), executorService, applicationEventPublisher);
         // when:
         Optional<URI> jobUri = jobService.startAsyncJob("BAR");
         // then:
@@ -63,7 +64,7 @@ public class DefaultJobServiceTest {
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         InMemJobRepository jobRepository = new InMemJobRepository();
-        DefaultJobService jobService = new DefaultJobService(
+        JobService jobService = new JobService(
                 jobRepository,
                 asList(jobRunnable),
                 mock(GaugeService.class),
@@ -85,7 +86,7 @@ public class DefaultJobServiceTest {
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         InMemJobRepository jobRepository = new InMemJobRepository();
-        DefaultJobService jobService = new DefaultJobService(
+        JobService jobService = new JobService(
                 jobRepository,
                 asList(jobRunnable),
                 mock(GaugeService.class),
@@ -109,7 +110,7 @@ public class DefaultJobServiceTest {
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("FOO"));
         URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
         jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", clock));
-        DefaultJobService jobService = new DefaultJobService(
+        JobService jobService = new JobService(
                 jobRepository,
                 asList(jobRunnable),
                 mock(GaugeService.class),
@@ -130,7 +131,7 @@ public class DefaultJobServiceTest {
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
 
         GaugeService mock = mock(GaugeService.class);
-        DefaultJobService jobService = new DefaultJobService(mock(JobRepository.class), asList(jobRunnable), mock, executorService, applicationEventPublisher);
+        JobService jobService = new JobService(mock(JobRepository.class), asList(jobRunnable), mock, executorService, applicationEventPublisher);
         // when:
         jobService.startAsyncJob("BAR");
         // then:
