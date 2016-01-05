@@ -9,39 +9,28 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Status</h3>
+                        <h3 class="panel-title">Application</h3>
                     </div>
                     <div class="panel-body">
                         <dl class="dl-horizontal">
                             <dt>Name:</dt>
-                            <dd th:text="${name}">Name</dd>
+                            <dd th:text="${appName}">Name</dd>
+                            <dt>Description:</dt>
+                            <dd th:text="${appDescription}">Name</dd>
+                            <dt>Group:</dt>
+                            <dd th:text="${appGroup}"></dd>
+                            <dt>Environment:</dt>
+                            <dd th:text="${appEnvironment}"></dd>
                             <dt>Status:</dt>
-                            <dd th:text="${status}">Status</dd>
+                            <dd th:text="${appStatus}">Status</dd>
                         </dl>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Version</h3>
-                    </div>
-                    <div class="panel-body">
-                        <dl class="dl-horizontal">
-                            <dt>Version:</dt>
-                            <dd th:text="${version}">Version</dd>
-                            <dt>Git Commit:</dt>
-                            <dd th:text="${commit}">Git commit</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">System</h3>
@@ -49,16 +38,34 @@
                     <div class="panel-body">
                         <dl class="dl-horizontal">
                             <dt>Host:</dt>
-                            <dd th:text="${hostname}">Hostname</dd>
+                            <dd th:text="${systemHostname}">Hostname</dd>
+                            <dt>Port:</dt>
+                            <dd th:text="${systemPort}">Port</dd>
                             <dt>System Time:</dt>
-                            <dd th:text="${systemtime}">Systemtime</dd>
+                            <dd th:text="${systemTime}">Systemtime</dd>
                             <dt>System Started</dt>
-                            <dd th:text="${systemstarttime}">Systemstarttime</dd>
+                            <dd th:text="${systemStartTime}">Systemstarttime</dd>
                         </dl>
                     </div>
                 </div>
             </div>
-
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Version</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                            <dt>Version:</dt>
+                            <dd th:text="${appVersion}">Version</dd>
+                            <dt>Git Commit:</dt>
+                            <dd th:text="${appCommit}">Git commit</dd>
+                            <dt>VCS:</dt>
+                            <dd th:text="${appVcsUrl}"></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -69,7 +76,7 @@
                     <div class="panel-body">
 
                         <div class="list-group">
-                            <div class="list-group-item" th:each="statusDetail : ${statusDetails}">
+                            <div class="list-group-item" th:each="statusDetail : ${appStatusDetails}">
                                 <h4 class="list-group-item-heading" th:text="${statusDetail.key}">List group item heading</h4>
                                 <dl class="list-group-item-text dl-horizontal">
                                     <dt>Status:</dt>

@@ -7,17 +7,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class VcsConfiguration {
+public class VersionInfoConfiguration {
 
     @Value("${info.build.version:unknown}")
     private String version;
     @Value(("${info.build.commit:unknown}"))
     private String commit;
+    @Value(("${info.build.url-template:}"))
+    private String vcsUrlTemplate;
 
     @Bean
     @ConditionalOnMissingBean(VersionInfo.class)
     public VersionInfo versionInfo() {
-        return VersionInfo.versionInfo(version, commit);
+        return VersionInfo.versionInfo(version, commit, vcsUrlTemplate);
     }
 
 }

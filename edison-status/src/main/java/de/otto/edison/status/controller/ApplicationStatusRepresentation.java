@@ -28,20 +28,31 @@ final class ApplicationStatusRepresentation {
         return new ApplicationStatusRepresentation(status);
     }
 
+    public Map<String, ?> getSystem() {
+        return new LinkedHashMap<String, Object>() {{
+            put("hostname", applicationStatus.getSystemInfo().getHostName());
+            put("port", applicationStatus.getSystemInfo().getPort());
+            put("systemTime", new Date());
+            put("systemStartTime", SYSTEM_START_TIME);
+        }};
+
+    }
+
     public Map<String, ?> getApplication() {
         return new LinkedHashMap<String, Object>() {{
-            put("status", applicationStatus.getStatus().name());
-            put("name", applicationStatus.getName());
-            put("hostname", applicationStatus.getHostName());
-            put("systemtime", new Date());
-            put("systemstarttime", SYSTEM_START_TIME);
-            put("commit", applicationStatus.getVersionInfo().getCommit());
+            put("name", applicationStatus.getApplicationInfo().getName());
+            put("description", applicationStatus.getApplicationInfo().getDescription());
+            put("group", applicationStatus.getApplicationInfo().getGroup());
+            put("environment", applicationStatus.getApplicationInfo().getEnvironment());
             put("version", applicationStatus.getVersionInfo().getVersion());
-            put("statusDetails", statusDetailsRepresentationOf(applicationStatus));
+            put("commit", applicationStatus.getVersionInfo().getCommit());
+            put("vcs-url", applicationStatus.getVersionInfo().getVcsUrl());
+            put("status", applicationStatus.getStatus().name());
+            put("statusDetails", statusDetailsOf(applicationStatus));
         }};
     }
 
-    private Map<String, ?> statusDetailsRepresentationOf(final ApplicationStatus applicationStatus) {
+    private Map<String, ?> statusDetailsOf(final ApplicationStatus applicationStatus) {
         final Map<String, Object> map = new LinkedHashMap<>();
         for (StatusDetail entry : applicationStatus.getStatusDetails()) {
             map.put(toCamelCase(entry.getName()), new LinkedHashMap<String, String>() {{

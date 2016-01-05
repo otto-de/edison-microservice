@@ -1,5 +1,7 @@
 package de.otto.edison.status.configuration;
 
+import de.otto.edison.status.domain.ApplicationInfo;
+import de.otto.edison.status.domain.SystemInfo;
 import de.otto.edison.status.domain.VersionInfo;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import de.otto.edison.status.indicator.CachedApplicationStatusAggregator;
@@ -20,38 +22,17 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 
 @Configuration
-@EnableScheduling
-public class StatusConfiguration {
+public class StatusAggregatorConfiguration {
 
     @Autowired(required = false)
     private List<StatusDetailIndicator> statusDetailIndicators = emptyList();
 
-    @Autowired
-    private VersionInfo versionInfo;
-
-    @Value("${spring.application.name}")
-    private String applicationName;
-
     @Bean
     @ConditionalOnMissingBean(ApplicationStatusAggregator.class)
-    public ApplicationStatusAggregator applicationStatusAggregator() {
-        return new CachedApplicationStatusAggregator(applicationName, versionInfo, statusDetailIndicators);
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "edison.status.scheduler.cron")
-    public Scheduler cronScheduler() {
-        return new CronScheduler(
-                applicationStatusAggregator()
-        );
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(Scheduler.class)
-    public Scheduler fixedDelayScheduler() {
-        return new EveryTenSecondsScheduler(
-                applicationStatusAggregator()
-        );
+    public ApplicationStatusAggregator applicationStatusAggregator(final ApplicationInfo applicationInfo,
+                                                                   final VersionInfo versionInfo,
+                                                                   final SystemInfo systemInfo) {
+        return new CachedApplicationStatusAggregator(applicationInfo, systemInfo, versionInfo, statusDetailIndicators);
     }
 
 }

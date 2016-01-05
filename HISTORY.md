@@ -1,5 +1,9 @@
 # Release History
 
+## Release 0.47.0
+* Added some more information to /internal/status 
+* Fixed the format of the status JSON
+
 ## Release 0.46.2
 * Removed StateChangeEvent.State.CREATE, replaced it by START
 * Renamed State.STILL_ALIVE to KEEP_ALIVE

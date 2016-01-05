@@ -1,9 +1,7 @@
 package de.otto.edison.status.indicator;
 
 
-import de.otto.edison.status.domain.Status;
-import de.otto.edison.status.domain.StatusDetail;
-import de.otto.edison.status.domain.VersionInfo;
+import de.otto.edison.status.domain.*;
 import org.testng.annotations.Test;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
@@ -29,7 +27,10 @@ public class CachedApplicationStatusAggregatorTest {
         // given
         final StatusDetailIndicator mockIndicator = someStatusDetailIndicator(OK_DETAIL_ONE);
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                "Test", mock(VersionInfo.class), singletonList(mockIndicator)
+                mock(ApplicationInfo.class),
+                mock(SystemInfo.class),
+                mock(VersionInfo.class),
+                singletonList(mockIndicator)
         );
         statusAggregator.update();
         // when
@@ -44,7 +45,8 @@ public class CachedApplicationStatusAggregatorTest {
     public void shouldAggregateStatusDetails() throws Exception {
         // given
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                "Test",
+                mock(ApplicationInfo.class),
+                mock(SystemInfo.class),
                 mock(VersionInfo.class),
                 asList(
                         someStatusDetailIndicator(OK_DETAIL_ONE),
@@ -64,7 +66,8 @@ public class CachedApplicationStatusAggregatorTest {
     public void shouldAggregateCompositeStatusDetails() throws Exception {
         // given
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                "Test",
+                mock(ApplicationInfo.class),
+                mock(SystemInfo.class),
                 mock(VersionInfo.class),
                 asList(
                         someCompositeStatusDetailIndicator(OK_DETAIL_ONE, WARNING_DETAIL),

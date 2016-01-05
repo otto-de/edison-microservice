@@ -1,8 +1,6 @@
 package de.otto.edison.status.indicator;
 
-import de.otto.edison.status.domain.ApplicationStatus;
-import de.otto.edison.status.domain.StatusDetail;
-import de.otto.edison.status.domain.VersionInfo;
+import de.otto.edison.status.domain.*;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -22,19 +20,20 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
 
     private volatile ApplicationStatus cachedStatus;
 
-    private final String applicationName;
+    private final ApplicationInfo applicationInfo;
+    private final SystemInfo systemInfo;
     private final VersionInfo versionInfo;
     private final List<StatusDetailIndicator> indicators;
-    private final String hostName;
 
-    public CachedApplicationStatusAggregator(final String applicationName,
+    public CachedApplicationStatusAggregator(final ApplicationInfo applicationInfo,
+                                             final SystemInfo systemInfo,
                                              final VersionInfo versionInfo,
                                              final List<StatusDetailIndicator> indicators) {
-        this.applicationName = applicationName;
+        this.applicationInfo = applicationInfo;
+        this.systemInfo = systemInfo;
         this.versionInfo = versionInfo;
         this.indicators = unmodifiableList(new ArrayList<>(indicators));
-        this.hostName = hostName();
-        this.cachedStatus = applicationStatus(applicationName, hostName, versionInfo, Collections.<StatusDetail>emptyList());
+        this.cachedStatus = applicationStatus(applicationInfo, systemInfo, versionInfo, Collections.<StatusDetail>emptyList());
     }
 
     @Override
@@ -52,7 +51,7 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
                 .stream()
                 .flatMap(i->i.statusDetails().stream())
                 .collect(toList());
-        return applicationStatus(applicationName, hostName, versionInfo, allDetails);
+        return applicationStatus(applicationInfo, systemInfo, versionInfo, allDetails);
     }
 
     private String hostName() {

@@ -1,6 +1,7 @@
 package de.otto.edison.status.controller;
 
 import de.otto.edison.status.domain.ApplicationStatus;
+import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -50,22 +52,27 @@ public class StatusController {
             produces = "text/html",
             method = GET
     )
-    public ModelAndView getStatusAsHtml(final HttpServletRequest request) {
+    public ModelAndView getStatusAsHtml() {
         final ApplicationStatus applicationStatus = aggregator.aggregatedStatus();
-        return new ModelAndView("status") {{
-            addObject("status", applicationStatus.getStatus().name());
-            addObject("name", applicationStatus.getName());
-            addObject("hostname", applicationStatus.getHostName());
-            addObject("systemtime", now().format(ofLocalizedDateTime(LONG)));
-            addObject("systemstarttime", SYSTEM_START_TIME);
-            addObject("version", applicationStatus.getVersionInfo().getVersion());
-            addObject("commit", applicationStatus.getVersionInfo().getCommit());
-            addObject("statusDetails", statusDetails(applicationStatus));
-        }};
+        return new ModelAndView("status", new LinkedHashMap<String, Object>() {{
+                put("appName", applicationStatus.getApplicationInfo().getName());
+                put("appDescription", applicationStatus.getApplicationInfo().getDescription());
+                put("appGroup", applicationStatus.getApplicationInfo().getGroup());
+                put("appEnvironment", applicationStatus.getApplicationInfo().getEnvironment());
+                put("appVersion", applicationStatus.getVersionInfo().getVersion());
+                put("appCommit", applicationStatus.getVersionInfo().getCommit());
+                put("appVcsUrl", applicationStatus.getVersionInfo().getVcsUrl());
+                put("appStatus", applicationStatus.getStatus().name());
+                put("appStatusDetails", statusDetails(applicationStatus.getStatusDetails()));
+                put("systemHostname", applicationStatus.getSystemInfo().getHostName());
+                put("systemPort", applicationStatus.getSystemInfo().getPort());
+                put("systemTime", now().format(ofLocalizedDateTime(LONG)));
+                put("systemStartTime", SYSTEM_START_TIME);
+        }});
     }
 
-    private Collection<Map<String, ?>> statusDetails(ApplicationStatus applicationStatus) {
-        return applicationStatus.getStatusDetails().stream()
+    private Collection<Map<String, ?>> statusDetails(final List<StatusDetail> statusDetails) {
+        return statusDetails.stream()
                 .map(detail ->
                             new LinkedHashMap<String, Object>() {{
                                 put("key", detail.getName());

@@ -1,13 +1,15 @@
 package de.otto.edison.status.indicator;
 
 
-import de.otto.edison.status.domain.ApplicationStatus;
-import de.otto.edison.status.domain.VersionInfo;
+import de.otto.edison.status.domain.*;
 import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
 import de.otto.edison.status.scheduler.Scheduler;
 import org.testng.annotations.Test;
 
+import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
+import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -16,8 +18,8 @@ import static org.mockito.Mockito.when;
 @Test
 public class EveryTenSecondsSchedulerTest {
 
-    public static final ApplicationStatus SOME_STATUS = ApplicationStatus.applicationStatus("someName", "someHost", VersionInfo.versionInfo("someVersion", "someCommit"), emptyList());
-    public static final ApplicationStatus SOME_OTHER_STATUS = ApplicationStatus.applicationStatus("someOtherName", "someHost", VersionInfo.versionInfo("someVersion", "someCommit"), emptyList());
+    public static final ApplicationStatus SOME_STATUS = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), singletonList(statusDetail("test", Status.OK, "everything is fine")));
+    public static final ApplicationStatus SOME_OTHER_STATUS = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), singletonList(statusDetail("test", Status.ERROR, "some error")));
 
     @Test
     public void shouldDelegateStatusAggregation() throws Exception {

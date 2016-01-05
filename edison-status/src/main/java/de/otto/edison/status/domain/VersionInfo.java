@@ -10,14 +10,16 @@ public class VersionInfo {
 
     private final String version;
     private final String commit;
+    private final String vcsUrl;
 
-    private VersionInfo(String version, String commit) {
+    private VersionInfo(final String version, final String commit, final String vcsUrlTemplate) {
         this.version = version;
         this.commit = commit;
+        this.vcsUrl = vcsUrlTemplate.isEmpty() ? "" : vcsUrlTemplate.replace("{commit}", commit);
     }
 
-    public static VersionInfo versionInfo(final String version, final String commit) {
-        return new VersionInfo(version, commit);
+    public static VersionInfo versionInfo(final String version, final String commit, final String vcsUrlTemplate) {
+        return new VersionInfo(version, commit, vcsUrlTemplate);
     }
 
     public String getCommit() {
@@ -28,11 +30,16 @@ public class VersionInfo {
         return version;
     }
 
+    public String getVcsUrl() {
+        return vcsUrl;
+    }
+
     @Override
     public String toString() {
         return "VersionInfo{" +
                 "commit='" + commit + '\'' +
                 ", version='" + version + '\'' +
+                ", vcsUrl='" + vcsUrl + '\'' +
                 '}';
     }
 }
