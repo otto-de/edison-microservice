@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.47.1
+* Fixed bug in navigation: broken path to bootstrap css
+
 ## Release 0.47.0
 * Added some more information to /internal/status 
 * Fixed the format of the status JSON
