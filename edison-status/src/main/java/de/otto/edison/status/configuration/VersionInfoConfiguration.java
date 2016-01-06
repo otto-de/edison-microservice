@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class VersionInfoConfiguration {
 
-    @Value("${info.build.version:unknown}")
+    @Value("${edison.status.vcs.version:unknown}")
     private String version;
-    @Value(("${info.build.commit:unknown}"))
+    @Value(("${edison.status.vcs.commit:unknown}"))
     private String commit;
-    @Value(("${info.build.url-template:}"))
+    @Value(("${edison.status.vcs.url-template:}"))
     private String vcsUrlTemplate;
 
     @Bean

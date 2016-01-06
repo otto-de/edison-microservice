@@ -24,19 +24,22 @@ Required:
 * spring.application.name: The default Spring Boot property containing the name of the service.
 
 Optional VCS information about the deployed application:
-* info.build.version: The version number (something like 1.5.2)
-* info.build.commit: The GIT commit hash
-* info.build.url-template: the URL template used to build an URL to the VCS
+* edison.status.vcs.version: The version number (something like 1.5.2)
+* edison.status.vcs.commit: The GIT commit hash
+* edison.status.vcs.url-template: the URL template used to build an URL to the VCS
 (e.g. https://github.com/otto-de/edison-microservice/commit/{commit})
-
-Because these properties are beginning with "info.",
-this information is automatically available by accessing Spring Boot's '/info' Endpoint
 
 Optional information about the application:
 * edison.status.application.description: A human-readable short description of the application's purpose.
 * edison.status.application.group: Information about the group of services this service is belonging to.
 Example: 'order', 'user', 'campaign'
 * edison.status.application.environment: The staging environment (like develop, prelive, live) of the service.
+
+Optional information about the system:
+* server.port: The port used to access the application
+* server.hostname: The hostname of the server
+* HOSTNAME: if server.hostname is not configured, the system environment's HOSTNAME is tried. If this is not available, 
+the SystemInfoConfiguration is trying to get the hostname using InetAddress.getLocalHost().getHostName().
 
 ## Conditional Spring Beans
 
