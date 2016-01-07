@@ -16,9 +16,13 @@ public class SystemInfo {
     public final String hostname;
     public final int port;
 
-    public SystemInfo(final String hostname, final int port) {
+    private SystemInfo(final String hostname, final int port) {
         this.hostname = hostname;
         this.port = port;
+    }
+
+    public static SystemInfo systemInfo(final String hostname, final int port) {
+        return new SystemInfo(hostname, port);
     }
 
     public String getTime() {

@@ -15,7 +15,7 @@ import static java.util.Collections.emptyList;
  */
 @Beta
 public class About {
-    private static final TeamInfo UNKNOWN_TEAM = new TeamInfo("unknown", "not yet configured", "not yet configured");
+    private static final TeamInfo UNKNOWN_TEAM = TeamInfo.teamInfo("unknown", "not yet configured", "not yet configured");
 
     public final ApplicationInfo application;
     public final VersionInfo vcs;

@@ -17,11 +17,17 @@ public final class TeamInfo {
     /** A business contact like, for example, a phone number or mail address. */
     public final String businessContact;
 
-    public TeamInfo(final String name,
-                    final String technicalContact,
-                    final String businessContact) {
+    private TeamInfo(final String name,
+                     final String technicalContact,
+                     final String businessContact) {
         this.name = name;
         this.technicalContact = technicalContact;
         this.businessContact = businessContact;
+    }
+
+    public static TeamInfo teamInfo(final String name,
+                                    final String technicalContact,
+                                    final String businessContact) {
+        return new TeamInfo(name, technicalContact, businessContact);
     }
 }

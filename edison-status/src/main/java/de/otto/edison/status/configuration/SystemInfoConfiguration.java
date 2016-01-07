@@ -32,7 +32,7 @@ public class SystemInfoConfiguration {
     @Bean
     @ConditionalOnMissingBean(SystemInfo.class)
     public SystemInfo systemInfo() {
-        return new SystemInfo(hostname(), port);
+        return SystemInfo.systemInfo(hostname(), port);
     }
 
     private String hostname() {
