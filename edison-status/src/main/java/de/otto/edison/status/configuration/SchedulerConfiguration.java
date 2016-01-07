@@ -11,6 +11,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * Configuration of (conditional) schedulers used to update cached ApplicationStatus using
+ * {@link ApplicationStatusAggregator#update()}.
+ */
 @Configuration
 @EnableScheduling
 public class SchedulerConfiguration {
@@ -18,6 +22,13 @@ public class SchedulerConfiguration {
     @Autowired
     private ApplicationStatusAggregator aggregator;
 
+    /**
+     * Cron scheduler that updating the status using a cron expression.
+     *
+     * This is used if edison.status.scheduler.cron is configured.
+     *
+     * @return CronScheduler
+     */
     @Bean
     @ConditionalOnProperty(name = "edison.status.scheduler.cron")
     public Scheduler cronScheduler() {
@@ -26,6 +37,13 @@ public class SchedulerConfiguration {
         );
     }
 
+    /**
+     * Scheduler that is updating the status every ten seconds.
+     *
+     * This is used by default, if no other scheduler is configured.
+     *
+     * @return Scheduler
+     */
     @Bean
     @ConditionalOnMissingBean(Scheduler.class)
     public Scheduler fixedDelayScheduler() {

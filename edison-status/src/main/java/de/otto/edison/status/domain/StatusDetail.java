@@ -11,6 +11,16 @@ import static de.otto.edison.status.domain.Status.WARNING;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
+/**
+ * The status of a job, component, repository or other part of the application.
+ *
+ * StatusDetails are {@link de.otto.edison.status.indicator.ApplicationStatusAggregator aggreagated}
+ * to the overall status of the application. This information is exposed by the
+ * {@link de.otto.edison.status.controller.StatusController} via REST.
+ *
+ * In order to accounce the current status of some part of the application,
+ * {@link de.otto.edison.status.indicator.StatusDetailIndicator} can be implemented.
+ */
 @Immutable
 public class StatusDetail {
 
@@ -42,42 +52,96 @@ public class StatusDetail {
         return new StatusDetail(name, status, message, additionalAttributes);
     }
 
+    /**
+     * Create a copy of this StatusDetail, updates the message, changes the status to OK,
+     * and return the new StatusDetail.
+     *
+     * @param message the new message
+     * @return StatusDetail
+     */
     public StatusDetail toOk(final String message) {
         return statusDetail(name, OK, message, details);
     }
 
+    /**
+     * Create a copy of this StatusDetail, updates the message, changes the status to WARNING,
+     * and return the new StatusDetail.
+     *
+     * @param message the new message
+     * @return StatusDetail
+     */
     public StatusDetail toWarning(final String message) {
         return statusDetail(name, WARNING, message, details);
     }
 
+    /**
+     * Create a copy of this StatusDetail, updates the message, changes the status to ERROR,
+     * and return the new StatusDetail.
+     *
+     * @param message the new message
+     * @return StatusDetail
+     */
     public StatusDetail toError(final String message) {
         return statusDetail(name, ERROR, message, details);
     }
 
-    public StatusDetail withDetail(String key, String value) {
-        LinkedHashMap<String, String> newDetails = new LinkedHashMap<>(details);
+    /**
+     * Create a copy of this StatusDetail, add a detail and return the new StatusDetail.
+     *
+     * @param key the key of the additional detail
+     * @param value the value of the additional detail
+     * @return StatusDetail
+     */
+    public StatusDetail withDetail(final String key, final String value) {
+        final LinkedHashMap<String, String> newDetails = new LinkedHashMap<>(details);
         newDetails.put(key, value);
         return statusDetail(name,status,message, newDetails);
     }
 
-    public StatusDetail withoutDetail(String key) {
-        LinkedHashMap<String, String> newDetails = new LinkedHashMap<>(details);
+    /**
+     * Create a copy of this StatusDetail, remove a detail and return the new StatusDetail.
+     *
+     * @param key the key of the additional detail
+     * @return StatusDetail
+     */
+    public StatusDetail withoutDetail(final String key) {
+        final LinkedHashMap<String, String> newDetails = new LinkedHashMap<>(details);
         newDetails.remove(key);
         return statusDetail(name,status,message, newDetails);
     }
 
+    /**
+     * Short name of the status detail.
+     *
+     * @return name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Status indicating the health / availability of the job, component, ...
+     *
+     * @return Status
+     */
     public Status getStatus() {
         return status;
     }
 
+    /**
+     * A short message describing the current status.
+     *
+     * @return String
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * Additional details about the current status of the job, component, ...
+     *
+     * @return Map
+     */
     public Map<String, String> getDetails() {
         return details;
     }

@@ -6,6 +6,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration of the information about this application.
+ *
+ * This is used for /internal/status and /internal/about.
+ */
 @Configuration
 public class ApplicationInfoConfiguration {
 

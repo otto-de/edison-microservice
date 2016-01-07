@@ -1,16 +1,13 @@
 package de.otto.edison.status.configuration;
 
-import de.otto.edison.status.domain.ApplicationInfo;
 import de.otto.edison.status.domain.SystemInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Objects;
 
 @Configuration
 public class SystemInfoConfiguration {
@@ -35,7 +32,7 @@ public class SystemInfoConfiguration {
     @Bean
     @ConditionalOnMissingBean(SystemInfo.class)
     public SystemInfo systemInfo() {
-        return SystemInfo.systemInfo(hostname(), port);
+        return new SystemInfo(hostname(), port);
     }
 
     private String hostname() {

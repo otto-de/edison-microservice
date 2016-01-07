@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -54,21 +53,7 @@ public class StatusController {
     )
     public ModelAndView getStatusAsHtml() {
         final ApplicationStatus applicationStatus = aggregator.aggregatedStatus();
-        return new ModelAndView("status", new LinkedHashMap<String, Object>() {{
-                put("appName", applicationStatus.getApplicationInfo().getName());
-                put("appDescription", applicationStatus.getApplicationInfo().getDescription());
-                put("appGroup", applicationStatus.getApplicationInfo().getGroup());
-                put("appEnvironment", applicationStatus.getApplicationInfo().getEnvironment());
-                put("appVersion", applicationStatus.getVersionInfo().getVersion());
-                put("appCommit", applicationStatus.getVersionInfo().getCommit());
-                put("appVcsUrl", applicationStatus.getVersionInfo().getVcsUrl());
-                put("appStatus", applicationStatus.getStatus().name());
-                put("appStatusDetails", statusDetails(applicationStatus.getStatusDetails()));
-                put("systemHostname", applicationStatus.getSystemInfo().getHostName());
-                put("systemPort", applicationStatus.getSystemInfo().getPort());
-                put("systemTime", now().format(ofLocalizedDateTime(LONG)));
-                put("systemStartTime", SYSTEM_START_TIME);
-        }});
+        return new ModelAndView("status", "status", aggregator.aggregatedStatus());
     }
 
     private Collection<Map<String, ?>> statusDetails(final List<StatusDetail> statusDetails) {

@@ -17,15 +17,11 @@
                     <div class="panel-body">
                         <dl class="dl-horizontal">
                             <dt>Name:</dt>
-                            <dd th:text="${appName}">Name</dd>
-                            <dt>Description:</dt>
-                            <dd th:text="${appDescription}">Name</dd>
-                            <dt>Group:</dt>
-                            <dd th:text="${appGroup}"></dd>
-                            <dt>Environment:</dt>
-                            <dd th:text="${appEnvironment}"></dd>
+                            <dd th:text="${status.application.name}">Name</dd>
+                            <dt>Version:</dt>
+                            <dd th:text="${status.vcs.version}">Version</dd>
                             <dt>Status:</dt>
-                            <dd th:text="${appStatus}">Status</dd>
+                            <dd th:text="${status.status}">Status</dd>
                         </dl>
                     </div>
                 </div>
@@ -38,32 +34,11 @@
                     <div class="panel-body">
                         <dl class="dl-horizontal">
                             <dt>Host:</dt>
-                            <dd th:text="${systemHostname}">Hostname</dd>
+                            <dd th:text="${status.system.hostname}">Hostname</dd>
                             <dt>Port:</dt>
-                            <dd th:text="${systemPort}">Port</dd>
+                            <dd th:text="${status.system.port}">Port</dd>
                             <dt>System Time:</dt>
-                            <dd th:text="${systemTime}">Systemtime</dd>
-                            <dt>System Started</dt>
-                            <dd th:text="${systemStartTime}">Systemstarttime</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Version</h3>
-                    </div>
-                    <div class="panel-body">
-                        <dl class="dl-horizontal">
-                            <dt>Version:</dt>
-                            <dd th:text="${appVersion}">Version</dd>
-                            <dt>Git Commit:</dt>
-                            <dd th:text="${appCommit}">Git commit</dd>
-                            <dt>VCS:</dt>
-                            <dd th:text="${appVcsUrl}"></dd>
+                            <dd th:text="${status.system.time}">Systemtime</dd>
                         </dl>
                     </div>
                 </div>
@@ -78,16 +53,16 @@
                     <div class="panel-body">
 
                         <div class="list-group">
-                            <div class="list-group-item" th:each="statusDetail : ${appStatusDetails}">
-                                <h4 class="list-group-item-heading" th:text="${statusDetail.key}">List group item heading</h4>
+                            <div class="list-group-item" th:each="statusDetail : ${status.statusDetails}">
+                                <h4 class="list-group-item-heading" th:text="${statusDetail.name}">List group item heading</h4>
                                 <dl class="list-group-item-text dl-horizontal">
                                     <dt>Status:</dt>
                                     <dd th:text="${statusDetail.status}"></dd>
                                     <dt>Message:</dt>
                                     <dd th:text="${statusDetail.message}"></dd>
-                                    <span th:each="key : ${statusDetail.additionalDetails.keySet()}">
+                                    <span th:each="key : ${statusDetail.details.keySet()}">
                                         <dt th:text="${key} + ':'">Message:</dt>
-                                        <dd th:text="${statusDetail.additionalDetails.get(key)}"></dd>
+                                        <dd th:text="${statusDetail.details.get(key)}"></dd>
                                     </span>
                                 </dl>
                             </div>

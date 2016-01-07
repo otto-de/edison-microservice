@@ -1,6 +1,5 @@
 package de.otto.edison.status.controller;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -14,7 +13,6 @@ import net.jcip.annotations.Immutable;
 @Immutable
 final class ApplicationStatusRepresentation {
 
-    private static final Date SYSTEM_START_TIME = new Date();
     private static final Pattern STATUS_DETAIL_JSON_SEPARATOR_PATTERN = Pattern.compile("\\s(.)");
 
 
@@ -30,31 +28,25 @@ final class ApplicationStatusRepresentation {
 
     public Map<String, ?> getSystem() {
         return new LinkedHashMap<String, Object>() {{
-            put("hostname", applicationStatus.getSystemInfo().getHostName());
-            put("port", applicationStatus.getSystemInfo().getPort());
-            put("systemTime", new Date());
-            put("systemStartTime", SYSTEM_START_TIME);
+            put("hostname", applicationStatus.system.hostname);
+            put("port", applicationStatus.system.port);
+            put("systemTime", applicationStatus.system.getTime());
         }};
 
     }
 
     public Map<String, ?> getApplication() {
         return new LinkedHashMap<String, Object>() {{
-            put("name", applicationStatus.getApplicationInfo().getName());
-            put("description", applicationStatus.getApplicationInfo().getDescription());
-            put("group", applicationStatus.getApplicationInfo().getGroup());
-            put("environment", applicationStatus.getApplicationInfo().getEnvironment());
-            put("version", applicationStatus.getVersionInfo().getVersion());
-            put("commit", applicationStatus.getVersionInfo().getCommit());
-            put("vcs-url", applicationStatus.getVersionInfo().getVcsUrl());
-            put("status", applicationStatus.getStatus().name());
+            put("name", applicationStatus.application.name);
+            put("version", applicationStatus.vcs.version);
+            put("status", applicationStatus.status.name());
             put("statusDetails", statusDetailsOf(applicationStatus));
         }};
     }
 
     private Map<String, ?> statusDetailsOf(final ApplicationStatus applicationStatus) {
         final Map<String, Object> map = new LinkedHashMap<>();
-        for (StatusDetail entry : applicationStatus.getStatusDetails()) {
+        for (StatusDetail entry : applicationStatus.statusDetails) {
             map.put(toCamelCase(entry.getName()), new LinkedHashMap<String, String>() {{
                 put("status", entry.getStatus().name());
                 put("message", entry.getMessage());

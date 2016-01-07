@@ -2,17 +2,17 @@ package de.otto.edison.status.indicator;
 
 import de.otto.edison.status.domain.*;
 
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
-import static java.net.InetAddress.getLocalHost;
-import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 /**
+ * A caching ApplicationStatusAggregator.
+ *
  * @author Guido Steinacker
  * @since 13.02.15
  */
@@ -32,7 +32,7 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
         this.applicationInfo = applicationInfo;
         this.systemInfo = systemInfo;
         this.versionInfo = versionInfo;
-        this.indicators = unmodifiableList(new ArrayList<>(indicators));
+        this.indicators = indicators;
         this.cachedStatus = applicationStatus(applicationInfo, systemInfo, versionInfo, Collections.<StatusDetail>emptyList());
     }
 
@@ -43,28 +43,11 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
 
     @Override
     public void update() {
-        this.cachedStatus = calcApplicationStatus();
-    }
-
-    private ApplicationStatus calcApplicationStatus() {
         final List<StatusDetail> allDetails = indicators
                 .stream()
                 .flatMap(i->i.statusDetails().stream())
                 .collect(toList());
-        return applicationStatus(applicationInfo, systemInfo, versionInfo, allDetails);
-    }
-
-    private String hostName() {
-        try {
-            final String envHost = System.getenv("HOST");
-            if (envHost != null) {
-                return envHost;
-            } else {
-                return getLocalHost().getHostName();
-            }
-        } catch (final UnknownHostException e) {
-            return "UNKOWN";
-        }
+        this.cachedStatus = applicationStatus(applicationInfo, systemInfo, versionInfo, allDetails);
     }
 
 }

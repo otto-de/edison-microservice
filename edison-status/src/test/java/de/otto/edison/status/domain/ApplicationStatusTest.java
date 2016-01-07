@@ -2,15 +2,11 @@ package de.otto.edison.status.domain;
 
 import org.testng.annotations.Test;
 
-import java.util.Collections;
-
-import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
-import static de.otto.edison.status.domain.VersionInfo.versionInfo;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,7 +22,7 @@ public class ApplicationStatusTest {
                 statusDetail("bar", OK, "a message"))
         );
         // then
-        assertThat(applicationStatus.getStatus(), is(OK));
+        assertThat(applicationStatus.status, is(OK));
     }
 
     @Test
@@ -37,7 +33,7 @@ public class ApplicationStatusTest {
                 statusDetail("foobar", WARNING, "another message")
         ));
         // then
-        assertThat(applicationStatus.getStatus(), is(WARNING));
+        assertThat(applicationStatus.status, is(WARNING));
     }
 
     @Test
@@ -49,7 +45,7 @@ public class ApplicationStatusTest {
                 statusDetail("foobar", WARNING, "yet another message")
         ));
         // then
-        assertThat(applicationStatus.getStatus(), is(ERROR));
+        assertThat(applicationStatus.status, is(ERROR));
     }
 
 }

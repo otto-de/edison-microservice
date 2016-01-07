@@ -60,9 +60,6 @@ public class StatusControllerAcceptanceTest {
                 assertThat(the_status_code().value(), is(200)),
                 and(
                         assertThat(the_returned_json().at("/application/version").asText(), is("unknown"))
-                ),
-                and(
-                        assertThat(the_returned_json().at("/application/commit").asText(), is("unknown"))
                 )
         );
     }

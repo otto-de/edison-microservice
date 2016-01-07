@@ -1,11 +1,19 @@
 # Edison Status
 
-Every Edison microservice should provide access to it's internal status. This library provides the following
-features to accomplish this:
+Edison Microservices are self-describing services: they expose information about the current state and about
+the application, system, responsible team and dependencies to other services. The purpose of this library is
+to expose such kind of information.
+
+The /internal/status API contains information about the application status:
 * A REST API to get the current status of the service as JSON
 * An HTML representation / status page for human beeings.
-* A simple API to expose status information (see de.otto.edison.status.indicator.StatusDetailIndicator)
+* A possibility to indicate the status of jobs, repositories or other components
+(see de.otto.edison.status.indicator.StatusDetailIndicator)
 
+The /internal/about API contains information about the application itself:
+* A REST API to get informaton about team, application and so on as JSON
+* An HTML representation of these information.
+* A possibility to add information about required services (see de.otto.edison.status.
 ## Usage
 
 The example-status shows how to use and configure the status library.

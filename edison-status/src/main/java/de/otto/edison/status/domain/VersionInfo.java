@@ -8,38 +8,17 @@ package de.otto.edison.status.domain;
  */
 public class VersionInfo {
 
-    private final String version;
-    private final String commit;
-    private final String vcsUrl;
+    public final String version;
+    public final String commit;
+    public final String url;
 
     private VersionInfo(final String version, final String commit, final String vcsUrlTemplate) {
         this.version = version;
         this.commit = commit;
-        this.vcsUrl = vcsUrlTemplate.isEmpty() ? "" : vcsUrlTemplate.replace("{commit}", commit);
+        this.url = vcsUrlTemplate.isEmpty() ? "" : vcsUrlTemplate.replace("{commit}", commit).replace("{version}", version);
     }
 
     public static VersionInfo versionInfo(final String version, final String commit, final String vcsUrlTemplate) {
         return new VersionInfo(version, commit, vcsUrlTemplate);
-    }
-
-    public String getCommit() {
-        return commit;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getVcsUrl() {
-        return vcsUrl;
-    }
-
-    @Override
-    public String toString() {
-        return "VersionInfo{" +
-                "commit='" + commit + '\'' +
-                ", version='" + version + '\'' +
-                ", vcsUrl='" + vcsUrl + '\'' +
-                '}';
     }
 }

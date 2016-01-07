@@ -2,58 +2,35 @@ package de.otto.edison.status.domain;
 
 import net.jcip.annotations.Immutable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.OffsetDateTime;
 
-import static java.util.Collections.unmodifiableList;
+import static java.time.Duration.between;
+import static java.time.OffsetDateTime.now;
+import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
 @Immutable
 public class SystemInfo {
 
-    private final String hostName;
-    private final int port;
+    private static final OffsetDateTime START_TIME = now();
 
-    private SystemInfo(final String hostName, final int port) {
-        this.hostName = hostName;
+    public final String hostname;
+    public final int port;
+
+    public SystemInfo(final String hostname, final int port) {
+        this.hostname = hostname;
         this.port = port;
     }
 
-    public static SystemInfo systemInfo(final String hostName, final int port) {
-        return new SystemInfo(hostName, port);
+    public String getTime() {
+        return now().format(ISO_DATE_TIME);
     }
 
-    public String getHostName() {
-        return hostName;
+    public String getStartTime() {
+        return START_TIME.format(ISO_DATE_TIME);
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SystemInfo that = (SystemInfo) o;
-
-        if (port != that.port) return false;
-        return !(hostName != null ? !hostName.equals(that.hostName) : that.hostName != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = hostName != null ? hostName.hashCode() : 0;
-        result = 31 * result + port;
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "SystemInfo{" +
-                "hostName='" + hostName + '\'' +
-                ", port=" + port +
-                '}';
+    public String getUpTime() {
+        final long seconds = between(START_TIME, now()).getSeconds();
+        return String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, (seconds % 60));
     }
 }

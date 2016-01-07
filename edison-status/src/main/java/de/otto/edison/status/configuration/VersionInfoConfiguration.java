@@ -6,6 +6,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration of the application's version.
+ *
+ * The following application properties are used to configure this:
+ * <ul>
+ *     <li>edison.status.vcs.version: The VCS version number. Default is 'unknown'</li>
+ *     <li>edison.status.vcs.commit: The VCS commit hash. Default is 'unknown'</li>
+ *     <li>edison.status.vcs.url-template: An URL template to create a link to VCS server. Default is ''.
+ *     The template may contain {commit} and/or {version} placeholders that are replaced by the version or commit</li>
+ * </ul>
+ */
 @Configuration
 public class VersionInfoConfiguration {
 

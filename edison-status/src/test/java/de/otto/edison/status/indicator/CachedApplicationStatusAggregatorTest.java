@@ -57,9 +57,9 @@ public class CachedApplicationStatusAggregatorTest {
         // when
         statusAggregator.aggregatedStatus();
         // then
-        assertThat(statusAggregator.aggregatedStatus().getStatus(), is(Status.ERROR));
-        assertThat(statusAggregator.aggregatedStatus().getStatusDetails().get(0), is(OK_DETAIL_ONE));
-        assertThat(statusAggregator.aggregatedStatus().getStatusDetails().get(1), is(ERROR_DETAIL));
+        assertThat(statusAggregator.aggregatedStatus().status, is(Status.ERROR));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(0), is(OK_DETAIL_ONE));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(1), is(ERROR_DETAIL));
     }
 
     @Test
@@ -78,10 +78,10 @@ public class CachedApplicationStatusAggregatorTest {
         // when
         statusAggregator.aggregatedStatus();
         // then
-        assertThat(statusAggregator.aggregatedStatus().getStatus(), is(Status.WARNING));
-        assertThat(statusAggregator.aggregatedStatus().getStatusDetails().get(0), is(OK_DETAIL_ONE));
-        assertThat(statusAggregator.aggregatedStatus().getStatusDetails().get(1), is(WARNING_DETAIL));
-        assertThat(statusAggregator.aggregatedStatus().getStatusDetails().get(2), is(OK_DETAIL_TWO));
+        assertThat(statusAggregator.aggregatedStatus().status, is(Status.WARNING));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(0), is(OK_DETAIL_ONE));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(1), is(WARNING_DETAIL));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(2), is(OK_DETAIL_TWO));
     }
 
     private StatusDetailIndicator someCompositeStatusDetailIndicator(final StatusDetail... statusDetails) {

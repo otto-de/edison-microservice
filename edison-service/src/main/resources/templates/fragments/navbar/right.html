@@ -1,37 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-
-<head th:replace="fragments/head :: head" />
-
 <body>
 
-    <div th:replace="fragments/navigation :: navigation" />
-
-    <div class="container">
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Admin Tools</h3>
-                    </div>
-                    <div class="panel-body">
-                        <ul>
-                            <li><a th:href="@{/internal/status}">Status Page</a></li>
+                <ul class="nav navbar-nav navbar-right" th:with="url=${#httpServletRequest.getRequestURI()}" th:fragment="right">
+                    <!--li th:classappend="${url.endsWith('/internal') ? 'active' : ''}"><a th:href="@{/internal}">Admin</a></li-->
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            Admin <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a th:href="@{/internal/about}">About</a></li>
+                            <li><a th:href="@{/internal/status}">Status</a></li>
                             <li><a th:href="@{/internal/jobs}">Job Overview</a></li>
                             <li><a th:href="@{/internal/jobdefinitions}">Job Definitions</a></li>
                             <li><a th:href="@{/internal/togglz}">Feature Toggles</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">System</h3>
-                    </div>
-                    <div class="panel-body">
-                        <ul>
+                            <li role="separator" class="divider"></li>
                             <li><a th:href="@{/internal/health}">health</a></li>
                             <li><a th:href="@{/internal/metrics}">metrics</a></li>
                             <li><a th:href="@{/internal/trace}">trace</a></li>
@@ -42,13 +25,8 @@
                             <li><a th:href="@{/internal/env}">env</a></li>
                             <li><a th:href="@{/internal/beans}">beans</a></li>
                         </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </li>
+                </ul>
 
-    </div> <!-- /container -->
-
-    <span th:replace="fragments/footer :: footer" />
 </body>
 </html>

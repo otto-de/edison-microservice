@@ -1,28 +1,27 @@
 package de.otto.edison.status.controller;
 
+import de.otto.edison.status.domain.ApplicationInfo;
+import de.otto.edison.status.domain.SystemInfo;
+import de.otto.edison.status.domain.VersionInfo;
+import de.otto.edison.testsupport.util.JsonMap;
+import org.testng.annotations.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static de.otto.edison.status.controller.ApplicationStatusRepresentation.statusRepresentationOf;
 import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
-import static de.otto.edison.status.domain.VersionInfo.versionInfo;
 import static de.otto.edison.testsupport.util.JsonMap.jsonMapFrom;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import de.otto.edison.status.domain.ApplicationInfo;
-import de.otto.edison.status.domain.SystemInfo;
-import de.otto.edison.status.domain.VersionInfo;
-import org.testng.annotations.Test;
-
-import de.otto.edison.testsupport.util.JsonMap;
 
 public class ApplicationStatusRepresentationTest {
 
@@ -30,15 +29,12 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithoutDetails() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                applicationStatus(applicationInfo("app", "desc", "grp", "env"), mock(SystemInfo.class), mock(VersionInfo.class), emptyList())
+                applicationStatus(applicationInfo("app", "", "", ""), mock(SystemInfo.class), mock(VersionInfo.class), emptyList())
         );
         // when
         final JsonMap jsonMap = jsonMapFrom(representation.getApplication());
         // then
         assertThat(jsonMap.getString("name"), is("app"));
-        assertThat(jsonMap.getString("description"), is("desc"));
-        assertThat(jsonMap.getString("group"), is("grp"));
-        assertThat(jsonMap.getString("environment"), is("env"));
         assertThat(jsonMap.getString("status"), is("OK"));
         assertThat(jsonMap.get("statusDetails").asMap().size(), is(0));
     }
@@ -47,21 +43,19 @@ public class ApplicationStatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithVersionInfo() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), versionInfo("1.0.0", "0815", "http://example.org/commits/{commit}"), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo("1.0.0", "0815", "http://example.org/commits/{commit}"), emptyList())
         );
         // when
         final JsonMap jsonMap = jsonMapFrom(representation.getApplication());
         // then
         assertThat(jsonMap.getString("version"), is("1.0.0"));
-        assertThat(jsonMap.getString("commit"), is("0815"));
-        assertThat(jsonMap.getString("vcs-url"), is("http://example.org/commits/0815"));
     }
 
     @Test
     public void shouldCreateStatusRepresentationWithSingleDetail() {
         // given
         final ApplicationStatusRepresentation representation = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), asList(
+                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), singletonList(
                         statusDetail("someDetail", WARNING, "detailed warning"))
                 )
         );
