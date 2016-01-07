@@ -1,5 +1,6 @@
-# edison-microservice:edison-guava
-Support for Guava caches in Edison microservices
+# edison-microservice:edison-core
+
+Core library of edison-microservice.
 
 ## Status
 
