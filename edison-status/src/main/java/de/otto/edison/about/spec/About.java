@@ -4,11 +4,14 @@ import de.otto.edison.annotations.Beta;
 import de.otto.edison.status.domain.ApplicationInfo;
 import de.otto.edison.status.domain.SystemInfo;
 import de.otto.edison.status.domain.VersionInfo;
+import net.jcip.annotations.Immutable;
 
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Information about this Edison microservice, containing facts about the application, version, system, team
@@ -17,7 +20,8 @@ import static java.util.Collections.emptyList;
  * Created by guido on 06.01.16.
  */
 @Beta
-public class About {
+@Immutable
+public final class About {
     private static final TeamInfo UNKNOWN_TEAM = TeamInfo.teamInfo("unknown", "not yet configured", "not yet configured");
 
     public final ApplicationInfo application;
@@ -36,7 +40,10 @@ public class About {
         this.vcs = versionInfo;
         this.system = systemInfo;
         this.team = teamInfo.orElse(UNKNOWN_TEAM);
-        this.serviceSpecs = serviceSpecs.orElse(emptyList());
+        this.serviceSpecs = serviceSpecs.orElse(emptyList())
+                .stream()
+                .sorted(comparing(spec->spec.appId))
+                .collect(toList());
     }
 
     public static About about(final ApplicationInfo applicationInfo,

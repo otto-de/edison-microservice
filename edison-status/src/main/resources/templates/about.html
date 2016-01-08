@@ -16,6 +16,8 @@
                     </div>
                     <div class="panel-body">
                         <dl class="dl-horizontal" th:with="app=${about.application}">
+                            <dt>App ID:</dt>
+                            <dd th:text="${app.appId}">ID</dd>
                             <dt>Name:</dt>
                             <dd th:text="${app.name}">Name</dd>
                             <dt>Description:</dt>
@@ -96,17 +98,26 @@
 
                         <table class="table table-striped table-hover">
                             <tr>
-                                <th>Service</th>
-                                <th>Type</th>
+                                <th>App ID</th>
+                                <th>Name</th>
                                 <th>Url</th>
+                                <th>Type</th>
                                 <th>Requirements</th>
                             </tr>
                             <tr th:each="spec : ${about.serviceSpecs}">
+                                <td th:text="${spec.appId}">App ID</td>
                                 <td th:text="${spec.name}">Service</td>
-                                <td th:text="${spec.type}">Type</td>
                                 <td th:text="${spec.url}">Url</td>
-                                <td>
-                                    <span th:text="${spec.expectedPerformance} + ' Performance, ' + ${spec.expectedAvailability} + ' Availability'" />
+                                <td><ul>
+                                    <li>Type: <span th:text="${spec.type.type}">Type</span></li>
+                                    <li>Criticality: <span th:text="${spec.type.criticality}">Criticality</span></li>
+                                    <li>Impact: <span th:text="${spec.type.disasterImpact}">Impact</span></li>
+                                </ul>
+                                </td>
+                                <td><ul>
+                                    <li>Availability: <span th:text="${spec.expectations.availability}" /></li>
+                                    <li>Performance:  <span th:text="${spec.expectations.performance}" /></li>
+                                </ul>
                                 </td>
                             </tr>
                         </table>

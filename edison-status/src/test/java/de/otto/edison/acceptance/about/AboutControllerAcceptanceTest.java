@@ -85,7 +85,8 @@ public class AboutControllerAcceptanceTest {
         );
 
         then(
-                assertThat(the_returned_json().at("/application/name").asText(), is("test")),
+                assertThat(the_returned_json().at("/application/appId").asText(), is("/test-env/test-group/test-app")),
+                assertThat(the_returned_json().at("/application/name").asText(), is("test-app")),
                 assertThat(the_returned_json().at("/application/description").asText(), is("desc")),
                 assertThat(the_returned_json().at("/application/environment").asText(), is("test-env")),
                 assertThat(the_returned_json().at("/application/group").asText(), is("test-group"))
@@ -99,10 +100,21 @@ public class AboutControllerAcceptanceTest {
         );
 
         then(
-                assertThat(the_returned_json().at("/serviceSpecs/0/type").asText(), is("OTHER")),
-                and(
-                        assertThat(the_returned_json().at("/serviceSpecs/0/url").asText(), not(isEmptyString()))
-                )
+                assertThat(the_returned_json().at("/serviceSpecs/0/appId").asText(), is("/test/bar")),
+                assertThat(the_returned_json().at("/serviceSpecs/0/url").asText(), not(isEmptyString())),
+                assertThat(the_returned_json().at("/serviceSpecs/0/type/type").asText(), is("TEST")),
+                assertThat(the_returned_json().at("/serviceSpecs/0/type/criticality").asText(), is("MISSION_CRITICAL")),
+                assertThat(the_returned_json().at("/serviceSpecs/0/type/disasterImpact").asText(), is("test will fail")),
+                assertThat(the_returned_json().at("/serviceSpecs/0/expectations/availability").asText(), is("HIGH")),
+                assertThat(the_returned_json().at("/serviceSpecs/0/expectations/performance").asText(), is("HIGH")),
+
+                assertThat(the_returned_json().at("/serviceSpecs/1/appId").asText(), is("/test/foo")),
+                assertThat(the_returned_json().at("/serviceSpecs/1/url").asText(), not(isEmptyString())),
+                assertThat(the_returned_json().at("/serviceSpecs/1/type/type").asText(), is("not specified")),
+                assertThat(the_returned_json().at("/serviceSpecs/1/type/criticality").asText(), is("NOT_SPECIFIED")),
+                assertThat(the_returned_json().at("/serviceSpecs/1/type/disasterImpact").asText(), is("not specified")),
+                assertThat(the_returned_json().at("/serviceSpecs/1/expectations/availability").asText(), is("NOT_SPECIFIED")),
+                assertThat(the_returned_json().at("/serviceSpecs/1/expectations/performance").asText(), is("NOT_SPECIFIED"))
         );
     }
 

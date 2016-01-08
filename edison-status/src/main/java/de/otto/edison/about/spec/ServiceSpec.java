@@ -1,48 +1,64 @@
 package de.otto.edison.about.spec;
 
 import de.otto.edison.annotations.Beta;
+import net.jcip.annotations.Immutable;
+
+import static de.otto.edison.about.spec.Expectations.unspecifiedExpectations;
+import static de.otto.edison.about.spec.ServiceType.unspecifiedService;
 
 /**
  * Information about a dependency to a different service, this application is relying on.
  */
 @Beta
+@Immutable
 public class ServiceSpec {
 
+    /** The appId of the service. See {@link de.otto.edison.status.domain.ApplicationInfo#appId}. */
+    public final String appId;
     /** A human readable name of the service. */
     public final String name;
-    /** A URL that may be used to identify the service. */
+    /** A URL that is identifying the required REST API. Generally a prefix of the accessed REST resource. */
     public final String url;
     /** The type of the service dependency. */
     public final ServiceType type;
-    /** Expectations about the availability of the service. */
-    public final AvailabilityRequirement expectedAvailability;
-    /** Expectations about the performance of the service. */
-    public final PerformanceRequirement expectedPerformance;
+    /** Expectations about the required service. */
+    public final Expectations expectations;
 
-    public static ServiceSpec serviceSpec(final String name,
-                                          final ServiceType type,
-                                          final String url) {
-        return new ServiceSpec(name, type, url, AvailabilityRequirement.HIGH, PerformanceRequirement.MEDIUM);
-    }
-
-    public static ServiceSpec serviceSpec(final String name,
-                                          final ServiceType type,
+    /**
+     * Create a specification for a service that is required by this service.
+     *
+     * @param appId The appId of the service. See {@link de.otto.edison.status.domain.ApplicationInfo#appId}.
+     * @param name A human readable name of the service.
+     * @param url A URL that is identifying the required REST API. Generally a prefix of the accessed REST resource.
+     * @param type The type of the service dependency.
+     * @param expectations Expectations about the required service.
+     *
+     * @return ServiceSpec for the external service.
+     */
+    public static ServiceSpec serviceSpec(final String appId,
+                                          final String name,
                                           final String url,
-                                          final AvailabilityRequirement expectedAvailability,
-                                          final PerformanceRequirement expectedPerformance) {
-        return new ServiceSpec(name, type, url, expectedAvailability, expectedPerformance);
+                                          final ServiceType type,
+                                          final Expectations expectations) {
+        return new ServiceSpec(appId, name, url, type, expectations);
     }
 
-    private ServiceSpec(final String name,
-                        final ServiceType type,
+    public static ServiceSpec serviceSpec(final String appId,
+                                          final String name,
+                                          final String url) {
+        return new ServiceSpec(appId, name, url, unspecifiedService(), unspecifiedExpectations());
+    }
+
+    private ServiceSpec(final String appId,
+                        final String name,
                         final String url,
-                        final AvailabilityRequirement expectedAvailability,
-                        final PerformanceRequirement expectedPerformance) {
+                        final ServiceType type,
+                        final Expectations expectations) {
+        this.appId = appId;
         this.name = name;
         this.type = type;
         this.url = url;
-        this.expectedAvailability = expectedAvailability;
-        this.expectedPerformance = expectedPerformance;
+        this.expectations = expectations;
     }
 
 

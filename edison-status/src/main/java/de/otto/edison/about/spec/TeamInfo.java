@@ -1,6 +1,7 @@
 package de.otto.edison.about.spec;
 
 import de.otto.edison.annotations.Beta;
+import net.jcip.annotations.Immutable;
 
 /**
  * Information about the team that is responsible for developing and running the service.
@@ -8,6 +9,7 @@ import de.otto.edison.annotations.Beta;
  * (yes, it should always be one team beeing responsible).
  */
 @Beta
+@Immutable
 public final class TeamInfo {
 
     /** The name of the team. */

@@ -1,11 +1,14 @@
 package de.otto.edison.status.domain;
 
+import net.jcip.annotations.Immutable;
+
 /**
  * VCS information about the current version of the application.
  *
  * @author Guido Steinacker
  * @since 04.03.15
  */
+@Immutable
 public class VersionInfo {
 
     public final String version;

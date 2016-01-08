@@ -28,7 +28,7 @@ public class StatusControllerAcceptanceTest {
                 and(
                         assertThat(the_returned_json().at("/application/status").asText(), is("WARNING"))),
                 and(
-                        assertThat(the_returned_json().at("/application/name").asText(), is("test"))
+                        assertThat(the_returned_json().at("/application/name").asText(), is("test-app"))
                 )
         );
     }

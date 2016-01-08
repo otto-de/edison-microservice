@@ -1,10 +1,16 @@
 package de.otto.edison.acceptance.about;
 
-import de.otto.edison.about.spec.*;
+import de.otto.edison.about.spec.ServiceSpec;
+import de.otto.edison.about.spec.TeamInfo;
 import de.otto.edison.status.domain.ApplicationInfo;
 import de.otto.edison.status.domain.VersionInfo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import static de.otto.edison.about.spec.Criticality.MISSION_CRITICAL;
+import static de.otto.edison.about.spec.Expectations.highExpectations;
+import static de.otto.edison.about.spec.ServiceSpec.serviceSpec;
+import static de.otto.edison.about.spec.ServiceType.serviceType;
 
 /**
  * @author Guido Steinacker
@@ -25,16 +31,16 @@ public class AboutAcceptanceConfiguration {
 
     @Bean
     ApplicationInfo applicationInfo() {
-        return ApplicationInfo.applicationInfo("test", "desc", "test-group", "test-env");
+        return ApplicationInfo.applicationInfo("test-app", "desc", "test-group", "test-env");
     }
     @Bean
     ServiceSpec fooTestService() {
-        return ServiceSpec.serviceSpec("Foo Test", ServiceType.OTHER, "http://example.org/foo");
+        return serviceSpec("/test/foo", "fooTest", "http://example.org/foo");
     }
 
     @Bean
     ServiceSpec barTestService() {
-        return ServiceSpec.serviceSpec("Bar Test", ServiceType.OTHER, "http://example.org/bar", AvailabilityRequirement.LOW, PerformanceRequirement.LOW);
+        return serviceSpec("/test/bar", "BarTest", "http://example.org/bar", serviceType("TEST", MISSION_CRITICAL, "test will fail"), highExpectations());
     }
 
 
