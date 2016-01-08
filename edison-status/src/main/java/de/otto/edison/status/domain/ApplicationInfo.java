@@ -51,6 +51,31 @@ public class ApplicationInfo {
         return new ApplicationInfo(name, description, group, environment);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ApplicationInfo that = (ApplicationInfo) o;
+
+        if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (group != null ? !group.equals(that.group) : that.group != null) return false;
+        return !(environment != null ? !environment.equals(that.environment) : that.environment != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = appId != null ? appId.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (group != null ? group.hashCode() : 0);
+        result = 31 * result + (environment != null ? environment.hashCode() : 0);
+        return result;
+    }
+
     private static String buildAppId(final String environment, final String group, final String name) {
         final StringJoiner joiner = new StringJoiner("/", "/", "");
         if (!environment.isEmpty()) joiner.add(environment);

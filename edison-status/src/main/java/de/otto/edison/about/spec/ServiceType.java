@@ -40,6 +40,27 @@ public class ServiceType {
         return new ServiceType("not specified", NOT_SPECIFIED, "not specified");
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ServiceType that = (ServiceType) o;
+
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (criticality != that.criticality) return false;
+        return !(disasterImpact != null ? !disasterImpact.equals(that.disasterImpact) : that.disasterImpact != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (criticality != null ? criticality.hashCode() : 0);
+        result = 31 * result + (disasterImpact != null ? disasterImpact.hashCode() : 0);
+        return result;
+    }
+
     private ServiceType(final String type, final Criticality criticality, final String disasterImpact) {
         this.type = type;
         this.criticality = criticality;

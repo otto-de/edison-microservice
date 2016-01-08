@@ -34,4 +34,23 @@ public class Expectations {
         this.availability = availability;
         this.performance = performance;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Expectations that = (Expectations) o;
+
+        if (availability != that.availability) return false;
+        return performance == that.performance;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = availability != null ? availability.hashCode() : 0;
+        result = 31 * result + (performance != null ? performance.hashCode() : 0);
+        return result;
+    }
 }

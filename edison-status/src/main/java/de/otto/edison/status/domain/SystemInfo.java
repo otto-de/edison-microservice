@@ -37,4 +37,23 @@ public class SystemInfo {
         final long seconds = between(START_TIME, now()).getSeconds();
         return String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, (seconds % 60));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SystemInfo that = (SystemInfo) o;
+
+        if (port != that.port) return false;
+        return !(hostname != null ? !hostname.equals(that.hostname) : that.hostname != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = hostname != null ? hostname.hashCode() : 0;
+        result = 31 * result + port;
+        return result;
+    }
 }

@@ -53,4 +53,29 @@ public final class About {
                               final Optional<List<ServiceSpec>> serviceSpecs) {
         return new About(applicationInfo, versionInfo, systemInfo, teamInfo, serviceSpecs);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        About about = (About) o;
+
+        if (application != null ? !application.equals(about.application) : about.application != null) return false;
+        if (vcs != null ? !vcs.equals(about.vcs) : about.vcs != null) return false;
+        if (system != null ? !system.equals(about.system) : about.system != null) return false;
+        if (team != null ? !team.equals(about.team) : about.team != null) return false;
+        return !(serviceSpecs != null ? !serviceSpecs.equals(about.serviceSpecs) : about.serviceSpecs != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = application != null ? application.hashCode() : 0;
+        result = 31 * result + (vcs != null ? vcs.hashCode() : 0);
+        result = 31 * result + (system != null ? system.hashCode() : 0);
+        result = 31 * result + (team != null ? team.hashCode() : 0);
+        result = 31 * result + (serviceSpecs != null ? serviceSpecs.hashCode() : 0);
+        return result;
+    }
 }

@@ -32,4 +32,26 @@ public final class TeamInfo {
                                     final String businessContact) {
         return new TeamInfo(name, technicalContact, businessContact);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TeamInfo teamInfo = (TeamInfo) o;
+
+        if (name != null ? !name.equals(teamInfo.name) : teamInfo.name != null) return false;
+        if (technicalContact != null ? !technicalContact.equals(teamInfo.technicalContact) : teamInfo.technicalContact != null)
+            return false;
+        return !(businessContact != null ? !businessContact.equals(teamInfo.businessContact) : teamInfo.businessContact != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (technicalContact != null ? technicalContact.hashCode() : 0);
+        result = 31 * result + (businessContact != null ? businessContact.hashCode() : 0);
+        return result;
+    }
 }

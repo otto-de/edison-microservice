@@ -36,4 +36,28 @@ public final class ApplicationStatus {
         return new ApplicationStatus(applicationInfo, systemInfo, versionInfo, details);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ApplicationStatus that = (ApplicationStatus) o;
+
+        if (application != null ? !application.equals(that.application) : that.application != null) return false;
+        if (system != null ? !system.equals(that.system) : that.system != null) return false;
+        if (vcs != null ? !vcs.equals(that.vcs) : that.vcs != null) return false;
+        if (status != that.status) return false;
+        return !(statusDetails != null ? !statusDetails.equals(that.statusDetails) : that.statusDetails != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = application != null ? application.hashCode() : 0;
+        result = 31 * result + (system != null ? system.hashCode() : 0);
+        result = 31 * result + (vcs != null ? vcs.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (statusDetails != null ? statusDetails.hashCode() : 0);
+        return result;
+    }
 }
