@@ -77,9 +77,9 @@ public class JobConfiguration {
         final List<JobDefinition> jobDefinitions = service.getJobDefinitions();
 
         if (jobDefinitions.isEmpty()) {
-            return () -> StatusDetail.statusDetail("jobs", Status.OK, "No job definitions configured in application.");
+            return () -> StatusDetail.statusDetail("Jobs", Status.OK, "No job definitions configured in application.");
         } else {
-            return new CompositeStatusDetailIndicator("jobs",
+            return new CompositeStatusDetailIndicator("Jobs",
                     jobDefinitions
                             .stream()
                             .map(d -> new JobStatusDetailIndicator(jobRepository(), d.jobName(), d.jobType(), d.maxAge()))
