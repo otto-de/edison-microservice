@@ -28,7 +28,7 @@ public class AboutControllerAcceptanceTest {
         then(
                 assertThat(the_status_code().value(), is(200)),
                 and(
-                        assertThat(the_returned_content(), startsWith("<html"))
+                        assertThat(the_returned_content(), startsWith("<!DOCTYPE html"))
                 )
         );
     }
@@ -85,10 +85,10 @@ public class AboutControllerAcceptanceTest {
         );
 
         then(
-                assertThat(the_returned_json().at("/application/environment").asText(), is("test")),
-                and(
-                        assertThat(the_returned_json().at("/application/group").asText(), is("test"))
-                )
+                assertThat(the_returned_json().at("/application/name").asText(), is("test")),
+                assertThat(the_returned_json().at("/application/description").asText(), is("desc")),
+                assertThat(the_returned_json().at("/application/environment").asText(), is("test-env")),
+                assertThat(the_returned_json().at("/application/group").asText(), is("test-group"))
         );
     }
 

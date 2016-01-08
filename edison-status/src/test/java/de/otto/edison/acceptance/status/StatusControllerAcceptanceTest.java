@@ -28,7 +28,7 @@ public class StatusControllerAcceptanceTest {
                 and(
                         assertThat(the_returned_json().at("/application/status").asText(), is("WARNING"))),
                 and(
-                        assertThat(the_returned_json().at("/application/name").asText(), is("teststatus"))
+                        assertThat(the_returned_json().at("/application/name").asText(), is("test"))
                 )
         );
     }
@@ -59,7 +59,7 @@ public class StatusControllerAcceptanceTest {
         then(
                 assertThat(the_status_code().value(), is(200)),
                 and(
-                        assertThat(the_returned_json().at("/application/version").asText(), is("unknown"))
+                        assertThat(the_returned_json().at("/application/version").asText(), is("1.0.0"))
                 )
         );
     }

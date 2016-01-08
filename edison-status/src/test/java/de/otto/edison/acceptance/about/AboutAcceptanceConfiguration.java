@@ -1,6 +1,7 @@
 package de.otto.edison.acceptance.about;
 
 import de.otto.edison.about.spec.*;
+import de.otto.edison.status.domain.ApplicationInfo;
 import de.otto.edison.status.domain.VersionInfo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,10 @@ public class AboutAcceptanceConfiguration {
         return VersionInfo.versionInfo("1.0.0", "ab1234", "http://example.org/vcs/{version}");
     }
 
+    @Bean
+    ApplicationInfo applicationInfo() {
+        return ApplicationInfo.applicationInfo("test", "desc", "test-group", "test-env");
+    }
     @Bean
     ServiceSpec fooTestService() {
         return ServiceSpec.serviceSpec("Foo Test", ServiceType.OTHER, "http://example.org/foo");
