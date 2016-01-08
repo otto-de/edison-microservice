@@ -1,6 +1,7 @@
 package de.otto.edison.health.configuration;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
@@ -15,6 +16,7 @@ public class MetricsJvmConfiguration extends MetricsConfigurerAdapter {
     public void configureReporters(final MetricRegistry metricRegistry) {
         metricRegistry.register("gc", new GarbageCollectorMetricSet());
         metricRegistry.register("memory", new MemoryUsageGaugeSet());
+        metricRegistry.register("filedescriptors.ratio", new FileDescriptorRatioGauge());
     }
 
 }
