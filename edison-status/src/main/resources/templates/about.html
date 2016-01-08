@@ -101,12 +101,12 @@
                                 <th>Url</th>
                                 <th>Requirements</th>
                             </tr>
-                            <tr th:each="client : ${about.serviceDependencies}">
-                                <td th:text="${client.name}">Service</td>
-                                <td th:text="${client.type}">Type</td>
-                                <td th:text="${client.url}">Url</td>
+                            <tr th:each="spec : ${about.serviceSpecs}">
+                                <td th:text="${spec.name}">Service</td>
+                                <td th:text="${spec.type}">Type</td>
+                                <td th:text="${spec.url}">Url</td>
                                 <td>
-                                    <span th:text="${client.expectedPerformance} + ' Performance, ' + ${client.expectedAvailability} + ' Availability'" />
+                                    <span th:text="${spec.expectedPerformance} + ' Performance, ' + ${spec.expectedAvailability} + ' Availability'" />
                                 </td>
                             </tr>
                         </table>

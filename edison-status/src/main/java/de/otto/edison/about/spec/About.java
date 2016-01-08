@@ -1,6 +1,9 @@
-package de.otto.edison.status.domain;
+package de.otto.edison.about.spec;
 
 import de.otto.edison.annotations.Beta;
+import de.otto.edison.status.domain.ApplicationInfo;
+import de.otto.edison.status.domain.SystemInfo;
+import de.otto.edison.status.domain.VersionInfo;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,26 +24,26 @@ public class About {
     public final VersionInfo vcs;
     public final SystemInfo system;
     public final TeamInfo team;
-    public final List<ServiceDependency> serviceDependencies;
+    public final List<ServiceSpec> serviceSpecs;
 
     private About(final ApplicationInfo applicationInfo,
                   final VersionInfo versionInfo,
                   final SystemInfo systemInfo,
                   final Optional<TeamInfo> teamInfo,
-                  final Optional<List<ServiceDependency>> serviceDependencies) {
+                  final Optional<List<ServiceSpec>> serviceSpecs) {
 
         this.application = applicationInfo;
         this.vcs = versionInfo;
         this.system = systemInfo;
         this.team = teamInfo.orElse(UNKNOWN_TEAM);
-        this.serviceDependencies = serviceDependencies.orElse(emptyList());
+        this.serviceSpecs = serviceSpecs.orElse(emptyList());
     }
 
     public static About about(final ApplicationInfo applicationInfo,
                               final VersionInfo versionInfo,
                               final SystemInfo systemInfo,
                               final Optional<TeamInfo> teamInfo,
-                              final Optional<List<ServiceDependency>> serviceDependencies) {
-        return new About(applicationInfo, versionInfo, systemInfo, teamInfo, serviceDependencies);
+                              final Optional<List<ServiceSpec>> serviceSpecs) {
+        return new About(applicationInfo, versionInfo, systemInfo, teamInfo, serviceSpecs);
     }
 }

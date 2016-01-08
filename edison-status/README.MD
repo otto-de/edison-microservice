@@ -13,7 +13,8 @@ The /internal/status API contains information about the application status:
 The /internal/about API contains information about the application itself:
 * A REST API to get informaton about team, application and so on as JSON
 * An HTML representation of these information.
-* A possibility to add information about required services (see de.otto.edison.status.
+* A possibility to add information about required services (see de.otto.edison.about.spec.ServiceSpec)
+
 ## Usage
 
 The example-status shows how to use and configure the status library.

@@ -1,21 +1,19 @@
-package de.otto.edison.status.configuration;
+package de.otto.edison.about.configuration;
 
+import de.otto.edison.about.spec.About;
+import de.otto.edison.about.spec.ServiceSpec;
+import de.otto.edison.about.spec.TeamInfo;
 import de.otto.edison.annotations.Beta;
-import de.otto.edison.status.domain.About;
 import de.otto.edison.status.domain.ApplicationInfo;
 import de.otto.edison.status.domain.SystemInfo;
-import de.otto.edison.status.domain.TeamInfo;
 import de.otto.edison.status.domain.VersionInfo;
-import de.otto.edison.status.domain.ServiceDependency;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
-import java.util.Optional;
 
-import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -30,7 +28,7 @@ import static java.util.Optional.ofNullable;
  * In addition to this, information can be added by configuring the following beans:
  * <ul>
  *     <li>TeamInfo: Information about the team responsible for the application</li>
- *     <li>ServiceDependency: One or more beans providing information about other services, this service is depending on</li>
+ *     <li>List&lt;ServiceSpec&gt;: One or more beans providing information about other services, this service is depending on</li>
  * </ul>
  */
 @Beta
@@ -46,7 +44,7 @@ public class AboutConfiguration {
     @Autowired(required = false)
     private TeamInfo teamInfo;
     @Autowired(required = false)
-    private List<ServiceDependency> serviceDependencies;
+    private List<ServiceSpec> serviceSpecs;
 
     /**
      * Default configuration of SpringBean 'about' used to render /internal/about.
@@ -56,7 +54,7 @@ public class AboutConfiguration {
     @Bean
     @ConditionalOnMissingBean(About.class)
     public About about() {
-        return About.about(applicationInfo, versionInfo, systemInfo, ofNullable(teamInfo), ofNullable(serviceDependencies));
+        return About.about(applicationInfo, versionInfo, systemInfo, ofNullable(teamInfo), ofNullable(serviceSpecs));
     }
 
 }

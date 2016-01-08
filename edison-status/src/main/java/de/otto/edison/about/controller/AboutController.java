@@ -1,15 +1,12 @@
-package de.otto.edison.status.controller;
+package de.otto.edison.about.controller;
 
+import de.otto.edison.about.spec.About;
 import de.otto.edison.annotations.Beta;
-import de.otto.edison.status.domain.About;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import static java.time.ZonedDateTime.now;
-import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
-import static java.time.format.FormatStyle.LONG;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**

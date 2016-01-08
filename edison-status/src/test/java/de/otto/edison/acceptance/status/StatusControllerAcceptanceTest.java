@@ -1,10 +1,10 @@
-package de.otto.edison.acceptance;
+package de.otto.edison.acceptance.status;
 
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static de.otto.edison.acceptance.api.StatusApi.the_internal_status_is_retrieved_as;
+import static de.otto.edison.acceptance.api.StatusApi.internal_status_is_retrieved_as;
 import static de.otto.edison.acceptance.api.StatusApi.the_returned_content;
 import static de.otto.edison.acceptance.api.StatusApi.the_returned_json;
 import static de.otto.edison.acceptance.api.StatusApi.the_status_code;
@@ -20,7 +20,7 @@ public class StatusControllerAcceptanceTest {
     @Test
     public void shouldGetApplicationStatus() throws IOException {
         when(
-                the_internal_status_is_retrieved_as("application/json")
+                internal_status_is_retrieved_as("application/json")
         );
 
         then(
@@ -36,7 +36,7 @@ public class StatusControllerAcceptanceTest {
     @Test
     public void shouldGetApplicationStatusDetailsAsJson() throws IOException {
         when(
-                the_internal_status_is_retrieved_as("application/json")
+                internal_status_is_retrieved_as("application/json")
         );
 
         then(
@@ -53,7 +53,7 @@ public class StatusControllerAcceptanceTest {
     @Test
     public void shouldGetApplicationStatusWithVcsInformation() throws IOException {
         when(
-                the_internal_status_is_retrieved_as("application/json")
+                internal_status_is_retrieved_as("application/json")
         );
 
         then(
@@ -67,7 +67,7 @@ public class StatusControllerAcceptanceTest {
     @Test
     public void shouldGetApplicationStatusAsHtml() throws IOException {
         when(
-                the_internal_status_is_retrieved_as("text/html")
+                internal_status_is_retrieved_as("text/html")
         );
 
         then(

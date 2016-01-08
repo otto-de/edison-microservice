@@ -1,4 +1,4 @@
-package de.otto.edison.acceptance;
+package de.otto.edison.acceptance.status;
 
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.indicator.MutableStatusDetailIndicator;
@@ -13,7 +13,7 @@ import static de.otto.edison.status.domain.StatusDetail.statusDetail;
  * @since 13.02.15
  */
 @Configuration
-public class AcceptanceConfiguration {
+public class StatusAcceptanceConfiguration {
 
     @Bean
     StatusDetailIndicator fooIndicator() {

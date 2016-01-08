@@ -25,8 +25,13 @@ public class StatusApi extends SpringTestBase {
     private static String content = null;
     private static HttpStatus statusCode;
 
-    public static When the_internal_status_is_retrieved_as(final String mediaType) throws IOException {
+    public static When internal_status_is_retrieved_as(final String mediaType) throws IOException {
         getResource("http://localhost:8085/teststatus/internal/status", of(mediaType));
+        return When.INSTANCE;
+    }
+
+    public static When internal_about_is_retrieved_as(final String mediaType) throws IOException {
+        getResource("http://localhost:8085/teststatus/internal/about", of(mediaType));
         return When.INSTANCE;
     }
 
