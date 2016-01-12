@@ -2,6 +2,7 @@
 
 ## Release 0.47.2
 * Added convenience methods to `JobEventPublisher` to make logging more fun again
+* Updated spring-boot to version 1.3.1
 
 ## Release 0.47.1
 * Fixed bug in navigation: broken path to bootstrap css
