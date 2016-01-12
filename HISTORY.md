@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.47.2
+* Added convenience methods to `JobEventPublisher` to make logging more fun again
+
 ## Release 0.47.1
 * Fixed bug in navigation: broken path to bootstrap css
 

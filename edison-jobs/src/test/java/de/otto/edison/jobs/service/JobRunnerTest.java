@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
-import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -81,7 +80,7 @@ public class JobRunnerTest {
         jobRunner.start(jobRunnable);
 
         // then
-        verify(jobEventPublisher).message(eq(MessageEvent.Level.ERROR), contains("some error"));
+        verify(jobEventPublisher).error(contains("some error"));
     }
 
     @Test

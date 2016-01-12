@@ -1,7 +1,7 @@
 package de.otto.edison.jobs.eventbus;
 
-import de.otto.edison.jobs.eventbus.events.MessageEvent;
-import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
+import de.otto.edison.jobs.eventbus.events.MessageEvent.Level;
+import de.otto.edison.jobs.eventbus.events.StateChangeEvent.State;
 import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
 import org.springframework.context.ApplicationEventPublisher;
@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.net.URI;
 import java.util.Objects;
 
+import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.*;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 
@@ -27,12 +28,24 @@ public class JobEventPublisher {
         this.jobUri = jobUri;
     }
 
-    public void stateChanged(final StateChangeEvent.State state) {
+    public void stateChanged(final State state) {
         applicationEventPublisher.publishEvent(newStateChangeEvent(jobRunnable, jobUri, state));
     }
 
-    public void message(final MessageEvent.Level level, final String message) {
+    public void message(final Level level, final String message) {
         applicationEventPublisher.publishEvent(newMessageEvent(jobRunnable, jobUri, level, message));
+    }
+
+    public void info(final String message) {
+        message(INFO, message);
+    }
+
+    public void warn(final String message) {
+        message(WARN, message);
+    }
+
+    public void error(final String message) {
+        message(ERROR, message);
     }
 
     public static JobEventPublisher newJobEventPublisher(final ApplicationEventPublisher applicationEventPublisher,

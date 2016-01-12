@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
-import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
@@ -9,10 +8,7 @@ import java.net.URI;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.KEEP_ALIVE;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.RESTART;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.START;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -88,7 +84,7 @@ public final class JobRunner {
     }
 
     private synchronized void error(final Exception e) {
-        jobEventPublisher.message(MessageEvent.Level.ERROR, "Fatal error in job " + jobType + " (" + jobUri + ") " + e.getMessage());
+        jobEventPublisher.error("Fatal error in job " + jobType + " (" + jobUri + ") " + e.getMessage());
         LOG.error("Fatal error in job " + jobType + " (" + jobUri + ")", e.getMessage());
     }
 

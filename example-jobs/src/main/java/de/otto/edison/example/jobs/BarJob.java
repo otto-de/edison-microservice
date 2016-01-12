@@ -9,8 +9,6 @@ import java.util.Optional;
 import java.util.Random;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.retryableFixedDelayJobDefinition;
-import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.ERROR;
-import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.INFO;
 import static java.lang.Thread.sleep;
 import static java.time.Duration.ofMinutes;
 
@@ -34,7 +32,7 @@ public class BarJob implements JobRunnable {
     @Override
     public void execute(final JobEventPublisher jobEventPublisher) {
         if (new Random().nextBoolean()) {
-            jobEventPublisher.message(ERROR, "Some random error occured");
+            jobEventPublisher.error("Some random error occured");
         }
         for (int i = 0; i < 10; ++i) {
             doSomeHardWork(jobEventPublisher);
@@ -43,10 +41,10 @@ public class BarJob implements JobRunnable {
 
     private void doSomeHardWork(final JobEventPublisher jobEventPublisher) {
         try {
-            jobEventPublisher.message(INFO, "Still doing some hard work...");
+            jobEventPublisher.info("Still doing some hard work...");
             sleep(new Random(42).nextInt(2000));
         } catch (final InterruptedException e) {
-            jobEventPublisher.message(ERROR, e.getMessage());
+            jobEventPublisher.error(e.getMessage());
         }
     }
 

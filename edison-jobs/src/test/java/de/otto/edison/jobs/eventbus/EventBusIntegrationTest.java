@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 import java.net.URI;
 
 import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
-import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.ERROR;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -38,7 +37,7 @@ public class EventBusIntegrationTest extends AbstractTestNGSpringContextTests {
         JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/job"));
 
         // when
-        testee.message(ERROR, "some message");
+        testee.error("some message");
 
         // then
         assertThat(inMemoryEventRubbishBin.getMessageEvents().get(0), is("some/job"));
