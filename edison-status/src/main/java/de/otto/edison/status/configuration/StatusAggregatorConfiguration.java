@@ -1,8 +1,6 @@
 package de.otto.edison.status.configuration;
 
-import de.otto.edison.status.domain.ApplicationInfo;
-import de.otto.edison.status.domain.SystemInfo;
-import de.otto.edison.status.domain.VersionInfo;
+import de.otto.edison.status.domain.*;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import de.otto.edison.status.indicator.CachedApplicationStatusAggregator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
@@ -14,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static java.util.Optional.ofNullable;
 
 
 /**
@@ -23,10 +20,12 @@ import static java.util.Optional.ofNullable;
  *
  */
 @Configuration
-public class StatusConfiguration {
+public class StatusAggregatorConfiguration {
 
     @Autowired(required = false)
     private List<StatusDetailIndicator> statusDetailIndicators = emptyList();
+    @Autowired(required = false)
+    private List<ServiceSpec> serviceSpecs = emptyList();
 
     /**
      * By default, a CachedApplicationStatusAggregator is used. The status is updated using a
@@ -41,11 +40,15 @@ public class StatusConfiguration {
     @ConditionalOnMissingBean(ApplicationStatusAggregator.class)
     public ApplicationStatusAggregator applicationStatusAggregator(final ApplicationInfo applicationInfo,
                                                                    final VersionInfo versionInfo,
-                                                                   final SystemInfo systemInfo) {
+                                                                   final SystemInfo systemInfo,
+                                                                   final TeamInfo teamInfo) {
         final List<StatusDetailIndicator> indicators = statusDetailIndicators != null
                 ? statusDetailIndicators
                 : emptyList();
-        return new CachedApplicationStatusAggregator(applicationInfo, systemInfo, versionInfo, indicators);
+        final List<ServiceSpec> services = serviceSpecs != null
+                ? serviceSpecs
+                : emptyList();
+        return new CachedApplicationStatusAggregator(applicationInfo, systemInfo, versionInfo, teamInfo, indicators, services);
     }
 
 }

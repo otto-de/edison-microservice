@@ -1,5 +1,11 @@
 # Release History
 
+## Release 0.48.0
+* VCS information are now expected in edison.status.vcs.* instead of info.build.*
+* Added ServiceSpecs to be able to specify dependencies to other services
+* Added TeamInfo to the /internal/status
+* Added environment, group and appId to /internal/status
+
 ## Release 0.47.2
 * Added convenience methods to `JobEventPublisher` to make logging more fun again
 * Updated spring-boot to version 1.3.1
@@ -7,8 +13,8 @@
 ## Release 0.47.1
 * Fixed bug in navigation: broken path to bootstrap css
 
-## Release 0.48.0
-* VCS information are now expected in edison.status.vcs.* instead of info.build.*
+## Release 0.47.1
+* Fixed bug in navigation: broken path to bootstrap css
 
 ## Release 0.47.0
 * Added some more information to /internal/status 

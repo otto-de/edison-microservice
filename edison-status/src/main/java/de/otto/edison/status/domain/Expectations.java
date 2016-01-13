@@ -1,4 +1,4 @@
-package de.otto.edison.about.spec;
+package de.otto.edison.status.domain;
 
 import net.jcip.annotations.Immutable;
 

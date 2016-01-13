@@ -1,9 +1,9 @@
-package de.otto.edison.about.spec;
+package de.otto.edison.status.domain;
 
 import de.otto.edison.annotations.Beta;
 import net.jcip.annotations.Immutable;
 
-import static de.otto.edison.about.spec.Criticality.NOT_SPECIFIED;
+import static de.otto.edison.status.domain.Criticality.NOT_SPECIFIED;
 
 /**
  * Specifies the type of a service, including the business criticality and impact.

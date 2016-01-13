@@ -1,4 +1,4 @@
-package de.otto.edison.about.spec;
+package de.otto.edison.status.domain;
 
 import de.otto.edison.annotations.Beta;
 import net.jcip.annotations.Immutable;
@@ -10,7 +10,7 @@ import net.jcip.annotations.Immutable;
  */
 @Beta
 @Immutable
-public final class TeamInfo {
+public class TeamInfo {
 
     /** The name of the team. */
     public final String name;

@@ -1,10 +1,9 @@
-package de.otto.edison.about.spec;
+package de.otto.edison.status.domain;
 
 import de.otto.edison.annotations.Beta;
 import net.jcip.annotations.Immutable;
 
-import static de.otto.edison.about.spec.Expectations.unspecifiedExpectations;
-import static de.otto.edison.about.spec.ServiceType.unspecifiedService;
+import static de.otto.edison.status.domain.Expectations.unspecifiedExpectations;
 
 /**
  * Information about a dependency to a different service, this application is relying on.
@@ -46,7 +45,7 @@ public class ServiceSpec {
     public static ServiceSpec serviceSpec(final String appId,
                                           final String name,
                                           final String url) {
-        return new ServiceSpec(appId, name, url, unspecifiedService(), unspecifiedExpectations());
+        return new ServiceSpec(appId, name, url, ServiceType.unspecifiedService(), unspecifiedExpectations());
     }
 
     private ServiceSpec(final String appId,

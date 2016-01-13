@@ -18,8 +18,8 @@ import static org.mockito.Mockito.when;
 @Test
 public class EveryTenSecondsSchedulerTest {
 
-    public static final ApplicationStatus SOME_STATUS = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), singletonList(statusDetail("test", Status.OK, "everything is fine")));
-    public static final ApplicationStatus SOME_OTHER_STATUS = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), singletonList(statusDetail("test", Status.ERROR, "some error")));
+    public static final ApplicationStatus SOME_STATUS = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(statusDetail("test", Status.OK, "everything is fine")), emptyList());
+    public static final ApplicationStatus SOME_OTHER_STATUS = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(statusDetail("test", Status.ERROR, "some error")), emptyList());
 
     @Test
     public void shouldDelegateStatusAggregation() throws Exception {

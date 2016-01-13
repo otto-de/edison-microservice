@@ -1,6 +1,6 @@
 package de.otto.edison.example.status;
 
-import de.otto.edison.about.spec.TeamInfo;
+import de.otto.edison.status.domain.TeamInfo;
 import de.otto.edison.status.domain.VersionInfo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

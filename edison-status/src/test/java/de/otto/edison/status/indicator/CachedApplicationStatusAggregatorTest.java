@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,7 +31,9 @@ public class CachedApplicationStatusAggregatorTest {
                 mock(ApplicationInfo.class),
                 mock(SystemInfo.class),
                 mock(VersionInfo.class),
-                singletonList(mockIndicator)
+                mock(TeamInfo.class),
+                singletonList(mockIndicator),
+                emptyList()
         );
         statusAggregator.update();
         // when
@@ -48,10 +51,12 @@ public class CachedApplicationStatusAggregatorTest {
                 mock(ApplicationInfo.class),
                 mock(SystemInfo.class),
                 mock(VersionInfo.class),
+                mock(TeamInfo.class),
                 asList(
                         someStatusDetailIndicator(OK_DETAIL_ONE),
                         someStatusDetailIndicator(ERROR_DETAIL)
-                )
+                ),
+                emptyList()
         );
         statusAggregator.update();
         // when
@@ -69,10 +74,12 @@ public class CachedApplicationStatusAggregatorTest {
                 mock(ApplicationInfo.class),
                 mock(SystemInfo.class),
                 mock(VersionInfo.class),
+                mock(TeamInfo.class),
                 asList(
                         someCompositeStatusDetailIndicator(OK_DETAIL_ONE, WARNING_DETAIL),
                         someStatusDetailIndicator(OK_DETAIL_TWO)
-                )
+                ),
+                emptyList()
         );
         statusAggregator.update();
         // when

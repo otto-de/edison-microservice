@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Configuration of the information about this application.
  *
- * This is used for /internal/status and /internal/about.
+ * This is used for /internal/status
  */
 @Configuration
 public class ApplicationInfoConfiguration {

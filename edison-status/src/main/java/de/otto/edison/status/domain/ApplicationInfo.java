@@ -17,8 +17,8 @@ public class ApplicationInfo {
      * parts: /live/shoppingcart.
      *
      * The identifier is used to identify a service in a group, deployed in some staging environment. You
-     * can find this information in the application section of the /internal/about page. If you are specifying
-     * dependencies to other services using {@link de.otto.edison.about.spec.ServiceSpec}s, the ServicesSpec#appId
+     * can find this information in the application section of the /internal/status page. If you are specifying
+     * dependencies to other services using {@link ServiceSpec}s, the ServicesSpec#appId
      * should match the appId of the services you are depending on.
      */
     public final String appId;

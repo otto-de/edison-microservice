@@ -5,14 +5,10 @@ the application, system, responsible team and dependencies to other services. Th
 to expose such kind of information.
 
 The /internal/status API contains information about the application status:
-* A REST API to get the current status of the service as JSON
+* A REST API to get the current status and information about the service as JSON
 * An HTML representation / status page for human beeings.
 * A possibility to indicate the status of jobs, repositories or other components
 (see de.otto.edison.status.indicator.StatusDetailIndicator)
-
-The /internal/about API contains information about the application itself:
-* A REST API to get informaton about team, application and so on as JSON
-* An HTML representation of these information.
 * A possibility to add information about required services (see de.otto.edison.about.spec.ServiceSpec)
 
 ## Usage

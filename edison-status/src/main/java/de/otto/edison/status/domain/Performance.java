@@ -1,4 +1,4 @@
-package de.otto.edison.about.spec;
+package de.otto.edison.status.domain;
 
 import de.otto.edison.annotations.Beta;
 

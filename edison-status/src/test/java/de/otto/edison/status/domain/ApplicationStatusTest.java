@@ -8,6 +8,7 @@ import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -18,9 +19,9 @@ public class ApplicationStatusTest {
     @Test
     public void shouldHaveStatusOkIfDetailsAreOk() {
         // given
-        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), singletonList(
+        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(
                 statusDetail("bar", OK, "a message"))
-        );
+        , emptyList());
         // then
         assertThat(applicationStatus.status, is(OK));
     }
@@ -28,10 +29,10 @@ public class ApplicationStatusTest {
     @Test
     public void shouldHaveStatusWarningIfDetailsContainWarnings() {
         // given
-        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), asList(
+        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                 statusDetail("bar", OK, "a message"),
                 statusDetail("foobar", WARNING, "another message")
-        ));
+        ), emptyList());
         // then
         assertThat(applicationStatus.status, is(WARNING));
     }
@@ -39,11 +40,11 @@ public class ApplicationStatusTest {
     @Test
     public void shouldHaveStatusErrorIfDetailsContainWarnings() {
         // given
-        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), asList(
+        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                 statusDetail("bar", OK, "a message"),
                 statusDetail("foobar", ERROR, "another message"),
                 statusDetail("foobar", WARNING, "yet another message")
-        ));
+        ), emptyList());
         // then
         assertThat(applicationStatus.status, is(ERROR));
     }

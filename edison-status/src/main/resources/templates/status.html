@@ -15,13 +15,17 @@
                         <h3 class="panel-title">Application</h3>
                     </div>
                     <div class="panel-body">
-                        <dl class="dl-horizontal">
+                        <dl class="dl-horizontal" th:with="app=${status.application}">
+                            <dt>App ID:</dt>
+                            <dd th:text="${app.appId}">ID</dd>
                             <dt>Name:</dt>
-                            <dd th:text="${status.application.name}">Name</dd>
-                            <dt>Version:</dt>
-                            <dd th:text="${status.vcs.version}">Version</dd>
-                            <dt>Status:</dt>
-                            <dd th:text="${status.status}">Status</dd>
+                            <dd th:text="${app.name}">Name</dd>
+                            <dt>Description:</dt>
+                            <dd th:text="${app.description}">Name</dd>
+                            <dt>Group:</dt>
+                            <dd th:text="${app.group}"></dd>
+                            <dt>Environment:</dt>
+                            <dd th:text="${app.environment}"></dd>
                         </dl>
                     </div>
                 </div>
@@ -32,13 +36,53 @@
                         <h3 class="panel-title">System</h3>
                     </div>
                     <div class="panel-body">
-                        <dl class="dl-horizontal">
+                        <dl class="dl-horizontal" th:with="system=${status.system}">
                             <dt>Host:</dt>
-                            <dd th:text="${status.system.hostname}">Hostname</dd>
+                            <dd th:text="${system.hostname}">Hostname</dd>
                             <dt>Port:</dt>
-                            <dd th:text="${status.system.port}">Port</dd>
+                            <dd th:text="${system.port}">Port</dd>
                             <dt>System Time:</dt>
-                            <dd th:text="${status.system.time}">Systemtime</dd>
+                            <dd th:text="${system.systemTime}">Systemtime</dd>
+                            <dt>System Started</dt>
+                            <dd th:text="${system.systemStartTime}">Systemstarttime</dd>
+                            <dt>System Uptime</dt>
+                            <dd th:text="${system.systemUpTime}">SystemUptime</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Version</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal" th:with="vcs=${status.vcs}">
+                            <dt>Version:</dt>
+                            <dd th:text="${vcs.version}">Version</dd>
+                            <dt>Git Commit:</dt>
+                            <dd th:text="${vcs.commit}">Git commit</dd>
+                            <dt>VCS:</dt>
+                            <dd th:text="${vcs.url}"></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Team</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal" th:with="team=${status.team}">
+                            <dt>Name:</dt>
+                            <dd th:text="${team.name}"></dd>
+                            <dt>Technical Contact:</dt>
+                            <dd th:text="${team.technicalContact}"></dd>
+                            <dt>Business Contact:</dt>
+                            <dd th:text="${team.businessContact}"></dd>
                         </dl>
                     </div>
                 </div>
@@ -68,6 +112,43 @@
                             </div>
                         </div>
 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Services in Use</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <table class="table table-striped table-hover">
+                            <tr>
+                                <th>App ID</th>
+                                <th>Name</th>
+                                <th>Url</th>
+                                <th>Type</th>
+                                <th>Requirements</th>
+                            </tr>
+                            <tr th:each="spec : ${status.serviceSpecs}">
+                                <td th:text="${spec.appId}">App ID</td>
+                                <td th:text="${spec.name}">Service</td>
+                                <td th:text="${spec.url}">Url</td>
+                                <td><ul>
+                                    <li>Type: <span th:text="${spec.type.type}">Type</span></li>
+                                    <li>Criticality: <span th:text="${spec.type.criticality}">Criticality</span></li>
+                                    <li>Impact: <span th:text="${spec.type.disasterImpact}">Impact</span></li>
+                                </ul>
+                                </td>
+                                <td><ul>
+                                    <li>Availability: <span th:text="${spec.expectations.availability}" /></li>
+                                    <li>Performance:  <span th:text="${spec.expectations.performance}" /></li>
+                                </ul>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>

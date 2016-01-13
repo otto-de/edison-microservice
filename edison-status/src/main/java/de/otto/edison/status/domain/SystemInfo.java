@@ -25,15 +25,15 @@ public class SystemInfo {
         return new SystemInfo(hostname, port);
     }
 
-    public String getTime() {
+    public String getSystemTime() {
         return now().format(ISO_DATE_TIME);
     }
 
-    public String getStartTime() {
+    public String getSystemStartTime() {
         return START_TIME.format(ISO_DATE_TIME);
     }
 
-    public String getUpTime() {
+    public String getSystemUpTime() {
         final long seconds = between(START_TIME, now()).getSeconds();
         return String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, (seconds % 60));
     }
