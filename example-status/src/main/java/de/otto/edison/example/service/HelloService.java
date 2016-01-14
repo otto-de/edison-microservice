@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 import static java.util.Collections.singletonMap;
 
 /**
+ * An example for a service that is implementing StatusDetailIndicator.
+ *
+ * By doing this, the current status of the service can be exposed on the status page.
+ *
  * @author Guido Steinacker
  * @since 06.03.15
  */

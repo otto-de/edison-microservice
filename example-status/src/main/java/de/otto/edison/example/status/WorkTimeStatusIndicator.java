@@ -11,6 +11,9 @@ import static de.otto.edison.status.domain.Status.WARNING;
 import static java.time.LocalTime.now;
 
 /**
+ * Example for a StatusDetailIndicator that is using the current time to determine the status
+ * of the application.
+ *
  * @author Guido Steinacker
  * @since 13.02.15
  */
