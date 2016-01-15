@@ -44,9 +44,9 @@ public class EdisonDiscoveryClient implements DiscoveryClient {
     private long expireAfterMinutes;
     @Value("${edison.servicediscovery.refresh-after:5}")
     private long refreshAfterMinutes;
-    @Value("${edison.servicediscovery.environment:unknown}")
+    @Value("${edison.status.application.environment:unknown}")
     private String applicationEnvironment;
-    @Value("${edison.servicediscovery.group:default}")
+    @Value("${edison.status.application.group:default}")
     private String applicationGroup;
 
     @PostConstruct
