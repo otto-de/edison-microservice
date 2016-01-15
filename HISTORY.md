@@ -1,7 +1,7 @@
 # Release History
 
 ## Release 0.48.0
-* VCS information are now expected in edison.status.vcs.* instead of info.build.*
+* VCS information are now expected in edison.status.vcs.* instead of info.build.*. Change in build.gradle required
 * Added ServiceSpecs to be able to specify dependencies to other services
 * Added TeamInfo to the /internal/status
 * Added environment, group and appId to /internal/status
@@ -19,6 +19,7 @@
 ## Release 0.47.0
 * Added some more information to /internal/status 
 * Fixed the format of the status JSON
+* Update to com.github.fakemongo:fongo:2.0.4 required
 
 ## Release 0.46.2
 * Removed StateChangeEvent.State.CREATE, replaced it by START
