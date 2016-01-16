@@ -11,7 +11,8 @@ public class LogJobEventListener implements JobEventListener {
 
     @Override
     public void consumeStateChange(final StateChangeEvent stateChangeEvent) {
-        LOG.info("job state changed to '{}' ('{}')", stateChangeEvent.getState(), stateChangeEvent.getJobUri());
+        LOG.info("jobType='{}' state changed to '{}' ('{}')", stateChangeEvent.getJobType(),
+                stateChangeEvent.getState(), stateChangeEvent.getJobUri());
     }
 
     @Override

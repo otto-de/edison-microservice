@@ -43,7 +43,7 @@ public class KeepLastJobs implements JobCleanupStrategy {
     public KeepLastJobs(final int numberOfJobsToKeep, final Optional<String> jobType) {
         this.numberOfJobsToKeep = numberOfJobsToKeep;
         this.jobType = jobType;
-        LOG.info("KeepLastJobs strategy configured with numberOfJobsToKeep= '{}', jobType= '{}'", numberOfJobsToKeep, jobType.toString());
+        LOG.info("KeepLastJobs strategy configured with numberOfJobsToKeep='{}', jobType='{}'", numberOfJobsToKeep, jobType.orElse("N/A"));
     }
 
     @Autowired
