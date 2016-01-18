@@ -39,7 +39,7 @@ subprojects {
     // Minor Release: 0.X.0: Additional Features, updates from minor releases in Spring
     // Micro Release: 0.0.X: Bugfixes, non-breaking changes, updates from micro releases in Spring
     // DO NOT FORGET TO DOCUMENT CHANGES IN HISTORY.MD
-    version = '0.49.0-SNAPSHOT'
+    version = '0.49.0'
 
     repositories {
         mavenCentral()
