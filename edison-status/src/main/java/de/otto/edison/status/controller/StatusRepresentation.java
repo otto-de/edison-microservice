@@ -1,7 +1,7 @@
 package de.otto.edison.status.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.otto.edison.status.domain.*;
-import net.jcip.annotations.Immutable;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,24 +10,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Immutable
-final class StatusRepresentation {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class StatusRepresentation {
 
     private static final Pattern STATUS_DETAIL_JSON_SEPARATOR_PATTERN = Pattern.compile("\\s(.)");
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class ApplicationRepresentation {
-        public final String appId;
-        public final String name;
-        public final String description;
-        public final String group;
-        public final String environment;
-        public final String version;
-        public final String commit;
-        public final String vcsUrl;
-        public final Status status;
-        public final Map<String,?> statusDetails;
+        public String name;
+        public String description;
+        public String group;
+        public String environment;
+        public String version;
+        public String commit;
+        public String vcsUrl;
+        public Status status;
+        public Map<String,?> statusDetails;
+
+        public ApplicationRepresentation() {
+        }
+
         private ApplicationRepresentation(final ApplicationStatus applicationStatus) {
-            this.appId = applicationStatus.application.appId;
             this.name = applicationStatus.application.name;
             this.description = applicationStatus.application.description;
             this.group = applicationStatus.application.group;
@@ -39,10 +42,10 @@ final class StatusRepresentation {
             this.statusDetails = statusDetailsOf(applicationStatus.statusDetails);
         }
     }
-    public final ApplicationRepresentation application;
-    public final SystemInfo system;
-    public final TeamInfo team;
-    public final List<ServiceSpec> serviceSpecs;
+    public ApplicationRepresentation application;
+    public SystemInfo system;
+    public TeamInfo team;
+    public List<ServiceSpec> serviceSpecs;
 
     private StatusRepresentation(final ApplicationStatus applicationStatus) {
         this.application = new ApplicationRepresentation(applicationStatus);

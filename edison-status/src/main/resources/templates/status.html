@@ -16,8 +16,6 @@
                     </div>
                     <div class="panel-body">
                         <dl class="dl-horizontal" th:with="app=${status.application}">
-                            <dt>App ID:</dt>
-                            <dd th:text="${app.appId}">ID</dd>
                             <dt>Name:</dt>
                             <dd th:text="${app.name}">Name</dd>
                             <dt>Description:</dt>
@@ -126,14 +124,12 @@
 
                         <table class="table table-striped table-hover">
                             <tr>
-                                <th>App ID</th>
                                 <th>Name</th>
                                 <th>Url</th>
                                 <th>Type</th>
                                 <th>Requirements</th>
                             </tr>
                             <tr th:each="spec : ${status.serviceSpecs}">
-                                <td th:text="${spec.appId}">App ID</td>
                                 <td th:text="${spec.name}">Service</td>
                                 <td th:text="${spec.url}">Url</td>
                                 <td><ul>

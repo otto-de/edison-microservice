@@ -40,12 +40,12 @@ public class StatusAcceptanceConfiguration {
 
     @Bean
     ServiceSpec fooTestService() {
-        return serviceSpec("/test/foo", "fooTest", "http://example.org/foo");
+        return serviceSpec("fooTest", "http://example.org/foo");
     }
 
     @Bean
     ServiceSpec barTestService() {
-        return serviceSpec("/test/bar", "BarTest", "http://example.org/bar", serviceType("TEST", MISSION_CRITICAL, "test will fail"), highExpectations());
+        return serviceSpec("BarTest", "http://example.org/bar", serviceType("TEST", MISSION_CRITICAL, "test will fail"), highExpectations());
     }
 
     // some statusDetailIndicators:

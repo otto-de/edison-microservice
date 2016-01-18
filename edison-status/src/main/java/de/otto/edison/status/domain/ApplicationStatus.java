@@ -35,7 +35,7 @@ public final class ApplicationStatus {
         this.system = system;
         this.vcs = vcs;
         this.team = team;
-        this.serviceSpecs = serviceSpecs != null ? serviceSpecs.stream().sorted(comparing(spec->spec.appId)).collect(toList()) : emptyList();
+        this.serviceSpecs = serviceSpecs != null ? serviceSpecs.stream().sorted(comparing(spec->spec.name)).collect(toList()) : emptyList();
     }
 
     public static ApplicationStatus applicationStatus(final ApplicationInfo applicationInfo,

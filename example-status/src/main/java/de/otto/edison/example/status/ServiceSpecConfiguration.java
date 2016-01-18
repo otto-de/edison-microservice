@@ -23,13 +23,13 @@ public class ServiceSpecConfiguration {
 
     @Bean
     ServiceSpec fooClient() {
-        return serviceSpec("/local/example/foo", "Foo Service", "http://example.org/api/foo");
+        return serviceSpec("Foo Service", "http://example.org/api/foo");
     }
 
     @Bean
     ServiceSpec barClient() {
         return serviceSpec(
-                "/local/example/bar", "Bar Service", "http://example.org/api/bar",
+                "Bar Service", "http://example.org/api/bar",
                 serviceType(TYPE_DATA_FEED, FUNCTIONAL_CRITICAL, "Data will become inconsistent"),
                 lowExpectations()
         );

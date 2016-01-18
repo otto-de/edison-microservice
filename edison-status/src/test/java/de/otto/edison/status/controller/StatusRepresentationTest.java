@@ -31,7 +31,6 @@ public class StatusRepresentationTest {
                 applicationStatus(applicationInfo("app", "", "test", "local"), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
         );
         // then
-        assertThat(json.application.appId, is("/local/test/app"));
         assertThat(json.application.name, is("app"));
         assertThat(json.application.status, is(OK));
         assertThat(json.application.statusDetails.size(), is(0));
