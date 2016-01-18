@@ -2,7 +2,10 @@
 
 ## Release 0.49.0
 * Removed unneeded appId from ServiceSpec and ApplicationInfo
-* 
+* Fixed path in navigation from /internal to /internal/status
+* Using edison.status.application.environment + .group instead of edison.servicediscovery.environment + .group.
+The properties edison.servicediscovery.environment and edison.servicediscovery.group 
+can be removed from application.properties/.yml
 
 ## Release 0.48.0
 * VCS information are now expected in edison.status.vcs.* instead of info.build.*. Change in build.gradle required
