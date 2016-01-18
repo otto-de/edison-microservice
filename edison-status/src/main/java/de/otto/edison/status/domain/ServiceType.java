@@ -61,6 +61,15 @@ public class ServiceType {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "ServiceType{" +
+                "type='" + type + '\'' +
+                ", criticality=" + criticality +
+                ", disasterImpact='" + disasterImpact + '\'' +
+                '}';
+    }
+
     private ServiceType(final String type, final Criticality criticality, final String disasterImpact) {
         this.type = type;
         this.criticality = criticality;

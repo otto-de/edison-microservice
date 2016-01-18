@@ -54,4 +54,13 @@ public class TeamInfo {
         result = 31 * result + (businessContact != null ? businessContact.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "TeamInfo{" +
+                "name='" + name + '\'' +
+                ", technicalContact='" + technicalContact + '\'' +
+                ", businessContact='" + businessContact + '\'' +
+                '}';
+    }
 }

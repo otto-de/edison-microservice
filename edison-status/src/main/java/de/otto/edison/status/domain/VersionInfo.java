@@ -45,4 +45,13 @@ public class VersionInfo {
         result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "VersionInfo{" +
+                "version='" + version + '\'' +
+                ", commit='" + commit + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

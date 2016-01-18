@@ -77,4 +77,17 @@ public final class ApplicationStatus {
         result = 31 * result + (serviceSpecs != null ? serviceSpecs.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ApplicationStatus{" +
+                "application=" + application +
+                ", system=" + system +
+                ", vcs=" + vcs +
+                ", team=" + team +
+                ", status=" + status +
+                ", statusDetails=" + statusDetails +
+                ", serviceSpecs=" + serviceSpecs +
+                '}';
+    }
 }

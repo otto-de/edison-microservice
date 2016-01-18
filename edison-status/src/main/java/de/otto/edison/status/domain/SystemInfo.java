@@ -60,4 +60,12 @@ public class SystemInfo {
         result = 31 * result + port;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "SystemInfo{" +
+                "hostname='" + hostname + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

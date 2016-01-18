@@ -53,4 +53,12 @@ public class Expectations {
         result = 31 * result + (performance != null ? performance.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Expectations{" +
+                "availability=" + availability +
+                ", performance=" + performance +
+                '}';
+    }
 }
