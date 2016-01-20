@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.49.1
+* Added field `hostname` to JobInfo, which allows to track on which server the job gets executed
+
 ## Release 0.49.0
 * Removed unneeded appId from ServiceSpec and ApplicationInfo
 * Fixed path in navigation from /internal to /internal/status

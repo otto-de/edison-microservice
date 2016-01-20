@@ -68,6 +68,10 @@ public class JobRepresentation {
         return formatTime(job.getLastUpdated());
     }
 
+    public String getHostname() {
+        return job.getHostname();
+    }
+
     public List<String> getMessages() {
         return job.getMessages().stream().map((jobMessage) ->
             "[" + formatTime(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()

@@ -4,6 +4,7 @@ import de.otto.edison.jobs.definition.JobDefinition;
 import net.jcip.annotations.ThreadSafe;
 
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.domain.Level.WARNING;
 import static java.lang.String.format;
+import static java.net.InetAddress.getLocalHost;
 import static java.time.OffsetDateTime.now;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -38,8 +40,9 @@ public class JobInfo {
     private JobStatus status;
     private OffsetDateTime lastUpdated;
     private int restarts = 0;
+    private String hostname;
 
-    public enum JobStatus {OK, ERROR, DEAD;}
+    public enum JobStatus {OK, ERROR, DEAD}
 
     public static JobInfo newJobInfo(final URI jobUri, final String jobType,
                                      final Clock clock) {
@@ -53,8 +56,9 @@ public class JobInfo {
                                      final Optional<OffsetDateTime> stopped,
                                      final JobStatus status,
                                      final List<JobMessage> messages,
-                                     final Clock clock) {
-        return new JobInfo(jobUri, jobType, started, lastUpdated, stopped, status, messages, clock);
+                                     final Clock clock,
+                                     final String hostname) {
+        return new JobInfo(jobUri, jobType, started, lastUpdated, stopped, status, messages, clock, hostname);
     }
 
     private JobInfo(final String jobType,
@@ -67,6 +71,7 @@ public class JobInfo {
         this.stopped = empty();
         this.status = OK;
         this.lastUpdated = started;
+        this.hostname = hostName();
     }
 
     private JobInfo(final URI jobUri,
@@ -76,7 +81,8 @@ public class JobInfo {
                     final Optional<OffsetDateTime> stopped,
                     final JobStatus status,
                     final List<JobMessage> messages,
-                    final Clock clock) {
+                    final Clock clock,
+                    final String hostname) {
         this.clock = clock;
         this.jobUri = jobUri;
         this.jobType = jobType;
@@ -85,6 +91,19 @@ public class JobInfo {
         this.stopped = stopped;
         this.status = status;
         this.messages.addAll(messages);
+        this.hostname = hostname;
+    }
+
+    private static String hostName() {
+        final String envHost = System.getenv("HOST");
+        if (envHost != null) {
+            return envHost;
+        }
+        try {
+            return getLocalHost().getCanonicalHostName();
+        } catch (final UnknownHostException e) {
+            return "N/A";
+        }
     }
 
     /**
@@ -106,6 +125,13 @@ public class JobInfo {
      */
     public String getJobType() {
         return jobType;
+    }
+
+    /**
+     * @return the name of the server this job is executed on
+     */
+    public String getHostname() {
+        return hostname;
     }
 
     /**

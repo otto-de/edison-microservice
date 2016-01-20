@@ -136,7 +136,8 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
                             put(MSG_TEXT.key(), jm.getMessage());
                         }})
                         .collect(toList()))
-                .append(STATUS.key(), job.getStatus().name());
+                .append(STATUS.key(), job.getStatus().name())
+                .append(HOSTNAME.key(), job.getHostname());
         if (job.isStopped()) {
             document.append(STOPPED.key(), toDate(job.getStopped().get()));
         }
@@ -153,7 +154,8 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
                 ofNullable(toOffsetDateTime(document.getDate(STOPPED.key()))),
                 JobStatus.valueOf(document.getString(STATUS.key())),
                 getMessagesFrom(document),
-                clock);
+                clock,
+                document.getString(HOSTNAME));
     }
 
     @SuppressWarnings("unchecked")

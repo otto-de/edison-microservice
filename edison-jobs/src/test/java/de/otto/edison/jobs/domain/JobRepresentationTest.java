@@ -27,11 +27,11 @@ public class JobRepresentationTest {
         final Clock clock = fixed(Instant.now(), systemDefault());
         final OffsetDateTime startTime = now(clock);
         final OffsetDateTime finishedTime = startTime.plus(90, ChronoUnit.SECONDS);
-        final JobInfo job = newJobInfo(create("foo"), "TEST", startTime, finishedTime, of(finishedTime), OK, emptyList(), clock);
+        final JobInfo job = newJobInfo(create("foo"), "TEST", startTime, finishedTime, of(finishedTime), OK, emptyList(), clock, "localhost");
 
         final JobRepresentation jobRepresentation = representationOf(job, true, "");
         assertThat(jobRepresentation.getStatus(), is("OK"));
         assertThat(jobRepresentation.getRuntime(), is("00:01:30"));
-
+        assertThat(jobRepresentation.getHostname(), is("localhost"));
     }
 }

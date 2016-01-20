@@ -222,7 +222,8 @@ public class MongoJobRepositoryTest {
                 asList(
                         jobMessage(Level.INFO, "foo"),
                         jobMessage(Level.WARNING, "bar")),
-                systemDefaultZone()
+                systemDefaultZone(),
+                "localhost"
         );
     }
 
@@ -234,7 +235,8 @@ public class MongoJobRepositoryTest {
                 asList(
                         jobMessage(Level.INFO, "foo"),
                         jobMessage(Level.WARNING, "bar")),
-                systemDefaultZone()
+                systemDefaultZone(),
+                "localhost"
         );
     }
 
@@ -244,7 +246,8 @@ public class MongoJobRepositoryTest {
                 type,
                 started, started.plus(1, SECONDS), Optional.empty(), OK,
                 Collections.<JobMessage>emptyList(),
-                systemDefaultZone()
+                systemDefaultZone(),
+                "localhost"
         );
     }
 
