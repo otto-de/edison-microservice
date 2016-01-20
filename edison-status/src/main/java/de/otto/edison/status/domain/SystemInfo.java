@@ -25,6 +25,10 @@ public class SystemInfo {
         return new SystemInfo(hostname, port);
     }
 
+    public String getHostname() {
+        return hostname;
+    }
+
     public String getSystemTime() {
         return now().format(ISO_DATE_TIME);
     }
