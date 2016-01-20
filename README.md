@@ -1,7 +1,10 @@
 # edison-microservice
+
 Common basis for some of otto.de's micro-services using Spring Boot.
 
+
 ## Status
+
 [![Build Status](https://travis-ci.org/otto-de/edison-microservice.svg)](https://travis-ci.org/otto-de/edison-microservice)
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-service/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-service)
@@ -10,8 +13,11 @@ Common basis for some of otto.de's micro-services using Spring Boot.
 
 Have a look at the [release history](HISTORY.md) for details about updates and changes.
 
+
 ## About
+
 This project contains a number of independent libraries that may be used to create microservices on top of Spring Boot. The libraries are used in different projects at OTTO. It's purpose is to provide a common implementation for cross-cutting requirements like:
+
 * Health checks that are used to tell the load balancer or mesos platform whether or not a service is healthy.
 * A [Status page/document](https://github.com/otto-de/edison-microservice/tree/master/edison-status) that may be used to give information about the current state of the service. Status information may also include details about sub-components, background jobs like imports, and so on.
 * A simple job handling library that is used to run asynchronous background jobs, which for example can be used to run data imports from other systems.
@@ -22,6 +28,15 @@ This project contains a number of independent libraries that may be used to crea
 * Support for feature toggles based on the Togglz library
 
 ... plus all the features of [Spring Boot](http://projects.spring.io/spring-boot/).
+
+
+## Getting started
+
+Make sure you have Java 1.8 and gradle 2.x and installed on your computer.
+To run all tests for all edison modules execute in the shell:
+
+    gradle clean check
+
 
 ## Examples
 
