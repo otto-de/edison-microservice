@@ -33,7 +33,8 @@ This project contains a number of independent libraries that may be used to crea
 ## Getting started
 
 Make sure you have Java 1.8 and gradle 2.x and installed on your computer.
-To run all tests for all edison modules execute in the shell:
+To run all tests for all edison modules execute in the base directory
+where you have checked out this project the shell and give it a spin:
 
     gradle clean check
 
@@ -49,3 +50,8 @@ The examples can be started with gradle:
     gradle clean example-jobs:bootRun
     gradle clean example-metrics:bootRun
     gradle clean example-status:bootRun
+    gradle clean example-layout:bootRun
+
+Open in your browser [http://localhost:8080/example/](http://localhost:8080/example/)
+
+*Note:* Every example is configured to use port 8080, so make sure to run only one example at a time.
