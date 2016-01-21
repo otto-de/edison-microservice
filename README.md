@@ -5,10 +5,8 @@ Common basis for some of otto.de's micro-services using Spring Boot.
 
 ## Status
 
-[![Build Status](https://travis-ci.org/otto-de/edison-microservice.svg)](https://travis-ci.org/otto-de/edison-microservice)
-
+[![Build Status](https://travis-ci.org/otto-de/edison-microservice.svg)](https://travis-ci.org/otto-de/edison-microservice) 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-service/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-service)
-
 [![Dependency Status](https://www.versioneye.com/user/projects/55ba6f016537620017001905/badge.svg?style=flat)](https://www.versioneye.com/user/projects/55ba6f016537620017001905)
 
 Have a look at the [release history](HISTORY.md) for details about updates and changes.
