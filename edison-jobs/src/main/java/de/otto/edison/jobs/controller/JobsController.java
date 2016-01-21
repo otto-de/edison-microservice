@@ -23,12 +23,8 @@ import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
 import static java.net.URI.create;
 import static java.util.stream.Collectors.toList;
-import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static javax.servlet.http.HttpServletResponse.*;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 public class JobsController {
@@ -78,16 +74,17 @@ public class JobsController {
 
     /**
      * Starts a new job of the specified type, if no such job is currently running.
-     *
+     * <p>
      * The method will return immediately, without waiting for the job to complete.
-     *
+     * <p>
      * If a job with same type is running, the response will have HTTP status 409 CONFLICT,
      * otherwise HTTP 204 NO CONTENT is returned, together with the response header 'Location',
      * containing the full URL of the running job.
      *
-     * @param jobType the type of the started job
-     * @param request the HttpServletRequest used to determine the base URL
+     * @param jobType  the type of the started job
+     * @param request  the HttpServletRequest used to determine the base URL
      * @param response the HttpServletResponse used to set the Location header
+     * @throws IOException in case the job was not able to start properly (ie. conflict)
      */
     @RequestMapping(
             value = "/internal/jobs/{jobType}",
@@ -97,7 +94,7 @@ public class JobsController {
                          final HttpServletResponse response) throws IOException {
         final Optional<URI> jobUri = jobService.startAsyncJob(jobType);
         if (jobUri.isPresent()) {
-            response.setHeader("Location", baseUriOf(request) + jobUri.get().toString());
+            response.setHeader("Location", baseUriOf(request) + jobUri.get());
             response.setStatus(SC_NO_CONTENT);
         } else {
             response.sendError(SC_CONFLICT);

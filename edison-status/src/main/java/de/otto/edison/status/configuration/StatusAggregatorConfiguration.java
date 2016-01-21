@@ -34,6 +34,7 @@ public class StatusAggregatorConfiguration {
      * @param applicationInfo Information about the application
      * @param versionInfo Information about the application's version
      * @param systemInfo Information about the system
+     * @param teamInfo Information about the team responsible for this application
      * @return ApplicationStatusAggregator
      */
     @Bean

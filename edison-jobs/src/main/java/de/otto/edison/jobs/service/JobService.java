@@ -72,7 +72,7 @@ public class JobService {
      * Starts a job asynchronously in the background.
      *
      * @param jobType the type of the job
-     * @return
+     * @return the URI under which you can retrieve the status about the triggered job instance
      */
     public Optional<URI> startAsyncJob(String jobType) {
         final JobRunnable jobRunnable = findJobRunnable(jobType);
