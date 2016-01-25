@@ -1,5 +1,8 @@
 # Release History
 
+## NEXT Release
+* Job Lifecycle: set hostname via SystemInfo (to overcome problems on Mesos)
+
 ## Release 0.49.1
 * Added field `hostname` to JobInfo, which allows to track on which server the job gets executed
 * Updated dependencies: async-http-client (to 1.9.32) and mongodb-driver (to 3.2.1)
