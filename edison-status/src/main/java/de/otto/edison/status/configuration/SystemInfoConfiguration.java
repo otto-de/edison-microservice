@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -18,7 +19,8 @@ public class SystemInfoConfiguration {
         String localHost = null;
         try {
             localHost = InetAddress.getLocalHost().getHostName();
-        } catch (final UnknownHostException ignored) { }
+        } catch (final UnknownHostException ignored) {
+        }
         defaultHostname = localHost;
     }
 
@@ -26,7 +28,7 @@ public class SystemInfoConfiguration {
     private String hostname;
     @Value("${server.hostname:}")
     private String envhostname;
-    @Value("${server.port:}")
+    @Value("${server.port:8080}")
     private int port;
 
     @Bean
@@ -36,10 +38,10 @@ public class SystemInfoConfiguration {
     }
 
     private String hostname() {
-        if (envhostname != null && !envhostname.isEmpty()) {
+        if (!StringUtils.isEmpty(envhostname)) {
             return envhostname;
         }
-        if(hostname != null && !hostname.isEmpty()) {
+        if (!StringUtils.isEmpty(hostname)) {
             return hostname;
         }
         return defaultHostname;
