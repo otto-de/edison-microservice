@@ -29,9 +29,9 @@ public class KeepLastJobsTest {
     public void shouldRemoveJobsWithMatchingJobType() {
         // given
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE1", now).stop());
-            createOrUpdate(newJobInfo(create("foobar"), "TYPE2", now).stop());
-            createOrUpdate(newJobInfo(create("bar"), "TYPE2", now).stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE1", now, "localhost").stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE2", now, "localhost").stop());
+            createOrUpdate(newJobInfo(create("bar"), "TYPE2", now, "localhost").stop());
         }};
         KeepLastJobs strategy = new KeepLastJobs(1, Optional.of("TYPE2"));
         strategy.setJobRepository(repository);
@@ -47,9 +47,9 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2, Optional.empty());
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE", now).stop());
-            createOrUpdate(newJobInfo(create("foobar"), "TYPE", earlier).stop());
-            createOrUpdate(newJobInfo(create("bar"), "TYPE", muchEarlier).stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE", now, "localhost").stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE", earlier, "localhost").stop());
+            createOrUpdate(newJobInfo(create("bar"), "TYPE", muchEarlier, "localhost").stop());
         }};
         strategy.setJobRepository(repository);
         // when
@@ -64,9 +64,9 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(1, Optional.of("TYPE"));
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE", now).stop());
-            createOrUpdate(newJobInfo(create("foobar"), "TYPE", earlier));
-            createOrUpdate(newJobInfo(create("bar"), "TYPE", muchEarlier).stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE", now, "localhost").stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE", earlier, "localhost"));
+            createOrUpdate(newJobInfo(create("bar"), "TYPE", muchEarlier, "localhost").stop());
         }};
         strategy.setJobRepository(repository);
         // when
@@ -84,9 +84,9 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2, Optional.empty());
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE", now).error("bumm").stop());
-            createOrUpdate(newJobInfo(create("foobar"), "TYPE", muchEarlier).stop());
-            createOrUpdate(newJobInfo(create("bar"), "TYPE", earlier).error("bumm").stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE", now, "localhost").error("bumm").stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE", muchEarlier, "localhost").stop());
+            createOrUpdate(newJobInfo(create("bar"), "TYPE", earlier, "localhost").error("bumm").stop());
         }};
         strategy.setJobRepository(repository);
         // when
@@ -103,9 +103,9 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(1, Optional.empty());
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE1", now).stop());
-            createOrUpdate(newJobInfo(create("foobar"), "TYPE2", muchEarlier));
-            createOrUpdate(newJobInfo(create("bar"), "TYPE2", earlier));
+            createOrUpdate(newJobInfo(create("foo"), "TYPE1", now, "localhost").stop());
+            createOrUpdate(newJobInfo(create("foobar"), "TYPE2", muchEarlier, "localhost"));
+            createOrUpdate(newJobInfo(create("bar"), "TYPE2", earlier, "localhost"));
         }};
         strategy.setJobRepository(repository);
         // when
@@ -120,7 +120,7 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2, Optional.empty());
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE", now).stop());
+            createOrUpdate(newJobInfo(create("foo"), "TYPE", now, "localhost").stop());
         }};
         strategy.setJobRepository(repository);
         // when

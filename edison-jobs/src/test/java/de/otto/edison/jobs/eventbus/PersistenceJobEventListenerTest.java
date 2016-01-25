@@ -7,6 +7,7 @@ import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.service.JobRunnable;
+import de.otto.edison.status.domain.SystemInfo;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -24,9 +25,7 @@ import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Test
 public class PersistenceJobEventListenerTest {
@@ -34,13 +33,15 @@ public class PersistenceJobEventListenerTest {
     private PersistenceJobEventListener testee;
     private JobRepository jobRepository;
     private Clock clock;
+    private SystemInfo systemInfo;
 
     @BeforeMethod
     public void setUp() throws Exception {
         jobRepository = mock(JobRepository.class);
         clock = fixed(now(), systemDefault());
+        systemInfo = SystemInfo.systemInfo("localhost", 8080);
 
-        testee = new PersistenceJobEventListener(jobRepository, clock);
+        testee = new PersistenceJobEventListener(jobRepository, clock, systemInfo);
     }
 
     @Test
@@ -52,7 +53,7 @@ public class PersistenceJobEventListenerTest {
         testee.consumeStateChange(stateChangeEvent);
 
         // then
-        verify(jobRepository).createOrUpdate(newJobInfo(new URI("some/job"), "someJobType", clock));
+        verify(jobRepository).createOrUpdate(newJobInfo(new URI("some/job"), "someJobType", clock, "localhost"));
     }
 
     @Test
@@ -123,7 +124,7 @@ public class PersistenceJobEventListenerTest {
     public void shouldPersistInfoMessages() throws Exception {
         // given
         MessageEvent messageEvent = newMessageEvent(someJobRunnable(), URI.create("some/job"), MessageEvent.Level.INFO, "some message");
-        JobInfo jobInfo = JobInfo.newJobInfo(URI.create("some/job"), "someType", Clock.systemDefaultZone());
+        JobInfo jobInfo = JobInfo.newJobInfo(URI.create("some/job"), "someType", Clock.systemDefaultZone(), "localhost");
         when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
 
         // when
@@ -142,7 +143,7 @@ public class PersistenceJobEventListenerTest {
     public void shouldPersistWarnMessages() throws Exception {
         // given
         MessageEvent messageEvent = newMessageEvent(someJobRunnable(), URI.create("some/job"), MessageEvent.Level.WARN, "some message");
-        JobInfo jobInfo = JobInfo.newJobInfo(URI.create("some/job"), "someType", Clock.systemDefaultZone());
+        JobInfo jobInfo = JobInfo.newJobInfo(URI.create("some/job"), "someType", Clock.systemDefaultZone(), "localhost");
         when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
 
         // when
@@ -161,7 +162,7 @@ public class PersistenceJobEventListenerTest {
     public void shouldPersistErrorMessages() throws Exception {
         // given
         MessageEvent messageEvent = newMessageEvent(someJobRunnable(), URI.create("some/job"), MessageEvent.Level.ERROR, "some message");
-        JobInfo jobInfo = JobInfo.newJobInfo(URI.create("some/job"), "someType", Clock.systemDefaultZone());
+        JobInfo jobInfo = JobInfo.newJobInfo(URI.create("some/job"), "someType", Clock.systemDefaultZone(), "localhost");
         when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
 
         // when
@@ -200,7 +201,6 @@ public class PersistenceJobEventListenerTest {
 
             @Override
             public void execute(JobEventPublisher jobEventPublisher) {
-
             }
         };
     }

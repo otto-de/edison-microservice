@@ -4,6 +4,7 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.status.domain.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,17 +21,21 @@ public class PersistenceJobEventListener implements JobEventListener {
 
     private final JobRepository jobRepository;
     private final Clock clock;
+    private final SystemInfo systemInfo;
 
-    public PersistenceJobEventListener(final JobRepository jobRepository, final Clock clock) {
+    public PersistenceJobEventListener(final JobRepository jobRepository, final Clock clock,
+                                       final SystemInfo systemInfo) {
         this.jobRepository = jobRepository;
         this.clock = clock;
+        this.systemInfo = systemInfo;
     }
 
     @Override
     public void consumeStateChange(final StateChangeEvent event) {
         switch (event.getState()) {
             case START:
-                jobRepository.createOrUpdate(newJobInfo(event.getJobUri(), event.getJobType(), clock));
+                jobRepository.createOrUpdate(newJobInfo(event.getJobUri(), event.getJobType(), clock,
+                        systemInfo.getHostname()));
                 break;
 
             case KEEP_ALIVE:
@@ -73,7 +78,7 @@ public class PersistenceJobEventListener implements JobEventListener {
             consumer.accept(jobInfo.get());
             jobRepository.createOrUpdate(jobInfo.get());
         } else {
-            LOG.error("job '{}' in inconsistent state.. should be present here", jobUri);
+            LOG.error("job '{}' in inconsistent state. Should be present here", jobUri);
         }
     }
 }

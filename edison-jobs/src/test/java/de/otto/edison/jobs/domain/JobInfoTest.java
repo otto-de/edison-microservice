@@ -1,5 +1,7 @@
 package de.otto.edison.jobs.domain;
 
+import de.otto.edison.status.domain.SystemInfo;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Clock;
@@ -17,21 +19,29 @@ import static org.hamcrest.Matchers.is;
 
 public class JobInfoTest {
 
+    private Clock clock;
+    private String hostname;
+
+    @BeforeMethod
+    public void setUp() {
+        clock = fixed(now(), systemDefault());
+        hostname = "localhost";
+    }
+
     @Test
     public void shouldInitializeCorrectly() {
-        Clock clock = fixed(now(), systemDefault());
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock);
+        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost");
         assertThat(job.getStatus(), is(OK));
         assertThat(job.getJobUri(), is(create("foo")));
         assertThat(job.getJobType(), is("TEST"));
+        assertThat(job.getHostname(), is(hostname));
         assertThat(job.getStarted().toInstant(), is(clock.instant()));
         assertThat(job.getStopped(), isAbsent());
     }
 
     @Test
     public void shouldStopAJob() {
-        Clock clock = fixed(now(), systemDefault());
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock).stop();
+        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost").stop();
 
         assertThat(job.isStopped(), is(true));
         assertThat(job.getStatus(), is(OK));
@@ -39,8 +49,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldMarkAsError() {
-        Clock clock = fixed(now(), systemDefault());
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock);
+        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost");
         job.info("first");
         job.error("BUMMMMMM");
         job.info("last");
@@ -51,8 +60,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldMarkAsOkAfterRestart() {
-        Clock clock = fixed(now(), systemDefault());
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock);
+        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost");
         job.error("BUMMMMMM");
         job.restart();
         job.stop();
@@ -62,8 +70,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldMarkAsDead() {
-        Clock clock = fixed(now(), systemDefault());
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock).dead();
+        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost").dead();
 
         assertThat(job.isStopped(), is(true));
         assertThat(job.getStatus(), is(DEAD));
@@ -72,8 +79,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldNotBeStopped() {
-        Clock clock = fixed(now(), systemDefault());
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock);
+        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost");
 
         assertThat(job.isStopped(), is(false));
         assertThat(job.getStopped().isPresent(), is(false));

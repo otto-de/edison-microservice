@@ -37,9 +37,7 @@ public class InMemJobRepositoryTest {
     public void shouldNotRemoveRunningJobs() {
         // given
         final URI testUri = create("test");
-        repository.createOrUpdate(
-                newJobInfo(testUri, "FOO", systemDefaultZone())
-        );
+        repository.createOrUpdate(newJobInfo(testUri, "FOO", systemDefaultZone(), "localhost"));
         // when
         repository.removeIfStopped(testUri);
         // then
@@ -57,7 +55,7 @@ public class InMemJobRepositoryTest {
     @Test
     public void shouldRemoveJob() throws Exception {
         final URI testUri = create("test");
-        final JobInfo jobInfo = newJobInfo(testUri, "FOO", systemDefaultZone()).stop();
+        final JobInfo jobInfo = newJobInfo(testUri, "FOO", systemDefaultZone(), "localhost").stop();
         repository.createOrUpdate(jobInfo);
 
         repository.removeIfStopped(jobInfo.getJobUri());
@@ -68,8 +66,8 @@ public class InMemJobRepositoryTest {
     @Test
     public void shouldFindAll() {
         // given
-        repository.createOrUpdate(newJobInfo(create("oldest"), "FOO", fixed(Instant.now().minusSeconds(1), systemDefault())));
-        repository.createOrUpdate(newJobInfo(create("youngest"), "FOO", fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("oldest"), "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("youngest"), "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
         // when
         final List<JobInfo> jobInfos = repository.findAll();
         // then
@@ -81,8 +79,8 @@ public class InMemJobRepositoryTest {
     @Test
     public void shouldFindRunningJobsWithoutUpdatedSinceSpecificDate() throws Exception {
         // given
-        repository.createOrUpdate(newJobInfo(create("deadJob"), "FOO", fixed(Instant.now().minusSeconds(10), systemDefault())));
-        repository.createOrUpdate(newJobInfo(create("running"), "FOO", fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("deadJob"), "FOO", fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("running"), "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
 
         // when
         final List<JobInfo> jobInfos = repository.findRunningWithoutUpdateSince(OffsetDateTime.now().minus(5, ChronoUnit.SECONDS));
@@ -99,9 +97,9 @@ public class InMemJobRepositoryTest {
         final String otherType = "OTHERTEST";
 
 
-        repository.createOrUpdate(newJobInfo(create("oldest"), type, fixed(Instant.now().minusSeconds(10), systemDefault())));
-        repository.createOrUpdate(newJobInfo(create("other"), otherType, fixed(Instant.now().minusSeconds(5), systemDefault())));
-        repository.createOrUpdate(newJobInfo(create("youngest"), type, fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("oldest"), type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("other"), otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("youngest"), type, fixed(Instant.now(), systemDefault()), "localhost"));
 
         // when
         final List<JobInfo> jobInfos = repository.findLatestBy(type, 2);
@@ -117,9 +115,9 @@ public class InMemJobRepositoryTest {
         // given
         final String type = "TEST";
         final String otherType = "OTHERTEST";
-        repository.createOrUpdate(newJobInfo(create("oldest"), type, fixed(Instant.now().minusSeconds(10), systemDefault())));
-        repository.createOrUpdate(newJobInfo(create("other"), otherType, fixed(Instant.now().minusSeconds(5), systemDefault())));
-        repository.createOrUpdate(newJobInfo(create("youngest"), type, fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("oldest"), type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("other"), otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("youngest"), type, fixed(Instant.now(), systemDefault()), "localhost"));
 
         // when
         final List<JobInfo> jobInfos = repository.findLatest(2);
@@ -135,9 +133,9 @@ public class InMemJobRepositoryTest {
         // given
         final String type = "TEST";
         final String otherType = "OTHERTEST";
-        repository.createOrUpdate(newJobInfo(create("some/job/stopped"), type, fixed(Instant.now().minusSeconds(10), systemDefault())).stop());
-        repository.createOrUpdate(newJobInfo(create("some/job/other"), otherType, fixed(Instant.now().minusSeconds(5), systemDefault())));
-        repository.createOrUpdate(newJobInfo(create("some/job/running"), type, fixed(Instant.now(), systemDefault())));
+        repository.createOrUpdate(newJobInfo(create("some/job/stopped"), type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost").stop());
+        repository.createOrUpdate(newJobInfo(create("some/job/other"), otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("some/job/running"), type, fixed(Instant.now(), systemDefault()), "localhost"));
 
         // when
         final Optional<JobInfo> runningJob = repository.findRunningJobByType(type);
@@ -162,9 +160,9 @@ public class InMemJobRepositoryTest {
         // Given
         final String type = "TEST";
         final String otherType = "OTHERTEST";
-        repository.createOrUpdate(newJobInfo(create("1"), type, systemDefaultZone()).stop());
-        repository.createOrUpdate(newJobInfo(create("2"), otherType, systemDefaultZone()));
-        repository.createOrUpdate(newJobInfo(create("3"), type, systemDefaultZone()));
+        repository.createOrUpdate(newJobInfo(create("1"), type, systemDefaultZone(), "localhost").stop());
+        repository.createOrUpdate(newJobInfo(create("2"), otherType, systemDefaultZone(), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("3"), type, systemDefaultZone(), "localhost"));
 
         // When
         final List<JobInfo> jobsType1 = repository.findByType(type);
@@ -182,8 +180,7 @@ public class InMemJobRepositoryTest {
     public void shouldFindStatusOfJob() throws Exception {
         //Given
         final String type = "TEST";
-        JobInfo jobInfo = newJobInfo(create("1"), type, systemDefaultZone());
-
+        JobInfo jobInfo = newJobInfo(create("1"), type, systemDefaultZone(), "localhost");
         repository.createOrUpdate(jobInfo);
 
         //When

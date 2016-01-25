@@ -29,9 +29,9 @@ public class StopDeadJobsTest {
         final Clock clock = fixed(Instant.now(), systemDefault());
         final Clock earlierClock = fixed(Instant.now().minusSeconds(25), systemDefault());
 
-        JobInfo runningJobToBeStopped = newJobInfo(create("runningJobToBeStopped"), "TYPE", earlierClock);
-        JobInfo runningJob = newJobInfo(create("runningJob"), "TYPE", clock);
-        JobInfo stoppedJob = newJobInfo(create("stoppedJob"), "TYPE", earlierClock).stop();
+        JobInfo runningJobToBeStopped = newJobInfo(create("runningJobToBeStopped"), "TYPE", earlierClock, "localhost");
+        JobInfo runningJob = newJobInfo(create("runningJob"), "TYPE", clock, "localhost");
+        JobInfo stoppedJob = newJobInfo(create("stoppedJob"), "TYPE", earlierClock, "localhost").stop();
 
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(runningJobToBeStopped);
@@ -56,6 +56,5 @@ public class StopDeadJobsTest {
         assertThat(toBeStopped.getMessages().get(0).getMessage(), is(notNullValue()));
         assertThat(running, is(runningJob));
         assertThat(stopped, is(stoppedJob));
-
     }
 }

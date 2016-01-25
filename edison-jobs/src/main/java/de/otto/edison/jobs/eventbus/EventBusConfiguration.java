@@ -1,6 +1,8 @@
 package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.status.configuration.SystemInfoConfiguration;
+import de.otto.edison.status.domain.SystemInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,9 @@ public class EventBusConfiguration {
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired
+    private SystemInfo systemInfo;
+
     @Bean
     public JobEventListener logJobEventListener() {
         return new LogJobEventListener();
@@ -20,6 +25,6 @@ public class EventBusConfiguration {
 
     @Bean
     public JobEventListener persistenceJobEventListener() {
-        return new PersistenceJobEventListener(jobRepository, systemDefaultZone());
+        return new PersistenceJobEventListener(jobRepository, systemDefaultZone(), systemInfo);
     }
 }

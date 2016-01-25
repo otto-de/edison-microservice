@@ -22,9 +22,9 @@ public class InMemJobInfoRepositoryTest {
     public void shouldFindJobInfoByUri() {
         // given
         InMemJobRepository repository = new InMemJobRepository();
-        // when
 
-        JobInfo job = newJobInfo(create("/jobs/" + randomUUID()), "MYJOB", clock);
+        // when
+        JobInfo job = newJobInfo(create("/jobs/" + randomUUID()), "MYJOB", clock, "localhost");
         repository.createOrUpdate(job);
 
         // then

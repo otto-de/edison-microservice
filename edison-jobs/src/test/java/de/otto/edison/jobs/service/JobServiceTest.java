@@ -23,8 +23,7 @@ import static java.time.Clock.fixed;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -94,7 +93,7 @@ public class JobServiceTest {
                 applicationEventPublisher
         );
         URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
-        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", clock));
+        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", clock, "localhost"));
         // when:
         Optional<URI> jobUri = jobService.startAsyncJob("bar");
         // then:
@@ -109,7 +108,7 @@ public class JobServiceTest {
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("FOO"));
         URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
-        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", clock));
+        jobRepository.createOrUpdate(JobInfo.newJobInfo(alreadyRunningJob, "BAR", clock, "localhost"));
         JobService jobService = new JobService(
                 jobRepository,
                 asList(jobRunnable),

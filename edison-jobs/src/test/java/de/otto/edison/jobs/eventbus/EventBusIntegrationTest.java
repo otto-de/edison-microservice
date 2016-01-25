@@ -2,7 +2,9 @@ package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.service.JobRunnable;
+import de.otto.edison.status.configuration.SystemInfoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -17,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 @Test
-@SpringApplicationConfiguration(classes = {EventBusConfiguration.class, EventBusTestConfiguration.class})
+@SpringApplicationConfiguration(classes = {SystemInfoConfiguration.class, PropertyPlaceholderAutoConfiguration.class, EventBusConfiguration.class, EventBusTestConfiguration.class})
 public class EventBusIntegrationTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
