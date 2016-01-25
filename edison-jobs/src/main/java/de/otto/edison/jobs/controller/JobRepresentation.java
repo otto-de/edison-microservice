@@ -88,9 +88,14 @@ public class JobRepresentation {
         );
     }
 
-	private String formatRuntime(OffsetDateTime started, OffsetDateTime stopped) {
-		Duration duration = Duration.between(started, stopped);
-		LocalTime dateTime = LocalTime.ofSecondOfDay(duration.getSeconds());
+    private String formatRuntime(OffsetDateTime started, OffsetDateTime stopped) {
+        Duration duration = Duration.between(started, stopped);
+
+        if (duration.toHours() >= 24) {
+            return "> 24h";
+        }
+
+        LocalTime dateTime = LocalTime.ofSecondOfDay(duration.getSeconds());
         return humanReadable
                 ? ofPattern("HH:mm:ss").format(dateTime)
                 : ofPattern("HH:mm:ss").format(dateTime);

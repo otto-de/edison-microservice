@@ -24,14 +24,37 @@ public class JobRepresentationTest {
 
     @Test()
     public void shouldCalculateRuntime() throws InterruptedException {
-        final Clock clock = fixed(Instant.now(), systemDefault());
-        final OffsetDateTime startTime = now(clock);
-        final OffsetDateTime finishedTime = startTime.plus(90, ChronoUnit.SECONDS);
-        final JobInfo job = newJobInfo(create("foo"), "TEST", startTime, finishedTime, of(finishedTime), OK, emptyList(), clock, "localhost");
+        final JobInfo job = jobInfoWithRuntime(90, ChronoUnit.SECONDS);
 
         final JobRepresentation jobRepresentation = representationOf(job, true, "");
+        
         assertThat(jobRepresentation.getStatus(), is("OK"));
         assertThat(jobRepresentation.getRuntime(), is("00:01:30"));
         assertThat(jobRepresentation.getHostname(), is("localhost"));
+    }
+
+    @Test
+    public void shouldFormatRuntimeBiggerThan24Hours() throws Exception {
+        final JobInfo job = jobInfoWithRuntime(25, ChronoUnit.HOURS);
+
+        JobRepresentation jobRepresentation = representationOf(job, true, "");
+
+        assertThat(jobRepresentation.getRuntime(), is("> 24h"));
+    }
+
+    @Test
+    public void shouldFormatRuntimeLessThan24Hours() throws Exception {
+        final JobInfo job = jobInfoWithRuntime(23, ChronoUnit.HOURS);
+
+        JobRepresentation jobRepresentation = representationOf(job, true, "");
+
+        assertThat(jobRepresentation.getRuntime(), is("23:00:00"));
+    }
+
+    private JobInfo jobInfoWithRuntime(int finishAmount, ChronoUnit unit) {
+        final Clock clock = fixed(Instant.now(), systemDefault());
+        final OffsetDateTime startTime = now(clock);
+        final OffsetDateTime finishedTime = startTime.plus(finishAmount, unit);
+        return newJobInfo(create("foo"), "TEST", startTime, finishedTime, of(finishedTime), OK, emptyList(), clock, "localhost");
     }
 }
