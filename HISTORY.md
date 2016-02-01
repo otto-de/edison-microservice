@@ -1,6 +1,7 @@
 # Release History
 
-## UPCOMING: Release 0.49.3
+## Release 0.49.3
+* removed unnecessary bean from togglz configuration
 * Extended `JobService` to cover also synchronous job execution
 
 ## Release 0.49.2
