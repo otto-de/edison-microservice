@@ -155,7 +155,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
                 JobStatus.valueOf(document.getString(STATUS.key())),
                 getMessagesFrom(document),
                 clock,
-                document.getString(HOSTNAME));
+                document.getString(HOSTNAME.key()));
     }
 
     @SuppressWarnings("unchecked")

@@ -255,6 +255,7 @@ public class JobInfo {
         if (started != null ? !started.equals(jobInfo.started) : jobInfo.started != null) return false;
         if (status != jobInfo.status) return false;
         if (stopped != null ? !stopped.equals(jobInfo.stopped) : jobInfo.stopped != null) return false;
+        if (hostname != null ? !hostname.equals(jobInfo.hostname) : jobInfo.hostname != null) return false;
 
         return true;
     }
@@ -268,6 +269,7 @@ public class JobInfo {
         result = 31 * result + (messages != null ? messages.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (lastUpdated != null ? lastUpdated.hashCode() : 0);
+        result = 31 * result + (hostname != null ? hostname.hashCode() : 0);
         return result;
     }
 
@@ -277,6 +279,7 @@ public class JobInfo {
                 "jobUri=" + jobUri +
                 ", jobType=" + jobType +
                 ", started=" + started +
+                ", hostname=" + hostname +
                 ", stopped=" + stopped +
                 ", messages=" + messages +
                 ", status=" + status +

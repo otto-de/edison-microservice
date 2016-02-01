@@ -2,6 +2,7 @@ apply plugin: 'spring-boot'
 
 dependencies {
     compile project(":edison-service")
+    //compile project(":edison-jobs-mongo")  // Enable to get persistent job information
 
     testCompile project(":edison-testsupport")
 }
