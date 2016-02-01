@@ -1,6 +1,7 @@
 # Release History
 
-## NEXT Release
+## Release 0.49.2
+* Fix error on job page for long-running jobs
 * Job Lifecycle: set hostname via SystemInfo (to overcome problems on Mesos)
 
 ## Release 0.49.1
