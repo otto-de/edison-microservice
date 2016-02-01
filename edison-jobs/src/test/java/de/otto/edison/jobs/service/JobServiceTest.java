@@ -2,6 +2,7 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.mockito.invocation.InvocationOnMock;
@@ -76,6 +77,28 @@ public class JobServiceTest {
 
         // then:
         verify(executorService).execute(any(Runnable.class));
+    }
+
+    @Test
+    public void shouldStartAndWaitForJobExecution() {
+        // given:
+        JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
+        InMemJobRepository jobRepository = new InMemJobRepository();
+        JobService jobService = new JobService(
+                jobRepository,
+                asList(jobRunnable),
+                mock(GaugeService.class),
+                executorService,
+                applicationEventPublisher
+        );
+
+        // when:
+        jobService.startJob("bar");
+
+        // then:
+        verify(jobRunnable).execute(any(JobEventPublisher.class));
+        verify(executorService, never()).execute(any(Runnable.class));
     }
 
     @Test

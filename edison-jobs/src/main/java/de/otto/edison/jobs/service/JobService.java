@@ -69,17 +69,35 @@ public class JobService {
     }
 
     /**
+     * Starts a job synchronously, and blocks until the job has finished execution.
+     *
+     * @param jobType the type of the job
+     * @return the URI to retrieve detail information about the executed job instance
+     */
+    public Optional<URI> startJob(String jobType) {
+        return startJob(jobType, false);
+    }
+
+    /**
      * Starts a job asynchronously in the background.
      *
      * @param jobType the type of the job
      * @return the URI under which you can retrieve the status about the triggered job instance
      */
     public Optional<URI> startAsyncJob(String jobType) {
+        return startJob(jobType, true);
+    }
+
+    private Optional<URI> startJob(String jobType, boolean async) {
         final JobRunnable jobRunnable = findJobRunnable(jobType);
         // TODO: use some kind of database lock so we can prevent race conditions
         final Optional<JobInfo> alreadyRunning = repository.findRunningJobByType(jobRunnable.getJobDefinition().jobType());
         if (alreadyRunning == null || !alreadyRunning.isPresent()) {
-            return Optional.of(startAsync(metered(jobRunnable)));
+            if (async) {
+                return Optional.of(startAsync(metered(jobRunnable)));
+            } else {
+                return Optional.of(start(metered(jobRunnable)));
+            }
         } else {
             final URI jobUri = alreadyRunning.get().getJobUri();
             LOG.info("Job {} triggered but not started - still running.", jobUri);
@@ -94,7 +112,7 @@ public class JobService {
     /**
      * Find the latest jobs, optionally restricted to jobs of a specified type.
      *
-     * @param type if provided, the last N jobs of the type are returned, otherwise the last jobs of any type.
+     * @param type  if provided, the last N jobs of the type are returned, otherwise the last jobs of any type.
      * @param count the number of jobs to return.
      * @return a list of JobInfos
      */
@@ -121,15 +139,26 @@ public class JobService {
 
     private URI startAsync(final JobRunnable jobRunnable) {
         final URI jobUri = newJobUri();
+        final JobRunner jobRunner = createJobRunner(jobRunnable, jobUri);
+        executor.execute(() -> jobRunner.start(jobRunnable));
+        return jobUri;
+    }
+
+    private URI start(final JobRunnable jobRunnable) {
+        final URI jobUri = newJobUri();
+        final JobRunner jobRunner = createJobRunner(jobRunnable, jobUri);
+        jobRunner.start(jobRunnable);
+        return jobUri;
+    }
+
+    private JobRunner createJobRunner(JobRunnable jobRunnable, URI jobUri) {
         final String jobType = jobRunnable.getJobDefinition().jobType();
-        final JobRunner jobRunner = newJobRunner(
+        return newJobRunner(
                 jobUri,
                 jobType,
                 executor,
                 newJobEventPublisher(applicationEventPublisher, jobRunnable, jobUri)
         );
-        executor.execute(() -> jobRunner.start(jobRunnable));
-        return jobUri;
     }
 
     private JobRunnable metered(final JobRunnable delegate) {
