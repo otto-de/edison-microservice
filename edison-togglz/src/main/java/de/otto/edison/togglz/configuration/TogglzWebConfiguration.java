@@ -13,14 +13,6 @@ import org.togglz.servlet.TogglzFilter;
 public class TogglzWebConfiguration {
 
     @Bean
-    public FilterRegistrationBean togglzFilter() {
-        FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
-        filterRegistration.setFilter(new TogglzFilter());
-        filterRegistration.addUrlPatterns("/*");
-        return filterRegistration;
-    }
-
-    @Bean
     public ServletRegistrationBean togglzServlet(@Value("${management.context-path:/internal}") String prefix) {
         return new ServletRegistrationBean(new TogglzConsoleServlet(), prefix + "/togglz/*");
     }
