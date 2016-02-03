@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.49.4
+* Reverted: "removed unnecessary bean from togglz configuration" because embedded containers in Spring Boot don't scan web-fragments
+
 ## Release 0.49.3
 * removed unnecessary bean from togglz configuration
 * Extended `JobService` to cover also synchronous job execution
