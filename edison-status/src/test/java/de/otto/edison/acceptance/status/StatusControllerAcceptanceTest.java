@@ -4,10 +4,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static de.otto.edison.acceptance.api.StatusApi.internal_status_is_retrieved_as;
-import static de.otto.edison.acceptance.api.StatusApi.the_returned_content;
-import static de.otto.edison.acceptance.api.StatusApi.the_returned_json;
-import static de.otto.edison.acceptance.api.StatusApi.the_status_code;
+import static de.otto.edison.acceptance.api.StatusApi.*;
 import static de.otto.edison.testsupport.dsl.Then.assertThat;
 import static de.otto.edison.testsupport.dsl.Then.then;
 import static de.otto.edison.testsupport.dsl.When.when;
@@ -22,6 +19,18 @@ public class StatusControllerAcceptanceTest {
     public void shouldGetInternalStatusAsHtml() throws IOException {
         when(
                 internal_status_is_retrieved_as("text/html")
+        );
+
+        then(
+                assertThat(the_status_code().value(), is(200)),
+                assertThat(the_returned_content(), startsWith("<!DOCTYPE html>"))
+        );
+    }
+
+    @Test
+    public void shouldRedirectInternalToStatus() throws IOException {
+        when(
+                internal_is_retrieved_as("text/html")
         );
 
         then(

@@ -1,5 +1,9 @@
 # Release History
 
+## Release 0.50.0
+* Added InternalController that is redirecting requests from /internal to /internal/status. This can be disabled
+by setting edison.status.redirect-internal.enabled=false
+
 ## Release 0.49.4
 * Reverted: "removed unnecessary bean from togglz configuration" because embedded containers in Spring Boot don't scan web-fragments
 
