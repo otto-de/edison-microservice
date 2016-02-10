@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.testng.annotations.BeforeMethod;
@@ -8,8 +9,8 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static java.net.URI.create;
 import static java.time.Clock.fixed;
 import static java.time.Clock.systemDefaultZone;
+import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -83,7 +85,7 @@ public class InMemJobRepositoryTest {
         repository.createOrUpdate(newJobInfo(create("running"), "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
 
         // when
-        final List<JobInfo> jobInfos = repository.findRunningWithoutUpdateSince(OffsetDateTime.now().minus(5, ChronoUnit.SECONDS));
+        final List<JobInfo> jobInfos = repository.findRunningWithoutUpdateSince(now().minus(5, ChronoUnit.SECONDS));
 
         // then
         assertThat(jobInfos, IsCollectionWithSize.hasSize(1));
@@ -126,6 +128,25 @@ public class InMemJobRepositoryTest {
         assertThat(jobInfos.get(0).getJobUri(), is(create("youngest")));
         assertThat(jobInfos.get(1).getJobUri(), is(create("other")));
         assertThat(jobInfos, hasSize(2));
+    }
+
+    @Test
+    public void shouldFindLatestAndStatus() {
+        // given
+        final String type = "TEST";
+        final String otherType = "OTHERTEST";
+        repository.createOrUpdate(newJobInfo(create("oldest"), type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("other"), otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("youngest"), type, fixed(Instant.now(), systemDefault()), "localhost"));
+        repository.createOrUpdate(newJobInfo(create("finished"), type, now(), now(), Optional.of(now()),
+                JobStatus.OK, Collections.emptyList(), systemDefaultZone(), "localhost"));
+
+        // when
+        final List<JobInfo> jobInfos = repository.findLatestFinishedBy(type, JobStatus.OK, 2);
+
+        // then
+        assertThat(jobInfos.size(), is(1));
+        assertThat(jobInfos.get(0).getJobUri(), is(create("finished")));
     }
 
     @Test
@@ -184,9 +205,9 @@ public class InMemJobRepositoryTest {
         repository.createOrUpdate(jobInfo);
 
         //When
-        JobInfo.JobStatus status = repository.findStatus(create("1"));
+        JobStatus status = repository.findStatus(create("1"));
 
         //Then
-        assertThat(status, is(JobInfo.JobStatus.OK));
+        assertThat(status, is(JobStatus.OK));
     }
 }

@@ -125,8 +125,8 @@ public class JobService {
         }
     }
 
-    public List<JobInfo> findJobs(final String type, JobStatus status, final int count) {
-        return repository.findLatestBy(type, status, count);
+    public List<JobInfo> findFinishedJobs(final String type, JobStatus status, final int count) {
+        return repository.findLatestFinishedBy(type, status, count);
     }
 
 

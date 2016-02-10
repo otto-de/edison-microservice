@@ -93,9 +93,9 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     }
 
     @Override
-    public List<JobInfo> findLatestBy(final String type, final JobStatus status, final int maxCount) {
+    public List<JobInfo> findLatestFinishedBy(final String type, final JobStatus status, final int maxCount) {
         return collection()
-                .find(byTypeAndStatus(type, status))
+                .find(byTypeAndStatus(type, status).append(STOPPED.key(), singletonMap("$exists", true)))
                 .sort(orderByStarted(DESCENDING))
                 .limit(maxCount)
                 .map(this::decode)
@@ -211,7 +211,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     }
 
     private Document byTypeAndStatus(final String type, final JobStatus status) {
-        return new Document(JOB_TYPE.key(), type).append(STATUS.key(), status);
+        return new Document(JOB_TYPE.key(), type).append(STATUS.key(), status.name());
     }
 
     private Document orderByStarted(final int order) {
