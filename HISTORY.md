@@ -1,5 +1,9 @@
 # Release History
 
+## Release 0.50.1
+* edison-jobs: Bug-Fix in find implementations to limit search result after sorting has happened
+* edison-jobs: Added method to find job instances by type and status
+
 ## Release 0.50.0
 * Added InternalController that is redirecting requests from /internal to /internal/status. This can be disabled
 by setting edison.status.redirect-internal.enabled=false

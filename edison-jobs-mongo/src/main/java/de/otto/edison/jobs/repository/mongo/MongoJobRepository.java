@@ -76,8 +76,8 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     public List<JobInfo> findLatest(final int maxCount) {
         return collection()
                 .find()
-                .limit(maxCount)
                 .sort(orderByStarted(DESCENDING))
+                .limit(maxCount)
                 .map(this::decode)
                 .into(new ArrayList<>());
     }
@@ -86,8 +86,18 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     public List<JobInfo> findLatestBy(final String type, final int maxCount) {
         return collection()
                 .find(byType(type))
-                .limit(maxCount)
                 .sort(orderByStarted(DESCENDING))
+                .limit(maxCount)
+                .map(this::decode)
+                .into(new ArrayList<>());
+    }
+
+    @Override
+    public List<JobInfo> findLatestBy(final String type, final JobStatus status, final int maxCount) {
+        return collection()
+                .find(byTypeAndStatus(type, status))
+                .sort(orderByStarted(DESCENDING))
+                .limit(maxCount)
                 .map(this::decode)
                 .into(new ArrayList<>());
     }
@@ -198,6 +208,10 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
 
     private Document byType(final String type) {
         return new Document(JOB_TYPE.key(), type);
+    }
+
+    private Document byTypeAndStatus(final String type, final JobStatus status) {
+        return new Document(JOB_TYPE.key(), type).append(STATUS.key(), status);
     }
 
     private Document orderByStarted(final int order) {

@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -9,11 +10,13 @@ import java.util.Optional;
 
 public interface JobRepository {
 
-    List<JobInfo> findLatest(int maxCount);
-
     Optional<JobInfo> findOne(URI uri);
 
+    List<JobInfo> findLatest(int maxCount);
+
     List<JobInfo> findLatestBy(String type, int maxCount);
+
+    List<JobInfo> findLatestBy(String type, JobStatus status, int maxCount);
 
     List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset);
 

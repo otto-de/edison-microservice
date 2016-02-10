@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.repository.inmem;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.repository.JobRepository;
 
 import java.net.URI;
@@ -44,8 +45,21 @@ public class InMemJobRepository implements JobRepository {
                 .stream()
                 .sorted(STARTED_TIME_DESC_COMPARATOR)
                 .filter(jobInfo -> jobInfo.getJobType().equals(type))
+                .limit(maxCount)
                 .collect(toList());
     }
+
+    @Override
+    public List<JobInfo> findLatestBy(String type, JobStatus status, int maxCount) {
+        return jobs.values()
+                .stream()
+                .sorted(STARTED_TIME_DESC_COMPARATOR)
+                .filter(jobInfo ->
+                        jobInfo.getJobType().equals(type) && jobInfo.getStatus().equals(status))
+                .limit(maxCount)
+                .collect(toList());
+    }
+
 
     @Override
     public List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset) {
@@ -96,7 +110,7 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public JobInfo.JobStatus findStatus(URI jobUri) {
+    public JobStatus findStatus(URI jobUri) {
         return jobs.get(jobUri).getStatus();
     }
 
