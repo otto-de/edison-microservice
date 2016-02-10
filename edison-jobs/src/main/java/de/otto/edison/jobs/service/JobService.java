@@ -2,6 +2,7 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
@@ -123,6 +124,11 @@ public class JobService {
             return repository.findLatest(count);
         }
     }
+
+    public List<JobInfo> findJobs(final String type, JobStatus status, final int count) {
+        return repository.findLatestBy(type, status, count);
+    }
+
 
     public void deleteJobs(final Optional<String> type) {
         if (type.isPresent()) {
