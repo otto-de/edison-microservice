@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.50.2
+* edison-status: Added status to /internal/status.html
+
 ## Release 0.50.1
 * edison-jobs: Bug-Fix in find implementations to limit search result after sorting has happened
 * edison-jobs: Added method to find job instances by type and status
