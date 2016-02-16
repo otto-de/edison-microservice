@@ -1,4 +1,4 @@
-package de.otto.edison.health.configuration;
+package de.otto.edison.metrics.configuration;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
