@@ -29,7 +29,7 @@ public class TogglzRepresentation {
     }
 
     private boolean toggleState(Feature feature) {
-        return getFeatureManager().isActive(feature);
+        return getFeatureManager().getFeatureState(feature).isEnabled();
     }
 
     private String toggleName(Feature features) {
