@@ -1,5 +1,11 @@
 # Release History
 
+## Release 0.51.0
+* edison-guava: Refactored edison-guava. Guava caches can now be configured using GuavaCacheConfig. These caches will
+now expose cache statistics as /internal/metrics (JSON) and /internal/caches/statistics (HTML). 
+See edison-guava/README.md for more details on how to use Guava caches.
+* edison-metrics: Fixed package name (...metrics instead of ...health)
+
 ## Release 0.50.3
 * Housekeeping: Updated Spring Boot to version 1.3.2, MongoDB driver to 3.2.2 and Logback to 1.1.5
 

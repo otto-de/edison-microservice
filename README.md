@@ -22,6 +22,7 @@ This project contains a number of independent libraries that may be used to crea
 * An optional MongoDB-based implementation of a JobRepository
 * Support for MongoDB-based repositories in case you do not like Spring Data
 * Reporting of metrics to Graphite
+* Support for [Guava caches](https://github.com/otto-de/edison-microservice/tree/master/edison-guava)
 * Logging of messages to Kafka queues
 * Support for feature toggles based on the Togglz library
 

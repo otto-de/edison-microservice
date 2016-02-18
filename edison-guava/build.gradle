@@ -4,8 +4,10 @@ dependencies {
 
     compile libs.guava
     compile libs.bootstrap
+    compile libs.metricsSpring
 
     compile libs.springBootThymeleaf
+    compile libs.springBootActuator
 
     testCompile project(":edison-testsupport")
 }

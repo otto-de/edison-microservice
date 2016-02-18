@@ -3,13 +3,8 @@ dependencies {
     compile project(":edison-core")
     compile libs.logging
     compile libs.metrics
-    compile(libs.metricsSpring) {
-        // Fix dependencies of metrics-spring 3.0.3
-        exclude module: "metrics-annotation"
-        exclude module: "metrics-core"
-        exclude module: "metrics-healthchecks"
-    }
-    compile libs.springBoot
+    compile libs.metricsSpring
+    compile libs.springBootWeb
 
     testCompile libs.testUnit
     testCompile project(":edison-testsupport")

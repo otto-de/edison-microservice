@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="fragments/head  :: head" />
+
+<body>
+
+    <div th:replace="fragments/navigation :: navigation" />
+
+    <div class="container">
+        <div th:each="cacheInfo : ${cacheInfos}" class="panel-body">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title" th:text="${cacheInfo.name}">Cache Name</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                    <th>Rate</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td><span
+                                                title="size: the current cache size">size</span>
+                                        </td>
+                                        <td th:text="${cacheInfo.metrics['size']}"></td>
+                                        <td><span/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span
+                                                title="requestCount: the number of times Cache lookup methods have returned either a cached or uncached value">requestCount</span>
+                                        </td>
+                                        <td th:text="${cacheInfo.metrics['requestCount']}"></td>
+                                        <td><span/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span
+                                                title="hitCount: the number of cache requests which were hits">hitCount</span>
+                                        </td>
+                                        <td th:text="${cacheInfo.metrics['hitCount']} + ' times'"></td>
+                                        <td th:text="${#numbers.formatDecimal(cacheInfo.metrics['hitRatio'] * 100, 0, 2)} + '%'"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span
+                                                title="missCount: the number of times Cache lookup methods have returned an uncached (newly loaded) value, or null">missCount</span>
+                                        </td>
+                                        <td th:text="${cacheInfo.metrics['missCount']} + ' times'"></td>
+                                        <td th:text="${#numbers.formatDecimal(cacheInfo.metrics['missRatio'] * 100, 0, 2)} + '%'"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span
+                                                title="evictionCount: the number of times an entry has been evicted">evictionCount</span>
+                                        </td>
+                                        <td th:text="${cacheInfo.metrics['evictionCount']} + ' times'"></td>
+                                        <td><span/></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <th>Configuration</th>
+                                    <th>Value</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="spec : ${cacheInfo.specification}">
+                                        <td th:text="${spec.key}">keyvalue</td>
+                                        <td th:text="${spec.value}">num</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- /container -->
+
+    <span th:replace="fragments/footer :: footer" />
+
+</body>
+</html>
+

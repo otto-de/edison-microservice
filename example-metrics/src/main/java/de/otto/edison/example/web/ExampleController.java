@@ -27,8 +27,9 @@ public class ExampleController {
     @Metered(name = "sayHello", absolute = true)
     @ExceptionMetered(name = "sayHello.exceptions", absolute = true)
     public ModelAndView sayHelloAsHtml() {
+        final String name = service.getName();
         return new ModelAndView("example") {{
-            addObject("hello", service.getMessage());
+            addObject("hello", service.getMessage(name));
         }};
     }
 

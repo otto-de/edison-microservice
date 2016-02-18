@@ -2,6 +2,7 @@ apply plugin: 'spring-boot'
 
 dependencies {
     compile project(":edison-service")
+    compile project(":edison-guava")
 
     testCompile project(":edison-testsupport")
 }
