@@ -17,7 +17,7 @@ ext.libs = [
         jcip: [
                 "net.jcip:jcip-annotations:1.0"],
         logging: [
-                "ch.qos.logback:logback-classic:1.1.3"],
+                "ch.qos.logback:logback-classic:1.1.5"],
         metrics: [
                 "io.dropwizard.metrics:metrics-annotation:3.1.2",
                 "io.dropwizard.metrics:metrics-core:3.1.2",
@@ -42,7 +42,7 @@ ext.libs = [
         testTogglz:
                 "org.togglz:togglz-testing:2.2.0.Final",
         mongoDb: [
-                "org.mongodb:mongodb-driver:3.2.1"],
+                "org.mongodb:mongodb-driver:3.2.2"],
         fakeMongo:
                 "com.github.fakemongo:fongo:2.0.5",
         guava:

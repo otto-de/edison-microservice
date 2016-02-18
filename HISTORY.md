@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.50.3
+* Housekeeping: Updated Spring Boot to version 1.3.2, MongoDB driver to 3.2.2 and Logback to 1.1.5
+
 ## Release 0.50.2
 * edison-status: Added status to /internal/status.html
 
