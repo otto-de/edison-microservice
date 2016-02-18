@@ -40,7 +40,7 @@ Edison-guava is providing some code to integrate the cache statistics of Guava c
         @Bean
         public GuavaCacheConfig yetAnotherCacheConfig() {
             return new GuavaCacheConfig(
-                    "CustomerCache",
+                    "YetAnotherCache",
                     "initialCapacity=10,maximumSize=50,expireAfterAccess=5s,expireAfterWrite=5s,recordStats"
             );
         }
