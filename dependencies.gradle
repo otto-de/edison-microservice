@@ -47,7 +47,7 @@ ext.libs = [
         mongoDb: [
                 "org.mongodb:mongodb-driver:3.2.2"],
         fakeMongo:
-                "com.github.fakemongo:fongo:2.0.5",
+                "com.github.fakemongo:fongo:2.0.6",
         guava:
                 "com.google.guava:guava:19.0"
 ]
