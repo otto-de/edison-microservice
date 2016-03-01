@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.51.1
+* Updated to Spring Boot 1.3.3 (with Spring 4.2.5)
+
 ## Release 0.51.0
 * edison-guava: Refactored edison-guava. Guava caches can now be configured using GuavaCacheConfig. These caches will
 now expose cache statistics as /internal/metrics (JSON) and /internal/caches/statistics (HTML). 
