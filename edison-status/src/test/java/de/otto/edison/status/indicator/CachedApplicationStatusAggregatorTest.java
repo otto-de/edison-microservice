@@ -1,6 +1,5 @@
 package de.otto.edison.status.indicator;
 
-
 import de.otto.edison.status.domain.*;
 import org.testng.annotations.Test;
 
@@ -10,10 +9,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Test
 public class CachedApplicationStatusAggregatorTest {
@@ -41,7 +37,7 @@ public class CachedApplicationStatusAggregatorTest {
         statusAggregator.aggregatedStatus();
         statusAggregator.aggregatedStatus();
         // then
-        verify(mockIndicator,times(1)).statusDetails();
+        verify(mockIndicator, times(2)).statusDetails();
     }
 
     @Test
