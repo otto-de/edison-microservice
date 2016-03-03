@@ -19,7 +19,7 @@ ext.libs = [
         jcip: [
                 "net.jcip:jcip-annotations:1.0"],
         logging: [
-                "ch.qos.logback:logback-classic:1.1.5"],
+                "ch.qos.logback:logback-classic:1.1.6"],
         metrics: [
                 "io.dropwizard.metrics:metrics-annotation:3.1.2",
                 "io.dropwizard.metrics:metrics-core:3.1.2",
