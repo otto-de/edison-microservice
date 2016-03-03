@@ -37,7 +37,7 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
         this.teamInfo = teamInfo;
         this.indicators = indicators;
         this.serviceSpecs = serviceSpecs;
-        this.cachedStatus = applicationStatus(applicationInfo, systemInfo, versionInfo, teamInfo, emptyList(), serviceSpecs);
+        update();
     }
 
     @Override

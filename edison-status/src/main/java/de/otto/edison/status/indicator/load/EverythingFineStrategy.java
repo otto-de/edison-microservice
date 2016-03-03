@@ -1,9 +1,9 @@
 package de.otto.edison.status.indicator.load;
 
-public class EverythingFineStrategy implements OverloadDetector {
+public class EverythingFineStrategy implements LoadDetector {
 
     @Override
-    public boolean isOverloaded() {
-        return false;
+    public Status getStatus() {
+        return Status.BALANCED;
     }
 }
