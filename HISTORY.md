@@ -1,7 +1,8 @@
 # Release History
 
-## UPCOMING: Release 0.52.0
-* Added status indicator allowing the application to signal overload (see `LoadStatusIndicator`)
+## Release 0.52.0
+* Added status indicator allowing the application to signal overload (see `LoadStatusIndicator`), which enables ie. watchers to autoscale the application accordingly
+* two default strategies to discover load, one making use of metrics library, allowing to leverage `@Timed` annotations on your classes  (see `application.properties` in `example-status` )
 * Fixed behaviour of application status aggregation to provide instant calculation instead of waiting until first update has ran
 
 ## Release 0.51.1

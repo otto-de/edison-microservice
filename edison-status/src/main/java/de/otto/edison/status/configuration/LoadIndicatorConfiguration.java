@@ -6,7 +6,6 @@ import de.otto.edison.status.indicator.load.LoadDetector;
 import de.otto.edison.status.indicator.load.MetricCounterStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -28,16 +27,15 @@ public class LoadIndicatorConfiguration {
     private long maxThreshold;
 
     @Bean
-    @ConditionalOnMissingBean
-    public LoadDetector defaultStrategy() {
-        return new EverythingFineStrategy();
+    @ConditionalOnProperty(name = "edison.status.load.strategy", havingValue = "MetricCounter")
+    public LoadDetector metricCounterStrategy() {
+        return new MetricCounterStrategy(metricRegistry, counterName, minThreshold, maxThreshold);
     }
 
     @Bean
-    @ConditionalOnBean(MetricRegistry.class)
-    @ConditionalOnProperty(name = "edison.status.load.strategy", havingValue = "MetricCounter", matchIfMissing = false)
-    public LoadDetector metricCounterStrategy() {
-        return new MetricCounterStrategy(metricRegistry, counterName, minThreshold, maxThreshold);
+    @ConditionalOnMissingBean
+    public LoadDetector defaultStrategy() {
+        return new EverythingFineStrategy();
     }
 
 }

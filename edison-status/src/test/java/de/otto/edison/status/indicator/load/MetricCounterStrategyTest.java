@@ -2,6 +2,7 @@ package de.otto.edison.status.indicator.load;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import de.otto.edison.status.indicator.load.LoadDetector.Status;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -25,34 +26,34 @@ public class MetricCounterStrategyTest {
 
     @Test
     public void thatStatusIdle() throws Exception {
-        initializeMetricRegistry(metricRegistry, 8);
+        initializeMetricRegistry(metricRegistry, 8.0d);
         MetricCounterStrategy strategy = new MetricCounterStrategy(metricRegistry, "my.counter", 10, 25);
         assertThat(strategy.getStatus(), is(Status.IDLE));
     }
 
     @Test
     public void thatStatusBalance() throws Exception {
-        initializeMetricRegistry(metricRegistry, 12);
+        initializeMetricRegistry(metricRegistry, 12.0d);
         MetricCounterStrategy strategy = new MetricCounterStrategy(metricRegistry, "my.counter", 10, 25);
         assertThat(strategy.getStatus(), is(Status.BALANCED));
     }
 
     @Test
     public void thatStatusOverload() throws Exception {
-        initializeMetricRegistry(metricRegistry, 42);
+        initializeMetricRegistry(metricRegistry, 42.0d);
         MetricCounterStrategy strategy = new MetricCounterStrategy(metricRegistry, "my.counter", 10, 25);
         assertThat(strategy.getStatus(), is(Status.OVERLOAD));
     }
 
     // ~~
 
-    private static void initializeMetricRegistry(MetricRegistry metricRegistry, long counterValue) {
-        Counter counter = new Counter();
-        counter.inc(counterValue);
-        when(metricRegistry.getCounters(any())).thenReturn(new TreeMap<String, Counter>() {{
-            put("my.counter", counter);
+    private static void initializeMetricRegistry(MetricRegistry metricRegistry, double counterValue) {
+        Timer timer = mock(Timer.class);
+        when(timer.getOneMinuteRate()).thenReturn(counterValue);
+        when(metricRegistry.getTimers(any())).thenReturn(new TreeMap<String, Timer>() {{
+            put("my.counter", timer);
         }});
-        when(metricRegistry.counter("my.counter")).thenReturn(counter);
+        when(metricRegistry.timer("my.counter")).thenReturn(timer);
     }
 
 }

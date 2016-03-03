@@ -1,10 +1,8 @@
 package de.otto.edison.status.indicator.load;
 
-import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Map;
 
@@ -25,13 +23,13 @@ public class MetricCounterStrategy implements LoadDetector {
 
     private final String counterName;
 
-    private final long minThreshold;
+    private final double minThreshold;
 
-    private final long maxThreshold;
+    private final double maxThreshold;
 
     public MetricCounterStrategy(MetricRegistry metricRegistry, String counterName,
-                                 long minThreshold, long maxThreshold) {
-        LOG.info("Initialize metric counter strategy, listening on {}", counterName);
+                                 double minThreshold, double maxThreshold) {
+        LOG.info("Initialize metric counter strategy, listening on counter: {}", counterName);
         this.metricRegistry = metricRegistry;
         this.counterName = counterName;
         this.minThreshold = minThreshold;
@@ -41,12 +39,11 @@ public class MetricCounterStrategy implements LoadDetector {
     @Override
     public Status getStatus() {
         Status result = Status.BALANCED;
-        LOG.info("----> Counters: {}", metricRegistry.getCounters());
-        Map<String, Counter> counters = metricRegistry.getCounters((name, metric) -> name.contains(counterName));
-        LOG.info("Retrieved {} counter(s) for {}", counters.size(), counterName);
-        if (counters.size() > 0) {
-            String firstKey = counters.keySet().iterator().next();
-            long curValue = counters.get(firstKey).getCount();
+        Map<String, Timer> timers = metricRegistry.getTimers((name, metric) -> name.contains(counterName));
+        LOG.debug("Retrieved {} counter(s) for {}", timers.size(), counterName);
+        if (timers.size() > 0) {
+            String firstKey = timers.keySet().iterator().next();
+            double curValue = timers.get(firstKey).getOneMinuteRate();
             LOG.info("Counter '{}' has current value: {}", firstKey, curValue);
             if (curValue < minThreshold) {
                 result = Status.IDLE;
