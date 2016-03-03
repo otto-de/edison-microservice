@@ -1,5 +1,8 @@
 # Release History
 
+## UPCOMING: Release 0.52.0
+* Added status indicator allowing the application to signal overload (see `OverloadStatusIndicator`)
+
 ## Release 0.51.1
 * Updated to Spring Boot 1.3.3 (with Spring 4.2.5)
 
