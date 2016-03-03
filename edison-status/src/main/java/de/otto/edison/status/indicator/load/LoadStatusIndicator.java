@@ -11,6 +11,12 @@ import java.util.LinkedHashMap;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 
+/**
+ * Applies the configured {@link LoadDetector} strategy to
+ * derive application status (incl. detail information).
+ *
+ * See {@link de.otto.edison.status.configuration.LoadIndicatorConfiguration}
+ */
 @Component
 public class LoadStatusIndicator implements StatusDetailIndicator {
 
@@ -26,7 +32,7 @@ public class LoadStatusIndicator implements StatusDetailIndicator {
         Status status = loadDetector.getStatus();
         return StatusDetail.statusDetail("load",
                 status == Status.OVERLOAD ? WARNING : OK,
-                "detects whether application is under heavy load, ok or idling.",
+                "detects whether application is currently over-loaded, fine or idling.",
                 new LinkedHashMap<String, String>() {{
                     put("detail", status.name());
                 }});

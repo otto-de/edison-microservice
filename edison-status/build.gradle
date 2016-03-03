@@ -1,15 +1,19 @@
 
 dependencies {
     compile project(":edison-core")
-    compile libs.springBootWeb
-    compile libs.springBootThymeleaf
 
     compile libs.jcip
     compile libs.logging
 
+    compile libs.metrics
+    compile libs.metricsSpring
+
+    compile libs.springBootWeb
+    compile libs.springBootThymeleaf
+
+    testCompile project(":edison-testsupport")
     testCompile libs.testUnit
     testCompile libs.asyncHttp
-    testCompile project(":edison-testsupport")
 }
 
 artifacts {
