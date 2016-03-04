@@ -1,6 +1,7 @@
 package de.otto.edison.status.configuration;
 
 import com.codahale.metrics.MetricRegistry;
+import de.otto.edison.annotations.Beta;
 import de.otto.edison.status.indicator.load.EverythingFineStrategy;
 import de.otto.edison.status.indicator.load.LoadDetector;
 import de.otto.edison.status.indicator.load.MetricCounterStrategy;
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Beta
 @Configuration
 public class LoadIndicatorConfiguration {
 

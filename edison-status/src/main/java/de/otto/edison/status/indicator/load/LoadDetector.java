@@ -1,9 +1,12 @@
 package de.otto.edison.status.indicator.load;
 
+import de.otto.edison.annotations.Beta;
+
 /**
  * Implementation of this interface allow to steer whether the application
  * is able to run smoothly versus nearly unable to handle the load.
  */
+@Beta
 public interface LoadDetector {
 
     enum Status {

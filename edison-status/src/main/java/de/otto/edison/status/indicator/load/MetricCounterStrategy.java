@@ -2,6 +2,7 @@ package de.otto.edison.status.indicator.load;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import de.otto.edison.annotations.Beta;
 import org.slf4j.Logger;
 
 import java.util.Map;
@@ -15,6 +16,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * @author Niko Schmuck
  */
+@Beta
 public class MetricCounterStrategy implements LoadDetector {
 
     private static final Logger LOG = getLogger(MetricCounterStrategy.class);

@@ -1,5 +1,6 @@
 package de.otto.edison.status.indicator.load;
 
+import de.otto.edison.annotations.Beta;
 import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import de.otto.edison.status.indicator.load.LoadDetector.Status;
@@ -17,6 +18,7 @@ import static de.otto.edison.status.domain.Status.WARNING;
  *
  * See {@link de.otto.edison.status.configuration.LoadIndicatorConfiguration}
  */
+@Beta
 @Component
 public class LoadStatusIndicator implements StatusDetailIndicator {
 
