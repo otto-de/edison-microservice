@@ -1,4 +1,4 @@
-package de.otto.edison.status.indicator.load;
+package de.otto.edison.metrics.load;
 
 import de.otto.edison.annotations.Beta;
 
@@ -24,8 +24,7 @@ public interface LoadDetector {
         BALANCED,
 
         /**
-         * Application is overloaded and therefore escalate overall application
-         * status via {@link de.otto.edison.status.domain.Status#WARNING}.
+         * Application is overloaded.
          */
         OVERLOAD
 

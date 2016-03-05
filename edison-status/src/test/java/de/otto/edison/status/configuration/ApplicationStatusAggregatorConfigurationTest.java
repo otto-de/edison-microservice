@@ -4,8 +4,6 @@ import de.otto.edison.status.domain.ApplicationStatus;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
-import de.otto.edison.status.indicator.load.LoadDetector;
-import de.otto.edison.status.indicator.load.LoadStatusIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -16,12 +14,12 @@ import org.testng.annotations.Test;
 import java.util.Optional;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 @SpringApplicationConfiguration(classes = {SystemInfoConfiguration.class, PropertyPlaceholderAutoConfiguration.class,
         ApplicationInfoConfiguration.class, VersionInfoConfiguration.class, TeamInfoConfiguration.class,
-        LoadStatusIndicator.class,
-        ApplicationStatusAggregatorConfiguration.class, LoadIndicatorConfiguration.class})
+        ApplicationStatusAggregatorConfiguration.class})
 public class ApplicationStatusAggregatorConfigurationTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
@@ -37,14 +35,12 @@ public class ApplicationStatusAggregatorConfigurationTest extends AbstractTestNG
     @Test
     public void checkOverallStatus() {
         assertEquals(status.status, Status.OK);
-    }
-
-    @Test
-    public void checkLoadStatus() {
-        Optional<StatusDetail> loadDetail = status.statusDetails.stream().filter(detail -> detail.getName().equals("load")).findFirst();
-        assertTrue(loadDetail.isPresent());
-        assertEquals(loadDetail.get().getStatus(), Status.OK);
-        assertEquals(loadDetail.get().getDetails().get("detail"), LoadDetector.Status.BALANCED.name());
+        assertNotNull(status.application);
+        assertNotNull(status.system);
+        assertNotNull(status.vcs);
+        assertNotNull(status.team);
+        assertTrue(status.statusDetails.isEmpty());
+        assertTrue(status.serviceSpecs.isEmpty());
     }
 
 }

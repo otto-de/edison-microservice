@@ -1,10 +1,10 @@
-package de.otto.edison.status.configuration;
+package de.otto.edison.metrics.configuration;
 
 import com.codahale.metrics.MetricRegistry;
 import de.otto.edison.annotations.Beta;
-import de.otto.edison.status.indicator.load.EverythingFineStrategy;
-import de.otto.edison.status.indicator.load.LoadDetector;
-import de.otto.edison.status.indicator.load.MetricCounterStrategy;
+import de.otto.edison.metrics.load.EverythingFineStrategy;
+import de.otto.edison.metrics.load.LoadDetector;
+import de.otto.edison.metrics.load.MetricTimerStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,19 +19,19 @@ public class LoadIndicatorConfiguration {
     @Autowired(required = false)
     private MetricRegistry metricRegistry;
 
-    @Value("${edison.status.load.metrics.counterName:}")
-    private String counterName;
+    @Value("${edison.metrics.load.timerName:}")
+    private String timerName;
 
-    @Value("${edison.status.load.metrics.minThreshold:0}")
+    @Value("${edison.metrics.load.minThreshold:0}")
     private long minThreshold;
 
-    @Value("${edison.status.load.metrics.maxThreshold:-1}")
+    @Value("${edison.metrics.load.maxThreshold:-1}")
     private long maxThreshold;
 
     @Bean
-    @ConditionalOnProperty(name = "edison.status.load.strategy", havingValue = "MetricCounter")
+    @ConditionalOnProperty(name = "edison.metrics.load.strategy", havingValue = "MetricCounter")
     public LoadDetector metricCounterStrategy() {
-        return new MetricCounterStrategy(metricRegistry, counterName, minThreshold, maxThreshold);
+        return new MetricTimerStrategy(metricRegistry, timerName, minThreshold, maxThreshold);
     }
 
     @Bean

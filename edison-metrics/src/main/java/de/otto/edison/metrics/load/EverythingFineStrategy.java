@@ -1,10 +1,14 @@
-package de.otto.edison.status.indicator.load;
+package de.otto.edison.metrics.load;
 
 import de.otto.edison.annotations.Beta;
 import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * No matter what, the application is in well balanced state,
+ * and will not signal any under- or over-load.
+ */
 @Beta
 public class EverythingFineStrategy implements LoadDetector {
 
