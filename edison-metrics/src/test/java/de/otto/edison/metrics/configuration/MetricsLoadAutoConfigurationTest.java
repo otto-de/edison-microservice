@@ -12,8 +12,8 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 @SpringApplicationConfiguration(classes = {PropertyPlaceholderAutoConfiguration.class,
-        MetricRegistry.class, LoadIndicatorConfiguration.class})
-public class LoadIndicatorConfigurationTest extends AbstractTestNGSpringContextTests {
+        MetricRegistry.class, MetricsLoadAutoConfiguration.class})
+public class MetricsLoadAutoConfigurationTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private LoadDetector loadDetector;

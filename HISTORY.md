@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.52.2
+* edison-metrics: Refactored auto configuration of `LoadDetector` to allow strategy selection by `application.properties` as well as exposing your own bean the same time
+
 ## Release 0.52.1
 * Refactored load indication (see 0.52.0) from edison-status to edison-metrics and introduced new endpoint `/internal/load` which returns the load status to be used by consumers (ie. auto-scaling drivers). See `example-metrics` for an usage example on average response time behaviour.
 
