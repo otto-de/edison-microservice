@@ -11,12 +11,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RestController
 public class MetricsLoadController {
 
-    @Autowired
     private LoadDetector loadDetector;
 
-    public MetricsLoadController() {
-    }
-
+    @Autowired
     public MetricsLoadController(final LoadDetector loadDetector) {
         this.loadDetector = loadDetector;
     }
