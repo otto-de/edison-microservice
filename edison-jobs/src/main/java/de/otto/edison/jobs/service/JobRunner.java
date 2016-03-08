@@ -59,7 +59,6 @@ public final class JobRunner {
             error(e);
             if (restarts > 0) {
                 jobEventPublisher.stateChanged(RESTART);
-                LOG.warn("Retrying job {}", runnable.getJobDefinition().jobName());
                 executeAndRetry(runnable, restarts - 1);
             }
         }

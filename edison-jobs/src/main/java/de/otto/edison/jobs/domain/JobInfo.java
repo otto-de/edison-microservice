@@ -37,7 +37,6 @@ public class JobInfo {
     private Optional<OffsetDateTime> stopped;
     private JobStatus status;
     private OffsetDateTime lastUpdated;
-    private int restarts = 0;
     private String hostname;
 
     public enum JobStatus {OK, ERROR, DEAD}
@@ -205,8 +204,7 @@ public class JobInfo {
      * @return the updated JobInfo
      */
     public synchronized JobInfo restart() {
-        ++restarts;
-        messages.add(jobMessage(WARNING, format("%s. restart of Job after error.", restarts)));
+        messages.add(jobMessage(WARNING, format("Restarting job ..")));
         lastUpdated = now(clock);
         status = OK;
         return this;
