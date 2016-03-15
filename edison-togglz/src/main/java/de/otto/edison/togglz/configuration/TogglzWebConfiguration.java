@@ -2,6 +2,7 @@ package de.otto.edison.togglz.configuration;
 
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.togglz.servlet.TogglzFilter;
 public class TogglzWebConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean
     public FilterRegistrationBean togglzFilter() {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
         filterRegistration.setFilter(new TogglzFilter());
