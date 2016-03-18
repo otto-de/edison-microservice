@@ -84,7 +84,6 @@ public final class JobRunner {
 
     private synchronized void error(final Exception e) {
         jobEventPublisher.error("Fatal error in job " + jobType + " (" + jobUri + ") " + e.getMessage());
-        LOG.error("Fatal error in job " + jobType + " (" + jobUri + ")", e.getMessage());
     }
 
     private synchronized void stop() {
