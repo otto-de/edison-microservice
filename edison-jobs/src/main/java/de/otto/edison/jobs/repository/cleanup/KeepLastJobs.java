@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +20,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 /**
- * A JobCleanupStrategy that is removing all but the newest N jobs of an optional JobType.
+ * A JobCleanupStrategy that is removing all but the newest N jobs of each type.
  * <p>
  * Concurrent executions of the strategy may have the effect, that more JobInfos than expected are deleted! This
  * may happen, if multiple instances of your application are running in parallel.
@@ -33,17 +34,14 @@ public class KeepLastJobs implements JobCleanupStrategy {
     private static final long KEEP_LAST_JOBS_CLEANUP_INTERVAL = 10L * 60L * 1000L;
 
     private final int numberOfJobsToKeep;
-    private final Optional<String> jobType;
     private JobRepository jobRepository;
 
     /**
      * @param numberOfJobsToKeep the number of jobs that are kept
-     * @param jobType            the optional type of the jobs
      */
-    public KeepLastJobs(final int numberOfJobsToKeep, final Optional<String> jobType) {
+    public KeepLastJobs(final int numberOfJobsToKeep) {
         this.numberOfJobsToKeep = numberOfJobsToKeep;
-        this.jobType = jobType;
-        LOG.info("KeepLastJobs strategy configured with numberOfJobsToKeep='{}', jobType='{}'", numberOfJobsToKeep, jobType.orElse("N/A"));
+        LOG.info("KeepLastJobs strategy configured with numberOfJobsToKeep='{}'", numberOfJobsToKeep);
     }
 
     @Autowired
@@ -56,35 +54,28 @@ public class KeepLastJobs implements JobCleanupStrategy {
      */
     @Scheduled(fixedRate = KEEP_LAST_JOBS_CLEANUP_INTERVAL)
     public void doCleanUp() {
-        final List<JobInfo> jobs = jobType.isPresent() ? jobRepository.findByType(jobType.get()) : jobRepository.findAll();
+        final List<JobInfo> jobs = jobRepository.findAll();
 
-        if (jobs.size() > numberOfJobsToKeep) {
-            findJobsToDelete(jobs)
-                    .forEach(jobInfo -> jobRepository.removeIfStopped(jobInfo.getJobUri()));
-        }
+        findJobsToDelete(jobs)
+                .forEach(jobInfo -> jobRepository.removeIfStopped(jobInfo.getJobUri()));
     }
 
     private List<JobInfo> findJobsToDelete(List<JobInfo> jobs) {
-        int numberOfJobsToDelete = jobs.size() - numberOfJobsToKeep;
-        List<JobInfo> lastOKJobs = findLastOKJobs(jobs);
-
-        return jobs
-                .stream()
-                .filter(j -> j.isStopped() && !lastOKJobs.contains(j))
-                .sorted(comparing(JobInfo::getStarted))
-                .limit(numberOfJobsToDelete)
-                .collect(toList());
+        List<JobInfo> jobsToDelete = new ArrayList<>();
+        jobs.stream()
+                .sorted(comparing(JobInfo::getStarted, reverseOrder()))
+                .collect(groupingBy(JobInfo::getJobType))
+                .forEach((jobType, jobExecutions) -> {
+                    Optional<JobInfo> lastOkExecution = jobExecutions.stream()
+                            .filter(j -> j.isStopped() && j.getStatus() == OK)
+                            .findFirst();
+                    jobExecutions.stream()
+                            .filter(JobInfo::isStopped)
+                            .skip(numberOfJobsToKeep)
+                            .filter(j -> !(lastOkExecution.isPresent() && lastOkExecution.get().equals(j)))
+                            .forEach(jobsToDelete::add);
+                });
+        return jobsToDelete;
     }
 
-    private List<JobInfo> findLastOKJobs(List<JobInfo> jobs) {
-        Map<String, List<JobInfo>> jobsGroupedByType = jobs.stream().collect(groupingBy(JobInfo::getJobType));
-
-        return jobsGroupedByType.entrySet().stream().map(entry -> {
-            return entry.getValue().stream()
-                    .filter(j -> j.isStopped() && j.getStatus() == OK)
-                    .sorted(comparing(JobInfo::getStarted, reverseOrder()))
-                    .findFirst();
-        }).filter(Optional::isPresent).map(Optional::get)
-                .collect(Collectors.toList());
-    }
 }

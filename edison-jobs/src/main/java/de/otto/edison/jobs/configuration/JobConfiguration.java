@@ -61,7 +61,7 @@ public class JobConfiguration {
     @Bean
     @ConditionalOnMissingBean(KeepLastJobs.class)
     public KeepLastJobs keepLastJobsStrategy() {
-        return new KeepLastJobs(numberOfJobsToKeep, Optional.empty());
+        return new KeepLastJobs(numberOfJobsToKeep);
     }
 
     @Bean
