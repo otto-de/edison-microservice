@@ -5,6 +5,7 @@ import com.mongodb.client.model.FindOneAndReplaceOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -20,6 +21,11 @@ public abstract class AbstractMongoRepository<K, V> {
 
     protected static final String ID = "_id";
     protected static final String ETAG = "etag";
+
+    @PostConstruct
+    public void postConstruct() {
+        ensureIndexes();
+    }
 
     public Optional<V> findOne(final K key) {
         return ofNullable(collection()

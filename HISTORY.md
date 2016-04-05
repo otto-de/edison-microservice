@@ -1,6 +1,6 @@
 # Release History
-## Release 0.53.0
-* edison-jobs-mongo: Create index on jobtype and startet to sort jobs by date when all job documents are bigger then 32MB  
+## Release 0.53.1
+* edison-jobs-mongo: Create index on jobtype and started to sort jobs by date when all job documents are bigger then 32MB  
 
 ## Release 0.52.2
 * edison-metrics: Refactored auto configuration of `LoadDetector` to allow strategy selection by `application.properties` as well as exposing your own bean the same time
