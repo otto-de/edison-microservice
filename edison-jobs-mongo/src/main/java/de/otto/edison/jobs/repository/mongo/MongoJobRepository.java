@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.repository.mongo;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.domain.JobInfo;
@@ -200,6 +201,8 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
 
     @Override
     protected final void ensureIndexes() {
+    	collection().createIndex(new BasicDBObject(JOB_TYPE.key(),1));
+    	collection().createIndex(new BasicDBObject(STARTED.key(),1));
     }
 
     private String getMessage(Document document) {
