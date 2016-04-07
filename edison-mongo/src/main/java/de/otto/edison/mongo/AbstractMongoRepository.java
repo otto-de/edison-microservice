@@ -2,6 +2,7 @@ package de.otto.edison.mongo;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -91,12 +92,12 @@ public abstract class AbstractMongoRepository<K, V> {
         return collection().count();
     }
 
-    public void delete(final K key) {
-        collection().deleteOne(byId(key));
+    public DeleteResult delete(final K key) {
+        return collection().deleteOne(byId(key));
     }
 
-    public void deleteAll() {
-        collection().deleteMany(matchAll());
+    public DeleteResult deleteAll() {
+        return collection().deleteMany(matchAll());
     }
 
     protected Document byId(final K key) {
