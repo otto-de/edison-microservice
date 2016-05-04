@@ -1,4 +1,10 @@
 # Release History
+
+## Release 0.54.0
+* Keep last jobs strategy now keeps the last N jobs of each type
+* Create indices in jobs collection
+* Return DeleteResult of mongo delete queries
+
 ## Release 0.53.1
 * edison-jobs-mongo: Create index on jobtype and started to sort jobs by date when all job documents are bigger then 32MB  
 
