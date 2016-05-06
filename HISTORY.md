@@ -1,5 +1,8 @@
 # Release History
 
+## CURRENT SNAPSHOT
+* add serverSelectionTimeout (default 30secs) to mongo config
+
 ## Release 0.54.1
 * JobStatusDetailIndicator: Indicate error if job could not be retrieved from the repository 
 
