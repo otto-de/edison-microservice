@@ -5,6 +5,8 @@ import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -19,6 +21,8 @@ import static java.time.OffsetDateTime.now;
 
 
 public class JobStatusDetailIndicator implements StatusDetailIndicator {
+    private static final Logger LOG = LoggerFactory.getLogger(JobStatusDetailIndicator.class);
+
     public static final String SUCCESS_MESSAGE = "Last job was successful";
     public static final String ERROR_MESSAGE = "Job had an error";
     public static final String JOB_TOO_OLD_MESSAGE = "Job didn't run in the past ";
@@ -40,9 +44,13 @@ public class JobStatusDetailIndicator implements StatusDetailIndicator {
 
     @Override
     public StatusDetail statusDetail() {
-        List<JobInfo> jobs = jobRepository.findLatestBy(jobType, 1);
-
-        return jobs.isEmpty() ? statusDetailWhenNoJobAvailable() : toStatusDetail(jobs.get(0));
+        try {
+            List<JobInfo> jobs = jobRepository.findLatestBy(jobType, 1);
+            return jobs.isEmpty() ? statusDetailWhenNoJobAvailable() : toStatusDetail(jobs.get(0));
+        } catch (final Exception e) {
+            LOG.error("could not retrieve job status");
+            return StatusDetail.statusDetail(name, Status.ERROR, "could not retrieve job status");
+        }
     }
 
     private StatusDetail toStatusDetail(final JobInfo jobInfo) {

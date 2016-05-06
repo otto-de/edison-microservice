@@ -2,6 +2,7 @@ package de.otto.edison.jobs.status;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -11,6 +12,7 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.status.JobStatusDetailIndicator.ERROR_MESSAGE;
 import static de.otto.edison.jobs.status.JobStatusDetailIndicator.SUCCESS_MESSAGE;
 import static de.otto.edison.status.domain.Status.OK;
@@ -21,9 +23,7 @@ import static java.time.OffsetDateTime.now;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -220,7 +220,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
-        when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
+        when(someJob.getStatus()).thenReturn(ERROR);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
@@ -242,7 +242,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
-        when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
+        when(someJob.getStatus()).thenReturn(ERROR);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
@@ -299,6 +299,20 @@ public class JobStatusDetailIndicatorTest {
     }
 
     @Test
+    public void shouldIndicateErrorIfJobCouldNotBeRetievedFromRepository() {
+        // given
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenThrow(RuntimeException.class);
+
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+
+        // when
+        StatusDetail status = jobStatusDetailIndicator.statusDetail();
+
+        // then
+        assertThat(status.getStatus(), is(Status.ERROR));
+    }
+
+    @Test
     public void shouldFilterByJobType() {
         // given
         OffsetDateTime now = now();
@@ -308,7 +322,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
-        when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
+        when(someJob.getStatus()).thenReturn(ERROR);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
         JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType2", Optional.of(ofHours(10)));
