@@ -2,6 +2,8 @@ package de.otto.edison.jobs.repository.inmem;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.repository.JobRepository;
 
 import java.net.URI;
@@ -116,5 +118,12 @@ public class InMemJobRepository implements JobRepository {
     public JobStatus findStatus(URI jobUri) {
         return jobs.get(jobUri).getStatus();
     }
+
+    @Override
+    public void appendMessage(URI jobUri, JobMessage jobMessage) {
+        JobInfo jobInfo = jobs.get(jobUri);
+        jobInfo.getMessages().add(jobMessage);
+    }
+
 
 }

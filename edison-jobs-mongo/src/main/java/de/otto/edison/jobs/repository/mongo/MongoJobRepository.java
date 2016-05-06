@@ -21,6 +21,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
@@ -71,6 +72,11 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
                 .find(byId(jobUri))
                 .projection(new Document(STATUS.key(), true))
                 .first().getString(STATUS.key()));
+    }
+
+    @Override
+    public void appendMessage(URI jobUri, JobMessage jobMessage) {
+        collection().updateOne(byId(jobUri), new Document("$push", new Document(MESSAGES.key(), encodeJobMessage(jobMessage))));
     }
 
     @Override
@@ -141,11 +147,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
                 .append(STARTED.key(), toDate(job.getStarted()))
                 .append(LAST_UPDATED.key(), toDate(job.getLastUpdated()))
                 .append(MESSAGES.key(), job.getMessages().stream()
-                        .map(jm -> new Document() {{
-                            put(MSG_LEVEL.key(), jm.getLevel().name());
-                            put(MSG_TS.key(), toDate(jm.getTimestamp()));
-                            put(MSG_TEXT.key(), jm.getMessage());
-                        }})
+                        .map(MongoJobRepository::encodeJobMessage)
                         .collect(toList()))
                 .append(STATUS.key(), job.getStatus().name())
                 .append(HOSTNAME.key(), job.getHostname());
@@ -153,6 +155,14 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
             document.append(STOPPED.key(), toDate(job.getStopped().get()));
         }
         return document;
+    }
+
+    private static Document encodeJobMessage(JobMessage jm) {
+        return new Document() {{
+            put(MSG_LEVEL.key(), jm.getLevel().name());
+            put(MSG_TS.key(), toDate(jm.getTimestamp()));
+            put(MSG_TEXT.key(), jm.getMessage());
+        }};
     }
 
     @Override

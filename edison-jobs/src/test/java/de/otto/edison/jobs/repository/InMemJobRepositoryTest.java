@@ -2,7 +2,10 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
+import de.otto.edison.testsupport.dsl.When;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -209,5 +212,28 @@ public class InMemJobRepositoryTest {
 
         //Then
         assertThat(status, is(JobStatus.OK));
+    }
+
+    @Test
+    public void shouldAppendMessageToJobInfo() throws Exception {
+
+        URI someUri = create("someUri");
+
+        //Given
+        JobInfo jobInfo = newJobInfo(someUri, "TEST", systemDefaultZone(), "localhost");
+        jobInfo.getMessages().add(JobMessage.jobMessage(Level.INFO, "Die Biene ist da."));
+        jobInfo.getMessages().add(JobMessage.jobMessage(Level.INFO, "Die Biene ist immer noch da."));
+        repository.createOrUpdate(jobInfo);
+
+        //When
+        JobMessage igelMessage = JobMessage.jobMessage(Level.WARNING, "Der Igel ist froh.");
+        repository.appendMessage(someUri, igelMessage);
+
+        //Then
+        JobInfo jobInfoFromRepo = repository.findOne(someUri).get();
+
+        assertThat(jobInfoFromRepo.getMessages().size(), is(3));
+        assertThat(jobInfoFromRepo.getMessages().get(2), is(igelMessage));
+
     }
 }

@@ -2,6 +2,8 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.eventbus.events.MessageEvent;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -33,4 +35,6 @@ public interface JobRepository {
     long size();
 
     JobInfo.JobStatus findStatus(URI jobUri);
+
+    void appendMessage(URI jobUri, JobMessage jobMessage);
 }

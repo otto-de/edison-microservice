@@ -227,6 +227,25 @@ public class MongoJobRepositoryTest {
         assertThat(status, is(OK));
     }
 
+    @Test
+    public void shouldAppendMessageToJob() throws Exception {
+        // given
+        String jobId = "http://localhost/baZ";
+        URI jobUri = URI.create(jobId);
+        JobInfo jobInfo = someJobInfo(jobId, "T_FOO");
+        repo.createOrUpdate(jobInfo);
+
+        // when
+        JobMessage jobMessage = JobMessage.jobMessage(Level.INFO, "Schön ist es auf der Welt zu sein, sagt der Igel zu dem Stachelschwein", OffsetDateTime.now());
+        repo.appendMessage(jobUri, jobMessage);
+
+        // then
+        JobInfo jobInfoFromDB = repo.findOne(jobUri).get();
+        assertThat(jobInfoFromDB.getMessages(), hasSize(3));
+        assertThat(jobInfoFromDB.getMessages().get(2), is(jobMessage));
+
+    }
+
     private JobInfo someJobInfo(final String jobUri) {
         return JobInfo.newJobInfo(
                 URI.create(jobUri),

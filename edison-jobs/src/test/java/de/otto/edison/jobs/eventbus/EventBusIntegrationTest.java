@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.service.JobRunnable;
 import de.otto.edison.status.configuration.SystemInfoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ public class EventBusIntegrationTest extends AbstractTestNGSpringContextTests {
         JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/job"));
 
         // when
+        testee.stateChanged(StateChangeEvent.State.START);
         testee.error("some message");
 
         // then

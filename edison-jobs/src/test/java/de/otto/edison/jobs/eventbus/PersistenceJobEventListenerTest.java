@@ -2,12 +2,14 @@ package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.service.JobRunnable;
 import de.otto.edison.status.domain.SystemInfo;
+import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -131,12 +133,11 @@ public class PersistenceJobEventListenerTest {
         testee.consumeMessage(messageEvent);
 
         // then
-        assertThat(jobInfo.getMessages(), hasSize(1));
-        assertThat(jobInfo.getMessages().get(0).getLevel(), is(Level.INFO));
-        assertThat(jobInfo.getMessages().get(0).getMessage(), is("some message"));
-
-        verify(jobRepository).findOne(URI.create("some/job"));
-        verify(jobRepository).createOrUpdate(jobInfo);
+        ArgumentCaptor<JobMessage> captor = ArgumentCaptor.forClass(JobMessage.class);
+        verify(jobRepository).appendMessage(eq(URI.create("some/job")), captor.capture());
+        assertThat(captor.getValue().getLevel(), is(Level.INFO));
+        assertThat(captor.getValue().getMessage(), is("some message"));
+        verifyNoMoreInteractions(jobRepository);
     }
 
     @Test
@@ -150,31 +151,27 @@ public class PersistenceJobEventListenerTest {
         testee.consumeMessage(messageEvent);
 
         // then
-        assertThat(jobInfo.getMessages(), hasSize(1));
-        assertThat(jobInfo.getMessages().get(0).getLevel(), is(Level.WARNING));
-        assertThat(jobInfo.getMessages().get(0).getMessage(), is("some message"));
-
-        verify(jobRepository).findOne(URI.create("some/job"));
-        verify(jobRepository).createOrUpdate(jobInfo);
+        ArgumentCaptor<JobMessage> captor = ArgumentCaptor.forClass(JobMessage.class);
+        verify(jobRepository).appendMessage(eq(URI.create("some/job")), captor.capture());
+        assertThat(captor.getValue().getLevel(), is(Level.WARNING));
+        assertThat(captor.getValue().getMessage(), is("some message"));
+        verifyNoMoreInteractions(jobRepository);
     }
 
     @Test
     public void shouldPersistErrorMessages() throws Exception {
         // given
         MessageEvent messageEvent = newMessageEvent(someJobRunnable(), URI.create("some/job"), MessageEvent.Level.ERROR, "some message");
-        JobInfo jobInfo = JobInfo.newJobInfo(URI.create("some/job"), "someType", Clock.systemDefaultZone(), "localhost");
-        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeMessage(messageEvent);
 
         // then
-        assertThat(jobInfo.getMessages(), hasSize(1));
-        assertThat(jobInfo.getMessages().get(0).getLevel(), is(Level.ERROR));
-        assertThat(jobInfo.getMessages().get(0).getMessage(), is("some message"));
-
-        verify(jobRepository).findOne(URI.create("some/job"));
-        verify(jobRepository).createOrUpdate(jobInfo);
+        ArgumentCaptor<JobMessage> captor = ArgumentCaptor.forClass(JobMessage.class);
+        verify(jobRepository).appendMessage(eq(URI.create("some/job")), captor.capture());
+        assertThat(captor.getValue().getLevel(), is(Level.ERROR));
+        assertThat(captor.getValue().getMessage(), is("some message"));
+        verifyNoMoreInteractions(jobRepository);
     }
 
     private JobRunnable someJobRunnable() {

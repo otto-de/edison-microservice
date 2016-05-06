@@ -142,7 +142,7 @@ public class JobInfo {
      * @return list of job messages, containing human-readable information about what happened during execution.
      */
     public synchronized List<JobMessage> getMessages() {
-        return new ArrayList<>(messages);
+        return messages;
     }
 
     /**

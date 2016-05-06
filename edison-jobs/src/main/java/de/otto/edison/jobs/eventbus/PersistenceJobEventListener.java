@@ -1,6 +1,8 @@
 package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.repository.JobRepository;
@@ -58,18 +60,24 @@ public class PersistenceJobEventListener implements JobEventListener {
 
     @Override
     public void consumeMessage(final MessageEvent messageEvent) {
-        MessageEvent.Level level = messageEvent.getLevel();
-        switch (level) {
-            case ERROR:
-                updateJobIfPresent(messageEvent.getJobUri(), jobInfo -> jobInfo.error(messageEvent.getMessage()));
+        JobMessage jobMessage = JobMessage.jobMessage(convertLevel(messageEvent), messageEvent.getMessage());
+        jobRepository.appendMessage(messageEvent.getJobUri(), jobMessage);
+    }
+
+    private Level convertLevel(MessageEvent messageEvent) {
+        Level level = Level.INFO;
+        switch (messageEvent.getLevel()){
+            case INFO:
+                level = Level.INFO;
                 break;
             case WARN:
-                updateJobIfPresent(messageEvent.getJobUri(), jobInfo -> jobInfo.warn(messageEvent.getMessage()));
+                level = Level.WARNING;
                 break;
-            case INFO:
-                updateJobIfPresent(messageEvent.getJobUri(), jobInfo -> jobInfo.info(messageEvent.getMessage()));
+            case ERROR:
+                level = Level.ERROR;
                 break;
         }
+        return level;
     }
 
     private void updateJobIfPresent(final URI jobUri, final Consumer<JobInfo> consumer) {
