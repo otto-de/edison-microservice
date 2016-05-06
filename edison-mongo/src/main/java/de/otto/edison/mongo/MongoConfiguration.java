@@ -32,6 +32,8 @@ public class MongoConfiguration {
     private int connectTimeout = 5000;
     @Value("${edison.mongo.socketTimeout:2000}")
     private int socketTimeout = 10000;
+    @Value("${edison.mongo.serverSelectionTimeout:30000}")
+    private int serverSelectionTimeout;
 
     @Value("${edison.mongo.connectionpool.maxSize:100}")
     private int connectionsPerHostMax = 100;
@@ -67,6 +69,7 @@ public class MongoConfiguration {
                 .minConnectionsPerHost(connectionsPerHostMin)
                 .connectionsPerHost(connectionsPerHostMax)
                 .connectTimeout(connectTimeout)
+                .serverSelectionTimeout(serverSelectionTimeout)
                 .cursorFinalizerEnabled(true)
                 .maxConnectionIdleTime(maxConnectionIdleTime)
                 .maxConnectionLifeTime(maxConnectionLifeTime)
