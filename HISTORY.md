@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.54.1
+* JobStatusDetailIndicator: Indicate error if job could not be retrieved from the repository 
+
 ## Release 0.54.0
 * Keep last jobs strategy now keeps the last N jobs of each type
 * Create indices in jobs collection
