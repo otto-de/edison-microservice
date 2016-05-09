@@ -1,6 +1,9 @@
 # Release History
 
 ## CURRENT SNAPSHOT
+
+## Release 0.55.0
+* Optimized handling of persisting job messages
 * add serverSelectionTimeout (default 30secs) to mongo config
 
 ## Release 0.54.1
