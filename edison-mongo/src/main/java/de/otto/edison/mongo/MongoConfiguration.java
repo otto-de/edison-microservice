@@ -5,6 +5,7 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
+import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -62,6 +63,12 @@ public class MongoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(CodecRegistry.class)
+    public CodecRegistry codecRegistry() {
+        return MongoClient.getDefaultCodecRegistry();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(value = MongoClient.class)
     public MongoClient mongoClient() {
         LOG.info("Creating MongoClient");
@@ -76,6 +83,7 @@ public class MongoConfiguration {
                 .maxWaitTime(maxWaitTime)
                 .socketTimeout(socketTimeout)
                 .threadsAllowedToBlockForConnectionMultiplier(blockedConnectionMultiplier)
+                .codecRegistry(codecRegistry())
                 .build();
 
         return new MongoClient(databaseServers, getMongoCredentials(), settings);
