@@ -21,7 +21,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
@@ -76,7 +75,11 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
 
     @Override
     public void appendMessage(URI jobUri, JobMessage jobMessage) {
-        collection().updateOne(byId(jobUri), new Document("$push", new Document(MESSAGES.key(), encodeJobMessage(jobMessage))));
+        Document document = new Document("$push", new Document(MESSAGES.key(), encodeJobMessage(jobMessage)));
+        if (jobMessage.getLevel() == Level.ERROR) {
+            document.append("$set", new Document(STATUS.key(), JobStatus.ERROR.name()));
+        }
+        collection().updateOne(byId(jobUri), document);
     }
 
     @Override
