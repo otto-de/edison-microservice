@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.55.1
+* Set job status to error after receiving an error message
+
 ## Release 0.55.0
 * Optimized handling of persisting job messages
 * add serverSelectionTimeout (default 30secs) to mongo config
