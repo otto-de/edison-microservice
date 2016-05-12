@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.55.2
+* JobDefinition show fixedDelay in seconds if minutes would be zero
+
 ## Release 0.55.1
 * Set job status to error after receiving an error message
 * Make mongo codec registry configurable
