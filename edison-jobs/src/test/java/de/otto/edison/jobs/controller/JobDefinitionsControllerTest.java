@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import static de.otto.edison.jobs.controller.Link.link;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.manuallyTriggerableJobDefinition;
 import static java.time.Duration.ofHours;
+import static java.time.Duration.ofSeconds;
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -97,9 +99,9 @@ public class JobDefinitionsControllerTest {
 
         // then
         assertThat(defs.get("links"), is(asList(
-                        link("http://github.com/otto-de/edison/link-relations/job/definition", "http://127.0.0.1/internal/jobdefinitions/FooJob", "Foo"),
-                        link("http://github.com/otto-de/edison/link-relations/job/definition", "http://127.0.0.1/internal/jobdefinitions/BarJob", "Bar"),
-                        link("self", "http://127.0.0.1/internal/jobdefinitions", "Self")))
+                link("http://github.com/otto-de/edison/link-relations/job/definition", "http://127.0.0.1/internal/jobdefinitions/FooJob", "Foo"),
+                link("http://github.com/otto-de/edison/link-relations/job/definition", "http://127.0.0.1/internal/jobdefinitions/BarJob", "Bar"),
+                link("self", "http://127.0.0.1/internal/jobdefinitions", "Self")))
         );
     }
 
@@ -132,10 +134,54 @@ public class JobDefinitionsControllerTest {
         assertThat(jobdefinitions.size(), is(2));
         assertThat(jobdefinitions.get(0).toString(), containsString("frequency=Every 60 Minutes"));
         assertThat(jobdefinitions.get(1).toString(), containsString("frequency=Never"));
-   }
+    }
+
+    @Test
+    public void shouldConvertToSecondsIfSecondsIsLessThan60() throws Exception {
+        // Given
+        final JobDefinition jobDef = jobDefinition("TheJob", "Job", ofSeconds(59));
+        final JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobDefinition()).thenReturn(jobDef);
+
+        final JobDefinitionService service = new JobDefinitionService(asList(jobRunnable));
+        final JobDefinitionsController controller = new JobDefinitionsController(service);
+
+        // when
+        ModelAndView modelAndView = controller.getJobDefinitionsAsHtml(mock(HttpServletRequest.class));
+        @SuppressWarnings("unchecked")
+        List<Object> jobdefinitions = (List<Object>) modelAndView.getModel().get("jobdefinitions");
+
+        // then
+        assertThat(jobdefinitions.size(), is(1));
+        assertThat(jobdefinitions.get(0).toString(), containsString("frequency=Every 59 Seconds"));
+    }
+
+    @Test
+    public void shouldConvertToMinutesIfSecondsIsNotLessThan60() throws Exception {
+        // Given
+        final JobDefinition jobDef = jobDefinition("TheJob", "Job", ofSeconds(60));
+        final JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobDefinition()).thenReturn(jobDef);
+
+        final JobDefinitionService service = new JobDefinitionService(asList(jobRunnable));
+        final JobDefinitionsController controller = new JobDefinitionsController(service);
+
+        // when
+        ModelAndView modelAndView = controller.getJobDefinitionsAsHtml(mock(HttpServletRequest.class));
+        @SuppressWarnings("unchecked")
+        List<Object> jobdefinitions = (List<Object>) modelAndView.getModel().get("jobdefinitions");
+
+        // then
+        assertThat(jobdefinitions.size(), is(1));
+        assertThat(jobdefinitions.get(0).toString(), containsString("frequency=Every 1 Minutes"));
+    }
 
     private JobDefinition jobDefinition(final String jobType, final String name) {
-        return fixedDelayJobDefinition(jobType, name, name, ofHours(1), 0, empty());
+        return jobDefinition(jobType, name, ofHours(1));
+    }
+
+    private JobDefinition jobDefinition(final String jobType, final String name, Duration fixedDelay) {
+        return fixedDelayJobDefinition(jobType, name, name, fixedDelay, 0, empty());
     }
 
     private JobDefinition notTriggerableDefinition(final String jobType, final String name) {

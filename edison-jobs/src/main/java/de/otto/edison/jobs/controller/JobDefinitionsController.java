@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.*;
 
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
@@ -111,9 +112,23 @@ public class JobDefinitionsController {
     }
 
     private String frequencyOf(final JobDefinition def) {
-        return def.cron().isPresent()
-                ? def.cron().get()
-                : (def.fixedDelay().isPresent()) ? "Every " + def.fixedDelay().get().toMinutes() + " Minutes" : "Never";
+        if (def.cron().isPresent()) {
+            return def.cron().get();
+        } else {
+            return fixedDelayFrequency(def.fixedDelay());
+        }
+    }
+
+    private String fixedDelayFrequency(Optional<Duration> duration) {
+        if (duration.isPresent()) {
+            if (duration.get().toMinutes() < 1) {
+                return "Every " + duration.get().toMillis()/1000 + " Seconds";
+            } else {
+                return "Every " + duration.get().toMinutes() + " Minutes";
+            }
+        } else {
+            return "Never";
+        }
     }
 
     private String retryOf(final JobDefinition def) {
