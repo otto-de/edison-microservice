@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.56.0
+* New Feature: Mutually exclusion of jobs using JobMutexGroups
+
 ## Release 0.55.2
 * JobDefinition show fixedDelay in seconds if minutes would be zero
 

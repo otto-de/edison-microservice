@@ -9,6 +9,7 @@ dependencies {
     compile project(":edison-status")
 
     testCompile project(":edison-testsupport")
+    testCompile libs.testUnit
 }
 
 artifacts {
