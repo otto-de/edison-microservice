@@ -8,10 +8,6 @@ function echob {
     echo "${b}${1}${nb}"
 }
 
-function ensure_requirements {
-    command -v gradlew >/dev/null 2>&1 || { echob "ERROR: gradlew not in PATH. Aborting."; exit 1; }
-}
-
 function release {
     ${SCRIPT_DIR}/release.sh
 }
@@ -30,15 +26,12 @@ task can be:
     "
 }
 
-
-ensure_requirements
-
 if [ "$1" == "help" ]; then
     help
 elif [ "$1" == "release" ]; then
     release
 else
-    gradlew $*
+    ${SCRIPT_DIR}/gradlew $*
 fi
 
 

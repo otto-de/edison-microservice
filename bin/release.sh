@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+SCRIPT_DIR=$(dirname $0)
 
 USER_GRADLE_PROPERTIES=~/.gradle/gradle.properties
 
@@ -24,4 +25,4 @@ check_configuration() {
 
 check_configuration
 
-gradlew uploadArchives
+${SCRIPT_DIR}/gradlew uploadArchives
