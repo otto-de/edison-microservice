@@ -37,7 +37,7 @@ public class CachedApplicationStatusAggregatorTest {
         statusAggregator.aggregatedStatus();
         statusAggregator.aggregatedStatus();
         // then
-        verify(mockIndicator, times(2)).statusDetails();
+        verify(mockIndicator, times(1)).statusDetails();
     }
 
     @Test

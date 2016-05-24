@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.56.1
++ Bugfix: Do not aggregate application status in constructor. Use @PostConstruct instead
+
 ## Release 0.56.0
 * New Feature: Mutually exclusion of jobs using JobMutexGroups
 

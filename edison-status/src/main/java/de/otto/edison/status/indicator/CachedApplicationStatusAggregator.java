@@ -2,10 +2,10 @@ package de.otto.edison.status.indicator;
 
 import de.otto.edison.status.domain.*;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -37,6 +37,10 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
         this.teamInfo = teamInfo;
         this.indicators = indicators;
         this.serviceSpecs = serviceSpecs;
+    }
+
+    @PostConstruct
+    public void postConstruct() {
         update();
     }
 
