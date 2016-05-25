@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.56.2
+* edison-jobs-(mongo): Moved handling of persisting error status to PersistenceJobEventListener
+
 ## Release 0.56.1
 + Bugfix: Do not aggregate application status in constructor. Use @PostConstruct instead
 

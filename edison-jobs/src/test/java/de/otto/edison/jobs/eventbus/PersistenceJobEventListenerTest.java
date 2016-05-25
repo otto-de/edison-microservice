@@ -25,7 +25,6 @@ import static java.time.Clock.fixed;
 import static java.time.Instant.now;
 import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 
@@ -162,16 +161,15 @@ public class PersistenceJobEventListenerTest {
     public void shouldPersistErrorMessages() throws Exception {
         // given
         MessageEvent messageEvent = newMessageEvent(someJobRunnable(), URI.create("some/job"), MessageEvent.Level.ERROR, "some message");
+        JobInfo jobInfo = mock(JobInfo.class);
+        when(jobRepository.findOne(messageEvent.getJobUri())).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeMessage(messageEvent);
 
         // then
-        ArgumentCaptor<JobMessage> captor = ArgumentCaptor.forClass(JobMessage.class);
-        verify(jobRepository).appendMessage(eq(URI.create("some/job")), captor.capture());
-        assertThat(captor.getValue().getLevel(), is(Level.ERROR));
-        assertThat(captor.getValue().getMessage(), is("some message"));
-        verifyNoMoreInteractions(jobRepository);
+        verify(jobRepository).createOrUpdate(jobInfo);
+        verify(jobInfo).error(any());
     }
 
     private JobRunnable someJobRunnable() {

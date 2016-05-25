@@ -61,12 +61,19 @@ public class PersistenceJobEventListener implements JobEventListener {
     @Override
     public void consumeMessage(final MessageEvent messageEvent) {
         JobMessage jobMessage = JobMessage.jobMessage(convertLevel(messageEvent), messageEvent.getMessage());
-        jobRepository.appendMessage(messageEvent.getJobUri(), jobMessage);
+
+        switch (messageEvent.getLevel()) {
+            case ERROR:
+                updateJobIfPresent(messageEvent.getJobUri(), jobInfo -> jobInfo.error(messageEvent.getMessage()));
+                break;
+            default:
+                jobRepository.appendMessage(messageEvent.getJobUri(), jobMessage);
+        }
     }
 
     private Level convertLevel(MessageEvent messageEvent) {
         Level level = Level.INFO;
-        switch (messageEvent.getLevel()){
+        switch (messageEvent.getLevel()) {
             case INFO:
                 level = Level.INFO;
                 break;

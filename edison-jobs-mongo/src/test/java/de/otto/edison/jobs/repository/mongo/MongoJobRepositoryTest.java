@@ -247,26 +247,6 @@ public class MongoJobRepositoryTest {
 
     }
 
-    @Test
-    public void shouldUpdateJobStatusAfterAppendingAnErrorMessage() throws Exception {
-        // given
-        String jobId = "http://localhost/bla";
-        URI jobUri = URI.create(jobId);
-        JobInfo jobInfo = someJobInfo(jobId, "BLA");
-        repo.createOrUpdate(jobInfo);
-
-        // when
-        JobMessage jobMessage = JobMessage.jobMessage(Level.ERROR, "I'm hit! I'm hit!", OffsetDateTime.now());
-        repo.appendMessage(jobUri, jobMessage);
-
-        // then
-        JobInfo jobInfoFromDB = repo.findOne(jobUri).get();
-        assertThat(jobInfoFromDB.getMessages(), hasSize(3));
-        assertThat(jobInfoFromDB.getMessages().get(2), is(jobMessage));
-        assertThat(jobInfoFromDB.getStatus(), is(JobStatus.ERROR));
-
-    }
-
     private JobInfo someJobInfo(final String jobUri) {
         return JobInfo.newJobInfo(
                 URI.create(jobUri),

@@ -76,9 +76,6 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     @Override
     public void appendMessage(URI jobUri, JobMessage jobMessage) {
         Document document = new Document("$push", new Document(MESSAGES.key(), encodeJobMessage(jobMessage)));
-        if (jobMessage.getLevel() == Level.ERROR) {
-            document.append("$set", new Document(STATUS.key(), JobStatus.ERROR.name()));
-        }
         collection().updateOne(byId(jobUri), document);
     }
 
