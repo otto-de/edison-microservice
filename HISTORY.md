@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.56.3
+* togglz: FilterRegistrationBean in TogglzWebConfiguration uses filter name "togglzFilter"
+
 ## Release 0.56.2
 * edison-jobs-(mongo): Moved handling of persisting error status to PersistenceJobEventListener
 

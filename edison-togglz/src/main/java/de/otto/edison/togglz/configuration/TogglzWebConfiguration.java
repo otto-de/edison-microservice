@@ -14,7 +14,7 @@ import org.togglz.servlet.TogglzFilter;
 public class TogglzWebConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="togglzFilter")
     public FilterRegistrationBean togglzFilter() {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
         filterRegistration.setFilter(new TogglzFilter());
