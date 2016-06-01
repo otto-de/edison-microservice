@@ -4,6 +4,9 @@
 
 ## Release 0.57.0
 * The JobIds do not contain slashes any more, (/internal/jobs/ is not part of the jobIds)
+* Note that jobs which were persisted with older releases might not be accessible any more after the upgrade.
+* Also note that some jobs might show up with a red status on your dashboard after the upgrade. Simply rerun the job to
+  fix this.
 
 ## Release 0.56.3
 * togglz: FilterRegistrationBean in TogglzWebConfiguration uses filter name "togglzFilter"
