@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.57.0
+* The JobIds do not contain slashes any more, (/internal/jobs/ is not part of the jobIds)
+
 ## Release 0.56.3
 * togglz: FilterRegistrationBean in TogglzWebConfiguration uses filter name "togglzFilter"
 

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.net.URI;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 @Repository(value = "jobRepository")
-public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> implements JobRepository {
+public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo> implements JobRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
     private static final int DESCENDING = -1;
@@ -57,26 +56,26 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     }
 
     @Override
-    public void removeIfStopped(final URI uri) {
-        findOne(uri).ifPresent(jobInfo -> {
-            if (jobInfo.isStopped()) {
-                collection().deleteOne(byId(uri));
-            }
-        });
-    }
-
-    @Override
-    public JobStatus findStatus(URI jobUri) {
+    public JobStatus findStatus(String jobId) {
         return JobStatus.valueOf(collection()
-                .find(byId(jobUri))
+                .find(byId(jobId))
                 .projection(new Document(STATUS.key(), true))
                 .first().getString(STATUS.key()));
     }
 
     @Override
-    public void appendMessage(URI jobUri, JobMessage jobMessage) {
+    public void removeIfStopped(final String id) {
+        findOne(id).ifPresent(jobInfo -> {
+            if (jobInfo.isStopped()) {
+                collection().deleteOne(byId(id));
+            }
+        });
+    }
+
+    @Override
+    public void appendMessage(String jobId, JobMessage jobMessage) {
         Document document = new Document("$push", new Document(MESSAGES.key(), encodeJobMessage(jobMessage)));
-        collection().updateOne(byId(jobUri), document);
+        collection().updateOne(byId(jobId), document);
     }
 
     @Override
@@ -142,7 +141,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     @Override
     protected final Document encode(final JobInfo job) {
         final Document document = new Document()
-                .append(JobStructure.ID.key(), job.getJobUri().toString())
+                .append(JobStructure.ID.key(), job.getJobId())
                 .append(JOB_TYPE.key(), job.getJobType())
                 .append(STARTED.key(), toDate(job.getStarted()))
                 .append(LAST_UPDATED.key(), toDate(job.getLastUpdated()))
@@ -168,7 +167,7 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     @Override
     protected final JobInfo decode(final Document document) {
         return newJobInfo(
-                URI.create(document.getString(JobStructure.ID.key())),
+                document.getString(JobStructure.ID.key()),
                 document.getString(JOB_TYPE.key()),
                 toOffsetDateTime(document.getDate(STARTED.key())),
                 toOffsetDateTime(document.getDate(LAST_UPDATED.key())),
@@ -200,8 +199,8 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
     }
 
     @Override
-    protected final URI keyOf(JobInfo value) {
-        return value.getJobUri();
+    protected final String keyOf(JobInfo value) {
+        return value.getJobId();
     }
 
     @Override
@@ -211,8 +210,8 @@ public class MongoJobRepository extends AbstractMongoRepository<URI, JobInfo> im
 
     @Override
     protected final void ensureIndexes() {
-    	collection().createIndex(new BasicDBObject(JOB_TYPE.key(),1));
-    	collection().createIndex(new BasicDBObject(STARTED.key(),1));
+        collection().createIndex(new BasicDBObject(JOB_TYPE.key(), 1));
+        collection().createIndex(new BasicDBObject(STARTED.key(), 1));
     }
 
     private String getMessage(Document document) {

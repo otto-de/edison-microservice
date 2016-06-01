@@ -92,9 +92,9 @@ public class JobsController {
     public void startJob(final @PathVariable String jobType,
                          final HttpServletRequest request,
                          final HttpServletResponse response) throws IOException {
-        final Optional<URI> jobUri = jobService.startAsyncJob(jobType);
-        if (jobUri.isPresent()) {
-            response.setHeader("Location", baseUriOf(request) + jobUri.get());
+        final Optional<String> jobId = jobService.startAsyncJob(jobType);
+        if (jobId.isPresent()) {
+            response.setHeader("Location", baseUriOf(request) + jobId.get());
             response.setStatus(SC_NO_CONTENT);
         } else {
             response.sendError(SC_CONFLICT);
@@ -104,11 +104,12 @@ public class JobsController {
 
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "text/html")
     public ModelAndView getJobAsHtml(final HttpServletRequest request,
-                                     final HttpServletResponse response) throws IOException {
+                                     final HttpServletResponse response,
+                                     @PathVariable("id") final String jobId) throws IOException {
 
         setCorsHeaders(response);
 
-        final Optional<JobInfo> optionalJob = jobService.findJob(jobUriOf(request));
+        final Optional<JobInfo> optionalJob = jobService.findJob(jobId);
         if (optionalJob.isPresent()) {
             final ModelAndView modelAndView = new ModelAndView("job");
             modelAndView.addObject("job", representationOf(optionalJob.get(), true, baseUriOf(request)));
@@ -121,11 +122,12 @@ public class JobsController {
 
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "application/json")
     public JobRepresentation getJob(final HttpServletRequest request,
-                                    final HttpServletResponse response) throws IOException {
+                                    final HttpServletResponse response,
+                                    @PathVariable("id") final String jobId) throws IOException {
 
         setCorsHeaders(response);
 
-        final Optional<JobInfo> optionalJob = jobService.findJob(jobUriOf(request));
+        final Optional<JobInfo> optionalJob = jobService.findJob(jobId);
         if (optionalJob.isPresent()) {
             return representationOf(optionalJob.get(), false, baseUriOf(request));
         } else {
@@ -138,14 +140,4 @@ public class JobsController {
         response.setHeader("Access-Control-Allow-Methods", "GET");
         response.setHeader("Access-Control-Allow-Origin", "*");
     }
-
-    private URI jobUriOf(HttpServletRequest request) {
-        String servletPath = request.getServletPath() != null ? request.getServletPath() : "";
-        if (servletPath.contains(".")) {
-            return create(servletPath.substring(0, servletPath.lastIndexOf('.')));
-        } else {
-            return create(servletPath);
-        }
-    }
-
 }

@@ -55,6 +55,6 @@ public class JobRepresentationTest {
         final Clock clock = fixed(Instant.now(), systemDefault());
         final OffsetDateTime startTime = now(clock);
         final OffsetDateTime finishedTime = startTime.plus(finishAmount, unit);
-        return newJobInfo(create("foo"), "TEST", startTime, finishedTime, of(finishedTime), OK, emptyList(), clock, "localhost");
+        return newJobInfo("foo", "TEST", startTime, finishedTime, of(finishedTime), OK, emptyList(), clock, "localhost");
     }
 }

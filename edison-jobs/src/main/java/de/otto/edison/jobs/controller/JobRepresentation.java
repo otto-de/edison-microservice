@@ -5,7 +5,6 @@ import de.otto.edison.jobs.domain.JobInfo;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +31,7 @@ public class JobRepresentation {
     }
 
     public String getJobUri() {
-        return baseUri + job.getJobUri().toString();
+        return baseUri + "/internal/jobs/" + job.getJobId();
     }
 
     public String getJobType() {
@@ -79,7 +78,7 @@ public class JobRepresentation {
     }
 
     public List<Link> getLinks() {
-        final String jobUri = baseUri + job.getJobUri().toString();
+        final String jobUri = baseUri + "/internal/jobs/" + job.getJobId();
         return asList(
                 link("self", jobUri, "Self"),
                 link("http://github.com/otto-de/edison/link-relations/job/definition", baseUri + "/internal/jobdefinitions/" + job.getJobType(), "Job Definition"),

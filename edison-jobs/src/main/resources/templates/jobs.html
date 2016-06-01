@@ -39,7 +39,7 @@
                     <td th:text="${job.stopped}">&nbsp;</td>
                     <td th:text="${job.runtime}">&nbsp;</td>
                     <td><a th:href="@{|/internal/jobdefinitions/${job.jobType}|}" class="btn btn-xs btn-primary">Open Definition &raquo;</a></td>
-                    <td><a th:href="${job.jobUri}" class="btn btn-xs btn-primary">Open Details &raquo;</a></td>
+                    <td><a th:href="${job.jobId}" class="btn btn-xs btn-primary">Open Details &raquo;</a></td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(jobs)}"><td colspan="7">No Jobs</td></tr>
                 </tbody>

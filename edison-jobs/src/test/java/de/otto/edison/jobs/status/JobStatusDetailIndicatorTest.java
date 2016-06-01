@@ -46,7 +46,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
+        when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.of(now));
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
@@ -68,7 +68,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
+        when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(21));
         when(someJob.getStopped()).thenReturn(Optional.of(now.minusSeconds(20)));
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
@@ -91,7 +91,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
+        when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
@@ -112,7 +112,7 @@ public class JobStatusDetailIndicatorTest {
         OffsetDateTime now = now();
 
         JobInfo someJob = mock(JobInfo.class);
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/uri"));
+        when(someJob.getJobId()).thenReturn("/some/uri");
         when(someJob.getJobType()).thenReturn("someJobType");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
@@ -135,7 +135,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/uri"));
+        when(someJob.getJobId()).thenReturn("/some/uri");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.of(now));
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
@@ -172,7 +172,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/uri"));
+        when(someJob.getJobId()).thenReturn("/some/uri");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
@@ -195,7 +195,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
+        when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.of(now));
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
@@ -217,7 +217,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
+        when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(ERROR);
@@ -239,7 +239,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
+        when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(ERROR);
@@ -261,7 +261,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
+        when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.DEAD);
@@ -283,7 +283,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
+        when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now);
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.DEAD);
@@ -319,7 +319,7 @@ public class JobStatusDetailIndicatorTest {
 
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobUri()).thenReturn(URI.create("/some/job/url"));
+        when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
         when(someJob.getStatus()).thenReturn(ERROR);

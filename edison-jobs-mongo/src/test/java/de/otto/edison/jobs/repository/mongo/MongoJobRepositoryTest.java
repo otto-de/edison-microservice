@@ -41,7 +41,7 @@ public class MongoJobRepositoryTest {
         final JobInfo foo = someJobInfo("http://localhost/foo/A");
         final JobInfo writtenFoo = repo.create(foo);
         // when
-        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo/A"));
+        final Optional<JobInfo> jobInfo = repo.findOne("http://localhost/foo/A");
         // then
         assertThat(jobInfo.isPresent(), is(true));
         assertThat(jobInfo.get(), is(writtenFoo));
@@ -54,7 +54,7 @@ public class MongoJobRepositoryTest {
         repo.createOrUpdate(foo);
         final JobInfo writtenFoo = repo.createOrUpdate(foo.info("some message"));
         // when
-        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo/B"));
+        final Optional<JobInfo> jobInfo = repo.findOne("http://localhost/foo/B");
         // then
         assertThat(jobInfo.get(), is(writtenFoo));
     }
@@ -65,7 +65,7 @@ public class MongoJobRepositoryTest {
         final JobInfo foo = someRunningJobInfo("http://localhost/foo", "SOME_JOB", now());
         repo.createOrUpdate(foo);
         // when
-        final Optional<JobInfo> jobInfo = repo.findOne(URI.create("http://localhost/foo"));
+        final Optional<JobInfo> jobInfo = repo.findOne("http://localhost/foo");
         // then
         assertThat(jobInfo.get(), is(foo));
     }
@@ -175,8 +175,8 @@ public class MongoJobRepositoryTest {
         repo.createOrUpdate(foo);
         repo.createOrUpdate(bar);
         // when
-        repo.removeIfStopped(URI.create("http://localhost/foo"));
-        repo.removeIfStopped(URI.create("http://localhost/bar"));
+        repo.removeIfStopped("http://localhost/foo");
+        repo.removeIfStopped("http://localhost/bar");
         // then
         assertThat(repo.findAll(), hasSize(1));
         assertThat(repo.findAll(), contains(bar));
@@ -221,7 +221,7 @@ public class MongoJobRepositoryTest {
         repo.createOrUpdate(foo);
 
         //When
-        JobStatus status = repo.findStatus(URI.create("http://localhost/foo"));
+        JobStatus status = repo.findStatus("http://localhost/foo");
 
         //Then
         assertThat(status, is(OK));
@@ -231,25 +231,24 @@ public class MongoJobRepositoryTest {
     public void shouldAppendMessageToJob() throws Exception {
         // given
         String jobId = "http://localhost/baZ";
-        URI jobUri = URI.create(jobId);
         JobInfo jobInfo = someJobInfo(jobId, "T_FOO");
         repo.createOrUpdate(jobInfo);
 
         // when
         JobMessage jobMessage = JobMessage.jobMessage(Level.INFO, "Schön ist es auf der Welt zu sein, sagt der Igel zu dem Stachelschwein", OffsetDateTime.now());
-        repo.appendMessage(jobUri, jobMessage);
+        repo.appendMessage(jobId, jobMessage);
 
         // then
-        JobInfo jobInfoFromDB = repo.findOne(jobUri).get();
+        JobInfo jobInfoFromDB = repo.findOne(jobId).get();
         assertThat(jobInfoFromDB.getMessages(), hasSize(3));
         assertThat(jobInfoFromDB.getMessages().get(2), is(jobMessage));
         assertThat(jobInfoFromDB.getStatus(), is(JobStatus.OK));
 
     }
 
-    private JobInfo someJobInfo(final String jobUri) {
+    private JobInfo someJobInfo(final String jobId) {
         return JobInfo.newJobInfo(
-                URI.create(jobUri),
+                jobId,
                 "SOME_JOB",
                 now(), now(), Optional.of(now()), OK,
                 asList(
@@ -260,9 +259,9 @@ public class MongoJobRepositoryTest {
         );
     }
 
-    private JobInfo someJobInfo(final String jobUri, final String type) {
+    private JobInfo someJobInfo(final String jobId, final String type) {
         return JobInfo.newJobInfo(
-                URI.create(jobUri),
+                jobId,
                 type,
                 now(), now(), Optional.of(now()), OK,
                 asList(
@@ -273,9 +272,9 @@ public class MongoJobRepositoryTest {
         );
     }
 
-    private JobInfo someRunningJobInfo(final String jobUri, final String type, final OffsetDateTime started) {
+    private JobInfo someRunningJobInfo(final String jobId, final String type, final OffsetDateTime started) {
         return JobInfo.newJobInfo(
-                URI.create(jobUri),
+                jobId,
                 type,
                 started, started.plus(1, SECONDS), Optional.empty(), OK,
                 Collections.<JobMessage>emptyList(),

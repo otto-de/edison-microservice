@@ -18,22 +18,22 @@ public class JobEventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;
     private final JobRunnable jobRunnable;
-    private final URI jobUri;
+    private final String jobId;
 
     private JobEventPublisher(final ApplicationEventPublisher applicationEventPublisher,
                               final JobRunnable jobRunnable,
-                              final URI jobUri) {
+                              final String jobId) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.jobRunnable = jobRunnable;
-        this.jobUri = jobUri;
+        this.jobId = jobId;
     }
 
     public void stateChanged(final State state) {
-        applicationEventPublisher.publishEvent(newStateChangeEvent(jobRunnable, jobUri, state));
+        applicationEventPublisher.publishEvent(newStateChangeEvent(jobRunnable, jobId, state));
     }
 
     public void message(final Level level, final String message) {
-        applicationEventPublisher.publishEvent(newMessageEvent(jobRunnable, jobUri, level, message));
+        applicationEventPublisher.publishEvent(newMessageEvent(jobRunnable, jobId, level, message));
     }
 
     public void info(final String message) {
@@ -50,11 +50,11 @@ public class JobEventPublisher {
 
     public static JobEventPublisher newJobEventPublisher(final ApplicationEventPublisher applicationEventPublisher,
                                                          final JobRunnable jobRunnable,
-                                                         final URI jobUri) {
+                                                         final String jobId) {
         return new JobEventPublisher(
                 applicationEventPublisher,
                 jobRunnable,
-                jobUri
+                jobId
         );
     }
 
@@ -65,12 +65,12 @@ public class JobEventPublisher {
         JobEventPublisher that = (JobEventPublisher) o;
         return Objects.equals(applicationEventPublisher, that.applicationEventPublisher) &&
                 Objects.equals(jobRunnable, that.jobRunnable) &&
-                Objects.equals(jobUri, that.jobUri);
+                Objects.equals(jobId, that.jobId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(applicationEventPublisher, jobRunnable, jobUri);
+        return Objects.hash(applicationEventPublisher, jobRunnable, jobId);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class JobEventPublisher {
         return "JobEventPublisher{" +
                 "applicationEventPublisher=" + applicationEventPublisher +
                 ", jobRunnable=" + jobRunnable +
-                ", jobUri=" + jobUri +
+                ", jobId=" + jobId +
                 '}';
     }
 }

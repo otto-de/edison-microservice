@@ -2,80 +2,101 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobService;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.ModelAndView;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
-import static java.net.URI.create;
 import static java.time.Clock.fixed;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.Instant.ofEpochMilli;
 import static java.time.ZoneId.systemDefault;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 public class JobsControllerTest {
 
-    @Test
-    public void shouldReturn404IfJobIsUnknown() throws IOException {
-        // given
-        JobService jobService = mock(JobService.class);
-        when(jobService.findJob(any(URI.class))).thenReturn(Optional.<JobInfo>empty());
 
-        JobsController jobsController = new JobsController(jobService);
+    private JobService jobService;
+    private MockMvc mockMvc;
+    private JobsController jobsController;
 
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("http://127.0.0.1/internal/jobs/42");
-
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        // when
-        jobsController.getJob(request, response);
-        // then
-        verify(response).sendError(eq(404), anyString());
+    @BeforeMethod
+    public void setUp() throws Exception {
+        jobService = mock(JobService.class);
+        jobsController = new JobsController(jobService);
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(jobsController)
+                .defaultRequest(MockMvcRequestBuilders.get("/").contextPath("/some-microservice"))
+                .build();
     }
 
     @Test
-    public void shouldReturnJobIfJobExists() throws IOException {
+    public void shouldReturn404IfJobIsUnknown() throws Exception {
         // given
-        JobInfo expectedJob = newJobInfo(create("/test/42"), "TEST", systemDefaultZone(), "localhost");
-        JobService jobService = mock(JobService.class);
-        when(jobService.findJob(any(URI.class))).thenReturn(Optional.of(expectedJob));
-
-        JobsController jobsController = new JobsController(jobService);
-
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn(expectedJob.getJobUri().toString());
-
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(jobService.findJob(any(String.class))).thenReturn(Optional.<JobInfo>empty());
 
         // when
-        JobRepresentation job = jobsController.getJob(request, response);
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/some-microservice/internal/jobs/42"))
+                .andExpect(MockMvcResultMatchers.status().is(404));
+    }
 
-        // then
-        assertThat(job, is(representationOf(expectedJob, false, "")));
+    @Test
+    public void shouldReturnJobIfJobExists() throws Exception {
+        // given
+        ZoneId cet = ZoneId.of("CET");
+        OffsetDateTime now = OffsetDateTime.now(cet);
+        JobInfo expectedJob = newJobInfo("42", "TEST", fixed(now.toInstant(), cet), "localhost");
+        when(jobService.findJob("42")).thenReturn(Optional.of(expectedJob));
+
+        String nowAsString = ISO_OFFSET_DATE_TIME.format(now);
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/some-microservice/internal/jobs/42")
+                .servletPath("/internal/jobs/42"))
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("OK"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.messages").isArray())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.jobType").value("TEST"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hostname").value("localhost"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.started").value(nowAsString))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.stopped").value(""))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastUpdated").value(nowAsString))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.jobUri").value("http://localhost/some-microservice/internal/jobs/42"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isArray())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links[0].href").value("http://localhost/some-microservice/internal/jobs/42"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links[1].href").value("http://localhost/some-microservice/internal/jobdefinitions/TEST"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links[2].href").value("http://localhost/some-microservice/internal/jobs"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links[3].href").value("http://localhost/some-microservice/internal/jobs?type=TEST"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.runtime").value(""))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.state").value("Running"));
+        verify(jobService).findJob("42");
     }
 
     @Test
     public void shouldReturnAllJobs() throws IOException {
         // given
-        JobInfo firstJob = newJobInfo(create("/test/42"), "TEST", fixed(ofEpochMilli(0), systemDefault()), "localhost");
-        JobInfo secondJob = newJobInfo(create("/test/42"), "TEST", fixed(ofEpochMilli(1), systemDefault()), "localhost");
-        JobService service = mock(JobService.class);
-        when(service.findJobs(Optional.<String>empty(), 100)).thenReturn(asList(firstJob, secondJob));
-
-        JobsController jobsController = new JobsController(service);
+        JobInfo firstJob = newJobInfo("42", "TEST", fixed(ofEpochMilli(0), systemDefault()), "localhost");
+        JobInfo secondJob = newJobInfo("42", "TEST", fixed(ofEpochMilli(1), systemDefault()), "localhost");
+        when(jobService.findJobs(Optional.<String>empty(), 100)).thenReturn(asList(firstJob, secondJob));
 
         // when
         Object job = jobsController.getJobsAsJson(null, 100, mock(HttpServletRequest.class));
@@ -87,11 +108,8 @@ public class JobsControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldReturnAllJobsOfTypeAsHtml() {
-        JobInfo firstJob = newJobInfo(create("/test/42"), "SOME_TYPE", systemDefaultZone(), "localhost");
-        JobService service = mock(JobService.class);
-        when(service.findJobs(Optional.of("SOME_TYPE"), 100)).thenReturn(asList(firstJob));
-
-        JobsController jobsController = new JobsController(service);
+        JobInfo firstJob = newJobInfo("42", "SOME_TYPE", systemDefaultZone(), "localhost");
+        when(jobService.findJobs(Optional.of("SOME_TYPE"), 100)).thenReturn(asList(firstJob));
 
         ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE", 100, mock(HttpServletRequest.class));
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");

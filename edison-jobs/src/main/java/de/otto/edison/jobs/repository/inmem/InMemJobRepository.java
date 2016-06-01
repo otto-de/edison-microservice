@@ -3,10 +3,8 @@ package de.otto.edison.jobs.repository.inmem;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.repository.JobRepository;
 
-import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,7 +22,7 @@ public class InMemJobRepository implements JobRepository {
 
     private static final Comparator<JobInfo> STARTED_TIME_DESC_COMPARATOR = comparing(JobInfo::getStarted, reverseOrder());
 
-    private final ConcurrentMap<URI, JobInfo> jobs = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, JobInfo> jobs = new ConcurrentHashMap<>();
 
     @Override
     public List<JobInfo> findLatest(int maxCount) {
@@ -37,7 +35,7 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public Optional<JobInfo> findOne(final URI uri) {
+    public Optional<JobInfo> findOne(final String uri) {
         return ofNullable(jobs.get(uri));
     }
 
@@ -97,15 +95,15 @@ public class InMemJobRepository implements JobRepository {
 
     @Override
     public JobInfo createOrUpdate(final JobInfo job) {
-        jobs.put(job.getJobUri(), job);
+        jobs.put(job.getJobId(), job);
         return job;
     }
 
     @Override
-    public void removeIfStopped(final URI uri) {
-        final JobInfo jobInfo = jobs.get(uri);
+    public void removeIfStopped(final String id) {
+        final JobInfo jobInfo = jobs.get(id);
         if (jobInfo != null && jobInfo.isStopped()) {
-            jobs.remove(uri);
+            jobs.remove(id);
         }
     }
 
@@ -115,13 +113,13 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public JobStatus findStatus(URI jobUri) {
-        return jobs.get(jobUri).getStatus();
+    public JobStatus findStatus(String jobId) {
+        return jobs.get(jobId).getStatus();
     }
 
     @Override
-    public void appendMessage(URI jobUri, JobMessage jobMessage) {
-        JobInfo jobInfo = jobs.get(jobUri);
+    public void appendMessage(String jobId, JobMessage jobMessage) {
+        JobInfo jobInfo = jobs.get(jobId);
         jobInfo.getMessages().add(jobMessage);
     }
 

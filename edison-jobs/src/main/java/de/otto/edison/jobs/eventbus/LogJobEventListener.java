@@ -12,20 +12,20 @@ public class LogJobEventListener implements JobEventListener {
     @Override
     public void consumeStateChange(final StateChangeEvent stateChangeEvent) {
         LOG.info("jobType='{}' state changed to '{}' ('{}')", stateChangeEvent.getJobType(),
-                stateChangeEvent.getState(), stateChangeEvent.getJobUri());
+                stateChangeEvent.getState(), stateChangeEvent.getJobId());
     }
 
     @Override
     public void consumeMessage(final MessageEvent messageEvent) {
         switch (messageEvent.getLevel()) {
             case INFO:
-                LOG.info("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobUri());
+                LOG.info("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobId());
                 break;
             case WARN:
-                LOG.warn("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobUri());
+                LOG.warn("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobId());
                 break;
             case ERROR:
-                LOG.error("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobUri());
+                LOG.error("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobId());
         }
     }
 }

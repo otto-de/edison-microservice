@@ -1,6 +1,5 @@
 package de.otto.edison.jobs.domain;
 
-import de.otto.edison.status.domain.SystemInfo;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -30,9 +29,9 @@ public class JobInfoTest {
 
     @Test
     public void shouldInitializeCorrectly() {
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost");
+        JobInfo job = newJobInfo("foo", "TEST", clock, "localhost");
         assertThat(job.getStatus(), is(OK));
-        assertThat(job.getJobUri(), is(create("foo")));
+        assertThat(job.getJobId(), is("foo"));
         assertThat(job.getJobType(), is("TEST"));
         assertThat(job.getHostname(), is(hostname));
         assertThat(job.getStarted().toInstant(), is(clock.instant()));
@@ -41,7 +40,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldStopAJob() {
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost").stop();
+        JobInfo job = newJobInfo("foo", "TEST", clock, "localhost").stop();
 
         assertThat(job.isStopped(), is(true));
         assertThat(job.getStatus(), is(OK));
@@ -49,7 +48,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldMarkAsError() {
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost");
+        JobInfo job = newJobInfo("foo", "TEST", clock, "localhost");
         job.info("first");
         job.error("BUMMMMMM");
         job.info("last");
@@ -60,7 +59,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldMarkAsOkAfterRestart() {
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost");
+        JobInfo job = newJobInfo("foo", "TEST", clock, "localhost");
         job.error("BUMMMMMM");
         job.restart();
         job.stop();
@@ -70,7 +69,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldMarkAsDead() {
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost").dead();
+        JobInfo job = newJobInfo("foo", "TEST", clock, "localhost").dead();
 
         assertThat(job.isStopped(), is(true));
         assertThat(job.getStatus(), is(DEAD));
@@ -79,7 +78,7 @@ public class JobInfoTest {
 
     @Test
     public void shouldNotBeStopped() {
-        JobInfo job = newJobInfo(create("foo"), "TEST", clock, "localhost");
+        JobInfo job = newJobInfo("foo", "TEST", clock, "localhost");
 
         assertThat(job.isStopped(), is(false));
         assertThat(job.getStopped().isPresent(), is(false));

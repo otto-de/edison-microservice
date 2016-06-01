@@ -4,7 +4,6 @@ import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
-import java.net.URI;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
@@ -18,26 +17,26 @@ public final class JobRunner {
     public static final long PING_PERIOD = 20l;
 
     private final JobEventPublisher jobEventPublisher;
-    private final URI jobUri;
+    private final String jobId;
     private final String jobType;
     private final ScheduledExecutorService executorService;
     private ScheduledFuture<?> pingJob;
 
-    private JobRunner(final URI jobUri,
+    private JobRunner(final String jobId,
                       final String jobType,
                       final ScheduledExecutorService executorService,
                       final JobEventPublisher jobEventPublisher) {
-        this.jobUri = jobUri;
+        this.jobId = jobId;
         this.jobType = jobType;
         this.executorService = executorService;
         this.jobEventPublisher = jobEventPublisher;
     }
 
-    public static JobRunner newJobRunner(final URI jobUri,
+    public static JobRunner newJobRunner(final String jobId,
                                          final String jobType,
                                          final ScheduledExecutorService executorService,
                                          final JobEventPublisher jobEventPublisher) {
-        return new JobRunner(jobUri, jobType, executorService, jobEventPublisher);
+        return new JobRunner(jobId, jobType, executorService, jobEventPublisher);
     }
 
     public void start(final JobRunnable runnable) {
@@ -68,7 +67,7 @@ public final class JobRunner {
         jobEventPublisher.stateChanged(START);
         pingJob = executorService.scheduleAtFixedRate(this::ping, PING_PERIOD, PING_PERIOD, SECONDS);
 
-        final String jobId = jobUri.toString();
+        final String jobId = this.jobId.toString();
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
         MDC.put("job_type", jobType);
         LOG.info("[started]");
@@ -78,12 +77,12 @@ public final class JobRunner {
         try {
             jobEventPublisher.stateChanged(KEEP_ALIVE);
         } catch (Exception e) {
-            LOG.error("Fatal error in ping job for" + jobType + " (" + jobUri + ")", e);
+            LOG.error("Fatal error in ping job for" + jobType + " (" + jobId + ")", e);
         }
     }
 
     private synchronized void error(final Exception e) {
-        jobEventPublisher.error("Fatal error in job " + jobType + " (" + jobUri + ") " + e.getMessage());
+        jobEventPublisher.error("Fatal error in job " + jobType + " (" + jobId + ") " + e.getMessage());
     }
 
     private synchronized void stop() {
@@ -91,7 +90,7 @@ public final class JobRunner {
 
         try {
             jobEventPublisher.stateChanged(STOP);
-            LOG.info("stopped job {}", jobUri);
+            LOG.info("stopped job {}", jobId);
         } finally {
             MDC.clear();
         }

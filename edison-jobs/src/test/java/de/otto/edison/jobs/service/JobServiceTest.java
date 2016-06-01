@@ -12,27 +12,25 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.net.URI;
 import java.time.Clock;
-import java.time.Instant;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static de.otto.edison.jobs.domain.JobInfo.*;
+import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static java.time.Clock.fixed;
-import static java.time.Instant.*;
+import static java.time.Instant.now;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class JobServiceTest {
@@ -51,15 +49,16 @@ public class JobServiceTest {
     }
 
     @Test
-    public void shouldReturnCreatedJobUri() {
+    public void shouldReturnCreatedJobId() {
         // given:
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("BAR"));
         JobService jobService = new JobService(someJobRepository(), emptySet(), asList(jobRunnable), mock(GaugeService.class), executorService, applicationEventPublisher);
         // when:
-        Optional<URI> jobUri = jobService.startAsyncJob("BAR");
+        Optional<String> jobId = jobService.startAsyncJob("BAR");
         // then:
-        assertThat(jobUri.get().toString(), startsWith("/internal/jobs/"));
+        assertThat(jobId.isPresent(), is(true));
+        assertThat(jobId.get().length(), is(36));
     }
 
     private JobRepository someJobRepository() {
@@ -128,10 +127,10 @@ public class JobServiceTest {
                 executorService,
                 applicationEventPublisher
         );
-        URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
+        String alreadyRunningJob = "barIsRunning";
         jobRepository.createOrUpdate(newJobInfo(alreadyRunningJob, "BAR", clock, "localhost"));
         // when:
-        Optional<URI> jobUri = jobService.startAsyncJob("BAR");
+        Optional<String> jobUri = jobService.startAsyncJob("BAR");
         // then:
         assertThat(jobUri.isPresent(), is(false));
     }
@@ -143,7 +142,7 @@ public class JobServiceTest {
         InMemJobRepository jobRepository = new InMemJobRepository();
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("FOO"));
-        URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
+        String alreadyRunningJob ="barIsRunning";
         jobRepository.createOrUpdate(newJobInfo(alreadyRunningJob, "BAR", clock, "localhost"));
         JobService jobService = new JobService(
                 jobRepository,
@@ -155,7 +154,7 @@ public class JobServiceTest {
         );
 
         // when:
-        Optional<URI> jobUri = jobService.startAsyncJob("foo");
+        Optional<String> jobUri = jobService.startAsyncJob("foo");
         // then:
         assertThat(jobUri.get(), is(not(alreadyRunningJob)));
     }
@@ -167,7 +166,7 @@ public class JobServiceTest {
         InMemJobRepository jobRepository = new InMemJobRepository();
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition("FOO"));
-        URI alreadyRunningJob = URI.create("/internal/jobs/barIsRunning");
+        String alreadyRunningJob = "/internal/jobs/barIsRunning";
         jobRepository.createOrUpdate(newJobInfo(alreadyRunningJob, "BAR", clock, "localhost"));
         JobService jobService = new JobService(
                 jobRepository,
@@ -179,7 +178,7 @@ public class JobServiceTest {
         );
 
         // when:
-        Optional<URI> jobUri = jobService.startAsyncJob("FOO");
+        Optional<String> jobUri = jobService.startAsyncJob("FOO");
         // then:
         assertThat(jobUri.isPresent(), is(false));
     }

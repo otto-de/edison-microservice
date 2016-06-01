@@ -4,27 +4,25 @@ import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
 import org.springframework.context.ApplicationEvent;
 
-import java.net.URI;
-
 @Immutable
 public class MessageEvent extends ApplicationEvent {
 
-    private final URI jobUri;
+    private final String jobId;
     private final Level level;
     private final String message;
 
     private MessageEvent(final JobRunnable jobRunnable,
-                        final URI jobUri,
+                        final String jobId,
                         final Level level,
                         final String message) {
         super(jobRunnable);
-        this.jobUri = jobUri;
+        this.jobId = jobId;
         this.level = level;
         this.message = message;
     }
 
-    public URI getJobUri() {
-        return jobUri;
+    public String getJobId() {
+        return jobId;
     }
 
     public String getMessage() {
@@ -42,7 +40,7 @@ public class MessageEvent extends ApplicationEvent {
 
         MessageEvent that = (MessageEvent) o;
 
-        if (jobUri != null ? !jobUri.equals(that.jobUri) : that.jobUri != null) return false;
+        if (jobId != null ? !jobId.equals(that.jobId) : that.jobId != null) return false;
         if (level != that.level) return false;
         return !(message != null ? !message.equals(that.message) : that.message != null);
 
@@ -50,7 +48,7 @@ public class MessageEvent extends ApplicationEvent {
 
     @Override
     public int hashCode() {
-        int result = jobUri != null ? jobUri.hashCode() : 0;
+        int result = jobId != null ? jobId.hashCode() : 0;
         result = 31 * result + (level != null ? level.hashCode() : 0);
         result = 31 * result + (message != null ? message.hashCode() : 0);
         return result;
@@ -59,14 +57,14 @@ public class MessageEvent extends ApplicationEvent {
     @Override
     public String toString() {
         return "MessageEvent{" +
-                "jobUri=" + jobUri +
+                "jobId=" + jobId +
                 ", level=" + level +
                 ", message='" + message + '\'' +
                 '}';
     }
 
-    public static MessageEvent newMessageEvent(final JobRunnable jobRunnable, final URI jobUri, final Level level, final String message) {
-        return new MessageEvent(jobRunnable, jobUri, level, message);
+    public static MessageEvent newMessageEvent(final JobRunnable jobRunnable, final String jobId, final Level level, final String message) {
+        return new MessageEvent(jobRunnable, jobId, level, message);
     }
 
     public enum Level {

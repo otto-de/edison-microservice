@@ -48,27 +48,27 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistStartEvent() throws Exception {
         // given
-        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), URI.create("some/job"), START);
+        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", START);
 
         // when
         testee.consumeStateChange(stateChangeEvent);
 
         // then
-        verify(jobRepository).createOrUpdate(newJobInfo(new URI("some/job"), "someJobType", clock, "localhost"));
+        verify(jobRepository).createOrUpdate(newJobInfo("some/job", "someJobType", clock, "localhost"));
     }
 
     @Test
     public void shouldPersistStillAliveEvent() throws Exception {
         // given
-        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), URI.create("some/job"), KEEP_ALIVE);
+        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", KEEP_ALIVE);
         JobInfo jobInfo = mock(JobInfo.class);
-        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
+        when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeStateChange(stateChangeEvent);
 
         // then
-        verify(jobRepository).findOne(URI.create("some/job"));
+        verify(jobRepository).findOne("some/job");
         verify(jobInfo).ping();
         verify(jobRepository).createOrUpdate(jobInfo);
     }
@@ -76,15 +76,15 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistRestartEvent() throws Exception {
         // given
-        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), URI.create("some/job"), RESTART);
+        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", RESTART);
         JobInfo jobInfo = mock(JobInfo.class);
-        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
+        when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeStateChange(stateChangeEvent);
 
         // then
-        verify(jobRepository).findOne(URI.create("some/job"));
+        verify(jobRepository).findOne("some/job");
         verify(jobInfo).restart();
         verify(jobRepository).createOrUpdate(jobInfo);
     }
@@ -92,15 +92,15 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistDeadEvent() throws Exception {
         // given
-        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), URI.create("some/job"), DEAD);
+        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", DEAD);
         JobInfo jobInfo = mock(JobInfo.class);
-        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
+        when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeStateChange(stateChangeEvent);
 
         // then
-        verify(jobRepository).findOne(URI.create("some/job"));
+        verify(jobRepository).findOne("some/job");
         verify(jobInfo).dead();
         verify(jobRepository).createOrUpdate(jobInfo);
     }
@@ -108,15 +108,15 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistStopEvent() throws Exception {
         // given
-        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), URI.create("some/job"), STOP);
+        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", STOP);
         JobInfo jobInfo = mock(JobInfo.class);
-        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
+        when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeStateChange(stateChangeEvent);
 
         // then
-        verify(jobRepository).findOne(URI.create("some/job"));
+        verify(jobRepository).findOne("some/job");
         verify(jobInfo).stop();
         verify(jobRepository).createOrUpdate(jobInfo);
     }
@@ -124,16 +124,16 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistInfoMessages() throws Exception {
         // given
-        MessageEvent messageEvent = newMessageEvent(someJobRunnable(), URI.create("some/job"), MessageEvent.Level.INFO, "some message");
-        JobInfo jobInfo = JobInfo.newJobInfo(URI.create("some/job"), "someType", Clock.systemDefaultZone(), "localhost");
-        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
+        MessageEvent messageEvent = newMessageEvent(someJobRunnable(), "some/job", MessageEvent.Level.INFO, "some message");
+        JobInfo jobInfo = JobInfo.newJobInfo("some/job", "someType", Clock.systemDefaultZone(), "localhost");
+        when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeMessage(messageEvent);
 
         // then
         ArgumentCaptor<JobMessage> captor = ArgumentCaptor.forClass(JobMessage.class);
-        verify(jobRepository).appendMessage(eq(URI.create("some/job")), captor.capture());
+        verify(jobRepository).appendMessage(eq("some/job"), captor.capture());
         assertThat(captor.getValue().getLevel(), is(Level.INFO));
         assertThat(captor.getValue().getMessage(), is("some message"));
         verifyNoMoreInteractions(jobRepository);
@@ -142,16 +142,16 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistWarnMessages() throws Exception {
         // given
-        MessageEvent messageEvent = newMessageEvent(someJobRunnable(), URI.create("some/job"), MessageEvent.Level.WARN, "some message");
-        JobInfo jobInfo = JobInfo.newJobInfo(URI.create("some/job"), "someType", Clock.systemDefaultZone(), "localhost");
-        when(jobRepository.findOne(URI.create("some/job"))).thenReturn(Optional.of(jobInfo));
+        MessageEvent messageEvent = newMessageEvent(someJobRunnable(), "some/job", MessageEvent.Level.WARN, "some message");
+        JobInfo jobInfo = JobInfo.newJobInfo("some/job", "someType", Clock.systemDefaultZone(), "localhost");
+        when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeMessage(messageEvent);
 
         // then
         ArgumentCaptor<JobMessage> captor = ArgumentCaptor.forClass(JobMessage.class);
-        verify(jobRepository).appendMessage(eq(URI.create("some/job")), captor.capture());
+        verify(jobRepository).appendMessage(eq("some/job"), captor.capture());
         assertThat(captor.getValue().getLevel(), is(Level.WARNING));
         assertThat(captor.getValue().getMessage(), is("some message"));
         verifyNoMoreInteractions(jobRepository);
@@ -160,9 +160,9 @@ public class PersistenceJobEventListenerTest {
     @Test
     public void shouldPersistErrorMessages() throws Exception {
         // given
-        MessageEvent messageEvent = newMessageEvent(someJobRunnable(), URI.create("some/job"), MessageEvent.Level.ERROR, "some message");
+        MessageEvent messageEvent = newMessageEvent(someJobRunnable(), "some/job", MessageEvent.Level.ERROR, "some message");
         JobInfo jobInfo = mock(JobInfo.class);
-        when(jobRepository.findOne(messageEvent.getJobUri())).thenReturn(Optional.of(jobInfo));
+        when(jobRepository.findOne(messageEvent.getJobId())).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeMessage(messageEvent);

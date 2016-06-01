@@ -37,26 +37,26 @@ public class EventBusIntegrationTest extends AbstractTestNGSpringContextTests {
     @Test
     public void shouldSendAndReceiveStartEvent() throws Exception {
         // given
-        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/job"));
+        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), "some-job");
 
         // when
         testee.stateChanged(StateChangeEvent.State.START);
         testee.error("some message");
 
         // then
-        assertThat(inMemoryEventRubbishBin.getMessageEvents().get(0), is("some/job"));
+        assertThat(inMemoryEventRubbishBin.getMessageEvents().get(0), is("some-job"));
     }
 
     @Test
     public void shouldSendAndReceiveStopEvent() throws Exception {
         // given
-        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), URI.create("some/stopped/job"));
+        JobEventPublisher testee = newJobEventPublisher(applicationEventPublisher, createJobRunnable(), "some-stopped-job");
 
         // when
         testee.stateChanged(STOP);
 
         // then
-        assertThat(inMemoryEventRubbishBin.getStateChangedEvents().get(0), is("some/stopped/job"));
+        assertThat(inMemoryEventRubbishBin.getStateChangedEvents().get(0), is("some-stopped-job"));
     }
 
     private JobRunnable createJobRunnable() {

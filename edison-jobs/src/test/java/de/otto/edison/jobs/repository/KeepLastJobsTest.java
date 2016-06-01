@@ -31,16 +31,16 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE", now, "localhost").stop());
-            createOrUpdate(newJobInfo(create("foobar"), "TYPE", earlier, "localhost").stop());
-            createOrUpdate(newJobInfo(create("bar"), "TYPE", muchEarlier, "localhost").stop());
+            createOrUpdate(newJobInfo("foo", "TYPE", now, "localhost").stop());
+            createOrUpdate(newJobInfo("foobar", "TYPE", earlier, "localhost").stop());
+            createOrUpdate(newJobInfo("bar", "TYPE", muchEarlier, "localhost").stop());
         }};
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(2L));
-        assertThat(repository.findOne(create("bar")), isAbsent());
+        assertThat(repository.findOne("bar"), isAbsent());
     }
 
     @Test
@@ -48,17 +48,17 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(1);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE", now, "localhost").stop());
-            createOrUpdate(newJobInfo(create("foobar"), "TYPE", earlier, "localhost"));
-            createOrUpdate(newJobInfo(create("bar"), "TYPE", muchEarlier, "localhost").stop());
+            createOrUpdate(newJobInfo("foo", "TYPE", now, "localhost").stop());
+            createOrUpdate(newJobInfo("foobar", "TYPE", earlier, "localhost"));
+            createOrUpdate(newJobInfo("bar", "TYPE", muchEarlier, "localhost").stop());
         }};
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
-        assertThat(repository.findOne(create("foo")), isPresent());
-        assertThat(repository.findOne(create("foobar")), isPresent());
-        assertThat(repository.findOne(create("bar")), isAbsent());
+        assertThat(repository.findOne("foo"), isPresent());
+        assertThat(repository.findOne("foobar"), isPresent());
+        assertThat(repository.findOne("bar"), isAbsent());
 
         assertThat(repository.size(), is(2L));
     }
@@ -68,22 +68,22 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE", now, "localhost").error("bumm").stop());
-            createOrUpdate(newJobInfo(create("bar"), "TYPE", earlier, "localhost").error("bumm").stop());
-            createOrUpdate(newJobInfo(create("barzig"), "TYPE", evenEarlier, "localhost").error("b00m!!1shakalaka").stop());
-            createOrUpdate(newJobInfo(create("foobar"), "TYPE", muchEarlier, "localhost").stop());
-            createOrUpdate(newJobInfo(create("foozification"), "TYPE", evenEarlier, "localhost").error("b00m!!1").stop());
+            createOrUpdate(newJobInfo("foo", "TYPE", now, "localhost").error("bumm").stop());
+            createOrUpdate(newJobInfo("bar", "TYPE", earlier, "localhost").error("bumm").stop());
+            createOrUpdate(newJobInfo("barzig", "TYPE", evenEarlier, "localhost").error("b00m!!1shakalaka").stop());
+            createOrUpdate(newJobInfo("foobar", "TYPE", muchEarlier, "localhost").stop());
+            createOrUpdate(newJobInfo("foozification", "TYPE", evenEarlier, "localhost").error("b00m!!1").stop());
         }};
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
         assertThat(repository.size(), is(3L));
-        assertThat(repository.findOne(create("foo")), isPresent());
-        assertThat(repository.findOne(create("bar")), isPresent());
-        assertThat(repository.findOne(create("barzig")), isAbsent());
-        assertThat(repository.findOne(create("foobar")), isPresent());
-        assertThat(repository.findOne(create("foozification")), isAbsent());
+        assertThat(repository.findOne("foo"), isPresent());
+        assertThat(repository.findOne("bar"), isPresent());
+        assertThat(repository.findOne("barzig"), isAbsent());
+        assertThat(repository.findOne("foobar"), isPresent());
+        assertThat(repository.findOne("foozification"), isAbsent());
     }
 
     @Test
@@ -91,12 +91,12 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo1"), "TYPE1", now, "localhost").stop());
-            createOrUpdate(newJobInfo(create("foo2"), "TYPE1", muchEarlier, "localhost").stop());
-            createOrUpdate(newJobInfo(create("foo3"), "TYPE1", evenEarlier, "localhost").stop());
-            createOrUpdate(newJobInfo(create("bar1"), "TYPE2", earlier, "localhost")).stop();
-            createOrUpdate(newJobInfo(create("bar2"), "TYPE2", muchEarlier, "localhost")).stop();
-            createOrUpdate(newJobInfo(create("bar3"), "TYPE2", evenEarlier, "localhost")).stop();
+            createOrUpdate(newJobInfo("foo1", "TYPE1", now, "localhost").stop());
+            createOrUpdate(newJobInfo("foo2", "TYPE1", muchEarlier, "localhost").stop());
+            createOrUpdate(newJobInfo("foo3", "TYPE1", evenEarlier, "localhost").stop());
+            createOrUpdate(newJobInfo("bar1", "TYPE2", earlier, "localhost")).stop();
+            createOrUpdate(newJobInfo("bar2", "TYPE2", muchEarlier, "localhost")).stop();
+            createOrUpdate(newJobInfo("bar3", "TYPE2", evenEarlier, "localhost")).stop();
         }};
         strategy.setJobRepository(repository);
         // when
@@ -112,7 +112,7 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo(create("foo"), "TYPE", now, "localhost").stop());
+            createOrUpdate(newJobInfo("foo", "TYPE", now, "localhost").stop());
         }};
         strategy.setJobRepository(repository);
         // when

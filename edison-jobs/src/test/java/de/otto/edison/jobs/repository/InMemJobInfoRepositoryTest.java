@@ -24,16 +24,16 @@ public class InMemJobInfoRepositoryTest {
         InMemJobRepository repository = new InMemJobRepository();
 
         // when
-        JobInfo job = newJobInfo(create("/jobs/" + randomUUID()), "MYJOB", clock, "localhost");
+        JobInfo job = newJobInfo(randomUUID().toString(), "MYJOB", clock, "localhost");
         repository.createOrUpdate(job);
 
         // then
-        assertThat(repository.findOne(job.getJobUri()), isPresent());
+        assertThat(repository.findOne(job.getJobId()), isPresent());
     }
 
     @Test
     public void shouldReturnAbsentStatus() {
         InMemJobRepository repository = new InMemJobRepository();
-        assertThat(repository.findOne(create("/foo/bar")), isAbsent());
+        assertThat(repository.findOne("some-nonexisting-job-id"), isAbsent());
     }
 }

@@ -14,14 +14,16 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.System.currentTimeMillis;
-import static java.net.URI.create;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
@@ -82,7 +84,7 @@ public class JobService {
      * @param jobType the type of the job
      * @return the URI to retrieve detail information about the executed job instance
      */
-    public Optional<URI> startJob(String jobType) {
+    public Optional<String> startJob(String jobType) {
         return startJob(jobType, false);
     }
 
@@ -92,11 +94,11 @@ public class JobService {
      * @param jobType the type of the job
      * @return the URI under which you can retrieve the status about the triggered job instance
      */
-    public Optional<URI> startAsyncJob(String jobType) {
+    public Optional<String> startAsyncJob(String jobType) {
         return startJob(jobType, true);
     }
 
-    private Optional<URI> startJob(String jobType, boolean async) {
+    private Optional<String> startJob(String jobType, boolean async) {
         final JobRunnable jobRunnable = findJobRunnable(jobType);
         // TODO: use some kind of database lock so we can prevent race conditions
         final Set<String> mutexJobTypes = mutexJobTypesFor(jobType);
@@ -112,8 +114,8 @@ public class JobService {
         }
     }
 
-    public Optional<JobInfo> findJob(final URI uri) {
-        return repository.findOne(uri);
+    public Optional<JobInfo> findJob(final String id) {
+        return repository.findOne(id);
     }
 
     /**
@@ -137,9 +139,9 @@ public class JobService {
 
     public void deleteJobs(final Optional<String> type) {
         if (type.isPresent()) {
-            repository.findByType(type.get()).forEach((j) -> repository.removeIfStopped(j.getJobUri()));
+            repository.findByType(type.get()).forEach((j) -> repository.removeIfStopped(j.getJobId()));
         } else {
-            repository.findAll().forEach((j) -> repository.removeIfStopped(j.getJobUri()));
+            repository.findAll().forEach((j) -> repository.removeIfStopped(j.getJobId()));
         }
     }
 
@@ -149,27 +151,27 @@ public class JobService {
         return optionalRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for " + jobType));
     }
 
-    private URI startAsync(final JobRunnable jobRunnable) {
-        final URI jobUri = newJobUri();
-        final JobRunner jobRunner = createJobRunner(jobRunnable, jobUri);
+    private String startAsync(final JobRunnable jobRunnable) {
+        final String jobId = newJobId();
+        final JobRunner jobRunner = createJobRunner(jobRunnable, jobId);
         executor.execute(() -> jobRunner.start(jobRunnable));
-        return jobUri;
+        return jobId;
     }
 
-    private URI start(final JobRunnable jobRunnable) {
-        final URI jobUri = newJobUri();
+    private String start(final JobRunnable jobRunnable) {
+        final String jobUri = newJobId();
         final JobRunner jobRunner = createJobRunner(jobRunnable, jobUri);
         jobRunner.start(jobRunnable);
         return jobUri;
     }
 
-    private JobRunner createJobRunner(JobRunnable jobRunnable, URI jobUri) {
+    private JobRunner createJobRunner(JobRunnable jobRunnable, String jobId) {
         final String jobType = jobRunnable.getJobDefinition().jobType();
         return newJobRunner(
-                jobUri,
+                jobId,
                 jobType,
                 executor,
-                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobUri)
+                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobId)
         );
     }
 
@@ -194,8 +196,8 @@ public class JobService {
         };
     }
 
-    private URI newJobUri() {
-        return create("/internal/jobs/" + randomUUID());
+    private String newJobId() {
+        return randomUUID().toString();
     }
 
     private boolean isBlockedBy(final Set<String> mutexJobs) {

@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface JobRepository {
 
-    Optional<JobInfo> findOne(URI uri);
+    Optional<JobInfo> findOne(String jobId);
 
     List<JobInfo> findLatest(int maxCount);
 
@@ -30,11 +30,11 @@ public interface JobRepository {
 
     JobInfo createOrUpdate(JobInfo job);
 
-    void removeIfStopped(URI uri);
+    void removeIfStopped(String jobId);
 
     long size();
 
-    JobInfo.JobStatus findStatus(URI jobUri);
+    JobInfo.JobStatus findStatus(String jobId);
 
-    void appendMessage(URI jobUri, JobMessage jobMessage);
+    void appendMessage(String jobId, JobMessage jobMessage);
 }

@@ -9,15 +9,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 /**
  * A JobCleanupStrategy that is removing all but the newest N jobs of each type.
@@ -57,7 +54,7 @@ public class KeepLastJobs implements JobCleanupStrategy {
         final List<JobInfo> jobs = jobRepository.findAll();
 
         findJobsToDelete(jobs)
-                .forEach(jobInfo -> jobRepository.removeIfStopped(jobInfo.getJobUri()));
+                .forEach(jobInfo -> jobRepository.removeIfStopped(jobInfo.getJobId()));
     }
 
     private List<JobInfo> findJobsToDelete(List<JobInfo> jobs) {

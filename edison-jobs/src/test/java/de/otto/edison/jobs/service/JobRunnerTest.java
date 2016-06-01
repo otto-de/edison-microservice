@@ -52,7 +52,7 @@ public class JobRunnerTest {
     @Test
     public void shouldExecuteJob() {
         // given
-        JobRunner jobRunner = newJobRunner(create("/foo/jobs/42"), "TYPE", executor, jobEventPublisher);
+        JobRunner jobRunner = newJobRunner("42", "TYPE", executor, jobEventPublisher);
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty()));
 
@@ -66,9 +66,8 @@ public class JobRunnerTest {
     @Test
     public void shouldPublishErrorMessageOnFail() throws URISyntaxException {
         // given
-        URI jobUri = create("/foo/jobs/42");
         JobRunner jobRunner = newJobRunner(
-                jobUri,
+                "42",
                 "NAME",
                 executor,
                 jobEventPublisher);
@@ -86,9 +85,8 @@ public class JobRunnerTest {
     @Test
     public void shouldRestartJobOnException() {
         // given
-        URI jobUri = create("/foo/jobs/42");
         JobRunner jobRunner = newJobRunner(
-                jobUri,
+                "42",
                 "NAME",
                 executor,
                 jobEventPublisher);
@@ -113,9 +111,8 @@ public class JobRunnerTest {
     @Test
     public void shouldSendKeepAliveEventWithinPingJob() {
         //given
-        URI jobUri = create("/foo/jobs/42");
         JobRunner jobRunner = newJobRunner(
-                jobUri,
+                "42",
                 "NAME",
                 executor,
                 jobEventPublisher);
@@ -136,7 +133,7 @@ public class JobRunnerTest {
     public void shouldStopPingJobWhenJobIsFinished() {
         //given
         JobRunner jobRunner = newJobRunner(
-                create("/foo/jobs/42"),
+                "42",
                 "NAME",
                 executor,
                 jobEventPublisher);

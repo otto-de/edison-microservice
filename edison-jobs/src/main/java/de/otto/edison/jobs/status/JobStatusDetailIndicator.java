@@ -76,7 +76,7 @@ public class JobStatusDetailIndicator implements StatusDetailIndicator {
 
     private Map<String, String> runningDetailsFor(final JobInfo jobInfo) {
         Map<String, String> details = new HashMap<>();
-        String uri = jobInfo.getJobUri().toString();
+        String uri = jobInfo.getJobId();
         details.put("uri", uri);
         if (!jobInfo.getStopped().isPresent()) {
             details.put("running", uri);

@@ -14,12 +14,12 @@ public class InMemoryEventRubbishBin {
 
     @EventListener
     public void consumeStateChangedEvent(final StateChangeEvent stateChangeEvent) {
-        stateChangedEvents.add(stateChangeEvent.getJobUri().toString());
+        stateChangedEvents.add(stateChangeEvent.getJobId());
     }
 
     @EventListener
     public void consumeMessageEvent(final MessageEvent messageEvent) {
-        messageEvents.add(messageEvent.getJobUri().toString());
+        messageEvents.add(messageEvent.getJobId());
     }
 
     public List<String> getStateChangedEvents() {

@@ -30,7 +30,7 @@ public class JobInfo {
     private static final String JOB_DEAD_MESSAGE = "Job didn't receive updates for a while, considering it dead";
 
     private final Clock clock;
-    private final URI jobUri;
+    private final String jobId;
     private final String jobType;
     private final OffsetDateTime started;
     private final List<JobMessage> messages = new ArrayList<>();
@@ -41,12 +41,12 @@ public class JobInfo {
 
     public enum JobStatus {OK, ERROR, DEAD}
 
-    public static JobInfo newJobInfo(final URI jobUri, final String jobType,
+    public static JobInfo newJobInfo(final String jobId, final String jobType,
                                      final Clock clock, final String hostname) {
-        return new JobInfo(jobType, jobUri, clock, hostname);
+        return new JobInfo(jobType, jobId, clock, hostname);
     }
 
-    public static JobInfo newJobInfo(final URI jobUri,
+    public static JobInfo newJobInfo(final String jobId,
                                      final String jobType,
                                      final OffsetDateTime started,
                                      final OffsetDateTime lastUpdated,
@@ -55,12 +55,12 @@ public class JobInfo {
                                      final List<JobMessage> messages,
                                      final Clock clock,
                                      final String hostname) {
-        return new JobInfo(jobUri, jobType, started, lastUpdated, stopped, status, messages, clock, hostname);
+        return new JobInfo(jobId, jobType, started, lastUpdated, stopped, status, messages, clock, hostname);
     }
 
-    private JobInfo(final String jobType, final URI jobUri, final Clock clock, final String hostname) {
+    private JobInfo(final String jobType, final String jobId, final Clock clock, final String hostname) {
         this.clock = clock;
-        this.jobUri = jobUri;
+        this.jobId = jobId;
         this.jobType = jobType;
         this.started = now(clock);
         this.stopped = empty();
@@ -69,7 +69,7 @@ public class JobInfo {
         this.hostname = hostname;
     }
 
-    private JobInfo(final URI jobUri,
+    private JobInfo(final String jobId,
                     final String jobType,
                     final OffsetDateTime started,
                     final OffsetDateTime lastUpdated,
@@ -79,7 +79,7 @@ public class JobInfo {
                     final Clock clock,
                     final String hostname) {
         this.clock = clock;
-        this.jobUri = jobUri;
+        this.jobId = jobId;
         this.jobType = jobType;
         this.started = started;
         this.lastUpdated = lastUpdated;
@@ -99,8 +99,8 @@ public class JobInfo {
     /**
      * @return the URI of the job
      */
-    public URI getJobUri() {
-        return jobUri;
+    public String getJobId() {
+        return jobId;
     }
 
     /**
@@ -247,7 +247,7 @@ public class JobInfo {
         JobInfo jobInfo = (JobInfo) o;
 
         if (jobType != null ? !jobType.equals(jobInfo.jobType) : jobInfo.jobType != null) return false;
-        if (jobUri != null ? !jobUri.equals(jobInfo.jobUri) : jobInfo.jobUri != null) return false;
+        if (jobId != null ? !jobId.equals(jobInfo.jobId) : jobInfo.jobId != null) return false;
         if (lastUpdated != null ? !lastUpdated.equals(jobInfo.lastUpdated) : jobInfo.lastUpdated != null) return false;
         if (messages != null ? !messages.equals(jobInfo.messages) : jobInfo.messages != null) return false;
         if (started != null ? !started.equals(jobInfo.started) : jobInfo.started != null) return false;
@@ -260,7 +260,7 @@ public class JobInfo {
 
     @Override
     public int hashCode() {
-        int result = jobUri != null ? jobUri.hashCode() : 0;
+        int result = jobId != null ? jobId.hashCode() : 0;
         result = 31 * result + (jobType != null ? jobType.hashCode() : 0);
         result = 31 * result + (started != null ? started.hashCode() : 0);
         result = 31 * result + (stopped != null ? stopped.hashCode() : 0);
@@ -274,7 +274,7 @@ public class JobInfo {
     @Override
     public String toString() {
         return "JobInfo{" +
-                "jobUri=" + jobUri +
+                "jobId=" + jobId +
                 ", jobType=" + jobType +
                 ", started=" + started +
                 ", hostname=" + hostname +

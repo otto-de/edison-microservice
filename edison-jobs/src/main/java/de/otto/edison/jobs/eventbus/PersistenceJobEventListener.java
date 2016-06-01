@@ -36,24 +36,24 @@ public class PersistenceJobEventListener implements JobEventListener {
     public void consumeStateChange(final StateChangeEvent event) {
         switch (event.getState()) {
             case START:
-                jobRepository.createOrUpdate(newJobInfo(event.getJobUri(), event.getJobType(), clock,
+                jobRepository.createOrUpdate(newJobInfo(event.getJobId(), event.getJobType(), clock,
                         systemInfo.getHostname()));
                 break;
 
             case KEEP_ALIVE:
-                updateJobIfPresent(event.getJobUri(), JobInfo::ping);
+                updateJobIfPresent(event.getJobId(), JobInfo::ping);
                 break;
 
             case RESTART:
-                updateJobIfPresent(event.getJobUri(), JobInfo::restart);
+                updateJobIfPresent(event.getJobId(), JobInfo::restart);
                 break;
 
             case DEAD:
-                updateJobIfPresent(event.getJobUri(), JobInfo::dead);
+                updateJobIfPresent(event.getJobId(), JobInfo::dead);
                 break;
 
             case STOP:
-                updateJobIfPresent(event.getJobUri(), JobInfo::stop);
+                updateJobIfPresent(event.getJobId(), JobInfo::stop);
                 break;
         }
     }
@@ -64,10 +64,10 @@ public class PersistenceJobEventListener implements JobEventListener {
 
         switch (messageEvent.getLevel()) {
             case ERROR:
-                updateJobIfPresent(messageEvent.getJobUri(), jobInfo -> jobInfo.error(messageEvent.getMessage()));
+                updateJobIfPresent(messageEvent.getJobId(), jobInfo -> jobInfo.error(messageEvent.getMessage()));
                 break;
             default:
-                jobRepository.appendMessage(messageEvent.getJobUri(), jobMessage);
+                jobRepository.appendMessage(messageEvent.getJobId(), jobMessage);
         }
     }
 
@@ -87,13 +87,13 @@ public class PersistenceJobEventListener implements JobEventListener {
         return level;
     }
 
-    private void updateJobIfPresent(final URI jobUri, final Consumer<JobInfo> consumer) {
-        final Optional<JobInfo> jobInfo = jobRepository.findOne(jobUri);
+    private void updateJobIfPresent(final String jobId, final Consumer<JobInfo> consumer) {
+        final Optional<JobInfo> jobInfo = jobRepository.findOne(jobId);
         if (jobInfo.isPresent()) {
             consumer.accept(jobInfo.get());
             jobRepository.createOrUpdate(jobInfo.get());
         } else {
-            LOG.error("job '{}' in inconsistent state. Should be present here", jobUri);
+            LOG.error("job '{}' in inconsistent state. Should be present here", jobId);
         }
     }
 }

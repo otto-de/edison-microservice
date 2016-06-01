@@ -9,21 +9,21 @@ import java.net.URI;
 @Immutable
 public class StateChangeEvent extends ApplicationEvent {
 
-    private final URI jobUri;
+    private final String jobId;
     private final String jobType;
     private final State state;
 
     private StateChangeEvent(final JobRunnable jobRunnable,
-                             final URI jobUri,
+                             final String jobId,
                              final State state) {
         super(jobRunnable);
-        this.jobUri = jobUri;
+        this.jobId = jobId;
         this.jobType = jobRunnable.getJobDefinition().jobType();
         this.state = state;
     }
 
-    public URI getJobUri() {
-        return jobUri;
+    public String getJobId() {
+        return jobId;
     }
 
     public State getState() {
@@ -41,7 +41,7 @@ public class StateChangeEvent extends ApplicationEvent {
 
         StateChangeEvent that = (StateChangeEvent) o;
 
-        if (jobUri != null ? !jobUri.equals(that.jobUri) : that.jobUri != null) return false;
+        if (jobId != null ? !jobId.equals(that.jobId) : that.jobId != null) return false;
         if (jobType != null ? !jobType.equals(that.jobType) : that.jobType != null) return false;
         return state == that.state;
 
@@ -49,7 +49,7 @@ public class StateChangeEvent extends ApplicationEvent {
 
     @Override
     public int hashCode() {
-        int result = jobUri != null ? jobUri.hashCode() : 0;
+        int result = jobId != null ? jobId.hashCode() : 0;
         result = 31 * result + (jobType != null ? jobType.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
@@ -58,16 +58,16 @@ public class StateChangeEvent extends ApplicationEvent {
     @Override
     public String toString() {
         return "StateChangeEvent{" +
-                "jobUri=" + jobUri +
+                "jobId=" + jobId +
                 ", jobType='" + jobType + '\'' +
                 ", state=" + state +
                 '}';
     }
 
     public static StateChangeEvent newStateChangeEvent(final JobRunnable jobRunnable,
-                                                       final URI jobUri,
+                                                       final String jobId,
                                                        final State state) {
-        return new StateChangeEvent(jobRunnable, jobUri, state);
+        return new StateChangeEvent(jobRunnable, jobId, state);
     }
 
     public enum State {

@@ -29,9 +29,9 @@ public class StopDeadJobsTest {
         final Clock clock = fixed(Instant.now(), systemDefault());
         final Clock earlierClock = fixed(Instant.now().minusSeconds(25), systemDefault());
 
-        JobInfo runningJobToBeStopped = newJobInfo(create("runningJobToBeStopped"), "TYPE", earlierClock, "localhost");
-        JobInfo runningJob = newJobInfo(create("runningJob"), "TYPE", clock, "localhost");
-        JobInfo stoppedJob = newJobInfo(create("stoppedJob"), "TYPE", earlierClock, "localhost").stop();
+        JobInfo runningJobToBeStopped = newJobInfo("runningJobToBeStopped", "TYPE", earlierClock, "localhost");
+        JobInfo runningJob = newJobInfo("runningJob", "TYPE", clock, "localhost");
+        JobInfo stoppedJob = newJobInfo("stoppedJob", "TYPE", earlierClock, "localhost").stop();
 
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(runningJobToBeStopped);
@@ -46,10 +46,9 @@ public class StopDeadJobsTest {
         strategy.doCleanUp();
 
         //then
-        JobInfo toBeStopped = repository.findOne(URI.create("runningJobToBeStopped")).get();
-        JobInfo running = repository.findOne(URI.create("runningJob")).get();
-        JobInfo stopped = repository.findOne(URI.create("stoppedJob")).get();
-
+        JobInfo toBeStopped = repository.findOne("runningJobToBeStopped").get();
+        JobInfo running = repository.findOne("runningJob").get();
+        JobInfo stopped = repository.findOne("stoppedJob").get();
         assertThat(toBeStopped.getStopped().get(), is(OffsetDateTime.now(earlierClock)));
         assertThat(toBeStopped.getLastUpdated(), is(OffsetDateTime.now(earlierClock)));
         assertThat(toBeStopped.getStatus(), is(DEAD));
