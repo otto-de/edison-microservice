@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.57.2
+* Small bugfix: Fix job detail URL in jobs template
+
 ## Release 0.57.1
 * set the /internal/jobs/ in the URL of the Location header
 
