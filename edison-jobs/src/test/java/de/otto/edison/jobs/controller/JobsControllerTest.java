@@ -115,4 +115,17 @@ public class JobsControllerTest {
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
         assertThat(jobs, is(asList(representationOf(firstJob, false, ""))));
     }
+
+    @Test
+    public void shouldTriggerJobAndReturnItsURL() throws Exception {
+        when(jobService.startAsyncJob("someJobType")).thenReturn(Optional.of("theJobId"));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/some-microservice/internal/jobs/someJobType")
+                .servletPath("/internal/jobs/someJobType"))
+                .andExpect(MockMvcResultMatchers.status().is(204))
+                .andExpect(MockMvcResultMatchers.header().string("Location", "http://localhost/some-microservice/internal/jobs/theJobId"));
+
+        verify(jobService).startAsyncJob("someJobType");
+    }
 }

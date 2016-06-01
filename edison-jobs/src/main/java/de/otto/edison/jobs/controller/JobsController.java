@@ -94,7 +94,7 @@ public class JobsController {
                          final HttpServletResponse response) throws IOException {
         final Optional<String> jobId = jobService.startAsyncJob(jobType);
         if (jobId.isPresent()) {
-            response.setHeader("Location", baseUriOf(request) + jobId.get());
+            response.setHeader("Location", baseUriOf(request) + "/internal/jobs/" + jobId.get());
             response.setStatus(SC_NO_CONTENT);
         } else {
             response.sendError(SC_CONFLICT);

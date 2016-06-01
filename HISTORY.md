@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.57.1
+* set the /internal/jobs/ in the URL of the Location header
+
 ## Release 0.57.0
 * The JobIds do not contain slashes any more, (/internal/jobs/ is not part of the jobIds)
 * Note that jobs which were persisted with older releases might not be accessible any more after the upgrade.
