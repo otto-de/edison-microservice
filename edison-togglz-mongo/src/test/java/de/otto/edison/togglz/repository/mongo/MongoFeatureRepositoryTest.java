@@ -6,12 +6,16 @@ import de.otto.edison.togglz.FeatureClassProvider;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.togglz.core.repository.FeatureState;
+import org.togglz.core.user.SimpleFeatureUser;
+import org.togglz.core.user.UserProvider;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Test
 public class MongoFeatureRepositoryTest {
@@ -23,8 +27,10 @@ public class MongoFeatureRepositoryTest {
         Fongo fongo = new Fongo("inmemory-mongodb");
         MongoDatabase database = fongo.getDatabase("features");
         FeatureClassProvider featureClassProvider = new TestFeatureClassProvider();
+        UserProvider userProvider = mock(UserProvider.class);
+        when(userProvider.getCurrentUser()).thenReturn(new SimpleFeatureUser("someUser"));
 
-        testee = new MongoFeatureRepository(database, featureClassProvider);
+        testee = new MongoFeatureRepository(database, featureClassProvider, userProvider);
     }
 
     @Test
