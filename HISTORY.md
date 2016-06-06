@@ -2,6 +2,13 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.58.1
+* edison-togglz: Fixed a bug in the LDAP authentication filter
+* edison-togglz-mongo: Log name of the user switching a toggle also in the mongo state repository
+
+## Release 0.58.0
+* edison-togglz: added optional LDAP authentication
+
 ## Release 0.57.2
 * Small bugfix: Fix job detail URL in jobs template
 

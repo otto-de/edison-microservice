@@ -21,12 +21,6 @@ import java.util.Optional;
 @Configuration
 public class TogglzConfiguration {
 
-    @Autowired
-    private StateRepository stateRepository;
-
-    @Autowired
-    private FeatureClassProvider featureClassProvider;
-
     @Bean
     @ConditionalOnMissingBean(FeatureClassProvider.class)
     public FeatureClassProvider getFeatureClassProvider() {
@@ -51,12 +45,15 @@ public class TogglzConfiguration {
     private long cacheTtlMilliseconds;
 
     @Bean
-    public DefaultTogglzConfig defaultTogglzConfig() {
+    @Autowired
+    public DefaultTogglzConfig defaultTogglzConfig(final StateRepository stateRepository,
+                                                   final FeatureClassProvider featureClassProvider) {
         return new DefaultTogglzConfig(cacheTtlMilliseconds, stateRepository, getUserProvider(), featureClassProvider);
     }
 
     static enum Features implements Feature {
         NONE;
+
         public boolean isActive() {
             return FeatureContext.getFeatureManager().isActive(this);
         }

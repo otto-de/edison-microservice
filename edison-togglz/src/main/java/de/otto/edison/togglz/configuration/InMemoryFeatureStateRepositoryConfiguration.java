@@ -46,7 +46,8 @@ public class InMemoryFeatureStateRepositoryConfiguration {
             @Override
             public void setFeatureState(final FeatureState featureState) {
                 featureStore.put(featureState.getFeature().name(), featureState);
-                LOG.info((!StringUtils.isEmpty(userProvider.getCurrentUser().getName()) ? "User '" + userProvider.getCurrentUser().getName() + "'" : "Unknown user") + (featureState.isEnabled() ? " enabled " : " disabled ") + "feature " + featureState.getFeature().name());
+                LOG.info((!StringUtils.isEmpty(userProvider.getCurrentUser().getName()) ? "User '" + userProvider.getCurrentUser().getName() + "'" : "Unknown user")
+                        + (featureState.isEnabled() ? " enabled " : " disabled ") + "feature " + featureState.getFeature().name());
             }
         };
     }

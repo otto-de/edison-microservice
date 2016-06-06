@@ -12,9 +12,12 @@ import org.springframework.stereotype.Repository;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
+import org.togglz.core.user.UserProvider;
 
 import java.util.Map;
 import java.util.Optional;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Repository
 public class MongoFeatureRepository extends AbstractMongoRepository<String, FeatureState> implements StateRepository {
@@ -28,12 +31,15 @@ public class MongoFeatureRepository extends AbstractMongoRepository<String, Feat
 
     private final MongoCollection<Document> collection;
     private final FeatureClassProvider featureClassProvider;
+    private final UserProvider userProvider;
 
     @Autowired
     public MongoFeatureRepository(final MongoDatabase database,
-                                  final FeatureClassProvider featureClassProvider) {
+                                  final FeatureClassProvider featureClassProvider,
+                                  final UserProvider userProvider) {
         this.featureClassProvider = featureClassProvider;
         this.collection = database.getCollection("togglz");
+        this.userProvider = userProvider;
     }
 
     @Override
@@ -49,7 +55,8 @@ public class MongoFeatureRepository extends AbstractMongoRepository<String, Feat
     @Override
     public void setFeatureState(final FeatureState featureState) {
         createOrUpdate(featureState);
-        LOG.info("switched feature toggle '{}' to '{}'", featureState.getFeature().name(), featureState.isEnabled());
+        LOG.info((!isEmpty(userProvider.getCurrentUser().getName()) ? "User '" + userProvider.getCurrentUser().getName() + "'" : "Unknown user")
+                + (featureState.isEnabled() ? " enabled " : " disabled ") + "feature " + featureState.getFeature().name());
     }
 
     @Override

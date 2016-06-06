@@ -59,9 +59,10 @@ public class LdapAuthenticationFilter implements Filter {
             Optional<Credentials> credentials = Credentials.readFrom(httpRequest);
             if (!configurationIsValid() || !credentials.isPresent() || !ldapAuthentication(credentials.get())) {
                 unauthorized(httpResponse);
+            } else {
+                chain.doFilter(request, response);
             }
         }
-        chain.doFilter(request, response);
     }
 
     private boolean configurationIsValid() {
