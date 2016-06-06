@@ -2,6 +2,7 @@ package de.otto.edison.togglz.configuration;
 
 import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
+import de.otto.edison.togglz.authentication.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,6 +16,7 @@ import org.togglz.core.user.UserProvider;
 import org.togglz.servlet.util.HttpServletRequestHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Configuration
 public class TogglzConfiguration {
@@ -38,11 +40,10 @@ public class TogglzConfiguration {
 
             HttpServletRequest request = HttpServletRequestHolder.get();
 
-            String username = (String) request.getAttribute("username");
+            Optional<Credentials> credentials = Credentials.readFrom(request);
             boolean isAdmin = true; // "admin".equals(username);
 
-            return new SimpleFeatureUser(username, isAdmin);
-
+            return new SimpleFeatureUser((credentials.isPresent() ? credentials.get().getUsername() : null), isAdmin);
         };
     }
 

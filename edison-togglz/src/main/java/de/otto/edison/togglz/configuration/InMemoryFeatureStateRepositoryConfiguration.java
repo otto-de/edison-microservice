@@ -2,12 +2,15 @@ package de.otto.edison.togglz.configuration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
+import org.togglz.core.user.UserProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +32,9 @@ public class InMemoryFeatureStateRepositoryConfiguration {
 
             private Map<String, FeatureState> featureStore = new HashMap<>();
 
+            @Autowired
+            UserProvider userProvider;
+
             @Override
             public FeatureState getFeatureState(final Feature feature) {
                 if (featureStore.containsKey(feature.name())) {
@@ -40,7 +46,7 @@ public class InMemoryFeatureStateRepositoryConfiguration {
             @Override
             public void setFeatureState(final FeatureState featureState) {
                 featureStore.put(featureState.getFeature().name(), featureState);
-                LOG.info("Switched feature state to " + featureState.toString());
+                LOG.info((!StringUtils.isEmpty(userProvider.getCurrentUser().getName()) ? "User '" + userProvider.getCurrentUser().getName() + "'" : "Unknown user") + (featureState.isEnabled() ? " enabled " : " disabled ") + "feature " + featureState.getFeature().name());
             }
         };
     }

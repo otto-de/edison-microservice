@@ -5,7 +5,7 @@ dependencies {
     compile libs.logging
     compile libs.togglz
     compile libs.jcip
-
+    compile 'com.unboundid:unboundid-ldapsdk-minimal-edition:3.1.1'
 
     testCompile libs.testUnit
     testCompile project(":edison-testsupport")
