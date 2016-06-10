@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.60.0
+* added MetricsFilter to provide counters for http requests
+
 ## Release 0.59.0
 * upgrade spring boot to 1.3.5.RELEASE
 * upgrade spring to 4.2.6.RELEASE
