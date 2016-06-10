@@ -4,6 +4,7 @@ Common basis for some of otto.de's micro-services using Spring Boot.
 
 
 >"I never did anything by accident, nor did any of my inventions come by accident; they came by work."
+
 >Thomas Edison
 
 
