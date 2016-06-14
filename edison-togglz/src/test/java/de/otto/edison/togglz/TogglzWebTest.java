@@ -15,7 +15,7 @@ public class TogglzWebTest extends SpringTestBase {
 
     @Test
     public void shouldRegisterTogglzConsole() throws Exception {
-        ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8085/togglztest/internal/togglz/", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8085/togglztest/internal/toggles/", String.class);
         assertThat(response.getStatusCode().is2xxSuccessful(), is(true));
     }
 

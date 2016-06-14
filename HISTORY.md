@@ -6,7 +6,13 @@
 * Modified Mutex Behavior. The new MutexHandler is now able to use a mongoJobLockProvider which persists the
   mutex-handling in the database. That prevents raceconditions if two jobs of the same type or in the same group should
   be started at the same time.
-
+* Fixed representation of feature toggles to be consistent with
+  status mediatype.
+* Moved html representation of feature toggles from /internal/togglz
+  to /internal/toggles/console
+* Moved json representation of feature toggles from /internal/status/togglz
+  to /internal/toggles
+  
 ## Release 0.60.0
 * added MetricsFilter to provide counters for http requests
 

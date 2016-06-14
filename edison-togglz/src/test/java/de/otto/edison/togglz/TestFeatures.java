@@ -7,7 +7,8 @@ import org.togglz.core.context.FeatureContext;
 public enum TestFeatures implements Feature {
 
     @Label("a test feature toggle")
-    TEST_FEATURE;
+    TEST_FEATURE,
+    TEST_FEATURE_2;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

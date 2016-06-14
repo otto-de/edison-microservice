@@ -34,13 +34,13 @@ public class TogglzWebConfiguration {
                                                              @Value("${edison.togglz.ldap-authentication.rdn-identifier:}") String rdnIdentifier) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
         filterRegistration.setFilter(new LdapAuthenticationFilter(host, port, baseDn, rdnIdentifier));
-        filterRegistration.addUrlPatterns(prefix + "/togglz/*");
+        filterRegistration.addUrlPatterns(prefix + "/toggles/console");
         return filterRegistration;
     }
 
     @Bean
     public ServletRegistrationBean togglzServlet(@Value("${management.context-path:/internal}") String prefix) {
-        return new ServletRegistrationBean(new TogglzConsoleServlet(), prefix + "/togglz/*");
+        return new ServletRegistrationBean(new TogglzConsoleServlet(), prefix + "/toggles/console/*");
     }
 
 
