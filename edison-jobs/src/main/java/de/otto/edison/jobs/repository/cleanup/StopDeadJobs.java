@@ -2,6 +2,7 @@ package de.otto.edison.jobs.repository.cleanup;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.service.JobMutexHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class StopDeadJobs implements JobCleanupStrategy {
     private final int stopJobAfterSeconds;
     private final Clock clock;
     private JobRepository jobRepository;
+    private JobMutexHandler jobMutexHandler;
 
     public StopDeadJobs(final int stopJobAfterSeconds, final Clock clock) {
         this.stopJobAfterSeconds = stopJobAfterSeconds;
@@ -32,6 +34,11 @@ public class StopDeadJobs implements JobCleanupStrategy {
     @Autowired
     public void setJobRepository(JobRepository jobRepository) {
         this.jobRepository = jobRepository;
+    }
+
+    @Autowired
+    public void setJobMutexHandler(JobMutexHandler jobMutexHandler) {
+        this.jobMutexHandler = jobMutexHandler;
     }
 
     @Override
@@ -45,6 +52,8 @@ public class StopDeadJobs implements JobCleanupStrategy {
             // TODO send dead event instead of updating repository directly!
             j.dead();
             jobRepository.createOrUpdate(j);
+
+            jobMutexHandler.jobHasStopped(j.getJobType());
         });
     }
 }

@@ -5,7 +5,9 @@ import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
+import de.otto.edison.jobs.service.InMemoryJobRunLockProvider;
 import de.otto.edison.jobs.service.JobDefinitionService;
+import de.otto.edison.jobs.service.JobRunLockProvider;
 import de.otto.edison.jobs.status.JobStatusDetailIndicator;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
@@ -22,7 +24,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static java.time.Clock.systemDefaultZone;
@@ -56,6 +57,13 @@ public class JobConfiguration {
     public JobRepository jobRepository() {
         LOG.warn("Using in-memory JobRepository");
         return new InMemJobRepository();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JobRunLockProvider.class)
+    public JobRunLockProvider jobRunLockProvider() {
+        LOG.warn("Using dummy JobRunLockProvider");
+        return new InMemoryJobRunLockProvider();
     }
 
     @Bean

@@ -29,7 +29,6 @@ public class MongoFeatureRepositoryTest {
         FeatureClassProvider featureClassProvider = new TestFeatureClassProvider();
         UserProvider userProvider = mock(UserProvider.class);
         when(userProvider.getCurrentUser()).thenReturn(new SimpleFeatureUser("someUser"));
-
         testee = new MongoFeatureRepository(database, featureClassProvider, userProvider);
     }
 
