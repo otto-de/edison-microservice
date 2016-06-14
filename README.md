@@ -34,6 +34,26 @@ This project contains a number of independent libraries that may be used to crea
 ... plus all the features of [Spring Boot](http://projects.spring.io/spring-boot/).
 
 
+## Documentation
+* [edison-core](edison-core/README.md)
+* [edison-guava](edison-guava/README.md)
+* edison-health
+* [edison-jobs](edison-jobs/README.md)
+* [edison-jobs-mongo](edison-jobs-mongo/README.md)
+* edison-metrics
+* edison-mongo
+* edison-service
+* edison-servicediscovery-client
+* [edison-status](edison-status/README.md)
+* edison-testsupport
+* edison-togglz
+* edison-togglz-mongo
+* edison-togglz-testsupport
+* example-jobs
+* [example-layout](example-layout/README.md)
+* example-metrics
+* example-status
+
 ## Getting started
 
 Make sure you have Java 1.8 and gradle 2.x and installed on your computer.

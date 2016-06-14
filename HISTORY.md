@@ -2,6 +2,11 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.61.0
+* Modified Mutex Behavior. The new MutexHandler is now able to use a mongoJobLockProvider which persists the
+  mutex-handling in the database. That prevents raceconditions if two jobs of the same type or in the same group should
+  be started at the same time.
+
 ## Release 0.60.0
 * added MetricsFilter to provide counters for http requests
 
