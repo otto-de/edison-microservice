@@ -8,7 +8,9 @@ public interface JobRunLockProvider {
 
     /**
      * Returns true, if all desired locks can be obtained.
-     * This method has to always aquire all or no locks.
+     * This method has to always acquires all or no locks.
+     * @param jobTypes a list of jobtypes, for which the locks should be acquired
+     * @return true, only if all locks could be acquired
      */
     boolean acquireRunLocksForJobTypes(Set<String> jobTypes);
 
@@ -17,6 +19,7 @@ public interface JobRunLockProvider {
     /**
      * Releases all given locks.
      * If the lock is already released, no exception is thrown.
+     * @param jobTypes a list of jobtypes, for which the locks should be released
      */
-    void releaseRunLocksForJobTypes(Set<String> mutexJobTypes);
+    void releaseRunLocksForJobTypes(Set<String> jobTypes);
 }

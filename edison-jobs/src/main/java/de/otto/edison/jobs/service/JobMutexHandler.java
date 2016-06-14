@@ -48,10 +48,15 @@ public class JobMutexHandler {
      * A job is startable, if the job is not currently running and all other jobs in corresponding mutex groups are all
      * currently not running.
      *
+     * Note: This method has side effects! Locks may be acquired. If this method returns true, it is mandatory, that the
+     * method jobHasStopped gets called after the execution of the job.
+     *
      * Implementation details:
      * This implementation tries to get all locks for all jobs in the corresponding mutex groups. If successful, it
      * directly releases all locks beside the lock for the starting job. This way it is assured, that in a single
      * timeslot all locks were really available. But only one lock needs to remain acquired for the runtime of the job
+     * @param jobType the jobType for which should be checked, if it is startable
+     * @return true, if the job is startable
      */
     public boolean isJobStartable(String jobType) {
         final Set<String> mutexJobTypes = mutexJobTypesFor(jobType);
