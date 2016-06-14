@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 
 /**
  * This mutex handler is responsible for checking if a job can currently be started.
@@ -43,14 +44,27 @@ public class JobMutexHandler {
         }
     }
 
+    /**
+     * A job is startable, if the job is not currently running and all other jobs in corresponding mutex groups are all
+     * currently not running.
+     *
+     * Implementation details:
+     * This implementation tries to get all locks for all jobs in the corresponding mutex groups. If successful, it
+     * directly releases all locks beside the lock for the starting job. This way it is assured, that in a single
+     * timeslot all locks were really available. But only one lock needs to remain acquired for the runtime of the job
+     */
     public boolean isJobStartable(String jobType) {
         final Set<String> mutexJobTypes = mutexJobTypesFor(jobType);
-        return jobRunLockProvider.acquireRunLocksForJobTypes(mutexJobTypes);
+        final boolean allLocksAcquired = jobRunLockProvider.acquireRunLocksForJobTypes(mutexJobTypes);
+        if (allLocksAcquired) {
+            mutexJobTypes.remove(jobType);
+            jobRunLockProvider.releaseRunLocksForJobTypes(mutexJobTypes);
+        }
+        return allLocksAcquired;
     }
 
     public void jobHasStopped(String jobType) {
-        final Set<String> mutexJobTypes = mutexJobTypesFor(jobType);
-        jobRunLockProvider.releaseRunLocksForJobTypes(mutexJobTypes);
+        jobRunLockProvider.releaseRunLocksForJobTypes(singleton(jobType));
     }
 
     private Set<String> mutexJobTypesFor(final String jobType) {

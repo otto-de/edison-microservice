@@ -12,6 +12,11 @@ public class InMemoryJobRunLockProvider implements JobRunLockProvider {
     protected Set<String> locks = new HashSet<>();
 
     @Override
+    public synchronized boolean acquireRunLockForJobType(String jobType) {
+        return locks.add(jobType);
+    }
+
+    @Override
     public synchronized boolean acquireRunLocksForJobTypes(Set<String> jobTypes) {
         if (Collections.disjoint(locks, jobTypes)) {
             locks.addAll(jobTypes);
@@ -19,6 +24,11 @@ public class InMemoryJobRunLockProvider implements JobRunLockProvider {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public synchronized void releaseRunLockForJobType(String jobType) {
+        locks.remove(jobType);
     }
 
     @Override

@@ -37,7 +37,8 @@ public class MongoJobRunLockProvider implements JobRunLockProvider {
      * Creates a new running lock. If the creation fails with a duplicate key error, it means, the lock has already been acquired.
      * If any other runtime exception occures, it gets thrown and has to be handled outside.
      */
-    public boolean getRunLockForJobType(String jobType) {
+    @Override
+    public boolean acquireRunLockForJobType(String jobType) {
         try {
             jobRunLockRepository.create(new JobRunLock(jobType, OffsetDateTime.now(clock)));
         }catch (MongoWriteException e) {
@@ -59,7 +60,7 @@ public class MongoJobRunLockProvider implements JobRunLockProvider {
         List<String> obtainedLocks = new ArrayList<>();
         try {
             for(String jobType : orderedJobTypes) {
-                if (getRunLockForJobType(jobType)) {
+                if (acquireRunLockForJobType(jobType)) {
                     obtainedLocks.add(jobType);
                 } else {
                     break;
@@ -73,6 +74,11 @@ public class MongoJobRunLockProvider implements JobRunLockProvider {
 
         }
         return obtainedLocks.size() == jobTypes.size();
+    }
+
+    @Override
+    public void releaseRunLockForJobType(String jobType) {
+
     }
 
     @Override
