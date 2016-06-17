@@ -1,5 +1,6 @@
 package de.otto.edison.togglz.controller;
 
+import de.otto.edison.togglz.EmptyFeatures;
 import de.otto.edison.togglz.TestFeatures;
 import org.testng.annotations.Test;
 
@@ -7,7 +8,9 @@ import java.util.Map;
 
 import static de.otto.edison.togglz.controller.FeatureTogglesRepresentation.togglzRepresentation;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 
 @Test
 public class FeatureTogglesRepresentationTest {
@@ -15,10 +18,19 @@ public class FeatureTogglesRepresentationTest {
     private FeatureTogglesRepresentation testee;
 
     @Test
-    public void testGetTogglzState() {
+    public void testGetFeatureRepresentation() {
         testee = togglzRepresentation(() -> TestFeatures.class);
 
-        final Map<String, FeatureToggleRepresentation> togglzState = testee.features;
-        assertThat(togglzState.get("TEST_FEATURE"), is(new FeatureToggleRepresentation("a test feature toggle", true, null)));
+        final Map<String, FeatureToggleRepresentation> features = testee.features;
+        assertThat(features.get("TEST_FEATURE"), is(new FeatureToggleRepresentation("a test feature toggle", true, null)));
+    }
+
+    @Test
+    public void testGetEmptyFeatureRepresentation() {
+        testee = togglzRepresentation(() -> EmptyFeatures.class);
+
+        final Map<String, FeatureToggleRepresentation> features = testee.features;
+        assertThat(features, is(notNullValue()));
+        assertThat(features.isEmpty(), is(true));
     }
 }

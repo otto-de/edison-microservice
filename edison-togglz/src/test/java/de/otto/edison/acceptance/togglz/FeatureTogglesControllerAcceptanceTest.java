@@ -1,4 +1,4 @@
-package de.otto.edison.acceptance.status;
+package de.otto.edison.acceptance.togglz;
 
 import org.testng.annotations.Test;
 

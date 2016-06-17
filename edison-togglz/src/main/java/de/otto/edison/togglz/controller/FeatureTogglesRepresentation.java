@@ -8,7 +8,6 @@ import org.togglz.core.annotation.Label;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toMap;
 import static org.togglz.core.context.FeatureContext.getFeatureManager;
 
@@ -17,15 +16,15 @@ public class FeatureTogglesRepresentation {
 
     public final Map<String, FeatureToggleRepresentation> features;
 
-    private FeatureTogglesRepresentation(final Class<Feature> featureClass) {
+    private FeatureTogglesRepresentation(final Class<? extends Feature> featureClass) {
         this.features = buildTogglzState(featureClass);
     }
 
     public static FeatureTogglesRepresentation togglzRepresentation(final FeatureClassProvider featureClassProvider) {
-        return new FeatureTogglesRepresentation((Class<Feature>) featureClassProvider.getFeatureClass());
+        return new FeatureTogglesRepresentation(featureClassProvider.getFeatureClass());
     }
 
-    private Map<String, FeatureToggleRepresentation> buildTogglzState(final Class<Feature> featureClass) {
+    private Map<String, FeatureToggleRepresentation> buildTogglzState(final Class<? extends Feature> featureClass) {
         return asList(featureClass.getEnumConstants())
                 .stream()
                 .collect(toMap(Feature::name, this::toFeatureToggleRepresentation));
