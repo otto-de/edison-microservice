@@ -2,6 +2,9 @@
 
 ## CURRENT SNAPSHOT
 
+## Release 0.62.0
+* JobInfo is immutable, this is a breaking change, use the JobInfo.builder() instead
+
 ## Release 0.61.0
 * Modified Mutex Behavior. The new MutexHandler is now able to use a mongoJobLockProvider which persists the
   mutex-handling in the database. That prevents raceconditions if two jobs of the same type or in the same group should
@@ -12,7 +15,7 @@
   to /internal/toggles/console
 * Moved json representation of feature toggles from /internal/status/togglz
   to /internal/toggles
-  
+
 ## Release 0.60.0
 * added MetricsFilter to provide counters for http requests
 
