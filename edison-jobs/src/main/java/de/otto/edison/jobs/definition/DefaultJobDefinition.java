@@ -28,7 +28,8 @@ public final class DefaultJobDefinition implements JobDefinition {
      * @param jobName     A human readable name of the Job
      * @param description A short description of the job's purpose
      * @param restarts    The number of restarts if the job failed because of errors or exceptions
-     * @param maxAge      Optional maximum age of a job. After this duration, the job is marked as dead
+     * @param maxAge      Optional maximum age of a job. When the job is not run for longer than this duration,
+     *                    a warning is displayed on the status page
      *
      * @return JobDefinition
      */
@@ -48,7 +49,8 @@ public final class DefaultJobDefinition implements JobDefinition {
      * @param description A human readable description of the Job.
      * @param cron        The cron expression
      * @param restarts    The number of restarts if the job failed because of errors or exceptions
-     * @param maxAge      Optional maximum age of a job. After this duration, the job is marked as dead
+     * @param maxAge      Optional maximum age of a job. When the job is not run for longer than this duration,
+     *                    a warning is displayed on the status page
      *
      * @return JobDefinition
      */
@@ -71,7 +73,8 @@ public final class DefaultJobDefinition implements JobDefinition {
      * @param restarts    The number of restarts if the job failed because of errors or exceptions
      * @param retries     Specifies how often a job trigger should retry to start the job if triggering fails for some reason.
      * @param retryDelay  The optional delay between retries.
-     * @param maxAge      Optional maximum age of a job. After this duration, the job is marked as dead
+     * @param maxAge      Optional maximum age of a job. When the job is not run for longer than this duration,
+     *                    a warning is displayed on the status page
      *
      * @return JobDefinition
      */
@@ -94,7 +97,8 @@ public final class DefaultJobDefinition implements JobDefinition {
      * @param description A human readable description of the Job.
      * @param fixedDelay  The delay duration between to executions of the Job
      * @param restarts    The number of restarts if the job failed because of errors or exceptions
-     * @param maxAge      Optional maximum age of a job. After this duration, the job is marked as dead
+     * @param maxAge      Optional maximum age of a job. When the job is not run for longer than this duration,
+     *                    a warning is displayed on the status page
      * @return JobDefinition
      */
     public static DefaultJobDefinition fixedDelayJobDefinition(final String jobType,
@@ -114,7 +118,8 @@ public final class DefaultJobDefinition implements JobDefinition {
      * @param description A human readable description of the Job.
      * @param fixedDelay  The delay duration between to executions of the Job
      * @param restarts    The number of restarts if the job failed because of errors or exceptions
-     * @param maxAge      Optional maximum age of a job. After this duration, the job is marked as dead
+     * @param maxAge      Optional maximum age of a job. When the job is not run for longer than this duration,
+     *                    a warning is displayed on the status page
      * @param retries     Specifies how often a job trigger should retry to start the job if triggering fails for some reason.
      * @param retryDelay  The optional delay between retries.
      * @return JobDefinition
