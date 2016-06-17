@@ -12,10 +12,15 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.time.Clock;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
+import static java.time.OffsetDateTime.now;
 
 public class PersistenceJobEventListener implements JobEventListener {
 
@@ -34,40 +39,72 @@ public class PersistenceJobEventListener implements JobEventListener {
 
     @Override
     public void consumeStateChange(final StateChangeEvent event) {
-        switch (event.getState()) {
-            case START:
-                jobRepository.createOrUpdate(newJobInfo(event.getJobId(), event.getJobType(), clock,
-                        systemInfo.getHostname()));
-                break;
+        if (event.getState() == StateChangeEvent.State.START) {
+            jobRepository.createOrUpdate(newJobInfo(event.getJobId(), event.getJobType(), clock,
+                    systemInfo.getHostname()));
+            return;
+        }
+        final Optional<JobInfo> optionalJobInfo = jobRepository.findOne(event.getJobId());
+        if (!optionalJobInfo.isPresent()) {
+            LOG.error("job '{}' in inconsistent state. Should be present here", event.getJobId());
+            return;
+        }
+        JobInfo jobInfo = optionalJobInfo.get();
+        OffsetDateTime time = now(jobInfo.getClock());
 
+        switch (event.getState()) {
             case KEEP_ALIVE:
-                updateJobIfPresent(event.getJobId(), JobInfo::ping);
+                jobRepository.createOrUpdate(jobInfo.copy()
+                        .setLastUpdated(time)
+                        .build());
                 break;
 
             case RESTART:
-                updateJobIfPresent(event.getJobId(), JobInfo::restart);
+                jobRepository.appendMessage(event.getJobId(), jobMessage(Level.WARNING, "Restarting job ..", time));
+                jobRepository.createOrUpdate(jobInfo.copy()
+                        .setLastUpdated(time)
+                        .setStatus(JobInfo.JobStatus.OK)
+                        .build());
                 break;
 
             case DEAD:
-                updateJobIfPresent(event.getJobId(), JobInfo::dead);
+                jobRepository.createOrUpdate(
+                        jobInfo.copy()
+                                .setLastUpdated(time)
+                                .setStatus(JobInfo.JobStatus.DEAD)
+                                .setStopped(time)
+                                .build()
+                );
+                jobRepository.appendMessage(event.getJobId(), jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", time));
                 break;
 
             case STOP:
-                updateJobIfPresent(event.getJobId(), JobInfo::stop);
+                jobRepository.createOrUpdate(
+                        jobInfo.copy()
+                                .setLastUpdated(time)
+                                .setStopped(time)
+                                .build()
+                );
                 break;
         }
     }
 
     @Override
     public void consumeMessage(final MessageEvent messageEvent) {
-        JobMessage jobMessage = JobMessage.jobMessage(convertLevel(messageEvent), messageEvent.getMessage());
 
-        switch (messageEvent.getLevel()) {
-            case ERROR:
-                updateJobIfPresent(messageEvent.getJobId(), jobInfo -> jobInfo.error(messageEvent.getMessage()));
-                break;
-            default:
-                jobRepository.appendMessage(messageEvent.getJobId(), jobMessage);
+        final Optional<JobInfo> optionalJobInfo = jobRepository.findOne(messageEvent.getJobId());
+        if (!optionalJobInfo.isPresent()) {
+            LOG.error("job '{}' in inconsistent state. Should be present here", messageEvent.getJobId());
+            return;
+        }
+        JobMessage jobMessage = jobMessage(convertLevel(messageEvent), messageEvent.getMessage(), now(optionalJobInfo.get().getClock()));
+        JobInfo jobInfo = optionalJobInfo.get();
+        jobRepository.appendMessage(messageEvent.getJobId(), jobMessage);
+        if (messageEvent.getLevel() == MessageEvent.Level.ERROR) {
+            jobRepository.createOrUpdate(
+                    jobInfo.copy()
+                            .setStatus(ERROR)
+                            .build());
         }
     }
 
@@ -85,15 +122,5 @@ public class PersistenceJobEventListener implements JobEventListener {
                 break;
         }
         return level;
-    }
-
-    private void updateJobIfPresent(final String jobId, final Consumer<JobInfo> consumer) {
-        final Optional<JobInfo> jobInfo = jobRepository.findOne(jobId);
-        if (jobInfo.isPresent()) {
-            consumer.accept(jobInfo.get());
-            jobRepository.createOrUpdate(jobInfo.get());
-        } else {
-            LOG.error("job '{}' in inconsistent state. Should be present here", jobId);
-        }
     }
 }

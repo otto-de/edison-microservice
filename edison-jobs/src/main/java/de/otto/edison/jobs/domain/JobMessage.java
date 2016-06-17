@@ -20,10 +20,6 @@ public final class JobMessage {
         this.timestamp = timestamp;
     }
 
-    public static JobMessage jobMessage(final Level level, final String message) {
-        return new JobMessage(level, message, now());
-    }
-
     public static JobMessage jobMessage(final Level level, final String message, OffsetDateTime ts) {
         return new JobMessage(level, message, ts);
     }

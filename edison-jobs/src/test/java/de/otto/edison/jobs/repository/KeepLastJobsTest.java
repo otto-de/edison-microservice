@@ -1,19 +1,21 @@
 package de.otto.edison.jobs.repository;
 
 
+import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.testng.annotations.Test;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.Optional;
 
-import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
+import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isAbsent;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
-import static java.net.URI.create;
 import static java.time.Clock.fixed;
+import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -30,11 +32,22 @@ public class KeepLastJobsTest {
     public void shouldRemoveOldestJobs() {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2);
+
+        JobInfo job = builder()
+                .setJobId("foo")
+                .setJobType("TYPE")
+                .setStarted(now(now))
+                .setStopped(now(now))
+                .setHostname("localhost")
+                .setStatus(OK)
+                .build();
+
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("foo", "TYPE", now, "localhost").stop());
-            createOrUpdate(newJobInfo("foobar", "TYPE", earlier, "localhost").stop());
-            createOrUpdate(newJobInfo("bar", "TYPE", muchEarlier, "localhost").stop());
+            createOrUpdate(job);
+            createOrUpdate(job.copy().setJobId("foobar").setStarted(now(earlier)).build());
+            createOrUpdate(job.copy().setJobId("bar").setStarted(now(muchEarlier)).build());
         }};
+
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
@@ -47,11 +60,20 @@ public class KeepLastJobsTest {
     public void shouldOnlyRemoveStoppedJobs() {
         // given
         KeepLastJobs strategy = new KeepLastJobs(1);
+
+        JobInfo job = builder()
+                .setJobId("foo")
+                .setJobType("TYPE")
+                .setHostname("localhost")
+                .setStatus(OK)
+                .build();
+
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("foo", "TYPE", now, "localhost").stop());
-            createOrUpdate(newJobInfo("foobar", "TYPE", earlier, "localhost"));
-            createOrUpdate(newJobInfo("bar", "TYPE", muchEarlier, "localhost").stop());
+            createOrUpdate(job.copy().setStarted(now(now)).setStopped(now(now)).build());
+            createOrUpdate(job.copy().setStarted(now(earlier)).setJobId("foobar").setStarted(now(earlier)).build());
+            createOrUpdate(job.copy().setStarted(now(muchEarlier)).setJobId("bar").setStopped(now(now)).build());
         }};
+
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
@@ -67,13 +89,24 @@ public class KeepLastJobsTest {
     public void shouldKeepAtLeastOneSuccessfulJob() {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2);
+
+        JobInfo job = builder()
+                .setJobId("foobar")
+                .setJobType("TYPE")
+                .setStarted(now(muchEarlier))
+                .setStopped(now(now))
+                .setHostname("localhost")
+                .setStatus(ERROR)
+                .build();
+
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("foo", "TYPE", now, "localhost").error("bumm").stop());
-            createOrUpdate(newJobInfo("bar", "TYPE", earlier, "localhost").error("bumm").stop());
-            createOrUpdate(newJobInfo("barzig", "TYPE", evenEarlier, "localhost").error("b00m!!1shakalaka").stop());
-            createOrUpdate(newJobInfo("foobar", "TYPE", muchEarlier, "localhost").stop());
-            createOrUpdate(newJobInfo("foozification", "TYPE", evenEarlier, "localhost").error("b00m!!1").stop());
+            createOrUpdate(job.copy().setStatus(OK).build());
+            createOrUpdate(job.copy().setStarted(now(now)).setJobId("foo").build());
+            createOrUpdate(job.copy().setJobId("bar").setStarted(now(earlier)).build());
+            createOrUpdate(job.copy().setJobId("barzig").setStarted(now(evenEarlier)).build());
+            createOrUpdate(job.copy().setJobId("foozification").setStarted(now(evenEarlier)).build());
         }};
+
         strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
@@ -90,13 +123,23 @@ public class KeepLastJobsTest {
     public void shouldKeepNJobsOfEachTypePresentAndNotRemoveRunningJobs() {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2);
+
+        JobInfo stoppedJob = builder()
+                .setJobId("foo1")
+                .setJobType("TYPE1")
+                .setStarted(now(now))
+                .setStopped(now(now))
+                .setHostname("localhost")
+                .setStatus(OK)
+                .build();
+
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("foo1", "TYPE1", now, "localhost").stop());
-            createOrUpdate(newJobInfo("foo2", "TYPE1", muchEarlier, "localhost").stop());
-            createOrUpdate(newJobInfo("foo3", "TYPE1", evenEarlier, "localhost").stop());
-            createOrUpdate(newJobInfo("bar1", "TYPE2", earlier, "localhost")).stop();
-            createOrUpdate(newJobInfo("bar2", "TYPE2", muchEarlier, "localhost")).stop();
-            createOrUpdate(newJobInfo("bar3", "TYPE2", evenEarlier, "localhost")).stop();
+            createOrUpdate(stoppedJob);
+            createOrUpdate(stoppedJob.copy().setJobId("foo2").setStopped(now(muchEarlier)).setStarted(now(muchEarlier)).build());
+            createOrUpdate(stoppedJob.copy().setJobId("foo3").setStopped(now(evenEarlier)).setStarted(now(evenEarlier)).build());
+            createOrUpdate(stoppedJob.copy().setJobId("bar1").setJobType("TYPE2").setStopped(now(earlier)).setStarted(now(earlier)).build());
+            createOrUpdate(stoppedJob.copy().setJobId("bar2").setJobType("TYPE2").setStopped(now(muchEarlier)).setStarted(now(muchEarlier)).build());
+            createOrUpdate(stoppedJob.copy().setJobId("bar3").setJobType("TYPE2").setStopped(now(evenEarlier)).setStarted(now(evenEarlier)).build());
         }};
         strategy.setJobRepository(repository);
         // when
@@ -112,7 +155,14 @@ public class KeepLastJobsTest {
         // given
         KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
-            createOrUpdate(newJobInfo("foo", "TYPE", now, "localhost").stop());
+            createOrUpdate(builder()
+                    .setJobId("foo1")
+                    .setJobType("TYPE1")
+                    .setStarted(now(now))
+                    .setStopped(now(now))
+                    .setHostname("localhost")
+                    .setStatus(OK)
+                    .build());
         }};
         strategy.setJobRepository(repository);
         // when

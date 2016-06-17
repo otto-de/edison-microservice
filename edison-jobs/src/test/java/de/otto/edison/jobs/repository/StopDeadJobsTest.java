@@ -11,8 +11,10 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
+import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static java.time.Clock.fixed;
+import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -32,7 +34,15 @@ public class StopDeadJobsTest {
 
         JobInfo runningJobToBeStopped = newJobInfo("runningJobToBeStopped", "runningJobToBeStoppedTYPE", earlierClock, "localhost");
         JobInfo runningJob = newJobInfo("runningJob", "runningJobTYPE", clock, "localhost");
-        JobInfo stoppedJob = newJobInfo("stoppedJob", "stoppedJobTYPE", earlierClock, "localhost").stop();
+
+        JobInfo stoppedJob = builder()
+                .setJobId("stoppedJob")
+                .setJobType("stoppedJobTYPE")
+                .setStarted(now(earlierClock))
+                .setStopped(now(earlierClock))
+                .setHostname("localhost")
+                .setStatus(JobInfo.JobStatus.OK)
+                .build();
 
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(runningJobToBeStopped);

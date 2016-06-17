@@ -1,6 +1,8 @@
 package de.otto.edison.jobs.repository.cleanup;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.service.JobMutexHandler;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.lang.String.format;
 import static java.time.OffsetDateTime.now;
 
@@ -49,10 +52,13 @@ public class StopDeadJobs implements JobCleanupStrategy {
         LOG.info(format("JobCleanup: Looking for jobs older than %s ", timeToMarkJobAsStopped));
         final List<JobInfo> deadJobs = jobRepository.findRunningWithoutUpdateSince(timeToMarkJobAsStopped);
         deadJobs.forEach((j) -> {
-            // TODO send dead event instead of updating repository directly!
-            j.dead();
-            jobRepository.createOrUpdate(j);
-
+            OffsetDateTime nowJobInfo = OffsetDateTime.now(j.getClock());
+            jobRepository.createOrUpdate(j.copy()
+                    .setStopped(nowJobInfo)
+                    .setLastUpdated(nowJobInfo)
+                    .setStatus(JobInfo.JobStatus.DEAD)
+                    .build());
+            jobRepository.appendMessage(j.getJobId(), jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", nowJobInfo));
             jobMutexHandler.jobHasStopped(j.getJobType());
         });
     }

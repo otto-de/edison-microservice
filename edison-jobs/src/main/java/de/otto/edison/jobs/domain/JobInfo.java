@@ -7,6 +7,7 @@ import java.net.URI;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +16,13 @@ import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.domain.Level.WARNING;
 import static java.lang.String.format;
+import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 /**
  * Information about a single job execution.
@@ -27,17 +32,19 @@ import static java.util.Optional.of;
  */
 @ThreadSafe
 public class JobInfo {
-    private static final String JOB_DEAD_MESSAGE = "Job didn't receive updates for a while, considering it dead";
-
-    private final Clock clock;
     private final String jobId;
     private final String jobType;
     private final OffsetDateTime started;
-    private final List<JobMessage> messages = new ArrayList<>();
-    private Optional<OffsetDateTime> stopped;
-    private JobStatus status;
-    private OffsetDateTime lastUpdated;
-    private String hostname;
+    private final List<JobMessage> messages;
+    private final Optional<OffsetDateTime> stopped;
+    private final JobStatus status;
+    private final OffsetDateTime lastUpdated;
+    private final String hostname;
+    private final Clock clock;
+
+    public Clock getClock() {
+        return clock;
+    }
 
     public enum JobStatus {OK, ERROR, DEAD}
 
@@ -59,14 +66,15 @@ public class JobInfo {
     }
 
     private JobInfo(final String jobType, final String jobId, final Clock clock, final String hostname) {
-        this.clock = clock;
         this.jobId = jobId;
         this.jobType = jobType;
         this.started = now(clock);
+        this.clock = clock;
         this.stopped = empty();
         this.status = OK;
         this.lastUpdated = started;
         this.hostname = hostname;
+        this.messages = emptyList();
     }
 
     private JobInfo(final String jobId,
@@ -76,17 +84,16 @@ public class JobInfo {
                     final Optional<OffsetDateTime> stopped,
                     final JobStatus status,
                     final List<JobMessage> messages,
-                    final Clock clock,
-                    final String hostname) {
-        this.clock = clock;
+                    Clock clock, final String hostname) {
         this.jobId = jobId;
         this.jobType = jobType;
         this.started = started;
         this.lastUpdated = lastUpdated;
         this.stopped = stopped;
         this.status = status;
-        this.messages.addAll(messages);
+        this.messages = unmodifiableList(messages);
         this.hostname = hostname;
+        this.clock = clock;
     }
 
     /**
@@ -127,116 +134,29 @@ public class JobInfo {
     /**
      * @return the current status of the job: OK, ERROR or DEAD
      */
-    public synchronized JobStatus getStatus() {
+    public JobStatus getStatus() {
         return status;
     }
 
     /**
      * @return the timestamp when the job was stopped, of empty, if the job is still running.
      */
-    public synchronized Optional<OffsetDateTime> getStopped() {
+    public Optional<OffsetDateTime> getStopped() {
         return stopped;
     }
 
     /**
      * @return list of job messages, containing human-readable information about what happened during execution.
      */
-    public synchronized List<JobMessage> getMessages() {
+    public List<JobMessage> getMessages() {
         return messages;
     }
 
     /**
      * @return last updated timestamp
      */
-    public synchronized OffsetDateTime getLastUpdated() {
+    public OffsetDateTime getLastUpdated() {
         return lastUpdated;
-    }
-
-    /**
-     * Send a ping to the job and update the lastUpdated timestamp.
-     * <p>
-     * This is used to determine whether or not a job is still running of a different server.
-     */
-    public synchronized void ping() {
-        lastUpdated = now(clock);
-    }
-
-    /**
-     * Add an INFO message to the job messages.
-     * <p>
-     * Updates the lastUpdated timestamp
-     *
-     * @param message a message string
-     * @return the updated JobInfo
-     */
-    public synchronized JobInfo info(final String message) {
-        messages.add(jobMessage(INFO, message));
-        lastUpdated = now(clock);
-        return this;
-    }
-
-    public synchronized JobInfo warn(String message) {
-        messages.add(jobMessage(WARNING, message));
-        lastUpdated = now(clock);
-        return this;
-    }
-
-    /**
-     * Add an ERROR message to the job messages.
-     * <p>
-     * Updates the lastUpdated timestamp. The
-     * Status of the job is set to ERROR.
-     *
-     * @param message a message string
-     * @return the updated JobInfo
-     */
-    public synchronized JobInfo error(final String message) {
-        messages.add(jobMessage(Level.ERROR, message));
-        lastUpdated = now(clock);
-        status = ERROR;
-        return this;
-    }
-
-    /**
-     * Jobs can be restarted after an ERROR or if an Exception occured during execution if
-     * the {@link JobDefinition#restarts()} is greater 0.
-     *
-     * @return the updated JobInfo
-     */
-    public synchronized JobInfo restart() {
-        messages.add(jobMessage(WARNING, format("Restarting job ..")));
-        lastUpdated = now(clock);
-        status = OK;
-        return this;
-    }
-
-    /**
-     * This is called if the job was finished.
-     * <p>
-     * Updates the lastUpdated and stopped timestamp
-     *
-     * @return the updated JobInfo
-     */
-    public synchronized JobInfo stop() {
-        lastUpdated = now(clock);
-        stopped = of(lastUpdated);
-        return this;
-    }
-
-    /**
-     * This is called if the job was identified to be dead.
-     * <p>
-     * Updates the lastUpdated and stopped timestamp.
-     * The job status is set to DEAD
-     *
-     * @return the updated JobInfo
-     */
-    public synchronized JobInfo dead() {
-        messages.add(jobMessage(WARNING, JOB_DEAD_MESSAGE));
-        lastUpdated = now(clock);
-        stopped = of(lastUpdated);
-        status = DEAD;
-        return this;
     }
 
     @Override
@@ -283,5 +203,91 @@ public class JobInfo {
                 ", status=" + status +
                 ", lastUpdated=" + lastUpdated +
                 '}';
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+    public Builder copy() {
+        ArrayList messagesCopy = new ArrayList();
+        messagesCopy.addAll(messages);
+        return new Builder(jobId, jobType, started, messagesCopy, stopped, status, lastUpdated, hostname, clock); 
+    }
+
+    public static final class Builder {
+        private String jobId;
+        private String jobType;
+        private OffsetDateTime started;
+        private List<JobMessage> messages = new ArrayList<>();
+        private Clock clock;
+        private OffsetDateTime stopped;
+        private JobStatus status;
+        private OffsetDateTime lastUpdated;
+        private String hostname;
+        public Builder() {
+            
+        }
+        public Builder(String jobId, String jobType, OffsetDateTime started, ArrayList messages, 
+                       Optional<OffsetDateTime> stopped, JobStatus status, OffsetDateTime lastUpdated, 
+                       String hostname, Clock clock) {
+            this.jobId = jobId;
+            this.jobType = jobType;
+            this.started = started;
+            this.messages = messages;
+            this.clock = clock;
+            this.stopped = stopped.orElse(null);
+            this.status = status;
+            this.lastUpdated = lastUpdated;
+            this.hostname = hostname;
+        }
+
+        public Builder setJobId(String jobId) {
+            this.jobId = jobId;
+            return this;
+        }
+
+        public Builder setJobType(String jobType) {
+            this.jobType = jobType;
+            return this;
+        }
+
+        public Builder setStarted(OffsetDateTime started) {
+            this.started = started;
+            return this;
+        }
+
+        public Builder setMessages(List<JobMessage> messages) {
+            this.messages = messages;
+            return this;
+        }
+
+        public Builder setStopped(OffsetDateTime stopped) {
+            this.stopped = stopped;
+            return this;
+        }
+
+        public Builder setStatus(JobStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder setLastUpdated(OffsetDateTime lastUpdated) {
+            this.lastUpdated = lastUpdated;
+            return this;
+        }
+
+        public Builder setHostname(String hostname) {
+            this.hostname = hostname;
+            return this;
+        }
+
+        public JobInfo build() {
+            return new JobInfo(jobId, jobType, started, lastUpdated, ofNullable(stopped), status, messages, clock, hostname);
+        }
+
+        public Builder addMessage(JobMessage jobMessage) {
+            this.messages.add(jobMessage);
+            return this;
+        }
     }
 }

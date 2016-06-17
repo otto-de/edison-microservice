@@ -120,7 +120,7 @@ public class InMemJobRepository implements JobRepository {
     @Override
     public void appendMessage(String jobId, JobMessage jobMessage) {
         JobInfo jobInfo = jobs.get(jobId);
-        jobInfo.getMessages().add(jobMessage);
+        jobs.replace(jobId, jobInfo.copy().addMessage(jobMessage).build());
     }
 
 

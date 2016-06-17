@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.eventbus;
 
+import com.sun.scenario.effect.Offset;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
@@ -14,10 +15,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.time.Clock;
+import java.time.*;
 import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
@@ -61,7 +63,9 @@ public class PersistenceJobEventListenerTest {
     public void shouldPersistStillAliveEvent() throws Exception {
         // given
         StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", KEEP_ALIVE);
-        JobInfo jobInfo = mock(JobInfo.class);
+        Instant initialTime = Instant.now();
+        Clock clock = Clock.offset(Clock.fixed(initialTime, ZoneId.systemDefault()), Duration.ofMinutes(1));
+        JobInfo jobInfo = newJobInfo("someJobId", "someJobType", clock, "someHost");
         when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
@@ -69,15 +73,19 @@ public class PersistenceJobEventListenerTest {
 
         // then
         verify(jobRepository).findOne("some/job");
-        verify(jobInfo).ping();
-        verify(jobRepository).createOrUpdate(jobInfo);
+        verify(jobRepository).createOrUpdate(jobInfo
+                .copy()
+                .setLastUpdated(OffsetDateTime.ofInstant(initialTime, ZoneId.systemDefault()).plusMinutes(1))
+                .build());
     }
 
     @Test
     public void shouldPersistRestartEvent() throws Exception {
         // given
         StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", RESTART);
-        JobInfo jobInfo = mock(JobInfo.class);
+        Instant initialTime = Instant.now();
+        Clock clock = Clock.offset(Clock.fixed(initialTime, ZoneId.systemDefault()), Duration.ofMinutes(1));
+        JobInfo jobInfo = newJobInfo("someJobId", "someJobType", clock, "someHost");
         when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
@@ -85,15 +93,19 @@ public class PersistenceJobEventListenerTest {
 
         // then
         verify(jobRepository).findOne("some/job");
-        verify(jobInfo).restart();
-        verify(jobRepository).createOrUpdate(jobInfo);
+        verify(jobRepository).createOrUpdate(jobInfo.copy()
+                .setLastUpdated(OffsetDateTime.ofInstant(initialTime, ZoneId.systemDefault()).plusMinutes(1))
+                .setStatus(JobInfo.JobStatus.OK)
+                .build());
     }
 
     @Test
     public void shouldPersistDeadEvent() throws Exception {
         // given
         StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", DEAD);
-        JobInfo jobInfo = mock(JobInfo.class);
+        Instant initialTime = Instant.now();
+        Clock clock = Clock.offset(Clock.fixed(initialTime, ZoneId.systemDefault()), Duration.ofMinutes(1));
+        JobInfo jobInfo = newJobInfo("someJobId", "someJobType", clock, "someHost");
         when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
@@ -101,24 +113,33 @@ public class PersistenceJobEventListenerTest {
 
         // then
         verify(jobRepository).findOne("some/job");
-        verify(jobInfo).dead();
-        verify(jobRepository).createOrUpdate(jobInfo);
+        OffsetDateTime updatedTime = OffsetDateTime.ofInstant(initialTime, ZoneId.systemDefault()).plusMinutes(1);
+        verify(jobRepository).createOrUpdate(jobInfo.copy()
+                .setLastUpdated(updatedTime)
+                .setStatus(JobInfo.JobStatus.DEAD)
+                .setStopped(updatedTime)
+                .build());
     }
 
     @Test
     public void shouldPersistStopEvent() throws Exception {
         // given
         StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", STOP);
-        JobInfo jobInfo = mock(JobInfo.class);
+        Instant initialTime = Instant.now();
+        Clock clock = Clock.offset(Clock.fixed(initialTime, ZoneId.systemDefault()), Duration.ofMinutes(1));
+        JobInfo jobInfo = JobInfo.newJobInfo("some/job", "someType", clock, "localhost");
         when(jobRepository.findOne("some/job")).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeStateChange(stateChangeEvent);
 
         // then
+        OffsetDateTime updatedTime = OffsetDateTime.ofInstant(initialTime, ZoneId.systemDefault()).plusMinutes(1);
         verify(jobRepository).findOne("some/job");
-        verify(jobInfo).stop();
-        verify(jobRepository).createOrUpdate(jobInfo);
+        verify(jobRepository).createOrUpdate(jobInfo.copy()
+                .setStopped(updatedTime)
+                .setLastUpdated(updatedTime)
+                .build());
     }
 
     @Test
@@ -134,6 +155,7 @@ public class PersistenceJobEventListenerTest {
         // then
         ArgumentCaptor<JobMessage> captor = ArgumentCaptor.forClass(JobMessage.class);
         verify(jobRepository).appendMessage(eq("some/job"), captor.capture());
+        verify(jobRepository).findOne("some/job");
         assertThat(captor.getValue().getLevel(), is(Level.INFO));
         assertThat(captor.getValue().getMessage(), is("some message"));
         verifyNoMoreInteractions(jobRepository);
@@ -151,6 +173,7 @@ public class PersistenceJobEventListenerTest {
 
         // then
         ArgumentCaptor<JobMessage> captor = ArgumentCaptor.forClass(JobMessage.class);
+        verify(jobRepository).findOne("some/job");
         verify(jobRepository).appendMessage(eq("some/job"), captor.capture());
         assertThat(captor.getValue().getLevel(), is(Level.WARNING));
         assertThat(captor.getValue().getMessage(), is("some message"));
@@ -161,15 +184,17 @@ public class PersistenceJobEventListenerTest {
     public void shouldPersistErrorMessages() throws Exception {
         // given
         MessageEvent messageEvent = newMessageEvent(someJobRunnable(), "some/job", MessageEvent.Level.ERROR, "some message");
-        JobInfo jobInfo = mock(JobInfo.class);
+        JobInfo jobInfo = JobInfo.newJobInfo("some/job", "someType", Clock.systemDefaultZone(), "localhost");
         when(jobRepository.findOne(messageEvent.getJobId())).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeMessage(messageEvent);
 
         // then
-        verify(jobRepository).createOrUpdate(jobInfo);
-        verify(jobInfo).error(any());
+        verify(jobRepository).appendMessage("some/job", jobMessage(Level.ERROR, "some message", OffsetDateTime.now()));
+        verify(jobRepository).createOrUpdate(jobInfo.copy()
+                .setStatus(JobInfo.JobStatus.ERROR)
+                .build());
     }
 
     private JobRunnable someJobRunnable() {

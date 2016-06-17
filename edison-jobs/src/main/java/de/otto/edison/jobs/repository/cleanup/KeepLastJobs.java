@@ -57,7 +57,7 @@ public class KeepLastJobs implements JobCleanupStrategy {
                 .forEach(jobInfo -> jobRepository.removeIfStopped(jobInfo.getJobId()));
     }
 
-    private List<JobInfo> findJobsToDelete(List<JobInfo> jobs) {
+    private List<JobInfo> findJobsToDelete(final List<JobInfo> jobs) {
         List<JobInfo> jobsToDelete = new ArrayList<>();
         jobs.stream()
                 .sorted(comparing(JobInfo::getStarted, reverseOrder()))

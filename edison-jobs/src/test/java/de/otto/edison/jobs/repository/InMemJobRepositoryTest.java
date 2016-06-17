@@ -5,20 +5,18 @@ import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
-import de.otto.edison.testsupport.dsl.When;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.net.URI;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
-import static java.net.URI.create;
 import static java.time.Clock.fixed;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
@@ -59,11 +57,18 @@ public class InMemJobRepositoryTest {
 
     @Test
     public void shouldRemoveJob() throws Exception {
-        final String testUri = "test";
-        final JobInfo jobInfo = newJobInfo(testUri, "FOO", systemDefaultZone(), "localhost").stop();
-        repository.createOrUpdate(jobInfo);
+        JobInfo stoppedJob = builder()
+                .setJobId("some/job/stopped")
+                .setJobType("test")
+                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                .setHostname("localhost")
+                .setStatus(JobStatus.OK)
+                .build();
+        repository.createOrUpdate(stoppedJob);
+        repository.createOrUpdate(stoppedJob);
 
-        repository.removeIfStopped(jobInfo.getJobId());
+        repository.removeIfStopped(stoppedJob.getJobId());
 
         assertThat(repository.size(), is(0L));
     }
@@ -157,7 +162,14 @@ public class InMemJobRepositoryTest {
         // given
         final String type = "TEST";
         final String otherType = "OTHERTEST";
-        repository.createOrUpdate(newJobInfo("some/job/stopped", type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost").stop());
+        repository.createOrUpdate(builder()
+                .setJobId("some/job/stopped")
+                .setJobType(type)
+                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                .setHostname("localhost")
+                .setStatus(JobStatus.OK)
+                .build());
         repository.createOrUpdate(newJobInfo("some/job/other", otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
         repository.createOrUpdate(newJobInfo("some/job/running", type, fixed(Instant.now(), systemDefault()), "localhost"));
 
@@ -184,7 +196,14 @@ public class InMemJobRepositoryTest {
         // Given
         final String type = "TEST";
         final String otherType = "OTHERTEST";
-        repository.createOrUpdate(newJobInfo("1", type, systemDefaultZone(), "localhost").stop());
+        repository.createOrUpdate(builder()
+                .setJobId("1")
+                .setJobType(type)
+                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                .setHostname("localhost")
+                .setStatus(JobStatus.OK)
+                .build());
         repository.createOrUpdate(newJobInfo("2", otherType, systemDefaultZone(), "localhost"));
         repository.createOrUpdate(newJobInfo("3", type, systemDefaultZone(), "localhost"));
 
@@ -221,19 +240,17 @@ public class InMemJobRepositoryTest {
 
         //Given
         JobInfo jobInfo = newJobInfo(someUri, "TEST", systemDefaultZone(), "localhost");
-        jobInfo.getMessages().add(JobMessage.jobMessage(Level.INFO, "Die Biene ist da."));
-        jobInfo.getMessages().add(JobMessage.jobMessage(Level.INFO, "Die Biene ist immer noch da."));
         repository.createOrUpdate(jobInfo);
 
         //When
-        JobMessage igelMessage = JobMessage.jobMessage(Level.WARNING, "Der Igel ist froh.");
+        JobMessage igelMessage = JobMessage.jobMessage(Level.WARNING, "Der Igel ist froh.", now());
         repository.appendMessage(someUri, igelMessage);
 
         //Then
         JobInfo jobInfoFromRepo = repository.findOne(someUri).get();
 
-        assertThat(jobInfoFromRepo.getMessages().size(), is(3));
-        assertThat(jobInfoFromRepo.getMessages().get(2), is(igelMessage));
+        assertThat(jobInfoFromRepo.getMessages().size(), is(1));
+        assertThat(jobInfoFromRepo.getMessages().get(0), is(igelMessage));
 
     }
 }

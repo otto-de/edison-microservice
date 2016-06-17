@@ -52,7 +52,7 @@ public class MongoJobRepositoryTest {
         // given
         final JobInfo foo = someJobInfo("http://localhost/foo/B");
         repo.createOrUpdate(foo);
-        final JobInfo writtenFoo = repo.createOrUpdate(foo.info("some message"));
+        final JobInfo writtenFoo = repo.createOrUpdate(foo.copy().addMessage(jobMessage(Level.INFO, "some message", now(foo.getClock()))).build());
         // when
         final Optional<JobInfo> jobInfo = repo.findOne("http://localhost/foo/B");
         // then
@@ -235,7 +235,7 @@ public class MongoJobRepositoryTest {
         repo.createOrUpdate(jobInfo);
 
         // when
-        JobMessage jobMessage = JobMessage.jobMessage(Level.INFO, "Schön ist es auf der Welt zu sein, sagt der Igel zu dem Stachelschwein", OffsetDateTime.now());
+        JobMessage jobMessage = JobMessage.jobMessage(Level.INFO, "Schön ist es auf der Welt zu sein, sagt der Igel zu dem Stachelschwein", now());
         repo.appendMessage(jobId, jobMessage);
 
         // then
@@ -252,8 +252,8 @@ public class MongoJobRepositoryTest {
                 "SOME_JOB",
                 now(), now(), Optional.of(now()), OK,
                 asList(
-                        jobMessage(Level.INFO, "foo"),
-                        jobMessage(Level.WARNING, "bar")),
+                        jobMessage(Level.INFO, "foo", now()),
+                        jobMessage(Level.WARNING, "bar", now())),
                 systemDefaultZone(),
                 "localhost"
         );
@@ -265,8 +265,8 @@ public class MongoJobRepositoryTest {
                 type,
                 now(), now(), Optional.of(now()), OK,
                 asList(
-                        jobMessage(Level.INFO, "foo"),
-                        jobMessage(Level.WARNING, "bar")),
+                        jobMessage(Level.INFO, "foo", now()),
+                        jobMessage(Level.WARNING, "bar", now())),
                 systemDefaultZone(),
                 "localhost"
         );

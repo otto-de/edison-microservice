@@ -11,7 +11,6 @@ import java.time.temporal.ChronoUnit;
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
-import static java.net.URI.create;
 import static java.time.Clock.fixed;
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
@@ -27,7 +26,7 @@ public class JobRepresentationTest {
         final JobInfo job = jobInfoWithRuntime(90, ChronoUnit.SECONDS);
 
         final JobRepresentation jobRepresentation = representationOf(job, true, "");
-        
+
         assertThat(jobRepresentation.getStatus(), is("OK"));
         assertThat(jobRepresentation.getRuntime(), is("00:01:30"));
         assertThat(jobRepresentation.getHostname(), is("localhost"));
