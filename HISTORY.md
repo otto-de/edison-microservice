@@ -1,6 +1,7 @@
 # Release History
 
 ## CURRENT SNAPSHOT
+* Cronexpressions of JobDefinitions are evaluated on construction of a JobDefinition
 
 ## Release 0.62.0
 * JobInfo is immutable, this is a breaking change, use the JobInfo.builder() instead
