@@ -1,5 +1,8 @@
 package de.otto.edison.jobs.definition;
 
+
+import org.springframework.scheduling.support.CronSequenceGenerator;
+
 import java.time.Duration;
 import java.util.Optional;
 
@@ -30,7 +33,6 @@ public final class DefaultJobDefinition implements JobDefinition {
      * @param restarts    The number of restarts if the job failed because of errors or exceptions
      * @param maxAge      Optional maximum age of a job. When the job is not run for longer than this duration,
      *                    a warning is displayed on the status page
-     *
      * @return JobDefinition
      */
     public static JobDefinition manuallyTriggerableJobDefinition(final String jobType,
@@ -47,12 +49,12 @@ public final class DefaultJobDefinition implements JobDefinition {
      * @param jobType     The type of the Job
      * @param jobName     A human readable name of the Job
      * @param description A human readable description of the Job.
-     * @param cron        The cron expression
+     * @param cron        The cron expression. Must conform to {@link CronSequenceGenerator}s cron expressions.
      * @param restarts    The number of restarts if the job failed because of errors or exceptions
      * @param maxAge      Optional maximum age of a job. When the job is not run for longer than this duration,
      *                    a warning is displayed on the status page
-     *
      * @return JobDefinition
+     * @throws IllegalArgumentException if cron expression is invalid.
      */
     public static JobDefinition cronJobDefinition(final String jobType,
                                                   final String jobName,
@@ -69,14 +71,14 @@ public final class DefaultJobDefinition implements JobDefinition {
      * @param jobType     The type of the Job
      * @param jobName     A human readable name of the Job
      * @param description A human readable description of the Job.
-     * @param cron        The cron expression
+     * @param cron        The cron expression. Must conform to {@link CronSequenceGenerator}s cron expressions.
      * @param restarts    The number of restarts if the job failed because of errors or exceptions
      * @param retries     Specifies how often a job trigger should retry to start the job if triggering fails for some reason.
      * @param retryDelay  The optional delay between retries.
      * @param maxAge      Optional maximum age of a job. When the job is not run for longer than this duration,
      *                    a warning is displayed on the status page
-     *
      * @return JobDefinition
+     * @throws IllegalArgumentException if cron expression is invalid.
      */
     public static JobDefinition retryableCronJobDefinition(final String jobType,
                                                            final String jobName,
@@ -153,6 +155,18 @@ public final class DefaultJobDefinition implements JobDefinition {
         this.restarts = restarts;
         this.retries = retries;
         this.retryDelay = retryDelay;
+        cron.ifPresent(expression -> validateCron(expression));
+    }
+
+    /**
+     * @param cron cron expression to validate.
+     * @throws IllegalArgumentException if cron expression is invalid
+     * @see CronSequenceGenerator
+     */
+    public static void validateCron(String cron) {
+        //Internally, we use the org.springframework.scheduling.support.CronTrigger which has a different syntax than the official crontab syntax.
+        //Therefore we use the internal validation of CronTrigger
+        new CronSequenceGenerator(cron);
     }
 
     /**
