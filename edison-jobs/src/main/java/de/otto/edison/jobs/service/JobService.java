@@ -2,10 +2,9 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
-import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.status.domain.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +13,16 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.Clock;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
-import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
+import static java.util.UUID.randomUUID;
 
 /**
  * A service used to manage jobs in Edison microservices.
@@ -50,14 +45,9 @@ public class JobService {
     private GaugeService gaugeService;
     @Autowired(required = false)
     private List<JobRunnable> jobRunnables = emptyList();
-
-    @Autowired(required = false)
-    private Set<JobMutexGroup> mutexGroups;
-
     @Autowired
-    private SystemInfo systemInfo;
+    private JobMutexHandler jobMutexHandler;
 
-    private Clock clock = Clock.systemDefaultZone();
 
     public JobService() {
     }
@@ -67,23 +57,28 @@ public class JobService {
                final GaugeService gaugeService,
                final ScheduledExecutorService executor,
                final ApplicationEventPublisher applicationEventPublisher,
-               final Clock clock,
-               final SystemInfo systemInfo) {
+               final JobMutexHandler jobMutexHandler) {
         this.repository = repository;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
         this.executor = executor;
         this.applicationEventPublisher = applicationEventPublisher;
-        this.clock = clock;
-        this.systemInfo = systemInfo;
+        this.jobMutexHandler = jobMutexHandler;
     }
 
     @PostConstruct
     public void postConstruct() {
         LOG.info("Found {} JobRunnables: {}", +jobRunnables.size(), jobRunnables.stream().map(j -> j.getJobDefinition().jobType()).collect(Collectors.toList()));
-        if (mutexGroups == null) {
-            this.mutexGroups = emptySet();
-        }
+    }
+
+    /**
+     * Starts a job synchronously, and blocks until the job has finished execution.
+     *
+     * @param jobType the type of the job
+     * @return the URI to retrieve detail information about the executed job instance
+     */
+    public Optional<String> startJob(String jobType) {
+        return startJob(jobType, false);
     }
 
     /**
@@ -93,19 +88,21 @@ public class JobService {
      * @return the URI under which you can retrieve the status about the triggered job instance
      */
     public Optional<String> startAsyncJob(String jobType) {
-        try {
-            final JobRunnable jobRunnable = findJobRunnable(jobType);
-            JobInfo jobInfo = repository.startJob(createJobInfo(jobType), mutexJobTypesFor(jobType));
-            return Optional.of(startAsync(metered(jobRunnable), jobInfo.getJobId()));
-        } catch (JobBlockedException e) {
-            LOG.info(e.getMessage());
-            return Optional.empty();
-        }
+        return startJob(jobType, true);
     }
 
-    private JobInfo createJobInfo(String jobType) {
-        return newJobInfo("", jobType, clock,
-                systemInfo.getHostname());
+    private Optional<String> startJob(String jobType, boolean async) {
+        final JobRunnable jobRunnable = findJobRunnable(jobType);
+        if (jobMutexHandler.isJobStartable(jobRunnable.getJobDefinition().jobType())) {
+            if (async) {
+                return Optional.of(startAsync(metered(jobRunnable)));
+            } else {
+                return Optional.of(start(metered(jobRunnable)));
+            }
+        } else {
+            LOG.info("Job {} triggered but blocked by other job.", jobType);
+            return Optional.empty();
+        }
     }
 
     public Optional<JobInfo> findJob(final String id) {
@@ -127,6 +124,10 @@ public class JobService {
         }
     }
 
+    public List<JobInfo> findFinishedJobs(final String type, JobStatus status, final int count) {
+        return repository.findLatestFinishedBy(type, status, count);
+    }
+
     public void deleteJobs(final Optional<String> type) {
         if (type.isPresent()) {
             repository.findByType(type.get()).forEach((j) -> repository.removeIfStopped(j.getJobId()));
@@ -137,14 +138,22 @@ public class JobService {
 
 
     private JobRunnable findJobRunnable(String jobType) {
-        final Optional<JobRunnable> optionalRunnable = jobRunnables.stream().filter(r -> r.getJobDefinition().jobType().equalsIgnoreCase(jobType)).findFirst();
+        final Optional<JobRunnable> optionalRunnable = jobRunnables.stream().filter((r) -> r.getJobDefinition().jobType().equalsIgnoreCase(jobType)).findFirst();
         return optionalRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for " + jobType));
     }
 
-    private String startAsync(final JobRunnable jobRunnable, final String jobId) {
+    private String startAsync(final JobRunnable jobRunnable) {
+        final String jobId = newJobId();
         final JobRunner jobRunner = createJobRunner(jobRunnable, jobId);
         executor.execute(() -> jobRunner.start(jobRunnable));
         return jobId;
+    }
+
+    private String start(final JobRunnable jobRunnable) {
+        final String jobUri = newJobId();
+        final JobRunner jobRunner = createJobRunner(jobRunnable, jobUri);
+        jobRunner.start(jobRunnable);
+        return jobUri;
     }
 
     private JobRunner createJobRunner(JobRunnable jobRunnable, String jobId) {
@@ -153,19 +162,11 @@ public class JobService {
                 jobId,
                 jobType,
                 executor,
-                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobId)
+                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobId),
+                jobMutexHandler
         );
     }
-    private Set<String> mutexJobTypesFor(final String jobType) {
-        final Set<String> result = new HashSet<>();
-        result.add(jobType);
-        this.mutexGroups
-                .stream()
-                .map(JobMutexGroup::getJobTypes)
-                .filter(g->g.contains(jobType))
-                .forEach(result::addAll);
-        return result;
-    }
+
     private JobRunnable metered(final JobRunnable delegate) {
         return new JobRunnable() {
 
@@ -186,4 +187,9 @@ public class JobService {
             }
         };
     }
+
+    private String newJobId() {
+        return randomUUID().toString();
+    }
+
 }

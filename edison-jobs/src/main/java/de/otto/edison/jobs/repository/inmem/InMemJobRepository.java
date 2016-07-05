@@ -3,11 +3,13 @@ package de.otto.edison.jobs.repository.inmem;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -83,6 +85,13 @@ public class InMemJobRepository implements JobRepository {
                 .collect(toList());
     }
 
+    @Override
+    public Optional<JobInfo> findRunningJobByType(String jobType) {
+        final List<JobInfo> runningJobsOfType = jobs.values().stream()
+                .filter(job -> job.getJobType().equals(jobType) && !job.getStopped().isPresent())
+                .collect(toList());
+        return Optional.ofNullable(runningJobsOfType.isEmpty() ? null : runningJobsOfType.get(0));
+    }
 
     @Override
     public JobInfo createOrUpdate(final JobInfo job) {
@@ -112,11 +121,6 @@ public class InMemJobRepository implements JobRepository {
     public void appendMessage(String jobId, JobMessage jobMessage) {
         JobInfo jobInfo = jobs.get(jobId);
         jobs.replace(jobId, jobInfo.copy().addMessage(jobMessage).build());
-    }
-
-    @Override
-    public JobInfo startJob(JobInfo jobType, Set<String> blockingJobs) throws JobBlockedException {
-        throw new RuntimeException("no implementation");
     }
 
 
