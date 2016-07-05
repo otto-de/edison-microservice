@@ -2,12 +2,11 @@ package de.otto.edison.hateoas;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.otto.edison.annotations.Beta;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static java.util.Arrays.stream;
+import static de.otto.edison.hateoas.Embedded.withNothingEmbedded;
+import static de.otto.edison.hateoas.Links.emptyLinks;
 
 /**
  * Created by guido on 05.07.16.
@@ -17,19 +16,24 @@ import static java.util.Arrays.stream;
 @Beta
 public class HalRepresentation {
 
-    public final Map<String,Link> _links;
+    @JsonUnwrapped
+    public final Links _links;
+    @JsonUnwrapped
+    public final Embedded _embedded;
 
     public HalRepresentation() {
-        _links = new LinkedHashMap<>();
+        _links = emptyLinks();
+        _embedded = withNothingEmbedded();
     }
 
-    public HalRepresentation(final Link link, final Link... more) {
-        _links = new LinkedHashMap<String,Link>() {{
-            put(link.rel, link);
-            if (more != null) {
-                stream(more).forEach(l->put(l.rel, l));
-            }
-        }};
+    public HalRepresentation(final Links links) {
+        _links = links;
+        _embedded = withNothingEmbedded();
+    }
+
+    public HalRepresentation(final Links links, final Embedded embedded) {
+        _links = links;
+        _embedded = embedded;
     }
 
 }

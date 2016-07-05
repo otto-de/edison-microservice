@@ -4,16 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.annotations.Beta;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_ABSENT;
 import static java.lang.Boolean.TRUE;
 
 /**
  * Created by guido on 05.07.16.
  */
-@JsonInclude(NON_NULL)
+@JsonInclude(NON_ABSENT)
 @Beta
 public class Link {
 
+    @JsonIgnore
+    public final String rel;
     public final String href;
     public final Boolean templated;
     public final String type;
@@ -22,12 +24,20 @@ public class Link {
     public final String name;
     public final String profile;
     public final Boolean deprecated;
-    @JsonIgnore
-    public final String rel;
 
 
-    private Link(final String rel, final String href, final Boolean templated, final String type, final String hrefLang,
-                 final String title, final String name, final String profile, final Boolean deprecated) {
+    private Link(final String rel, final String href) {
+        this(rel, href, null, null, null, null, null, null, null);
+    }
+
+    private Link(final String rel, final String href,
+                 final Boolean templated,
+                 final String type,
+                 final String hrefLang,
+                 final String title,
+                 final String name,
+                 final String profile,
+                 final Boolean deprecated) {
         this.rel = rel;
         this.href = href;
         this.templated = templated;
@@ -39,23 +49,35 @@ public class Link {
         this.deprecated = deprecated;
     }
 
-    public static Link selfLink(final String href) {
-        return new Link("self", href, null, null, null, null, null, null, null);
+    public static Link self(final String href) {
+        return new Link("self", href);
+    }
+
+    public static Link profile(final String href) {
+        return new Link("profile", href);
+    }
+
+    public static Link item(final String href) {
+        return new Link("item", href);
+    }
+
+    public static Link collection(final String href) {
+        return new Link("collection", href);
     }
 
     public static Link link(final String rel, final String href) {
-        return new Link(rel, href, null, null, null, null, null, null, null);
+        return new Link(rel, href);
     }
 
-    public static Link templatedLink(final String rel, final String uriTemplate) {
+    public static Link templated(final String rel, final String uriTemplate) {
         return new Link(rel, uriTemplate, TRUE, null, null, null, null, null, null);
     }
 
-    public static LinkBuilder templatedLinkBuilderFor(final String rel, final String uriTemplate) {
+    public static LinkBuilder templatedBuilderBuilder(final String rel, final String uriTemplate) {
         return new LinkBuilder(rel, uriTemplate).beeingTemplated();
     }
 
-    public static LinkBuilder linkBuilderFor(final String rel, final String href) {
+    public static LinkBuilder linkBuilder(final String rel, final String href) {
         return new LinkBuilder(rel, href);
     }
 
