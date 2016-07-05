@@ -22,25 +22,22 @@ public final class JobRunner {
     private final String jobType;
     private final ScheduledExecutorService executorService;
     private ScheduledFuture<?> pingJob;
-    private final JobMutexHandler jobMutexHandler;
 
     private JobRunner(final String jobId,
                       final String jobType,
                       final ScheduledExecutorService executorService,
-                      final JobEventPublisher jobEventPublisher, JobMutexHandler jobMutexHandler) {
+                      final JobEventPublisher jobEventPublisher) {
         this.jobId = jobId;
         this.jobType = jobType;
         this.executorService = executorService;
         this.jobEventPublisher = jobEventPublisher;
-        this.jobMutexHandler = jobMutexHandler;
     }
 
     public static JobRunner newJobRunner(final String jobId,
                                          final String jobType,
                                          final ScheduledExecutorService executorService,
-                                         final JobEventPublisher jobEventPublisher,
-                                         final JobMutexHandler jobMutexHandler) {
-        return new JobRunner(jobId, jobType, executorService, jobEventPublisher, jobMutexHandler);
+                                         final JobEventPublisher jobEventPublisher) {
+        return new JobRunner(jobId, jobType, executorService, jobEventPublisher);
     }
 
     public void start(final JobRunnable runnable) {
@@ -97,14 +94,6 @@ public final class JobRunner {
             LOG.info("stopped job {}", jobId);
         } finally {
             MDC.clear();
-        }
-
-        try {
-            jobMutexHandler.jobHasStopped(jobType);
-        }catch (RuntimeException re) {
-            LOG.error("error during stopping of job {}", jobId, re);
-            jobEventPublisher.message(MessageEvent.Level.ERROR, "informing jobMutexHandler about stopped job raised an exeption " + re.getMessage());
-            throw re;
         }
     }
 }

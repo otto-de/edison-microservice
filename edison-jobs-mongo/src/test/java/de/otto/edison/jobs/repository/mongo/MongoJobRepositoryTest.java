@@ -137,21 +137,6 @@ public class MongoJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindRunningByType() {
-        // given
-        final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");
-        final JobInfo bar = someRunningJobInfo("http://localhost/bar", "T_BAR", now());
-        repo.createOrUpdate(foo);
-        repo.createOrUpdate(bar);
-        // when
-        final Optional<JobInfo> optionalFoo = repo.findRunningJobByType("T_FOO");
-        final Optional<JobInfo> optionalBar = repo.findRunningJobByType("T_BAR");
-        // then
-        assertThat(optionalFoo.isPresent(), is(false));
-        assertThat(optionalBar.isPresent(), is(true));
-    }
-
-    @Test
     public void shouldFindRunningWithoutUpdateSince() {
         // given
         final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");
@@ -283,8 +268,5 @@ public class MongoJobRepositoryTest {
         );
     }
 
-    @Test
-    public void shouldFindAll() {
 
-    }
 }

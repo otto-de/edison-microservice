@@ -6,6 +6,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Proxy;
+import java.util.Optional;
+import java.util.Set;
 
 //@Service
 public class AtomicJobRepository {
@@ -30,8 +32,7 @@ public class AtomicJobRepository {
         lockRepository();
         try {
             return runnable.exec(repository);
-        }
-        finally {
+        } finally {
             releaseRepository();
         }
     }
@@ -45,8 +46,10 @@ public class AtomicJobRepository {
         runLockProvider.releaseRunLockForJobType(REPOSITORY_LOCK);
     }
 
-//    @Scheduled -- every 20 - 60 seconds?!
-    public void cleanupLock(){
+    //    @Scheduled -- every 20 - 60 seconds?!
+    public void cleanupLock() {
         //TODO cleanup old locks scheduled every 20 seconds (or so)
     }
+
+
 }
