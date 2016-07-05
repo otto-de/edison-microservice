@@ -1,4 +1,5 @@
 include "edison-testsupport"
+include "edison-hateoas"
 include "edison-health"
 include "edison-status"
 include "edison-metrics"
