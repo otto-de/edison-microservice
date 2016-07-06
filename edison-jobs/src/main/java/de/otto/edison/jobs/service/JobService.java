@@ -2,7 +2,10 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
+import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
@@ -15,14 +18,18 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.Clock;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.System.currentTimeMillis;
+import static java.time.OffsetDateTime.now;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
@@ -136,10 +143,31 @@ public class JobService {
         }
     }
 
-    public void stopJob(final String jobId) {
-
+    private void stopJob(final String jobId, Optional<JobInfo.JobStatus> status) {
+        Optional<JobInfo> optionalJobInfo = repository.findOne(jobId);
+        if (!optionalJobInfo.isPresent()) {
+            return;
+        }
+        JobInfo jobInfo = optionalJobInfo.get();
+        repository.clearRunningMark(jobInfo.getJobType());
+        OffsetDateTime now = OffsetDateTime.now(clock);
+        JobInfo.Builder builder = jobInfo.copy()
+                .setStopped(now)
+                .setLastUpdated(now);
+        status.ifPresent(builder::setStatus);
+        repository.createOrUpdate(builder
+                .build());
     }
 
+    public void stopJob(final String jobId) {
+        this.stopJob(jobId, Optional.empty());
+    }
+
+    public void killJob(String jobId) {
+        this.stopJob(jobId, Optional.of(JobInfo.JobStatus.DEAD));
+        repository.appendMessage(jobId, jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", OffsetDateTime.now(clock)));
+
+    }
 
     private JobRunnable findJobRunnable(String jobType) {
         final Optional<JobRunnable> optionalRunnable = jobRunnables.stream().filter(r -> r.getJobDefinition().jobType().equalsIgnoreCase(jobType)).findFirst();
@@ -161,16 +189,50 @@ public class JobService {
                 newJobEventPublisher(applicationEventPublisher, jobRunnable, jobId)
         );
     }
+
     private Set<String> mutexJobTypesFor(final String jobType) {
         final Set<String> result = new HashSet<>();
         result.add(jobType);
         this.mutexGroups
                 .stream()
                 .map(JobMutexGroup::getJobTypes)
-                .filter(g->g.contains(jobType))
+                .filter(g -> g.contains(jobType))
                 .forEach(result::addAll);
         return result;
     }
+
+
+    public void appendMessage(String jobId, JobMessage jobMessage) {
+        repository.appendMessage(jobId, jobMessage);
+        if (jobMessage.getLevel() == Level.ERROR) {
+            repository.findOne(jobId).ifPresent(jobInfo -> {
+                repository.createOrUpdate(
+                        jobInfo.copy()
+                                .setStatus(ERROR)
+                                .build());
+            });
+        }
+    }
+
+    public void keepAlive(String jobId) {
+        repository.findOne(jobId)
+                .ifPresent(
+                        jobInfo -> repository.createOrUpdate(jobInfo.copy()
+                                .setLastUpdated(now(clock))
+                                .build()));
+    }
+
+    public void markRestarted(String jobId) {
+        OffsetDateTime currentTimestamp = now(clock);
+        repository.appendMessage(jobId, jobMessage(Level.WARNING, "Restarting job ..", currentTimestamp));
+        repository.findOne(jobId)
+                .ifPresent(jobInfo -> repository.createOrUpdate(jobInfo.copy()
+                        .setLastUpdated(currentTimestamp)
+                        .setStatus(JobInfo.JobStatus.OK)
+                        .build())
+                );
+    }
+
     private JobRunnable metered(final JobRunnable delegate) {
         return new JobRunnable() {
 
@@ -191,5 +253,4 @@ public class JobService {
             }
         };
     }
-
 }

@@ -16,6 +16,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Clock;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -27,9 +31,11 @@ import java.util.concurrent.TimeUnit;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.status.domain.SystemInfo.systemInfo;
 import static java.time.Clock.fixed;
+import static java.time.Clock.offset;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.Instant.now;
 import static java.time.ZoneId.systemDefault;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,6 +50,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class JobServiceTest {
 
     public static final String HOSTNAME = "HOST";
+    public static final String JOB_ID = "JOB/ID";
+    public static final String JOB_TYPE = "JOB_TYPE";
     @Mock
     private ScheduledExecutorService executorService;
     @Mock
@@ -159,6 +167,51 @@ public class JobServiceTest {
         jobService.startAsyncJob(jobType);
 
         verify(jobRepository).markJobAsRunningIfPossible(jobType, set(jobType, "type2", "type3", "type4"));
+    }
+
+    @Test
+    public void shouldStopJob() {
+        OffsetDateTime now = OffsetDateTime.now(clock);
+        Clock earlierClock = offset(clock, Duration.of(-1, MINUTES));
+        JobInfo jobInfo = JobInfo.newJobInfo("superId", "superType", earlierClock, HOSTNAME);
+        when(jobRepository.findOne("superId")).thenReturn(Optional.of(jobInfo));
+
+        jobService.stopJob("superId");
+
+        JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.OK).setStopped(now).setLastUpdated(now).build();
+        verify(jobRepository).clearRunningMark("superType");
+        verify(jobRepository).createOrUpdate(expected);
+    }
+
+    @Test
+    public void shouldKillJob() {
+        OffsetDateTime now = OffsetDateTime.now(clock);
+        JobInfo jobInfo = JobInfo.newJobInfo("superId", "superType", clock, HOSTNAME);
+        when(jobRepository.findOne("superId")).thenReturn(Optional.of(jobInfo));
+
+        jobService.killJob("superId");
+
+        JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.DEAD).setStopped(now).setLastUpdated(now).build();
+        verify(jobRepository).clearRunningMark("superType");
+        verify(jobRepository).createOrUpdate(expected);
+    }
+
+    @Test
+    public void shouldUpdateTimeStampOnKeepAlive() {
+        OffsetDateTime earlier = OffsetDateTime.ofInstant(now(clock).minus(10, MINUTES), systemDefault());
+        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(
+                defaultJobInfo().setLastUpdated(earlier).setStarted(earlier).build()
+        ));
+
+        jobService.keepAlive(JOB_ID);
+
+        JobInfo expected = defaultJobInfo().setLastUpdated(OffsetDateTime.now(clock)).build();
+//        verify(jobRepository).createOrUpdate(eq(expected));
+        //TODO - finish
+    }
+
+    private JobInfo.Builder defaultJobInfo() {
+        return newJobInfo(JOB_ID, JOB_TYPE, clock, HOSTNAME).copy();
     }
 
     private JobDefinition someJobDefinition(String jobType) {
