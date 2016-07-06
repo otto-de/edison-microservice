@@ -3,7 +3,6 @@ package de.otto.edison.jobs.repository;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
-import de.otto.edison.jobs.service.JobMutexHandler;
 import org.testng.annotations.Test;
 
 import java.time.Clock;
@@ -49,11 +48,9 @@ public class StopDeadJobsTest {
             createOrUpdate(runningJob);
             createOrUpdate(stoppedJob);
         }};
-        JobMutexHandler jobMutexHandler = mock(JobMutexHandler.class);
 
         StopDeadJobs strategy = new StopDeadJobs(21, clock);
         strategy.setJobRepository(repository);
-        strategy.setJobMutexHandler(jobMutexHandler);
 
         //when
         strategy.doCleanUp();
@@ -68,6 +65,6 @@ public class StopDeadJobsTest {
         assertThat(toBeStopped.getMessages().get(0).getMessage(), is(notNullValue()));
         assertThat(running, is(runningJob));
         assertThat(stopped, is(stoppedJob));
-        verify(jobMutexHandler).jobHasStopped("runningJobToBeStoppedTYPE");
+        //TODO - verify repo | verify(jobMutexHandler).jobHasStopped("runningJobToBeStoppedTYPE");
     }
 }

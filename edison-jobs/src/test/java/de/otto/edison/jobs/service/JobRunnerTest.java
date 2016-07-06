@@ -28,15 +28,11 @@ public class JobRunnerTest {
     private ScheduledExecutorService executor;
     private ScheduledFuture scheduledJob;
     private JobEventPublisher jobEventPublisher;
-    private JobMutexHandler jobMutexHandler;
 
     @BeforeMethod
     public void setUp() throws Exception {
         executor = mock(ScheduledExecutorService.class);
         jobEventPublisher = mock(JobEventPublisher.class);
-        jobMutexHandler = mock(JobMutexHandler.class);
-
-        when(jobMutexHandler.isJobStartable(anyString())).thenReturn(true);
 
         scheduledJob = mock(ScheduledFuture.class);
         doReturn(scheduledJob)
