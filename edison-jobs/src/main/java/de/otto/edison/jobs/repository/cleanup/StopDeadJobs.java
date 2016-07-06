@@ -51,7 +51,7 @@ public class StopDeadJobs implements JobCleanupStrategy {
                     .setStatus(JobInfo.JobStatus.DEAD)
                     .build());
             jobRepository.appendMessage(j.getJobId(), jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", nowJobInfo));
-            //TODO bv/sr - call Stop Dead Job In Repo
+            jobRepository.stopJob(j);
         });
     }
 }

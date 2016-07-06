@@ -75,6 +75,7 @@ public class PersistenceJobEventListener implements JobEventListener {
                                 .setStopped(time)
                                 .build()
                 );
+                jobRepository.stopJob(jobInfo);
                 jobRepository.appendMessage(event.getJobId(), jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", time));
                 break;
 
@@ -85,6 +86,7 @@ public class PersistenceJobEventListener implements JobEventListener {
                                 .setStopped(time)
                                 .build()
                 );
+                jobRepository.stopJob(jobInfo);
                 break;
         }
     }

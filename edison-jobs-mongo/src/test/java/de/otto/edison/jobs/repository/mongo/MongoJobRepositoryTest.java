@@ -25,6 +25,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.testng.Assert.assertFalse;
 
 public class MongoJobRepositoryTest {
 
@@ -294,6 +295,19 @@ public class MongoJobRepositoryTest {
 
     }
 
+    @Test
+    public void shouldRemoveStoppedJobFromRunningDocument() {
+        String jobType = "myJobType";
+        String jobId = "jobID";
+        addJobToRunningDocument("otherJobType", "superId");
+        addJobToRunningDocument(jobType, jobId);
+
+        repo.stopJob(someJobInfo(jobId, jobType));
+
+        assertRunningDocumentNotContainsJob(jobType);
+        assertRunningDocumentContainsJob("otherJobType", "superId");
+    }
+
     private JobInfo jobInfoWithoutId(String type) {
         return someJobInfo("", type);
     }
@@ -313,6 +327,11 @@ public class MongoJobRepositoryTest {
             put("_id", RUNNING_JOBS_DOCUMENT);
             put(jobType, jobId);
         }}.entrySet()));
+    }
+
+    private void assertRunningDocumentNotContainsJob(String jobType) {
+        Document magicDocument = runningJobsCollection.find(new Document("_id", RUNNING_JOBS_DOCUMENT)).iterator().next();
+        assertThat(magicDocument.containsKey(jobType), is(false));
     }
 
     private JobInfo someJobInfo(final String jobId) {

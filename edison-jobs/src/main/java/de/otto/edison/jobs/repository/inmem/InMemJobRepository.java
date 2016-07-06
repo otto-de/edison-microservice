@@ -21,6 +21,7 @@ public class InMemJobRepository implements JobRepository {
     private static final Comparator<JobInfo> STARTED_TIME_DESC_COMPARATOR = comparing(JobInfo::getStarted, reverseOrder());
 
     private final ConcurrentMap<String, JobInfo> jobs = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String,String> runningJobs = new ConcurrentHashMap<>();
 
     @Override
     public List<JobInfo> findLatest(int maxCount) {
@@ -117,6 +118,11 @@ public class InMemJobRepository implements JobRepository {
     @Override
     public JobInfo startJob(JobInfo jobType, Set<String> blockingJobs) throws JobBlockedException {
         throw new RuntimeException("no implementation");
+    }
+
+    @Override
+    public void stopJob(JobInfo jobInfo) {
+        runningJobs.remove(jobInfo.getJobType());
     }
 
 

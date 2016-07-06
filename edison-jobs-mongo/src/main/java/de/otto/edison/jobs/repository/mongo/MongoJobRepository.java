@@ -91,12 +91,23 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     @Override
     public JobInfo startJob(JobInfo jobInfo, Set<String> blockingJobs) throws JobBlockedException {
         String jobId = newJobId();
-        assertNotBlockedByOtherJobAndSet(blockingJobs, jobInfo.getJobType(), jobId);
+        blockIfPossible(blockingJobs, jobInfo.getJobType(), jobId);
         JobInfo jobInfoWithId = jobInfo.copy().setJobId(jobId).build();
         return createOrUpdate(jobInfoWithId);
     }
 
-    private void assertNotBlockedByOtherJobAndSet(Set<String> blockingJobs, String jobType, String jobId) {
+    @Override
+    public void stopJob(JobInfo jobInfo) {
+        unblock(jobInfo.getJobType());
+    }
+
+    private void unblock(String jobType) {
+        Document query = byId(RUNNING_JOBS_DOCUMENT);
+        query.append(jobType, new Document("$exists", true));
+        runningJobsCollection.findOneAndUpdate(query, new Document("$unset", new Document(jobType, "")));
+    }
+
+    private void blockIfPossible(Set<String> blockingJobs, String jobType, String jobId) throws JobBlockedException{
         Document query = byId(RUNNING_JOBS_DOCUMENT);
         for(String blockingJob: blockingJobs) {
             query.append(blockingJob, new Document("$exists", false));

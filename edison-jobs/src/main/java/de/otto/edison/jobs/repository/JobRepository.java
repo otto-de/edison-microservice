@@ -38,7 +38,7 @@ public interface JobRepository {
     void appendMessage(String jobId, JobMessage jobMessage);
 
     JobInfo startJob(JobInfo jobInfo, Set<String> blockingJobs) throws JobBlockedException;
-//    void stopJob(JobInfo jobInfo);
+    void stopJob(JobInfo jobInfo);
 //    void killJob(JobInfo jobInfo);
 
 }
