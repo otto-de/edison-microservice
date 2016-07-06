@@ -184,14 +184,14 @@ public class PersistenceJobEventListenerTest {
     public void shouldPersistErrorMessages() throws Exception {
         // given
         MessageEvent messageEvent = newMessageEvent(someJobRunnable(), "some/job", MessageEvent.Level.ERROR, "some message");
-        JobInfo jobInfo = JobInfo.newJobInfo("some/job", "someType", Clock.systemDefaultZone(), "localhost");
+        JobInfo jobInfo = JobInfo.newJobInfo("some/job", "someType", clock, "localhost");
         when(jobRepository.findOne(messageEvent.getJobId())).thenReturn(Optional.of(jobInfo));
 
         // when
         testee.consumeMessage(messageEvent);
 
         // then
-        verify(jobRepository).appendMessage("some/job", jobMessage(Level.ERROR, "some message", OffsetDateTime.now()));
+        verify(jobRepository).appendMessage("some/job", jobMessage(Level.ERROR, "some message", OffsetDateTime.now(clock)));
         verify(jobRepository).createOrUpdate(jobInfo.copy()
                 .setStatus(JobInfo.JobStatus.ERROR)
                 .build());

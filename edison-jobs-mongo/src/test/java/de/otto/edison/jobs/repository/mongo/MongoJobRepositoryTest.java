@@ -1,22 +1,24 @@
 package de.otto.edison.jobs.repository.mongo;
 
 import com.github.fakemongo.Fongo;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.jobs.repository.JobBlockedException;
 import org.bson.Document;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.*;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.repository.mongo.JobStructure.*;
+import static de.otto.edison.jobs.repository.mongo.MongoJobRepository.RUNNING_JOBS_DOCUMENT;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -27,13 +29,18 @@ import static org.hamcrest.Matchers.*;
 public class MongoJobRepositoryTest {
 
     private MongoJobRepository repo;
+    private MongoDatabase database;
+    private MongoCollection<Document> runningJobsCollection;
 
     @BeforeMethod
     public void setup() {
         final Fongo fongo = new Fongo("inmemory-mongodb");
-        final MongoDatabase database = fongo.getDatabase("jobsinfo");
+        database = fongo.getDatabase("jobsinfo");
         repo = new MongoJobRepository(database, systemDefaultZone());
+        runningJobsCollection = database.getCollection(MongoJobRepository.RUNNING_JOBS_COLLECTION_NAME);
+        repo.initRunningJobsDocumentOnStartup();
     }
+
 
     @Test
     public void shouldStoreAndRetrieveJobInfo() {
@@ -137,21 +144,6 @@ public class MongoJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindRunningByType() {
-        // given
-        final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");
-        final JobInfo bar = someRunningJobInfo("http://localhost/bar", "T_BAR", now());
-        repo.createOrUpdate(foo);
-        repo.createOrUpdate(bar);
-        // when
-        final Optional<JobInfo> optionalFoo = repo.findRunningJobByType("T_FOO");
-        final Optional<JobInfo> optionalBar = repo.findRunningJobByType("T_BAR");
-        // then
-        assertThat(optionalFoo.isPresent(), is(false));
-        assertThat(optionalBar.isPresent(), is(true));
-    }
-
-    @Test
     public void shouldFindRunningWithoutUpdateSince() {
         // given
         final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");
@@ -170,13 +162,13 @@ public class MongoJobRepositoryTest {
     @Test
     public void shouldRemoveIfStopped() {
         // given
-        final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");
-        final JobInfo bar = someRunningJobInfo("http://localhost/bar", "T_BAR", now());
+        final JobInfo foo = someJobInfo("foo", "T_FOO");
+        final JobInfo bar = someRunningJobInfo("bar", "T_BAR", now());
         repo.createOrUpdate(foo);
         repo.createOrUpdate(bar);
         // when
-        repo.removeIfStopped("http://localhost/foo");
-        repo.removeIfStopped("http://localhost/bar");
+        repo.removeIfStopped("foo");
+        repo.removeIfStopped("bar");
         // then
         assertThat(repo.findAll(), hasSize(1));
         assertThat(repo.findAll(), contains(bar));
@@ -246,6 +238,83 @@ public class MongoJobRepositoryTest {
 
     }
 
+    @Test
+    public void shouldStartJob() throws Exception {
+        final String jobType = "myJobType";
+        JobInfo jobInfo = someJobInfo("", jobType);
+
+        JobInfo result = repo.startJob(jobInfo, new HashSet<String>() {{
+            add(jobType);
+        }});
+
+        assertThat(result.getJobType(), is(jobType));
+        assertThat(result.getJobId(), is(notNullValue()));
+        assertRunningDocumentContainsJob(jobType, result.getJobId());
+    }
+
+    @Test(expectedExceptions = JobBlockedException.class)
+    public void shouldNotStartJobIfAlreadyRunning() throws Exception {
+        // given
+        final String jobType = "myJobType";
+        addJobToRunningDocument(jobType, "oldId");
+
+        // when
+        try {
+            repo.startJob(jobInfoWithoutId(jobType), new HashSet<String>() {{
+                add(jobType);
+            }});
+        }
+
+        // then
+        catch (JobBlockedException e) {
+            assertRunningDocumentContainsJob(jobType, "oldId");
+            throw e;
+        }
+    }
+
+    @Test(expectedExceptions = JobBlockedException.class)
+    public void shouldNotStartJobIfBlockedByAnotherJob() throws Exception {
+        // given
+        final String jobType = "myJobType";
+        final String otherJobType = "myOtherJobType";
+        addJobToRunningDocument(otherJobType, "oldId");
+
+        // when
+        try {
+            repo.startJob(jobInfoWithoutId(jobType), new HashSet<String>() {{
+                add(jobType); add(otherJobType);
+            }});
+        }
+
+        // then
+        catch (JobBlockedException e) {
+            assertRunningDocumentContainsJob(otherJobType, "oldId");
+            throw e;
+        }
+
+    }
+
+    private JobInfo jobInfoWithoutId(String type) {
+        return someJobInfo("", type);
+    }
+
+    private void addJobToRunningDocument(String jobType, String jobId) {
+        runningJobsCollection.updateOne(
+                new Document("_id", RUNNING_JOBS_DOCUMENT),
+                new Document("$set",
+                        new Document(jobType, jobId))
+        );
+    }
+
+
+    private void assertRunningDocumentContainsJob(String jobType, String jobId) {
+        Document magicDocument = runningJobsCollection.find(new Document("_id", RUNNING_JOBS_DOCUMENT)).iterator().next();
+        assertThat(magicDocument.entrySet(), is(new HashMap() {{
+            put("_id", RUNNING_JOBS_DOCUMENT);
+            put(jobType, jobId);
+        }}.entrySet()));
+    }
+
     private JobInfo someJobInfo(final String jobId) {
         return JobInfo.newJobInfo(
                 jobId,
@@ -281,10 +350,5 @@ public class MongoJobRepositoryTest {
                 systemDefaultZone(),
                 "localhost"
         );
-    }
-
-    @Test
-    public void shouldFindAll() {
-
     }
 }

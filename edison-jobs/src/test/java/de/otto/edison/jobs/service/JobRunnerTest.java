@@ -46,7 +46,7 @@ public class JobRunnerTest {
     @Test
     public void shouldExecuteJob() {
         // given
-        JobRunner jobRunner = newJobRunner("42", "TYPE", executor, jobEventPublisher, jobMutexHandler);
+        JobRunner jobRunner = newJobRunner("42", "TYPE", executor, jobEventPublisher);
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty()));
 
@@ -64,8 +64,8 @@ public class JobRunnerTest {
                 "42",
                 "NAME",
                 executor,
-                jobEventPublisher,
-                jobMutexHandler);
+                jobEventPublisher
+        );
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty()));
         doThrow(new RuntimeException("some error")).when(jobRunnable).execute(jobEventPublisher);
@@ -84,8 +84,8 @@ public class JobRunnerTest {
                 "42",
                 "NAME",
                 executor,
-                jobEventPublisher,
-                jobMutexHandler);
+                jobEventPublisher
+        );
 
         JobRunnable jobRunnable = mock(JobRunnable.class);
 
@@ -111,8 +111,8 @@ public class JobRunnerTest {
                 "42",
                 "NAME",
                 executor,
-                jobEventPublisher,
-                jobMutexHandler);
+                jobEventPublisher
+        );
 
         // when
         jobRunner.start(getMockedRunnable());
@@ -133,8 +133,8 @@ public class JobRunnerTest {
                 "42",
                 "NAME",
                 executor,
-                jobEventPublisher,
-                jobMutexHandler);
+                jobEventPublisher
+        );
 
         // when
         jobRunner.start(getMockedRunnable());

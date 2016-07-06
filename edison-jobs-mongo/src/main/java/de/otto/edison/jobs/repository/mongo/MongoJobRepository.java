@@ -7,19 +7,19 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.mongo.AbstractMongoRepository;
 import org.bson.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
@@ -31,27 +31,37 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 import static java.util.Date.from;
 import static java.util.Optional.ofNullable;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 @Repository(value = "jobRepository")
 public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo> implements JobRepository {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
     private static final int DESCENDING = -1;
-    private static final String COLLECTION_NAME = "jobinfo";
+    public static final String COLLECTION_NAME = "jobinfo";
+    public static final String RUNNING_JOBS_COLLECTION_NAME = "runningJobs";
     public static final String NO_LOG_MESSAGE_FOUND = "No log message found";
+    public static final String RUNNING_JOBS_DOCUMENT = "RUNNING_JOBS";
 
-    private final MongoCollection<Document> collection;
+    private final MongoCollection<Document> jobInfoCollection;
+    private final MongoCollection<Document> runningJobsCollection;
     private final Clock clock;
 
     @Autowired
     public MongoJobRepository(final MongoDatabase database) {
-        this.collection = database.getCollection(COLLECTION_NAME);
-        this.clock = systemDefaultZone();
+        this(database, systemDefaultZone());
+    }
+
+    @PostConstruct
+    public void initRunningJobsDocumentOnStartup() {
+        if(runningJobsCollection.count(byId(RUNNING_JOBS_DOCUMENT))==0) {
+            runningJobsCollection.insertOne(new Document("_id", RUNNING_JOBS_DOCUMENT));
+        }
     }
 
     MongoJobRepository(final MongoDatabase database, final Clock clock) {
-        this.collection = database.getCollection(COLLECTION_NAME);
+        this.jobInfoCollection = database.getCollection(COLLECTION_NAME);
+        this.runningJobsCollection = database.getCollection(RUNNING_JOBS_COLLECTION_NAME);
         this.clock = clock;
     }
 
@@ -76,6 +86,29 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public void appendMessage(String jobId, JobMessage jobMessage) {
         Document document = new Document("$push", new Document(MESSAGES.key(), encodeJobMessage(jobMessage)));
         collection().updateOne(byId(jobId), document);
+    }
+
+    @Override
+    public JobInfo startJob(JobInfo jobInfo, Set<String> blockingJobs) throws JobBlockedException {
+        String jobId = newJobId();
+        assertNotBlockedByOtherJobAndSet(blockingJobs, jobInfo.getJobType(), jobId);
+        JobInfo jobInfoWithId = jobInfo.copy().setJobId(jobId).build();
+        return createOrUpdate(jobInfoWithId);
+    }
+
+    private void assertNotBlockedByOtherJobAndSet(Set<String> blockingJobs, String jobType, String jobId) {
+        Document query = byId(RUNNING_JOBS_DOCUMENT);
+        for(String blockingJob: blockingJobs) {
+            query.append(blockingJob, new Document("$exists", false));
+        }
+        Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, new Document("$set", new Document(jobType, jobId)));
+        if(updatedRunningJobsDocument==null)  {
+            throw new JobBlockedException("Blocked by some other job");
+        }
+    }
+
+    private String newJobId() {
+        return randomUUID().toString();
     }
 
     @Override
@@ -125,17 +158,6 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                         .append(LAST_UPDATED.key(), singletonMap("$lt", from(timeOffset.toInstant()))))
                 .map(this::decode)
                 .into(new ArrayList<>());
-    }
-
-    @Override
-    public Optional<JobInfo> findRunningJobByType(final String jobType) {
-        return ofNullable(collection()
-                .find(new Document()
-                        .append(STOPPED.key(), singletonMap("$exists", false))
-                        .append(JOB_TYPE.key(), jobType))
-                .limit(1)
-                .map(this::decode)
-                .first());
     }
 
     @Override
@@ -205,7 +227,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Override
     protected final MongoCollection<Document> collection() {
-        return collection;
+        return jobInfoCollection;
     }
 
     @Override

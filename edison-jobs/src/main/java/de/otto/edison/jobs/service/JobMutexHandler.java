@@ -1,11 +1,14 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.annotations.Beta;
+import de.otto.edison.jobs.repository.AtomicJobRepository;
+import de.otto.edison.jobs.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
@@ -82,4 +85,8 @@ public class JobMutexHandler {
                 .forEach(result::addAll);
         return result;
     }
+
+    JobRepository jobrepo;
+    AtomicJobRepository atomicRepo;
+
 }

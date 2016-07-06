@@ -158,40 +158,6 @@ public class InMemJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindARunningJobGivenAType() throws Exception {
-        // given
-        final String type = "TEST";
-        final String otherType = "OTHERTEST";
-        repository.createOrUpdate(builder()
-                .setJobId("some/job/stopped")
-                .setJobType(type)
-                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
-                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
-                .setHostname("localhost")
-                .setStatus(JobStatus.OK)
-                .build());
-        repository.createOrUpdate(newJobInfo("some/job/other", otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
-        repository.createOrUpdate(newJobInfo("some/job/running", type, fixed(Instant.now(), systemDefault()), "localhost"));
-
-        // when
-        final Optional<JobInfo> runningJob = repository.findRunningJobByType(type);
-
-        // then
-        assertThat(runningJob.get().getJobId(), is("some/job/running"));
-    }
-
-    @Test
-    public void shouldReturnNullIfNoRunningJobOfTypePresent() throws Exception {
-        // given
-
-        // when
-        final Optional<JobInfo> runningJob = repository.findRunningJobByType("someType");
-
-        // then
-        assertThat(runningJob.isPresent(), is(false));
-    }
-
-    @Test
     public void shouldFindAllJobsOfSpecificType() throws Exception {
         // Given
         final String type = "TEST";

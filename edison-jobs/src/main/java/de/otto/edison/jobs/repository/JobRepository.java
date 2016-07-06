@@ -9,6 +9,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface JobRepository {
 
@@ -26,8 +27,6 @@ public interface JobRepository {
 
     List<JobInfo> findByType(String jobType);
 
-    Optional<JobInfo> findRunningJobByType(String jobType);
-
     JobInfo createOrUpdate(JobInfo job);
 
     void removeIfStopped(String jobId);
@@ -37,4 +36,9 @@ public interface JobRepository {
     JobInfo.JobStatus findStatus(String jobId);
 
     void appendMessage(String jobId, JobMessage jobMessage);
+
+    JobInfo startJob(JobInfo jobInfo, Set<String> blockingJobs) throws JobBlockedException;
+//    void stopJob(JobInfo jobInfo);
+//    void killJob(JobInfo jobInfo);
+
 }
