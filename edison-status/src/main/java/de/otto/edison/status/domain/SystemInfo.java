@@ -1,5 +1,6 @@
 package de.otto.edison.status.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import net.jcip.annotations.Immutable;
 
 import java.time.OffsetDateTime;
@@ -9,6 +10,7 @@ import static java.time.OffsetDateTime.now;
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
 @Immutable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SystemInfo {
 
     private static final OffsetDateTime START_TIME = now();

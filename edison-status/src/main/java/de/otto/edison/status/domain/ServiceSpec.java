@@ -1,5 +1,7 @@
 package de.otto.edison.status.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.otto.edison.annotations.Beta;
 import net.jcip.annotations.Immutable;
 
@@ -11,6 +13,7 @@ import static de.otto.edison.status.domain.ServiceType.unspecifiedService;
  */
 @Beta
 @Immutable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceSpec {
 
     /** A human readable name of the service. */
@@ -18,6 +21,7 @@ public class ServiceSpec {
     /** A URL that is identifying the required REST API. Generally a prefix of the accessed REST resource. */
     public final String url;
     /** The type of the service dependency. */
+    @JsonUnwrapped
     public final ServiceType type;
     /** Expectations about the required service. */
     public final Expectations expectations;

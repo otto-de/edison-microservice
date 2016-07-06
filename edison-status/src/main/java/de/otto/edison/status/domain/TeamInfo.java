@@ -1,5 +1,6 @@
 package de.otto.edison.status.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.otto.edison.annotations.Beta;
 import net.jcip.annotations.Immutable;
 
@@ -10,6 +11,7 @@ import net.jcip.annotations.Immutable;
  */
 @Beta
 @Immutable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TeamInfo {
 
     /** The name of the team. */
