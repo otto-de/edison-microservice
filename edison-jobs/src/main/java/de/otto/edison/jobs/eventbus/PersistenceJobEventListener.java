@@ -10,12 +10,9 @@ import de.otto.edison.status.domain.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
@@ -40,8 +37,6 @@ public class PersistenceJobEventListener implements JobEventListener {
     @Override
     public void consumeStateChange(final StateChangeEvent event) {
         if (event.getState() == StateChangeEvent.State.START) {
-            jobRepository.createOrUpdate(newJobInfo(event.getJobId(), event.getJobType(), clock,
-                    systemInfo.getHostname()));
             return;
         }
         final Optional<JobInfo> optionalJobInfo = jobRepository.findOne(event.getJobId());
@@ -75,7 +70,7 @@ public class PersistenceJobEventListener implements JobEventListener {
                                 .setStopped(time)
                                 .build()
                 );
-                jobRepository.stopJob(jobInfo);
+                jobRepository.clearRunningMark(jobInfo.getJobType());
                 jobRepository.appendMessage(event.getJobId(), jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", time));
                 break;
 
@@ -86,7 +81,7 @@ public class PersistenceJobEventListener implements JobEventListener {
                                 .setStopped(time)
                                 .build()
                 );
-                jobRepository.stopJob(jobInfo);
+                jobRepository.clearRunningMark(jobInfo.getJobType());
                 break;
         }
     }

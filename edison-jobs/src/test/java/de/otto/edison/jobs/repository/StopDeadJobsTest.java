@@ -2,17 +2,14 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
-import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
-import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static java.time.Clock.fixed;
 import static java.time.OffsetDateTime.now;
@@ -46,6 +43,6 @@ public class StopDeadJobsTest {
 
         //then
         verify(repository).createOrUpdate(runningJobToBeStopped.copy().setStatus(DEAD).setStopped(OffsetDateTime.now(earlierClock)).setLastUpdated(OffsetDateTime.now(earlierClock)).build());
-        verify(repository).stopJob(runningJobToBeStopped);
+        verify(repository).clearRunningMark(runningJobToBeStopped.getJobType());
     }
 }

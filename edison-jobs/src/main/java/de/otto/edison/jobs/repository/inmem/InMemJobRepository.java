@@ -21,7 +21,7 @@ public class InMemJobRepository implements JobRepository {
     private static final Comparator<JobInfo> STARTED_TIME_DESC_COMPARATOR = comparing(JobInfo::getStarted, reverseOrder());
 
     private final ConcurrentMap<String, JobInfo> jobs = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String,String> runningJobs = new ConcurrentHashMap<>();
+    private final HashSet<String> runningJobs = new HashSet<>();
 
     @Override
     public List<JobInfo> findLatest(int maxCount) {
@@ -116,13 +116,22 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public JobInfo startJob(JobInfo jobType, Set<String> blockingJobs) throws JobBlockedException {
-        throw new RuntimeException("no implementation");
+    public void markJobAsRunningIfPossible(String jobType, Set<String> blockingJobs) throws JobBlockedException {
+        synchronized(runningJobs) {
+            for(String mutexJobType: blockingJobs) {
+                if (runningJobs.contains(mutexJobType)) {
+                    throw new JobBlockedException("no implementation");
+                }
+            }
+            runningJobs.add(jobType);
+        }
     }
 
     @Override
-    public void stopJob(JobInfo jobInfo) {
-        runningJobs.remove(jobInfo.getJobType());
+    public void clearRunningMark(String jobType) {
+        synchronized (runningJobs) {
+            runningJobs.remove(jobType);
+        }
     }
 
 

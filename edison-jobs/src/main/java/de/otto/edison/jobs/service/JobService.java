@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.Clock;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
@@ -68,7 +65,8 @@ public class JobService {
                final ScheduledExecutorService executor,
                final ApplicationEventPublisher applicationEventPublisher,
                final Clock clock,
-               final SystemInfo systemInfo) {
+               final SystemInfo systemInfo,
+               final Set<JobMutexGroup> mutexGroups) {
         this.repository = repository;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
@@ -76,6 +74,7 @@ public class JobService {
         this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
         this.systemInfo = systemInfo;
+        this.mutexGroups = mutexGroups;
     }
 
     @PostConstruct
@@ -95,7 +94,9 @@ public class JobService {
     public Optional<String> startAsyncJob(String jobType) {
         try {
             final JobRunnable jobRunnable = findJobRunnable(jobType);
-            JobInfo jobInfo = repository.startJob(createJobInfo(jobType), mutexJobTypesFor(jobType));
+            repository.markJobAsRunningIfPossible(jobType, mutexJobTypesFor(jobType));
+            JobInfo jobInfo = createJobInfo(jobType);
+            repository.createOrUpdate(jobInfo);
             return Optional.of(startAsync(metered(jobRunnable), jobInfo.getJobId()));
         } catch (JobBlockedException e) {
             LOG.info(e.getMessage());
@@ -104,7 +105,7 @@ public class JobService {
     }
 
     private JobInfo createJobInfo(String jobType) {
-        return newJobInfo("", jobType, clock,
+        return newJobInfo(UUID.randomUUID().toString(), jobType, clock,
                 systemInfo.getHostname());
     }
 
@@ -133,6 +134,10 @@ public class JobService {
         } else {
             repository.findAll().forEach((j) -> repository.removeIfStopped(j.getJobId()));
         }
+    }
+
+    public void stopJob(final String jobId) {
+
     }
 
 
@@ -186,4 +191,5 @@ public class JobService {
             }
         };
     }
+
 }

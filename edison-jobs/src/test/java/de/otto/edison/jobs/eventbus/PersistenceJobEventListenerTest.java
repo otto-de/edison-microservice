@@ -48,18 +48,6 @@ public class PersistenceJobEventListenerTest {
     }
 
     @Test
-    public void shouldPersistStartEvent() throws Exception {
-        // given
-        StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", START);
-
-        // when
-        testee.consumeStateChange(stateChangeEvent);
-
-        // then
-        verify(jobRepository).createOrUpdate(newJobInfo("some/job", "someJobType", clock, "localhost"));
-    }
-
-    @Test
     public void shouldPersistStillAliveEvent() throws Exception {
         // given
         StateChangeEvent stateChangeEvent = newStateChangeEvent(someJobRunnable(), "some/job", KEEP_ALIVE);

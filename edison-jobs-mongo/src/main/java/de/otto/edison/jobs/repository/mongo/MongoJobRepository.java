@@ -89,33 +89,24 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     }
 
     @Override
-    public JobInfo startJob(JobInfo jobInfo, Set<String> blockingJobs) throws JobBlockedException {
-        String jobId = newJobId();
-        blockIfPossible(blockingJobs, jobInfo.getJobType(), jobId);
-        JobInfo jobInfoWithId = jobInfo.copy().setJobId(jobId).build();
-        return createOrUpdate(jobInfoWithId);
-    }
-
-    @Override
-    public void stopJob(JobInfo jobInfo) {
-        unblock(jobInfo.getJobType());
-    }
-
-    private void unblock(String jobType) {
-        Document query = byId(RUNNING_JOBS_DOCUMENT);
-        query.append(jobType, new Document("$exists", true));
-        runningJobsCollection.findOneAndUpdate(query, new Document("$unset", new Document(jobType, "")));
-    }
-
-    private void blockIfPossible(Set<String> blockingJobs, String jobType, String jobId) throws JobBlockedException{
+    public void markJobAsRunningIfPossible(String jobType, Set<String> blockingJobs) throws JobBlockedException {
         Document query = byId(RUNNING_JOBS_DOCUMENT);
         for(String blockingJob: blockingJobs) {
             query.append(blockingJob, new Document("$exists", false));
         }
-        Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, new Document("$set", new Document(jobType, jobId)));
+        Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, new Document("$set", new Document(jobType, jobType)));
         if(updatedRunningJobsDocument==null)  {
             throw new JobBlockedException("Blocked by some other job");
         }
+    }
+
+
+
+    @Override
+    public void clearRunningMark(String jobType) {
+        Document query = byId(RUNNING_JOBS_DOCUMENT);
+        query.append(jobType, new Document("$exists", true));
+        runningJobsCollection.findOneAndUpdate(query, new Document("$unset", new Document(jobType, "")));
     }
 
     private String newJobId() {

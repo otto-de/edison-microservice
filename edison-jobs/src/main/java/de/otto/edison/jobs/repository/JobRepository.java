@@ -37,8 +37,8 @@ public interface JobRepository {
 
     void appendMessage(String jobId, JobMessage jobMessage);
 
-    JobInfo startJob(JobInfo jobInfo, Set<String> blockingJobs) throws JobBlockedException;
-    void stopJob(JobInfo jobInfo);
-//    void killJob(JobInfo jobInfo);
+    void markJobAsRunningIfPossible(String jobType, Set<String> jobTypesMutex) throws JobBlockedException;
+
+    void clearRunningMark(String jobType);
 
 }

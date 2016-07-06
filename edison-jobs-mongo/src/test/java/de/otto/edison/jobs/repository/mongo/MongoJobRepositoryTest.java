@@ -240,35 +240,33 @@ public class MongoJobRepositoryTest {
     }
 
     @Test
-    public void shouldStartJob() throws Exception {
+    public void shouldMarkJobAsRunning() throws Exception {
         final String jobType = "myJobType";
         JobInfo jobInfo = someJobInfo("", jobType);
 
-        JobInfo result = repo.startJob(jobInfo, new HashSet<String>() {{
+        repo.markJobAsRunningIfPossible(jobInfo.getJobType(), new HashSet<String>() {{
             add(jobType);
         }});
 
-        assertThat(result.getJobType(), is(jobType));
-        assertThat(result.getJobId(), is(notNullValue()));
-        assertRunningDocumentContainsJob(jobType, result.getJobId());
+        assertRunningDocumentContainsJob(jobType);
     }
 
     @Test(expectedExceptions = JobBlockedException.class)
     public void shouldNotStartJobIfAlreadyRunning() throws Exception {
         // given
         final String jobType = "myJobType";
-        addJobToRunningDocument(jobType, "oldId");
+        addJobToRunningDocument(jobType);
 
         // when
         try {
-            repo.startJob(jobInfoWithoutId(jobType), new HashSet<String>() {{
+            repo.markJobAsRunningIfPossible(jobType, new HashSet<String>() {{
                 add(jobType);
             }});
         }
 
         // then
         catch (JobBlockedException e) {
-            assertRunningDocumentContainsJob(jobType, "oldId");
+            assertRunningDocumentContainsJob(jobType);
             throw e;
         }
     }
@@ -278,18 +276,18 @@ public class MongoJobRepositoryTest {
         // given
         final String jobType = "myJobType";
         final String otherJobType = "myOtherJobType";
-        addJobToRunningDocument(otherJobType, "oldId");
+        addJobToRunningDocument(otherJobType);
 
         // when
         try {
-            repo.startJob(jobInfoWithoutId(jobType), new HashSet<String>() {{
+            repo.markJobAsRunningIfPossible(jobType, new HashSet<String>() {{
                 add(jobType); add(otherJobType);
             }});
         }
 
         // then
         catch (JobBlockedException e) {
-            assertRunningDocumentContainsJob(otherJobType, "oldId");
+            assertRunningDocumentContainsJob(otherJobType);
             throw e;
         }
 
@@ -299,33 +297,29 @@ public class MongoJobRepositoryTest {
     public void shouldRemoveStoppedJobFromRunningDocument() {
         String jobType = "myJobType";
         String jobId = "jobID";
-        addJobToRunningDocument("otherJobType", "superId");
-        addJobToRunningDocument(jobType, jobId);
+        addJobToRunningDocument("otherJobType");
+        addJobToRunningDocument(jobType);
 
-        repo.stopJob(someJobInfo(jobId, jobType));
+        repo.clearRunningMark(jobType);
 
         assertRunningDocumentNotContainsJob(jobType);
-        assertRunningDocumentContainsJob("otherJobType", "superId");
+        assertRunningDocumentContainsJob("otherJobType");
     }
 
-    private JobInfo jobInfoWithoutId(String type) {
-        return someJobInfo("", type);
-    }
-
-    private void addJobToRunningDocument(String jobType, String jobId) {
+    private void addJobToRunningDocument(String jobType) {
         runningJobsCollection.updateOne(
                 new Document("_id", RUNNING_JOBS_DOCUMENT),
                 new Document("$set",
-                        new Document(jobType, jobId))
+                        new Document(jobType, jobType))
         );
     }
 
 
-    private void assertRunningDocumentContainsJob(String jobType, String jobId) {
+    private void assertRunningDocumentContainsJob(String jobType) {
         Document magicDocument = runningJobsCollection.find(new Document("_id", RUNNING_JOBS_DOCUMENT)).iterator().next();
         assertThat(magicDocument.entrySet(), is(new HashMap() {{
             put("_id", RUNNING_JOBS_DOCUMENT);
-            put(jobType, jobId);
+            put(jobType, jobType);
         }}.entrySet()));
     }
 
