@@ -8,6 +8,7 @@ import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.JobBlockedException;
+import de.otto.edison.testsupport.util.Sets;
 import org.bson.Document;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -19,6 +20,7 @@ import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.repository.mongo.JobStructure.*;
 import static de.otto.edison.jobs.repository.mongo.MongoJobRepository.RUNNING_JOBS_DOCUMENT;
+import static de.otto.edison.testsupport.util.Sets.hashSet;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -244,9 +246,7 @@ public class MongoJobRepositoryTest {
         final String jobType = "myJobType";
         JobInfo jobInfo = someJobInfo("", jobType);
 
-        repo.markJobAsRunningIfPossible(jobInfo.getJobType(), new HashSet<String>() {{
-            add(jobType);
-        }});
+        repo.markJobAsRunningIfPossible(jobInfo.getJobType(), hashSet(jobType));
 
         assertRunningDocumentContainsJob(jobType);
     }
@@ -259,9 +259,7 @@ public class MongoJobRepositoryTest {
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobType, new HashSet<String>() {{
-                add(jobType);
-            }});
+            repo.markJobAsRunningIfPossible(jobType, hashSet(jobType));
         }
 
         // then
@@ -280,9 +278,7 @@ public class MongoJobRepositoryTest {
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobType, new HashSet<String>() {{
-                add(jobType); add(otherJobType);
-            }});
+            repo.markJobAsRunningIfPossible(jobType, hashSet(jobType, otherJobType));
         }
 
         // then
@@ -290,7 +286,6 @@ public class MongoJobRepositoryTest {
             assertRunningDocumentContainsJob(otherJobType);
             throw e;
         }
-
     }
 
     @Test

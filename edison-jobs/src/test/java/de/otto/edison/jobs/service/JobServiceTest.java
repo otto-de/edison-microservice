@@ -9,6 +9,7 @@ import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
+import de.otto.edison.testsupport.util.Sets;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.status.domain.SystemInfo.systemInfo;
+import static de.otto.edison.testsupport.util.Sets.hashSet;
 import static java.time.Clock.fixed;
 import static java.time.Clock.offset;
 import static java.time.Clock.systemDefaultZone;
@@ -86,7 +88,7 @@ public class JobServiceTest {
         when(executorService.scheduleAtFixedRate(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(mock(ScheduledFuture.class));
         when(jobRunnable.getJobDefinition()).thenReturn(DefaultJobDefinition.manuallyTriggerableJobDefinition("someType", "bla", "bla", 0, Optional.empty()));
 
-        jobService = new JobService(jobRepository, asList(jobRunnable), gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, set(jobMutexGroup));
+        jobService = new JobService(jobRepository, asList(jobRunnable), gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, hashSet(jobMutexGroup));
         jobService.postConstruct();
     }
 
@@ -117,20 +119,7 @@ public class JobServiceTest {
         verify(executorService).execute(any(Runnable.class));
         verify(jobRepository).createOrUpdate(JobInfo.newJobInfo(optionalJobId.get(), jobType, clock, systemInfo.hostname));
         verify(jobRunnable).execute(any(JobEventPublisher.class));
-        verify(jobRepository).markJobAsRunningIfPossible(jobType, set(jobType));
-    }
-
-
-
-    private <T> Set<T> set(T... values) {
-        if(values==null) {
-            return emptySet();
-        }
-        HashSet<T> result = new HashSet<>();
-        for(T value: values) {
-            result.add(value);
-        }
-        return result;
+        verify(jobRepository).markJobAsRunningIfPossible(jobType, hashSet(jobType));
     }
 
     @Test
@@ -164,12 +153,12 @@ public class JobServiceTest {
         JobMutexGroup two = new JobMutexGroup("group2", jobType, "type2", "type4");
         JobMutexGroup three = new JobMutexGroup("otherGroup", "käse", "wurst", "wurstkäse");
         jobService = new JobService(jobRepository, asList(jobRunnable), gaugeServiceMock, executorService,
-                applicationEventPublisher, clock, systemInfo, set(one, two, three)) ;
+                applicationEventPublisher, clock, systemInfo, hashSet(one, two, three)) ;
 
         // when
         jobService.startAsyncJob(jobType);
 
-        verify(jobRepository).markJobAsRunningIfPossible(jobType, set(jobType, "type2", "type3", "type4"));
+        verify(jobRepository).markJobAsRunningIfPossible(jobType, hashSet(jobType, "type2", "type3", "type4"));
     }
 
     @Test
