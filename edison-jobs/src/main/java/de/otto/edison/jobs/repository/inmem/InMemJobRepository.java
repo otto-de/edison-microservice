@@ -34,6 +34,17 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
+    public List<JobInfo> findLatestJobsDistinct() {
+        Set<String> typeSet = new HashSet<>();
+
+        return jobs.values()
+                .stream()
+                .sorted(STARTED_TIME_DESC_COMPARATOR)
+                .filter(j -> typeSet.add(j.getJobType()))
+                .collect(toList());
+    }
+
+    @Override
     public Optional<JobInfo> findOne(final String uri) {
         return ofNullable(jobs.get(uri));
     }

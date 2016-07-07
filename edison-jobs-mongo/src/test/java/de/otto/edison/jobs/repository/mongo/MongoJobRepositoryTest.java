@@ -8,8 +8,8 @@ import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.JobBlockedException;
-import de.otto.edison.testsupport.util.Sets;
 import org.bson.Document;
+import org.hamcrest.Matchers;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -162,6 +162,52 @@ public class MongoJobRepositoryTest {
         // then
         assertThat(repo.findAll(), hasSize(1));
         assertThat(repo.findAll(), contains(bar));
+    }
+
+    @Test
+    public void shouldFindAllJobTypes() throws Exception {
+        // Given
+        OffsetDateTime now = OffsetDateTime.now();
+        final JobInfo eins = someRunningJobInfo("jobEins", "someJobTypeEins", now);
+        final JobInfo zwei = someRunningJobInfo("jobZwei", "someJobTypeZwei", now.plusSeconds(1));
+        final JobInfo drei = someRunningJobInfo("jobDrei", "someJobTypeDrei", now.plusSeconds(2));
+        final JobInfo vierWithTypeDrei = someRunningJobInfo("jobVier", "someJobTypeDrei", now.plusSeconds(3));
+
+        repo.createOrUpdate(eins);
+        repo.createOrUpdate(zwei);
+        repo.createOrUpdate(drei);
+        repo.createOrUpdate(vierWithTypeDrei);
+
+        // When
+        List<String> allJobIds = repo.findAllJobIdsDistinct();
+
+        // Then
+        assertThat(allJobIds, hasSize(3));
+        assertThat(allJobIds, Matchers.containsInAnyOrder("jobEins", "jobZwei", "jobVier"));
+    }
+
+    @Test
+    public void shouldFindLatestDistinct() throws Exception {
+        // Given
+        OffsetDateTime now = OffsetDateTime.now();
+        final JobInfo eins = someRunningJobInfo("http://localhost/eins", "someJobType", now);
+        final JobInfo zwei = someRunningJobInfo("http://localhost/zwei", "someOtherJobType", now.plusSeconds(1));
+        final JobInfo drei = someRunningJobInfo("http://localhost/drei", "nextJobType", now.plusSeconds(2));
+        final JobInfo vier = someRunningJobInfo("http://localhost/vier", "someJobType", now.plusSeconds(3));
+        final JobInfo fuenf = someRunningJobInfo("http://localhost/fuenf", "someJobType", now.plusSeconds(4));
+
+        repo.createOrUpdate(eins);
+        repo.createOrUpdate(zwei);
+        repo.createOrUpdate(drei);
+        repo.createOrUpdate(vier);
+        repo.createOrUpdate(fuenf);
+
+        // When
+        List<JobInfo> latestDistinct = repo.findLatestJobsDistinct();
+
+        // Then
+        assertThat(latestDistinct, hasSize(3));
+        assertThat(latestDistinct, Matchers.containsInAnyOrder(fuenf, zwei, drei));
     }
 
     @Test

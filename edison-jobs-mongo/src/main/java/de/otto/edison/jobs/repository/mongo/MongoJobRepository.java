@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.*;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
@@ -120,6 +121,27 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                 .sort(orderByStarted(DESCENDING))
                 .limit(maxCount)
                 .map(this::decode)
+                .into(new ArrayList<>());
+    }
+
+    @Override
+    public List<JobInfo> findLatestJobsDistinct() {
+        List<String> allJobIds = findAllJobIdsDistinct();
+        return collection()
+                .find(new Document("_id", new Document("$in", allJobIds)))
+                .map(this::decode)
+                .into(new ArrayList<>());
+    }
+
+    public List<String> findAllJobIdsDistinct() {
+        return collection()
+                .aggregate(Arrays.asList(
+                        new Document("$sort", new Document("started", -1)),
+                        new Document("$group", new HashMap<String, Object>() {{
+                            put("_id", "$type");
+                            put("latestJobId", new Document("$first", "$_id"));
+                        }})))
+                .map(doc -> doc.getString("latestJobId"))
                 .into(new ArrayList<>());
     }
 

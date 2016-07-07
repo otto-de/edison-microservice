@@ -17,6 +17,8 @@ public interface JobRepository {
 
     List<JobInfo> findLatest(int maxCount);
 
+    List<JobInfo> findLatestJobsDistinct();
+
     List<JobInfo> findLatestBy(String type, int maxCount);
 
     List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset);

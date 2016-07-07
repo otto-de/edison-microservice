@@ -99,10 +99,31 @@ public class JobsControllerTest {
         when(jobService.findJobs(Optional.<String>empty(), 100)).thenReturn(asList(firstJob, secondJob));
 
         // when
-        Object job = jobsController.getJobsAsJson(null, 100, mock(HttpServletRequest.class));
+        Object job = jobsController.getJobsAsJson(null, 100, false, mock(HttpServletRequest.class));
 
         // then
         assertThat(job, is(asList(representationOf(firstJob, false, ""), representationOf(secondJob, false, ""))));
+    }
+
+    @Test
+    public void shouldReturnAllJobsDistinct() throws IOException {
+        // given
+        JobInfo firstJob = newJobInfo("42", "jobType1", fixed(ofEpochMilli(0), systemDefault()), "localhost");
+        JobInfo secondJob = newJobInfo("42", "jobType2", fixed(ofEpochMilli(1), systemDefault()), "localhost");
+        JobInfo thirdJob = newJobInfo("42", "jobType3", fixed(ofEpochMilli(2), systemDefault()), "localhost");
+
+        when(jobService.findJobsDistinct()).thenReturn(asList(firstJob, secondJob, thirdJob));
+
+        // when
+        Object job = jobsController.getJobsAsJson(null, 100, true, mock(HttpServletRequest.class));
+
+        // then
+        assertThat(job, is(asList(representationOf(firstJob, false, ""),
+                representationOf(secondJob, false, ""),
+                representationOf(thirdJob, false, ""))));
+
+        verify(jobService, times(1)).findJobsDistinct();
+        verifyNoMoreInteractions(jobService);
     }
 
     @Test
@@ -111,7 +132,7 @@ public class JobsControllerTest {
         JobInfo firstJob = newJobInfo("42", "SOME_TYPE", systemDefaultZone(), "localhost");
         when(jobService.findJobs(Optional.of("SOME_TYPE"), 100)).thenReturn(asList(firstJob));
 
-        ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE", 100, mock(HttpServletRequest.class));
+        ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE", 100, false, mock(HttpServletRequest.class));
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
         assertThat(jobs, is(asList(representationOf(firstJob, false, ""))));
     }

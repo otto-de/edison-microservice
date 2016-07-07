@@ -128,6 +128,10 @@ public class JobService {
         }
     }
 
+    public List<JobInfo> findJobsDistinct() {
+        return repository.findLatestJobsDistinct();
+    }
+
     public void deleteJobs(final Optional<String> type) {
         if (type.isPresent()) {
             repository.findByType(type.get()).forEach((j) -> repository.removeIfStopped(j.getJobId()));

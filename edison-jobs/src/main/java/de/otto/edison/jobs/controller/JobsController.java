@@ -47,11 +47,12 @@ public class JobsController {
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")
     public ModelAndView getJobsAsHtml(@RequestParam(value = "type", required = false) String type,
                                       @RequestParam(value = "count", defaultValue = "100") int count,
+                                      @RequestParam(value = "distinct", defaultValue = "false", required = false) boolean distinct,
                                       HttpServletRequest request) {
-        final List<JobRepresentation> jobRepresentations = jobService.findJobs(Optional.ofNullable(type), count)
-                .stream()
+        final List<JobRepresentation> jobRepresentations = getJobInfos(type, count, distinct).stream()
                 .map((j) -> representationOf(j, true, baseUriOf(request)))
                 .collect(toList());
+
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
         return modelAndView;
@@ -60,8 +61,9 @@ public class JobsController {
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "application/json")
     public List<JobRepresentation> getJobsAsJson(@RequestParam(value = "type", required = false) String type,
                                                  @RequestParam(value = "count", defaultValue = "100") int count,
+                                                 @RequestParam(value = "distinct", defaultValue = "false", required = false) boolean distinct,
                                                  HttpServletRequest request) {
-        return jobService.findJobs(Optional.ofNullable(type), count)
+        return getJobInfos(type, count, distinct)
                 .stream()
                 .map((j) -> representationOf(j, false, baseUriOf(request)))
                 .collect(toList());
@@ -101,7 +103,6 @@ public class JobsController {
         }
     }
 
-
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "text/html")
     public ModelAndView getJobAsHtml(final HttpServletRequest request,
                                      final HttpServletResponse response,
@@ -139,5 +140,15 @@ public class JobsController {
     private void setCorsHeaders(final HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Methods", "GET");
         response.setHeader("Access-Control-Allow-Origin", "*");
+    }
+
+    private List<JobInfo> getJobInfos(String type, int count, boolean distinct) {
+        final List<JobInfo> jobInfos;
+        if (distinct) {
+            jobInfos = jobService.findJobsDistinct();
+        } else {
+            jobInfos = jobService.findJobs(Optional.ofNullable(type), count);
+        }
+        return jobInfos;
     }
 }

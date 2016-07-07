@@ -5,15 +5,14 @@ import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
+import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
@@ -85,6 +84,32 @@ public class InMemJobRepositoryTest {
         assertThat(jobInfos.get(0).getJobId(), is("youngest"));
         assertThat(jobInfos.get(1).getJobId(), is("oldest"));
     }
+
+    @Test
+    public void shouldFindLatestDistinct() throws Exception {
+        // Given
+        Instant now = Instant.now();
+        final JobInfo eins = newJobInfo("eins", "eins", fixed(now.plusSeconds(10), systemDefault()), "localhost");
+        final JobInfo zwei = newJobInfo("zwei", "eins", fixed(now.plusSeconds(20), systemDefault()), "localhost");
+        final JobInfo drei = newJobInfo("drei", "zwei", fixed(now.plusSeconds(30), systemDefault()), "localhost");
+        final JobInfo vier = newJobInfo("vier", "drei", fixed(now.plusSeconds(40), systemDefault()), "localhost");
+        final JobInfo fuenf = newJobInfo("fuenf", "drei", fixed(now.plusSeconds(50), systemDefault()), "localhost");
+
+        repository.createOrUpdate(eins);
+        repository.createOrUpdate(zwei);
+        repository.createOrUpdate(drei);
+        repository.createOrUpdate(vier);
+        repository.createOrUpdate(fuenf);
+
+        // When
+        List<JobInfo> latestDistinct = repository.findLatestJobsDistinct();
+
+        // Then
+        assertThat(latestDistinct, hasSize(3));
+        assertThat(latestDistinct, Matchers.containsInAnyOrder(fuenf, zwei, drei));
+    }
+
+
 
     @Test
     public void shouldFindRunningJobsWithoutUpdatedSinceSpecificDate() throws Exception {
