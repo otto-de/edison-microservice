@@ -1,6 +1,8 @@
 # Release History
 
 ## CURRENT SNAPSHOT
+
+## Release 0.63.0
 * Cronexpressions of JobDefinitions are evaluated on construction of a JobDefinition
 * Bugfix: JobLocks are now properly released when Jobs are marked dead.
 * Optimization of JobLocking.
