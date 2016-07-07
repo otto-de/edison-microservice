@@ -2,8 +2,12 @@ package de.otto.edison.example.jobs;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
+import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
+import de.otto.edison.jobs.service.JobMutexGroup;
+import de.otto.edison.jobs.service.JobService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,6 +22,12 @@ import static java.time.Clock.systemDefaultZone;
 @Configuration
 public class ExampleJobsConfiguration {
 
+    @Autowired
+    JobService jobService;
+
+    @Autowired
+    JobRepository jobRepository;
+
     @Bean
     public AsyncHttpClient httpClient() {
         return new AsyncHttpClient(new AsyncHttpClientConfig.Builder()
@@ -31,7 +41,12 @@ public class ExampleJobsConfiguration {
 
     @Bean
     public StopDeadJobs stopDeadJobsStrategy() {
-        return new StopDeadJobs(60, systemDefaultZone());
+        return new StopDeadJobs(jobService, jobRepository, 60, systemDefaultZone());
+    }
+
+    @Bean
+    public JobMutexGroup mutualExclusion() {
+        return new JobMutexGroup("barFizzle", "Bar", "Fizzle");
     }
 
 }

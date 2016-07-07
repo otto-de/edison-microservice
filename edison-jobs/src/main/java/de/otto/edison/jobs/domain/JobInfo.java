@@ -246,6 +246,11 @@ public class JobInfo {
             return this;
         }
 
+        public Builder setClock(Clock clock) {
+            this.clock = clock;
+            return this;
+        }
+
         public Builder setJobType(String jobType) {
             this.jobType = jobType;
             return this;

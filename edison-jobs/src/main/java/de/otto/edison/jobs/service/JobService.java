@@ -5,7 +5,6 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
-import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
@@ -33,12 +32,6 @@ import static java.time.OffsetDateTime.now;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
-/**
- * A service used to manage jobs in Edison microservices.
- *
- * @author Guido Steinacker
- * @since 15.02.15
- */
 @Service
 public class JobService {
 
@@ -209,6 +202,7 @@ public class JobService {
                 repository.createOrUpdate(
                         jobInfo.copy()
                                 .setStatus(ERROR)
+                                .setLastUpdated(now(clock))
                                 .build());
             });
         }

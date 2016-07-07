@@ -3,6 +3,8 @@ package de.otto.edison.jobs.service;
 import de.otto.edison.jobs.definition.DefaultJobDefinition;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
@@ -29,6 +31,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.status.domain.SystemInfo.systemInfo;
 import static java.time.Clock.fixed;
 import static java.time.Clock.offset;
@@ -199,15 +202,70 @@ public class JobServiceTest {
     @Test
     public void shouldUpdateTimeStampOnKeepAlive() {
         OffsetDateTime earlier = OffsetDateTime.ofInstant(now(clock).minus(10, MINUTES), systemDefault());
-        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(
-                defaultJobInfo().setLastUpdated(earlier).setStarted(earlier).build()
-        ));
+        JobInfo jobInfo = defaultJobInfo()
+                .setStarted(earlier)
+                .setLastUpdated(earlier).build();
+        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(jobInfo));
 
         jobService.keepAlive(JOB_ID);
 
-        JobInfo expected = defaultJobInfo().setLastUpdated(OffsetDateTime.now(clock)).build();
-//        verify(jobRepository).createOrUpdate(eq(expected));
-        //TODO - finish
+        JobInfo expected = jobInfo.copy()
+                .setLastUpdated(OffsetDateTime.now(clock))
+                .build();
+        verify(jobRepository).createOrUpdate(expected);
+    }
+
+    @Test
+    public void shouldMarkRestarted() {
+        JobInfo jobInfo = defaultJobInfo()
+                .setStatus(JobInfo.JobStatus.ERROR)
+                .build();
+        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(jobInfo));
+
+        //when
+        jobService.markRestarted(JOB_ID);
+
+        // then
+        OffsetDateTime now = OffsetDateTime.now(clock);
+        JobInfo expected = jobInfo.copy()
+                .setLastUpdated(now)
+                .setStatus(JobInfo.JobStatus.OK)
+                .build();
+        verify(jobRepository).createOrUpdate(expected);
+        verify(jobRepository).appendMessage(JOB_ID, jobMessage(Level.WARNING, "Restarting job ..", now));
+    }
+
+    @Test
+    public void shouldAppendNonErrorMessage() {
+        JobMessage message = JobMessage.jobMessage(Level.INFO, "This is an interesting message", OffsetDateTime.now());
+
+        // when
+        jobService.appendMessage(JOB_ID, message);
+
+        // then
+        verify(jobRepository).appendMessage(JOB_ID, message);
+        verify(jobRepository, never()).createOrUpdate(any(JobInfo.class));
+    }
+
+    @Test
+    public void shouldAppendErrorMessageAndSetErrorStatus() {
+        OffsetDateTime now = OffsetDateTime.now(clock);
+        OffsetDateTime earlier = now.minus(10, MINUTES);
+        JobMessage message = JobMessage.jobMessage(Level.ERROR, "Error: Out of hunk", now);
+        JobInfo jobInfo = defaultJobInfo()
+                .setLastUpdated(earlier)
+                .build();
+        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(jobInfo));
+
+        // when
+        jobService.appendMessage(JOB_ID, message);
+
+        // then
+        JobInfo expected = jobInfo.copy()
+                .setStatus(JobInfo.JobStatus.ERROR)
+                .setLastUpdated(now).build();
+        verify(jobRepository).appendMessage(JOB_ID, message);
+        verify(jobRepository).createOrUpdate(expected);
     }
 
     private JobInfo.Builder defaultJobInfo() {

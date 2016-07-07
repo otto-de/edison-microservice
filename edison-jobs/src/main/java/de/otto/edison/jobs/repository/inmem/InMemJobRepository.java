@@ -120,7 +120,7 @@ public class InMemJobRepository implements JobRepository {
         synchronized(runningJobs) {
             for(String mutexJobType: blockingJobs) {
                 if (runningJobs.contains(mutexJobType)) {
-                    throw new JobBlockedException("no implementation");
+                    throw new JobBlockedException("Blocked");
                 }
             }
             runningJobs.add(jobType);

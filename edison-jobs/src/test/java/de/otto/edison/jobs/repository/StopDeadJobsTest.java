@@ -2,7 +2,10 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
+import de.otto.edison.jobs.service.JobService;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Clock;
@@ -19,30 +22,40 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @Test
 public class StopDeadJobsTest {
+    static final String JOB_ID = "runningJobToBeStopped";
 
+    StopDeadJobs subject;
+
+    @Mock
+    JobService jobServiceMock;
+
+    @Mock
+    JobRepository jobRepository;
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        initMocks(this);
+        subject = new StopDeadJobs(jobServiceMock, jobRepository, 21, Clock.systemDefaultZone());
+
+    }
 
     @Test
     public void shouldMarkOldJobAsDeadAndStopped() throws Exception {
         //given
-        final Clock clock = fixed(Instant.now(), systemDefault());
         final Clock earlierClock = fixed(Instant.now().minusSeconds(25), systemDefault());
 
-        JobInfo runningJobToBeStopped = newJobInfo("runningJobToBeStopped", "runningJobToBeStoppedTYPE", earlierClock, "localhost");
+        JobInfo runningJobToBeStopped = newJobInfo(JOB_ID, "runningJobToBeStoppedTYPE", earlierClock, "localhost");
 
-        JobRepository repository = Mockito.mock(JobRepository.class);
-        when(repository.findRunningWithoutUpdateSince(any())).thenReturn(asList(runningJobToBeStopped));
-
-        StopDeadJobs strategy = new StopDeadJobs(21, clock);
-        strategy.setJobRepository(repository);
+        when(jobRepository.findRunningWithoutUpdateSince(any())).thenReturn(asList(runningJobToBeStopped));
 
         //when
-        strategy.doCleanUp();
+        subject.doCleanUp();
 
         //then
-        verify(repository).createOrUpdate(runningJobToBeStopped.copy().setStatus(DEAD).setStopped(OffsetDateTime.now(earlierClock)).setLastUpdated(OffsetDateTime.now(earlierClock)).build());
-        verify(repository).clearRunningMark(runningJobToBeStopped.getJobType());
+        verify(jobServiceMock).killJob(JOB_ID);
     }
 }

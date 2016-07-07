@@ -6,6 +6,7 @@ import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
+import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.jobs.status.JobStatusDetailIndicator;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
@@ -13,6 +14,7 @@ import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.time.Clock;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -44,6 +47,12 @@ public class JobConfiguration {
     @Value("${edison.jobs.cleanup.mark-dead-after:30}")
     int secondsToMarkJobsAsDead;
 
+    @Autowired
+    private JobService jobService;
+
+    @Autowired
+    private JobRepository jobRepository;
+
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
     public ScheduledExecutorService scheduledExecutorService() {
@@ -66,7 +75,7 @@ public class JobConfiguration {
     @Bean
     @ConditionalOnMissingBean(StopDeadJobs.class)
     public StopDeadJobs deadJobStrategy() {
-        return new StopDeadJobs(secondsToMarkJobsAsDead, systemDefaultZone());
+        return new StopDeadJobs(jobService, jobRepository, secondsToMarkJobsAsDead, systemDefaultZone());
     }
 
     @Bean
