@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.is;
 public class HalRepresentationLinkingTest {
 
     @Test
-    public void shouldRenderSimpleHalRepresentationWithProperties() throws JsonProcessingException {
+    public void shouldRenderSimpleHalRepresentationWithoutLinks() throws JsonProcessingException {
         // given
         final HalRepresentation representation = new HalRepresentation() {
             public final String first = "foo";
@@ -24,7 +24,7 @@ public class HalRepresentationLinkingTest {
         // when
         final String json = new ObjectMapper().writeValueAsString(representation);
         // then
-        assertThat(json, is("{\"first\":\"foo\",\"second\":\"bar\"}"));
+        assertThat(json, is("{\"_links\":{},\"first\":\"foo\",\"second\":\"bar\"}"));
 
     }
 
@@ -55,6 +55,20 @@ public class HalRepresentationLinkingTest {
         final String json = new ObjectMapper().writeValueAsString(representation);
         // then
         assertThat(json, is("{\"_links\":{\"self\":{\"href\":\"http://example.org/test/foo\"},\"collection\":{\"href\":\"http://example.org/test\"}}}"));
+    }
+
+    @Test
+    public void shouldRenderMultipleLinksForSingleRel() throws JsonProcessingException {
+        // given
+        final HalRepresentation representation = new HalRepresentation(
+                linkingTo(
+                        link("test", "http://example.org/test/foo"),
+                        link("test", "http://example.org/test/bar"))
+        );
+        // when
+        final String json = new ObjectMapper().writeValueAsString(representation);
+        // then
+        assertThat(json, is("{\"_links\":{\"test\":[{\"href\":\"http://example.org/test/foo\"},{\"href\":\"http://example.org/test/bar\"}]}}"));
     }
 
     @Test

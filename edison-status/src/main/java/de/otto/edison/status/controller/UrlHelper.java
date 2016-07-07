@@ -41,7 +41,11 @@ class UrlHelper {
      * @return
      */
     public static String absoluteHrefOf(final String path) {
-        return fromCurrentServletMapping().path(path).build().toString();
+        try {
+            return fromCurrentServletMapping().path(path).build().toString();
+        } catch (final IllegalStateException e) {
+            return path;
+        }
     }
 
     public static URL url(final String url) {

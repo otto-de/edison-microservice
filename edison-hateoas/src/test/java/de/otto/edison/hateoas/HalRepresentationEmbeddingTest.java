@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 import static de.otto.edison.hateoas.Embedded.withEmbedded;
+import static de.otto.edison.hateoas.Link.link;
 import static de.otto.edison.hateoas.Link.self;
 import static de.otto.edison.hateoas.Links.linkingTo;
 import static java.util.Arrays.asList;
@@ -40,6 +41,32 @@ public class HalRepresentationEmbeddingTest {
                                 "}," +
                                 "{" +
                                     "\"_links\":{\"self\":{\"href\":\"http://example.org/test/bar/02\"}},\"amount\":\"4711€\"" +
+                                "}" +
+                                "]}," +
+                        "\"total\":\"4753€\"" +
+                "}"));
+    }
+
+    @Test
+    public void shouldRenderEmbeddedResourcesWithMultipleLinks() throws JsonProcessingException {
+        // given
+        final List<HalRepresentation> items = asList(
+                new HalRepresentation(linkingTo(
+                        link("test", "http://example.org/test/bar/01"),
+                        link("test", "http://example.org/test/bar/02"))) {public String amount="42€";}
+        );
+        final HalRepresentation representation = new HalRepresentation(
+                linkingTo(self("http://example.org/test/bar")),
+                withEmbedded("orders", items)) {public String total="4753€";};
+        // when
+        final String json = new ObjectMapper().writeValueAsString(representation);
+        // then
+        assertThat(json, is(
+                "{" +
+                        "\"_links\":{\"self\":{\"href\":\"http://example.org/test/bar\"}}," +
+                        "\"_embedded\":{\"orders\":[" +
+                                "{" +
+                                    "\"_links\":{\"test\":[{\"href\":\"http://example.org/test/bar/01\"},{\"href\":\"http://example.org/test/bar/02\"}]},\"amount\":\"42€\"" +
                                 "}" +
                                 "]}," +
                         "\"total\":\"4753€\"" +
