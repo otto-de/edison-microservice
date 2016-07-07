@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentServletMapping;
+
 /**
  * @author Guido Steinacker
  * @since 21.08.15
@@ -23,6 +25,23 @@ class UrlHelper {
         return requestUrl != null
                 ? requestUrl.substring(0, requestUrl.indexOf(request.getServletPath()))
                 : "";
+    }
+
+    /**
+     * Returns an absolute URL for the specified path.
+     *
+     * Example: If the current request URL is http://example.org/helloworld/internal/status,
+     * {@code absoluteHrefOf("/internal/health")} will return http://example.org/helloworld/internal/health (with
+     * helloworld as servletContextPath).
+     *
+     * This method relies on Spring's {@link org.springframework.web.context.request.RequestContextHolder} to find
+     * the current request.
+     *
+     * @param path
+     * @return
+     */
+    public static String absoluteHrefOf(final String path) {
+        return fromCurrentServletMapping().path(path).build().toString();
     }
 
     public static URL url(final String url) {

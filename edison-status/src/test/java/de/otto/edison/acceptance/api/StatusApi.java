@@ -24,6 +24,7 @@ public class StatusApi extends SpringTestBase {
     private final static ObjectMapper objectMapper = new ObjectMapper();
     private static String content = null;
     private static HttpStatus statusCode;
+    private static HttpHeaders responseHeaders;
 
     public static When internal_is_retrieved_as(final String mediaType) throws IOException {
         getResource("http://localhost:8085/teststatus/internal", of(mediaType));
@@ -41,6 +42,10 @@ public class StatusApi extends SpringTestBase {
 
     public static String the_returned_content() {
         return content;
+    }
+
+    public static HttpHeaders the_response_headers() {
+        return responseHeaders;
     }
 
     public static JsonNode the_returned_json() {
@@ -64,6 +69,7 @@ public class StatusApi extends SpringTestBase {
         );
         content = responseEntity.getBody();
         statusCode = responseEntity.getStatusCode();
+        responseHeaders = responseEntity.getHeaders();
     }
 
 }
