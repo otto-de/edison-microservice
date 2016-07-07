@@ -134,16 +134,6 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     }
 
     @Override
-    public List<JobInfo> findLatestFinishedBy(final String type, final JobStatus status, final int maxCount) {
-        return collection()
-                .find(byTypeAndStatus(type, status).append(STOPPED.key(), singletonMap("$exists", true)))
-                .sort(orderByStarted(DESCENDING))
-                .limit(maxCount)
-                .map(this::decode)
-                .into(new ArrayList<>());
-    }
-
-    @Override
     public List<JobInfo> findByType(final String type) {
         return collection()
                 .find(byType(type))

@@ -122,19 +122,6 @@ public class MongoJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindLatestByTypeAndStatus() {
-        // given
-        repo.createOrUpdate(someJobInfo("http://localhost/foo", "T_FOO"));
-        JobInfo finishedBar = someJobInfo("http://localhost/bar/1", "T_BAR");
-        repo.createOrUpdate(finishedBar);
-        repo.createOrUpdate(someRunningJobInfo("http://localhost/bar/2", "T_BAR", now()));
-        // when
-        final List<JobInfo> jobInfos = repo.findLatestFinishedBy("T_BAR", OK, 1);
-        // then
-        assertThat(jobInfos, contains(finishedBar));
-    }
-
-    @Test
     public void shouldFindByType() {
         // given
         final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");

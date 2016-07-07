@@ -48,20 +48,6 @@ public class InMemJobRepository implements JobRepository {
                 .collect(toList());
     }
 
-    @Override
-    public List<JobInfo> findLatestFinishedBy(String type, JobStatus status, int maxCount) {
-        return jobs.values()
-                .stream()
-                .sorted(STARTED_TIME_DESC_COMPARATOR)
-                .filter(jobInfo ->
-                        jobInfo.getJobType().equals(type)
-                                && jobInfo.getStatus().equals(status)
-                                && jobInfo.isStopped()
-                )
-                .limit(maxCount)
-                .collect(toList());
-    }
-
 
     @Override
     public List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset) {

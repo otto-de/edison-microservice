@@ -139,25 +139,6 @@ public class InMemJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindLatestAndStatus() {
-        // given
-        final String type = "TEST";
-        final String otherType = "OTHERTEST";
-        repository.createOrUpdate(newJobInfo("oldest", type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
-        repository.createOrUpdate(newJobInfo("other", otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
-        repository.createOrUpdate(newJobInfo("youngest", type, fixed(Instant.now(), systemDefault()), "localhost"));
-        repository.createOrUpdate(newJobInfo("finished", type, now(), now(), Optional.of(now()),
-                JobStatus.OK, Collections.emptyList(), systemDefaultZone(), "localhost"));
-
-        // when
-        final List<JobInfo> jobInfos = repository.findLatestFinishedBy(type, JobStatus.OK, 2);
-
-        // then
-        assertThat(jobInfos.size(), is(1));
-        assertThat(jobInfos.get(0).getJobId(), is("finished"));
-    }
-
-    @Test
     public void shouldFindAllJobsOfSpecificType() throws Exception {
         // Given
         final String type = "TEST";
