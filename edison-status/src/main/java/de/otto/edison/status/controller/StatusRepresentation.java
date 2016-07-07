@@ -11,7 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static de.otto.edison.hateoas.Link.linkBuilder;
 import static de.otto.edison.hateoas.Link.profile;
 import static de.otto.edison.hateoas.Link.self;
 import static de.otto.edison.hateoas.Links.linkingTo;
@@ -31,12 +30,7 @@ public class StatusRepresentation extends HalRepresentation {
         super(
                 linkingTo(
                         self(absoluteHrefOf("/internal/status.json")),
-                        profile("http://otto-de.github.io/profiles/monitoring/status"),
-                        linkBuilder("http://otto-de.github.io/linkrelations/features", absoluteHrefOf("/internal/toggles.json"))
-                                .withTitle("Feature Toggles")
-                                .withType("application/hal+json")
-                                .withProfile("http://otto-de.github.io/profiles/monitoring/features")
-                                .build()
+                        profile("http://otto-de.github.io/profiles/monitoring/status")
                 )
         );
         this.application = new ApplicationRepresentation(applicationStatus);
