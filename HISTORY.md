@@ -2,6 +2,10 @@
 
 ## CURRENT SNAPSHOT
 * Cronexpressions of JobDefinitions are evaluated on construction of a JobDefinition
+* Bugfix: JobLocks are now properly released when Jobs are marked dead.
+* Optimization of JobLocking.
+* Breaking Change: `JobRepository` interface: add methods `markAsRunningIfPossible` and `clearRunningMark`. Delete unused methods.
+* Breaking Change: `StopDeadJobs` constructor now needs a `JobService` and a `JobRepository`. Those can be obtained by autowiring.
 
 ## Release 0.62.0
 * JobInfo is immutable, this is a breaking change, use the JobInfo.builder() instead
