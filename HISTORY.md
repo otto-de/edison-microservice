@@ -1,6 +1,8 @@
 # Release History
 
 ## CURRENT SNAPSHOT
+
+## Release 0.64.0
 * Add parameter distinct=true|false to jobcontroller to get only the latest of each jobs in the overview
 
 ## Release 0.63.0
