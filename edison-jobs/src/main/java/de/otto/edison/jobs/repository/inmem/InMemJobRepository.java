@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
+import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -40,6 +41,7 @@ public class InMemJobRepository implements JobRepository {
         return jobs.values()
                 .stream()
                 .sorted(STARTED_TIME_DESC_COMPARATOR)
+                .filter(j -> nonNull(j.getJobType()))
                 .filter(j -> typeSet.add(j.getJobType()))
                 .collect(toList());
     }

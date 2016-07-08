@@ -142,7 +142,9 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                             put("latestJobId", new Document("$first", "$_id"));
                         }})))
                 .map(doc -> doc.getString("latestJobId"))
-                .into(new ArrayList<>());
+                .into(new ArrayList<>()).stream()
+                .filter(Objects::nonNull)
+                .collect(toList());
     }
 
     @Override
