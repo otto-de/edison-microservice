@@ -1,6 +1,7 @@
 # Release History
 
 ## CURRENT SNAPSHOT
+* Add parameter distinct=true|false to jobcontroller to get only the latest of each jobs in the overview
 
 ## Release 0.63.0
 * Cronexpressions of JobDefinitions are evaluated on construction of a JobDefinition
