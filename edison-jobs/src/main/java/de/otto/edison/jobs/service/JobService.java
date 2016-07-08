@@ -104,11 +104,6 @@ public class JobService {
         }
     }
 
-    private JobInfo createJobInfo(String jobType) {
-        return newJobInfo(UUID.randomUUID().toString(), jobType, clock,
-                systemInfo.getHostname());
-    }
-
     public Optional<JobInfo> findJob(final String id) {
         return repository.findOne(id);
     }
@@ -140,6 +135,16 @@ public class JobService {
         }
     }
 
+    public void stopJob(final String jobId) {
+        this.stopJob(jobId, Optional.empty());
+    }
+
+    public void killJob(String jobId) {
+        this.stopJob(jobId, Optional.of(JobInfo.JobStatus.DEAD));
+        repository.appendMessage(jobId, jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", OffsetDateTime.now(clock)));
+
+    }
+
     private void stopJob(final String jobId, Optional<JobInfo.JobStatus> status) {
         Optional<JobInfo> optionalJobInfo = repository.findOne(jobId);
         if (!optionalJobInfo.isPresent()) {
@@ -154,48 +159,6 @@ public class JobService {
         status.ifPresent(builder::setStatus);
         repository.createOrUpdate(builder
                 .build());
-    }
-
-    public void stopJob(final String jobId) {
-        this.stopJob(jobId, Optional.empty());
-    }
-
-    public void killJob(String jobId) {
-        this.stopJob(jobId, Optional.of(JobInfo.JobStatus.DEAD));
-        repository.appendMessage(jobId, jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", OffsetDateTime.now(clock)));
-
-    }
-
-    private JobRunnable findJobRunnable(String jobType) {
-        final Optional<JobRunnable> optionalRunnable = jobRunnables.stream().filter(r -> r.getJobDefinition().jobType().equalsIgnoreCase(jobType)).findFirst();
-        return optionalRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for " + jobType));
-    }
-
-    private String startAsync(final JobRunnable jobRunnable, final String jobId) {
-        final JobRunner jobRunner = createJobRunner(jobRunnable, jobId);
-        executor.execute(() -> jobRunner.start(jobRunnable));
-        return jobId;
-    }
-
-    private JobRunner createJobRunner(JobRunnable jobRunnable, String jobId) {
-        final String jobType = jobRunnable.getJobDefinition().jobType();
-        return newJobRunner(
-                jobId,
-                jobType,
-                executor,
-                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobId)
-        );
-    }
-
-    private Set<String> mutexJobTypesFor(final String jobType) {
-        final Set<String> result = new HashSet<>();
-        result.add(jobType);
-        this.mutexGroups
-                .stream()
-                .map(JobMutexGroup::getJobTypes)
-                .filter(g -> g.contains(jobType))
-                .forEach(result::addAll);
-        return result;
     }
 
 
@@ -229,6 +192,43 @@ public class JobService {
                         .setStatus(JobInfo.JobStatus.OK)
                         .build())
                 );
+    }
+
+    private JobInfo createJobInfo(String jobType) {
+        return newJobInfo(UUID.randomUUID().toString(), jobType, clock,
+                systemInfo.getHostname());
+    }
+
+    private JobRunnable findJobRunnable(String jobType) {
+        final Optional<JobRunnable> optionalRunnable = jobRunnables.stream().filter(r -> r.getJobDefinition().jobType().equalsIgnoreCase(jobType)).findFirst();
+        return optionalRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for " + jobType));
+    }
+
+    private String startAsync(final JobRunnable jobRunnable, final String jobId) {
+        final JobRunner jobRunner = createJobRunner(jobRunnable, jobId);
+        executor.execute(() -> jobRunner.start(jobRunnable));
+        return jobId;
+    }
+
+    private JobRunner createJobRunner(JobRunnable jobRunnable, String jobId) {
+        final String jobType = jobRunnable.getJobDefinition().jobType();
+        return newJobRunner(
+                jobId,
+                jobType,
+                executor,
+                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobId)
+        );
+    }
+
+    private Set<String> mutexJobTypesFor(final String jobType) {
+        final Set<String> result = new HashSet<>();
+        result.add(jobType);
+        this.mutexGroups
+                .stream()
+                .map(JobMutexGroup::getJobTypes)
+                .filter(g -> g.contains(jobType))
+                .forEach(result::addAll);
+        return result;
     }
 
     private JobRunnable metered(final JobRunnable delegate) {
