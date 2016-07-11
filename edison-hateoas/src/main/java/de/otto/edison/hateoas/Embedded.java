@@ -1,27 +1,47 @@
 package de.otto.edison.hateoas;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 
 /**
  * Created by guido on 05.07.16.
  */
-@JsonInclude(NON_NULL)
+@JsonSerialize(using = Embedded.EmbeddedSerializer.class)
+@JsonDeserialize(using = Embedded.EmbeddedDeserializer.class)
 public class Embedded {
 
-    public final Map<String,List<HalRepresentation>> _embedded;
+    //@JsonProperty(value = "_embedded")
+    private final Map<String,List<HalRepresentation>> items;
 
-    private Embedded(final Map<String, List<HalRepresentation>> embedded) {
-        _embedded = embedded;
+    Embedded() {
+        items =null;}
+
+    private Embedded(final Map<String, List<HalRepresentation>> items) {
+        this.items = items;
     }
 
-    public static Embedded withNothingEmbedded() {
+    public static Embedded emptyEmbedded() {
         return new Embedded(null);
     }
 
@@ -43,7 +63,52 @@ public class Embedded {
         }
 
         public Embedded build() {
-            return _embedded.isEmpty() ? withNothingEmbedded() : new Embedded(_embedded);
+            return _embedded.isEmpty() ? emptyEmbedded() : new Embedded(_embedded);
+        }
+    }
+
+    @JsonIgnore
+    public List<HalRepresentation> getItemsBy(final String rel) {
+        return items.containsKey(rel) ? items.get(rel) : emptyList();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Embedded embedded = (Embedded) o;
+
+        return this.items != null ? this.items.equals(embedded.items) : embedded.items == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return items != null ? items.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Embedded{" +
+                "items=" + items +
+                '}';
+    }
+
+    static class EmbeddedSerializer extends JsonSerializer<Embedded> {
+
+        @Override
+        public void serialize(Embedded value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+            gen.writeObject(value.items);
+        }
+    }
+
+    static class EmbeddedDeserializer extends JsonDeserializer<Embedded> {
+
+        @Override
+        public Embedded deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            final Map<String,List<HalRepresentation>> items = p.readValueAs(new TypeReference<Map<String, List<HalRepresentation>>>() {});
+            return new Embedded(items);
         }
     }
 }

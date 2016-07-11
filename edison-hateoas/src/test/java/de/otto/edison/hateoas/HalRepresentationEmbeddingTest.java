@@ -34,16 +34,18 @@ public class HalRepresentationEmbeddingTest {
         // then
         assertThat(json, is(
                 "{" +
+                        "\"total\":\"4753€\"," +
                         "\"_links\":{\"self\":{\"href\":\"http://example.org/test/bar\"}}," +
                         "\"_embedded\":{\"orders\":[" +
                                 "{" +
-                                    "\"_links\":{\"self\":{\"href\":\"http://example.org/test/bar/01\"}},\"amount\":\"42€\"" +
+                                    "\"amount\":\"42€\"," +
+                                    "\"_links\":{\"self\":{\"href\":\"http://example.org/test/bar/01\"}}" +
                                 "}," +
                                 "{" +
-                                    "\"_links\":{\"self\":{\"href\":\"http://example.org/test/bar/02\"}},\"amount\":\"4711€\"" +
+                                    "\"amount\":\"4711€\"," +
+                                    "\"_links\":{\"self\":{\"href\":\"http://example.org/test/bar/02\"}}" +
                                 "}" +
-                                "]}," +
-                        "\"total\":\"4753€\"" +
+                                "]}" +
                 "}"));
     }
 
@@ -63,13 +65,14 @@ public class HalRepresentationEmbeddingTest {
         // then
         assertThat(json, is(
                 "{" +
+                        "\"total\":\"4753€\"," +
                         "\"_links\":{\"self\":{\"href\":\"http://example.org/test/bar\"}}," +
                         "\"_embedded\":{\"orders\":[" +
                                 "{" +
-                                    "\"_links\":{\"test\":[{\"href\":\"http://example.org/test/bar/01\"},{\"href\":\"http://example.org/test/bar/02\"}]},\"amount\":\"42€\"" +
+                                    "\"amount\":\"42€\"," +
+                                    "\"_links\":{\"test\":[{\"href\":\"http://example.org/test/bar/01\"},{\"href\":\"http://example.org/test/bar/02\"}]}" +
                                 "}" +
-                                "]}," +
-                        "\"total\":\"4753€\"" +
+                                "]}" +
                 "}"));
     }
 

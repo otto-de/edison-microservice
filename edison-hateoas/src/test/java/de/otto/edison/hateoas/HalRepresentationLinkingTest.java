@@ -24,7 +24,7 @@ public class HalRepresentationLinkingTest {
         // when
         final String json = new ObjectMapper().writeValueAsString(representation);
         // then
-        assertThat(json, is("{\"_links\":{},\"first\":\"foo\",\"second\":\"bar\"}"));
+        assertThat(json, is("{\"first\":\"foo\",\"second\":\"bar\"}"));
 
     }
 
@@ -40,7 +40,7 @@ public class HalRepresentationLinkingTest {
         // when
         final String json = new ObjectMapper().writeValueAsString(representation);
         // then
-        assertThat(json, is("{\"_links\":{\"self\":{\"href\":\"http://example.org/test/foo\"}},\"test\":\"foo\"}"));
+        assertThat(json, is("{\"test\":\"foo\",\"_links\":{\"self\":{\"href\":\"http://example.org/test/foo\"}}}"));
     }
 
     @Test
@@ -110,8 +110,8 @@ public class HalRepresentationLinkingTest {
         final String json = new ObjectMapper().writeValueAsString(representation);
         // then
         assertThat(json, is("{\"_links\":{" + "" +
-                "\"search\":{\"href\":\"/test{?bar}\",\"templated\":true,\"type\":\"application/hal+json\",\"hrefLang\":\"de-DE\",\"title\":\"Some Title\",\"name\":\"Foo\",\"profile\":\"http://example.org/profiles/test-profile\",\"deprecated\":true}," +
-                "\"foo\":{\"href\":\"/test/bar\",\"type\":\"application/hal+json\",\"hrefLang\":\"de-DE\",\"title\":\"Some Title\",\"name\":\"Foo\",\"profile\":\"http://example.org/profiles/test-profile\",\"deprecated\":true}" +
+                "\"search\":{\"href\":\"/test{?bar}\",\"templated\":true,\"type\":\"application/hal+json\",\"hreflang\":\"de-DE\",\"title\":\"Some Title\",\"name\":\"Foo\",\"profile\":\"http://example.org/profiles/test-profile\",\"deprecated\":true}," +
+                "\"foo\":{\"href\":\"/test/bar\",\"type\":\"application/hal+json\",\"hreflang\":\"de-DE\",\"title\":\"Some Title\",\"name\":\"Foo\",\"profile\":\"http://example.org/profiles/test-profile\",\"deprecated\":true}" +
                 "}}"));
     }
 

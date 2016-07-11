@@ -19,7 +19,7 @@ public class Link {
     public final String href;
     public final Boolean templated;
     public final String type;
-    public final String hrefLang;
+    public final String hreflang;
     public final String title;
     public final String name;
     public final String profile;
@@ -42,7 +42,7 @@ public class Link {
         this.href = href;
         this.templated = templated;
         this.type = type;
-        this.hrefLang = hrefLang;
+        this.hreflang = hrefLang;
         this.title = title;
         this.name = name;
         this.profile = profile;
@@ -79,6 +79,54 @@ public class Link {
 
     public static LinkBuilder linkBuilder(final String rel, final String href) {
         return new LinkBuilder(rel, href);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Link link = (Link) o;
+
+        if (rel != null ? !rel.equals(link.rel) : link.rel != null) return false;
+        if (href != null ? !href.equals(link.href) : link.href != null) return false;
+        if (templated != null ? !templated.equals(link.templated) : link.templated != null) return false;
+        if (type != null ? !type.equals(link.type) : link.type != null) return false;
+        if (hreflang != null ? !hreflang.equals(link.hreflang) : link.hreflang != null) return false;
+        if (title != null ? !title.equals(link.title) : link.title != null) return false;
+        if (name != null ? !name.equals(link.name) : link.name != null) return false;
+        if (profile != null ? !profile.equals(link.profile) : link.profile != null) return false;
+        return deprecated != null ? deprecated.equals(link.deprecated) : link.deprecated == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = rel != null ? rel.hashCode() : 0;
+        result = 31 * result + (href != null ? href.hashCode() : 0);
+        result = 31 * result + (templated != null ? templated.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (hreflang != null ? hreflang.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (profile != null ? profile.hashCode() : 0);
+        result = 31 * result + (deprecated != null ? deprecated.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Link{" +
+                "rel='" + rel + '\'' +
+                ", href='" + href + '\'' +
+                ", templated=" + templated +
+                ", type='" + type + '\'' +
+                ", hreflang='" + hreflang + '\'' +
+                ", title='" + title + '\'' +
+                ", name='" + name + '\'' +
+                ", profile='" + profile + '\'' +
+                ", deprecated=" + deprecated +
+                '}';
     }
 
     public static class LinkBuilder {
