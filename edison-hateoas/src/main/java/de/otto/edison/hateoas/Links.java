@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.otto.edison.hateoas.Link.linkBuilder;
 import static java.util.Arrays.stream;
@@ -118,11 +117,11 @@ public class Links {
 
     static class LinksDeserializer extends JsonDeserializer<Links> {
 
-        public static final TypeReference<Map<String, ?>> LINKS_MAP_TYPE = new TypeReference<Map<String, ?>>() {};
+        private static final TypeReference<Map<String, ?>> TYPE_REF_LINK_MAP = new TypeReference<Map<String, ?>>() {};
 
         @Override
         public Links deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            final Map<String,?> linksMap = p.readValueAs(LINKS_MAP_TYPE);
+            final Map<String,?> linksMap = p.readValueAs(TYPE_REF_LINK_MAP);
             return new Links(linksMap
                     .entrySet()
                     .stream()

@@ -1,9 +1,6 @@
 package de.otto.edison.hateoas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 
@@ -105,9 +101,11 @@ public class Embedded {
 
     static class EmbeddedDeserializer extends JsonDeserializer<Embedded> {
 
+        private static final TypeReference<Map<String, List<HalRepresentation>>> TYPE_REF_LIST_OF_HAL_REPRESENTATIONS = new TypeReference<Map<String, List<HalRepresentation>>>() {};
+
         @Override
         public Embedded deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            final Map<String,List<HalRepresentation>> items = p.readValueAs(new TypeReference<Map<String, List<HalRepresentation>>>() {});
+            final Map<String,List<HalRepresentation>> items = p.readValueAs(TYPE_REF_LIST_OF_HAL_REPRESENTATIONS);
             return new Embedded(items);
         }
     }

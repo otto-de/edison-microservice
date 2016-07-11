@@ -8,7 +8,7 @@ import static de.otto.edison.hateoas.Links.emptyLinks;
 
 /**
  *
- * @see <a href="http://stateless.co/hal_specification.html"/>
+ * @see <a href="http://stateless.co/hal_specification.html"></a>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)

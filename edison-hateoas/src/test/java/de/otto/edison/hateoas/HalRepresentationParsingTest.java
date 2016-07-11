@@ -93,6 +93,26 @@ public class HalRepresentationParsingTest {
         assertThat(embeddedItems.get(0).getLinks().getLinkBy("self").get(), is(link("self", "http://example.org/test/bar/01")));
     }
 
+    @Test(enabled = false)
+    public void shouldDeserializeEmbeddedItemsAsDomainObject() throws IOException {
+        // given
+        final String json =
+                "{" +
+                        "\"_embedded\":{\"bar\":[" +
+                        "{" +
+                        "\"value\":\"3\"," +
+                        "\"_links\":{\"self\":[{\"href\":\"http://example.org/test/bar/01\"}]}" +
+                        "}" +
+                        "]}" +
+                        "}";
+        // when
+        final SimpleHalRepresentation result = new ObjectMapper().readValue(json.getBytes(), SimpleHalRepresentation.class);
+        // then
+        final List<HalRepresentation> embeddedItems = result.getEmbedded().getItemsBy("bar");
+        assertThat(embeddedItems, hasSize(1));
+        assertThat(embeddedItems.get(0), is(instanceOf(EmbeddedHalRepresentation.class)));
+    }
+
     /*
     @Test
     public void shouldParseMultipleLinksForSingleRel() throws JsonProcessingException {
