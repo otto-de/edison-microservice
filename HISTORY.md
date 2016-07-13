@@ -1,6 +1,10 @@
 # Release History
 
-## CURRENT SNAPSHOT
+## Current Snapshot
+
+## Release 0.65.0
+* Add `ClearDeadLocks` Cleanup Strategy. 
+* *BREAKING CHANGE* : `JobRepository` Add method `runningJobsDocument`. Changed signature of `markJobAsRunningIfPossible`
 
 ## Release 0.64.0
 * Add parameter distinct=true|false to jobcontroller to get only the latest of each jobs in the overview
