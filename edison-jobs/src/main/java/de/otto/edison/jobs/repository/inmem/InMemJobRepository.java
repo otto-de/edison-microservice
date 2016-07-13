@@ -115,14 +115,14 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
-    public void markJobAsRunningIfPossible(String jobType, Set<String> blockingJobs) throws JobBlockedException {
+    public void markJobAsRunningIfPossible(JobInfo job, Set<String> blockingJobs) throws JobBlockedException {
         synchronized(runningJobs) {
             for(String mutexJobType: blockingJobs) {
                 if (runningJobs.contains(mutexJobType)) {
                     throw new JobBlockedException("Blocked");
                 }
             }
-            runningJobs.add(jobType);
+            runningJobs.add(job.getJobType());
         }
     }
 

@@ -47,6 +47,9 @@ public class JobService {
     private GaugeService gaugeService;
     @Autowired(required = false)
     private List<JobRunnable> jobRunnables = emptyList();
+    @Autowired
+    private UuidProvider uuidProvider;
+
 
     @Autowired(required = false)
     private Set<JobMutexGroup> mutexGroups;
@@ -66,7 +69,8 @@ public class JobService {
                final ApplicationEventPublisher applicationEventPublisher,
                final Clock clock,
                final SystemInfo systemInfo,
-               final Set<JobMutexGroup> mutexGroups) {
+               final Set<JobMutexGroup> mutexGroups,
+               final UuidProvider uuidProvider) {
         this.repository = repository;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
@@ -75,6 +79,7 @@ public class JobService {
         this.clock = clock;
         this.systemInfo = systemInfo;
         this.mutexGroups = mutexGroups;
+        this.uuidProvider = uuidProvider;
     }
 
     @PostConstruct
@@ -94,8 +99,8 @@ public class JobService {
     public Optional<String> startAsyncJob(String jobType) {
         try {
             final JobRunnable jobRunnable = findJobRunnable(jobType);
-            repository.markJobAsRunningIfPossible(jobType, mutexJobTypesFor(jobType));
             JobInfo jobInfo = createJobInfo(jobType);
+            repository.markJobAsRunningIfPossible(jobInfo, mutexJobTypesFor(jobType));
             repository.createOrUpdate(jobInfo);
             return Optional.of(startAsync(metered(jobRunnable), jobInfo.getJobId()));
         } catch (JobBlockedException e) {
@@ -195,9 +200,10 @@ public class JobService {
     }
 
     private JobInfo createJobInfo(String jobType) {
-        return newJobInfo(UUID.randomUUID().toString(), jobType, clock,
+        return newJobInfo(uuidProvider.getUuid(), jobType, clock,
                 systemInfo.getHostname());
     }
+
 
     private JobRunnable findJobRunnable(String jobType) {
         final Optional<JobRunnable> optionalRunnable = jobRunnables.stream().filter(r -> r.getJobDefinition().jobType().equalsIgnoreCase(jobType)).findFirst();

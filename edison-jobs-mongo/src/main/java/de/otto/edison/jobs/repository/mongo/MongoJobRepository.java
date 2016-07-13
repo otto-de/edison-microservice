@@ -90,12 +90,12 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     }
 
     @Override
-    public void markJobAsRunningIfPossible(String jobType, Set<String> blockingJobs) throws JobBlockedException {
+    public void markJobAsRunningIfPossible(JobInfo jobInfo, Set<String> blockingJobs) throws JobBlockedException {
         Document query = byId(RUNNING_JOBS_DOCUMENT);
         for(String blockingJob: blockingJobs) {
             query.append(blockingJob, new Document("$exists", false));
         }
-        Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, new Document("$set", new Document(jobType, jobType)));
+        Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, new Document("$set", new Document(jobInfo.getJobType(), jobInfo.getJobId())));
         if(updatedRunningJobsDocument==null)  {
             throw new JobBlockedException("Blocked by some other job");
         }
@@ -108,10 +108,6 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
         Document query = byId(RUNNING_JOBS_DOCUMENT);
         query.append(jobType, new Document("$exists", true));
         runningJobsCollection.findOneAndUpdate(query, new Document("$unset", new Document(jobType, "")));
-    }
-
-    private String newJobId() {
-        return randomUUID().toString();
     }
 
     @Override

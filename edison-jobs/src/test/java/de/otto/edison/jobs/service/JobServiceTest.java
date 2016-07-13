@@ -9,7 +9,6 @@ import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
-import de.otto.edison.testsupport.util.Sets;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -21,12 +20,7 @@ import org.testng.annotations.Test;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -37,16 +31,12 @@ import static de.otto.edison.status.domain.SystemInfo.systemInfo;
 import static de.otto.edison.testsupport.util.Sets.hashSet;
 import static java.time.Clock.fixed;
 import static java.time.Clock.offset;
-import static java.time.Clock.systemDefaultZone;
 import static java.time.Instant.now;
 import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptySet;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -57,6 +47,7 @@ public class JobServiceTest {
     public static final String HOSTNAME = "HOST";
     public static final String JOB_ID = "JOB/ID";
     public static final String JOB_TYPE = "JOB_TYPE";
+
     @Mock
     private ScheduledExecutorService executorService;
     @Mock
@@ -66,9 +57,11 @@ public class JobServiceTest {
     @Mock
     private JobRepository jobRepository;
     @Mock
-    GaugeService gaugeServiceMock;
+    private GaugeService gaugeServiceMock;
     @Mock
-    JobMutexGroup jobMutexGroup;
+    private JobMutexGroup jobMutexGroup;
+    @Mock
+    private UuidProvider uuidProviderMock;
 
     JobService jobService;
 
@@ -87,8 +80,9 @@ public class JobServiceTest {
         doAnswer(new RunImmediately()).when(executorService).execute(any(Runnable.class));
         when(executorService.scheduleAtFixedRate(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(mock(ScheduledFuture.class));
         when(jobRunnable.getJobDefinition()).thenReturn(DefaultJobDefinition.manuallyTriggerableJobDefinition("someType", "bla", "bla", 0, Optional.empty()));
+        when(uuidProviderMock.getUuid()).thenReturn(JOB_ID);
 
-        jobService = new JobService(jobRepository, asList(jobRunnable), gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, hashSet(jobMutexGroup));
+        jobService = new JobService(jobRepository, asList(jobRunnable), gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, hashSet(jobMutexGroup), uuidProviderMock);
         jobService.postConstruct();
     }
 
@@ -116,17 +110,16 @@ public class JobServiceTest {
         Optional<String> optionalJobId = jobService.startAsyncJob(jobType);
 
         // then:
+        JobInfo expectedJobInfo = JobInfo.newJobInfo(optionalJobId.get(), jobType, clock, systemInfo.hostname);
         verify(executorService).execute(any(Runnable.class));
-        verify(jobRepository).createOrUpdate(JobInfo.newJobInfo(optionalJobId.get(), jobType, clock, systemInfo.hostname));
+        verify(jobRepository).createOrUpdate(expectedJobInfo);
         verify(jobRunnable).execute(any(JobEventPublisher.class));
-        verify(jobRepository).markJobAsRunningIfPossible(jobType, hashSet(jobType));
+        verify(jobRepository).markJobAsRunningIfPossible(expectedJobInfo, hashSet(jobType));
     }
 
     @Test
     public void shouldNotStartJobOnBlockedException() {
-        JobInfo input =  newJobInfo("", "someType", clock,
-                systemInfo.getHostname());
-        doThrow(new JobBlockedException("bla")).when(jobRepository).markJobAsRunningIfPossible(eq(input.getJobType()), any());
+        doThrow(new JobBlockedException("bla")).when(jobRepository).markJobAsRunningIfPossible(any(), any());
 
         Optional<String> jobUri = jobService.startAsyncJob("someType");
 
@@ -153,12 +146,16 @@ public class JobServiceTest {
         JobMutexGroup two = new JobMutexGroup("group2", jobType, "type2", "type4");
         JobMutexGroup three = new JobMutexGroup("otherGroup", "käse", "wurst", "wurstkäse");
         jobService = new JobService(jobRepository, asList(jobRunnable), gaugeServiceMock, executorService,
-                applicationEventPublisher, clock, systemInfo, hashSet(one, two, three)) ;
+                applicationEventPublisher, clock, systemInfo, hashSet(one, two, three), uuidProviderMock);
 
         // when
         jobService.startAsyncJob(jobType);
 
-        verify(jobRepository).markJobAsRunningIfPossible(jobType, hashSet(jobType, "type2", "type3", "type4"));
+        verify(jobRepository).markJobAsRunningIfPossible(jobInfo(jobType), hashSet(jobType, "type2", "type3", "type4"));
+    }
+
+    private JobInfo jobInfo(String jobType) {
+        return JobInfo.newJobInfo(JOB_ID, jobType, clock, HOSTNAME);
     }
 
     @Test

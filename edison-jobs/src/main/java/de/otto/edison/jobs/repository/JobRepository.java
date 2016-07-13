@@ -1,11 +1,8 @@
 package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.eventbus.events.MessageEvent;
 
-import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,12 +39,12 @@ public interface JobRepository {
      * job from the mutex group. This operation must be implemented atomically on the persistent datastore (i. e. test
      * and set)
      *
-     * @param jobType the job type to be marked
+     * @param job the job to be marked
      * @param jobTypesMutex a list of job types that must not be marked running in order to mark this job.
      *                      The jobType to be marked will be contained in this set.
      * @throws JobBlockedException if at least one of the jobTypes in the jobTypesMutex set is already marked running.
      */
-    void markJobAsRunningIfPossible(String jobType, Set<String> jobTypesMutex) throws JobBlockedException;
+    void markJobAsRunningIfPossible(JobInfo job, Set<String> jobTypesMutex) throws JobBlockedException;
 
     /**
      * Clears the job running mark of the jobType. Does nothing if not mark exists.

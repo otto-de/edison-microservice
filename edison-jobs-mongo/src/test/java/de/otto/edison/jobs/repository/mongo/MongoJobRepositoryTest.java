@@ -27,7 +27,6 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.testng.Assert.assertFalse;
 
 public class MongoJobRepositoryTest {
 
@@ -124,9 +123,9 @@ public class MongoJobRepositoryTest {
     @Test
     public void shouldFindByType() {
         // given
-        final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");
+        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO");
         repo.createOrUpdate(foo);
-        repo.createOrUpdate(someJobInfo("http://localhost/bar", "T_BAR"));
+        repo.createOrUpdate(jobInfo("http://localhost/bar", "T_BAR"));
         // when
         final List<JobInfo> jobInfos = repo.findByType("T_FOO");
         // then
@@ -136,7 +135,7 @@ public class MongoJobRepositoryTest {
     @Test
     public void shouldFindRunningWithoutUpdateSince() {
         // given
-        final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");
+        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO");
         final JobInfo bar = someRunningJobInfo("http://localhost/bar", "T_BAR", now());
         final JobInfo foobar = someRunningJobInfo("http://localhost/foobar", "T_BAR", now().plusSeconds(3));
         repo.createOrUpdate(foo);
@@ -152,7 +151,7 @@ public class MongoJobRepositoryTest {
     @Test
     public void shouldRemoveIfStopped() {
         // given
-        final JobInfo foo = someJobInfo("foo", "T_FOO");
+        final JobInfo foo = jobInfo("foo", "T_FOO");
         final JobInfo bar = someRunningJobInfo("bar", "T_BAR", now());
         repo.createOrUpdate(foo);
         repo.createOrUpdate(bar);
@@ -245,7 +244,7 @@ public class MongoJobRepositoryTest {
     @Test
     public void shouldFindStatusOfAJob() throws Exception {
         //Given
-        final JobInfo foo = someJobInfo("http://localhost/foo", "T_FOO");
+        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO");
         repo.createOrUpdate(foo);
 
         //When
@@ -259,7 +258,7 @@ public class MongoJobRepositoryTest {
     public void shouldAppendMessageToJob() throws Exception {
         // given
         String jobId = "http://localhost/baZ";
-        JobInfo jobInfo = someJobInfo(jobId, "T_FOO");
+        JobInfo jobInfo = jobInfo(jobId, "T_FOO");
         repo.createOrUpdate(jobInfo);
 
         // when
@@ -277,27 +276,29 @@ public class MongoJobRepositoryTest {
     @Test
     public void shouldMarkJobAsRunning() throws Exception {
         final String jobType = "myJobType";
-        JobInfo jobInfo = someJobInfo("", jobType);
+        String jobId = "jobId";
+        JobInfo jobInfo = jobInfo(jobId, jobType);
 
-        repo.markJobAsRunningIfPossible(jobInfo.getJobType(), hashSet(jobType));
+        repo.markJobAsRunningIfPossible(jobInfo, hashSet(jobType));
 
-        assertRunningDocumentContainsJob(jobType);
+        assertRunningDocumentContainsJob(jobType, jobId);
     }
 
     @Test(expectedExceptions = JobBlockedException.class)
     public void shouldNotStartJobIfAlreadyRunning() throws Exception {
         // given
         final String jobType = "myJobType";
+        final String jobId = "jobId";
         addJobToRunningDocument(jobType);
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobType, hashSet(jobType));
+            repo.markJobAsRunningIfPossible(jobInfo(jobId,jobType), hashSet(jobType));
         }
 
         // then
         catch (JobBlockedException e) {
-            assertRunningDocumentContainsJob(jobType);
+            assertRunningDocumentContainsJob(jobType, jobType);
             throw e;
         }
     }
@@ -311,12 +312,12 @@ public class MongoJobRepositoryTest {
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobType, hashSet(jobType, otherJobType));
+            repo.markJobAsRunningIfPossible(jobInfo("", jobType), hashSet(jobType, otherJobType));
         }
 
         // then
         catch (JobBlockedException e) {
-            assertRunningDocumentContainsJob(otherJobType);
+            assertRunningDocumentContainsJob(otherJobType, otherJobType);
             throw e;
         }
     }
@@ -331,7 +332,7 @@ public class MongoJobRepositoryTest {
         repo.clearRunningMark(jobType);
 
         assertRunningDocumentNotContainsJob(jobType);
-        assertRunningDocumentContainsJob("otherJobType");
+        assertRunningDocumentContainsJob("otherJobType", "otherJobType");
     }
 
     private void addJobToRunningDocument(String jobType) {
@@ -343,17 +344,17 @@ public class MongoJobRepositoryTest {
     }
 
 
-    private void assertRunningDocumentContainsJob(String jobType) {
-        Document magicDocument = runningJobsCollection.find(new Document("_id", RUNNING_JOBS_DOCUMENT)).iterator().next();
-        assertThat(magicDocument.entrySet(), is(new HashMap() {{
+    private void assertRunningDocumentContainsJob(String jobType, String jobId) {
+        Document runningJobsDocument = runningJobsCollection.find(new Document("_id", RUNNING_JOBS_DOCUMENT)).iterator().next();
+        assertThat(runningJobsDocument.entrySet(), is(new HashMap() {{
             put("_id", RUNNING_JOBS_DOCUMENT);
-            put(jobType, jobType);
+            put(jobType, jobId);
         }}.entrySet()));
     }
 
     private void assertRunningDocumentNotContainsJob(String jobType) {
-        Document magicDocument = runningJobsCollection.find(new Document("_id", RUNNING_JOBS_DOCUMENT)).iterator().next();
-        assertThat(magicDocument.containsKey(jobType), is(false));
+        Document runningJobsDocument = runningJobsCollection.find(new Document("_id", RUNNING_JOBS_DOCUMENT)).iterator().next();
+        assertThat(runningJobsDocument.containsKey(jobType), is(false));
     }
 
     private JobInfo someJobInfo(final String jobId) {
@@ -369,7 +370,7 @@ public class MongoJobRepositoryTest {
         );
     }
 
-    private JobInfo someJobInfo(final String jobId, final String type) {
+    private JobInfo jobInfo(final String jobId, final String type) {
         return JobInfo.newJobInfo(
                 jobId,
                 type,
