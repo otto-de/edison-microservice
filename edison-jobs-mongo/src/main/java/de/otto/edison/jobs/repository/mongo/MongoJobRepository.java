@@ -7,6 +7,7 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.mongo.AbstractMongoRepository;
@@ -20,6 +21,7 @@ import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
@@ -110,6 +112,22 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
         if (updateResult == null) {
             LOG.warn("Could not clear running Mark for Job {}", jobType);
         }
+    }
+
+    @Override
+    public RunningJobs runningJobsDocument() {
+        Document runningJobsDocument = runningJobsCollection.find(byId(RUNNING_JOBS_DOCUMENT))
+                .first();
+        if (runningJobsDocument == null) {
+            return new RunningJobs(emptyList());
+        }
+
+        List<RunningJobs.RunningJob> runningJobs = runningJobsDocument.entrySet().stream()
+                .filter(entry -> !entry.getKey().equals("_id"))
+                .map(entry -> new RunningJobs.RunningJob(entry.getValue().toString(), entry.getKey()))
+                .collect(Collectors.toList());
+
+        return new RunningJobs(runningJobs);
     }
 
     @Override

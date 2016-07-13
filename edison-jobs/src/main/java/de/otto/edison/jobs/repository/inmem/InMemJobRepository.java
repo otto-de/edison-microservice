@@ -3,6 +3,7 @@ package de.otto.edison.jobs.repository.inmem;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 
@@ -10,6 +11,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
@@ -22,7 +24,7 @@ public class InMemJobRepository implements JobRepository {
     private static final Comparator<JobInfo> STARTED_TIME_DESC_COMPARATOR = comparing(JobInfo::getStarted, reverseOrder());
 
     private final ConcurrentMap<String, JobInfo> jobs = new ConcurrentHashMap<>();
-    private final HashSet<String> runningJobs = new HashSet<>();
+    private final HashMap<String, String> runningJobs = new HashMap<>();
 
     @Override
     public List<JobInfo> findLatest(int maxCount) {
@@ -118,11 +120,11 @@ public class InMemJobRepository implements JobRepository {
     public void markJobAsRunningIfPossible(JobInfo job, Set<String> blockingJobs) throws JobBlockedException {
         synchronized(runningJobs) {
             for(String mutexJobType: blockingJobs) {
-                if (runningJobs.contains(mutexJobType)) {
+                if (runningJobs.containsKey(mutexJobType)) {
                     throw new JobBlockedException("Blocked");
                 }
             }
-            runningJobs.add(job.getJobType());
+            runningJobs.put(job.getJobType(), job.getJobId());
         }
     }
 
@@ -131,6 +133,15 @@ public class InMemJobRepository implements JobRepository {
         synchronized (runningJobs) {
             runningJobs.remove(jobType);
         }
+    }
+
+    @Override
+    public RunningJobs runningJobsDocument() {
+        List<RunningJobs.RunningJob> runningJobs = this.runningJobs.entrySet().stream()
+                .map(entry -> new RunningJobs.RunningJob(entry.getValue(), entry.getKey()))
+                .collect(Collectors.toList());
+
+        return new RunningJobs(runningJobs);
     }
 
 

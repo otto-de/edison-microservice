@@ -2,6 +2,7 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.RunningJobs;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -51,5 +52,7 @@ public interface JobRepository {
      * @param jobType
      */
     void clearRunningMark(String jobType);
+
+    RunningJobs runningJobsDocument();
 
 }

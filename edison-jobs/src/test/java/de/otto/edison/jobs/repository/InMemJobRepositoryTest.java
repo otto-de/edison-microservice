@@ -4,6 +4,7 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsCollectionWithSize;
@@ -12,6 +13,8 @@ import org.testng.annotations.Test;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static de.otto.edison.jobs.domain.JobInfo.builder;
@@ -224,5 +227,14 @@ public class InMemJobRepositoryTest {
         assertThat(jobInfoFromRepo.getMessages().size(), is(1));
         assertThat(jobInfoFromRepo.getMessages().get(0), is(igelMessage));
 
+    }
+
+    @Test
+    public void shouldReturnRunningJobsDocument() {
+        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"), new HashSet<>());
+
+        RunningJobs expected = new RunningJobs(Collections.singletonList(new RunningJobs.RunningJob("id", "type")));
+
+        assertThat(repository.runningJobsDocument(), is(expected));
     }
 }

@@ -7,6 +7,7 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import org.bson.Document;
 import org.hamcrest.Matchers;
@@ -333,6 +334,15 @@ public class MongoJobRepositoryTest {
 
         assertRunningDocumentNotContainsJob(jobType);
         assertRunningDocumentContainsJob("otherJobType", "otherJobType");
+    }
+
+    @Test
+    public void shouldReturnRunningJobsDocument() {
+        repo.markJobAsRunningIfPossible(someRunningJobInfo("id", "type", now()), new HashSet<>());
+
+        RunningJobs expected = new RunningJobs(Collections.singletonList(new RunningJobs.RunningJob("id", "type")));
+
+        assertThat(repo.runningJobsDocument(), is(expected));
     }
 
     private void addJobToRunningDocument(String jobType) {
