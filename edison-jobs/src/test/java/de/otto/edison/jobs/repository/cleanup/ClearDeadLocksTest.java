@@ -38,7 +38,7 @@ public class ClearDeadLocksTest {
         fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
         subject = new ClearDeadLocks(jobRepository);
 
-        RunningJobs jobs = new RunningJobs(asList(new RunningJobs.RunningJob(JOB_TYPE, JOB_ID)));
+        RunningJobs jobs = new RunningJobs(asList(new RunningJobs.RunningJob(JOB_ID, JOB_TYPE)));
         when(jobRepository.runningJobsDocument()).thenReturn(jobs);
         now = OffsetDateTime.now(fixedClock);
     }
@@ -46,7 +46,7 @@ public class ClearDeadLocksTest {
     @Test
     public void shouldFindAndRemoveLockOfStoppedJob() {
         JobInfo stoppedJob = jobInfo(Optional.of(this.now));
-        when(jobRepository.findOne(JOB_TYPE)).thenReturn(Optional.of(stoppedJob));
+        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(stoppedJob));
 
         subject.clearLocks();
 
@@ -56,11 +56,20 @@ public class ClearDeadLocksTest {
     @Test
     public void shouldNotClearLockOfStillRunningJob() {
         JobInfo runningJob = jobInfo(Optional.empty());
-        when(jobRepository.findOne(JOB_TYPE)).thenReturn(Optional.of(runningJob));
+        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(runningJob));
 
         subject.clearLocks();
 
         verify(jobRepository, never()).clearRunningMark(JOB_TYPE);
+    }
+
+    @Test
+    public void shouldClearLockIfNoJobInfoExists() {
+        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.empty());
+
+        subject.clearLocks();
+
+        verify(jobRepository).clearRunningMark(JOB_TYPE);
     }
 
     private JobInfo jobInfo(Optional<OffsetDateTime> stopped) {
