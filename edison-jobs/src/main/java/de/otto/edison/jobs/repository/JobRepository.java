@@ -53,6 +53,9 @@ public interface JobRepository {
      */
     void clearRunningMark(String jobType);
 
+    /**
+     * @return All Running Jobs as specified by the markJobAsRunningIfPossible method.
+     */
     RunningJobs runningJobsDocument();
 
 }
