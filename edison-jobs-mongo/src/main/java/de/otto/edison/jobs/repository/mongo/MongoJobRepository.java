@@ -11,15 +11,14 @@ import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.mongo.AbstractMongoRepository;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.*;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
@@ -32,11 +31,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 import static java.util.Date.from;
 import static java.util.Optional.ofNullable;
-import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 @Repository(value = "jobRepository")
 public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo> implements JobRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
 
     private static final int DESCENDING = -1;
     public static final String COLLECTION_NAME = "jobinfo";
@@ -106,8 +106,10 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     @Override
     public void clearRunningMark(String jobType) {
         Document query = byId(RUNNING_JOBS_DOCUMENT);
-        query.append(jobType, new Document("$exists", true));
-        runningJobsCollection.findOneAndUpdate(query, new Document("$unset", new Document(jobType, "")));
+        Document updateResult = runningJobsCollection.findOneAndUpdate(query, new Document("$unset", new Document(jobType, "")));
+        if (updateResult == null) {
+            LOG.warn("Could not clear running Mark for Job {}", jobType);
+        }
     }
 
     @Override
