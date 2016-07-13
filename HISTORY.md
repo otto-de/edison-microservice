@@ -1,6 +1,7 @@
 # Release History
 
-## Current Snapshot
+## Release 0.65.1
+* Fix ClearDeadLocks Cleanup: Also clear a lock if the JobId does not exist anymore.
 
 ## Release 0.65.0
 * Add `ClearDeadLocks` Cleanup Strategy. 
