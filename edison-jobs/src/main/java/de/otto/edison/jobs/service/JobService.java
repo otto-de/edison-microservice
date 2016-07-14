@@ -257,4 +257,8 @@ public class JobService {
             }
         };
     }
+
+    public void disableJob(String someJobType) {
+        throw new IllegalStateException("not implemented");
+    }
 }

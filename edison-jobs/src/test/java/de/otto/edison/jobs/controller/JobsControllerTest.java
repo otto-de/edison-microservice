@@ -28,9 +28,11 @@ import static java.time.Instant.ofEpochMilli;
 import static java.time.ZoneId.systemDefault;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Arrays.asList;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class JobsControllerTest {
 
@@ -57,7 +59,7 @@ public class JobsControllerTest {
         // when
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/some-microservice/internal/jobs/42"))
-                .andExpect(MockMvcResultMatchers.status().is(404));
+                .andExpect(status().is(404));
     }
 
     @Test
@@ -72,7 +74,7 @@ public class JobsControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/some-microservice/internal/jobs/42")
                 .servletPath("/internal/jobs/42"))
-                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(status().is(200))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("OK"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").isArray())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.jobType").value("TEST"))
@@ -144,9 +146,18 @@ public class JobsControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/some-microservice/internal/jobs/someJobType")
                 .servletPath("/internal/jobs/someJobType"))
-                .andExpect(MockMvcResultMatchers.status().is(204))
+                .andExpect(status().is(204))
                 .andExpect(MockMvcResultMatchers.header().string("Location", "http://localhost/some-microservice/internal/jobs/theJobId"));
 
         verify(jobService).startAsyncJob("someJobType");
+    }
+
+    @Test
+    public void shouldDisableJob() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/some-microservice/internal/jobs/someJobType/disable"))
+                .andExpect(status().is(SC_NO_CONTENT));
+
+        verify(jobService).disableJob("someJobType");
     }
 }

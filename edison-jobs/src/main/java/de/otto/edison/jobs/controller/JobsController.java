@@ -6,10 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -102,6 +100,18 @@ public class JobsController {
             response.sendError(SC_CONFLICT);
         }
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(
+            value = "/internal/jobs/{jobType}/disable",
+            method = POST
+
+    )
+    public void disableJobType(final @PathVariable String jobType) {
+
+        jobService.disableJob(jobType);
+    }
+
 
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "text/html")
     public ModelAndView getJobAsHtml(final HttpServletRequest request,

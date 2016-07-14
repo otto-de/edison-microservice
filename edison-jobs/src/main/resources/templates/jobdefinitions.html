@@ -25,6 +25,7 @@
                     <th>Retry</th>
                     <th>Last Runs</th>
                     <th>Trigger</th>
+                    <th>Disabled</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -43,6 +44,15 @@
                                 th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${def.jobType}"
                                 data-loading-text="Triggering...">
                             Trigger &raquo;
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button"
+                                class="triggerButton btn btn-xs btn-warning"
+                                autocomplete="off"
+                                th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${def.jobType} + '/disable'"
+                                data-loading-text="Triggering...">
+                            Pause &raquo;
                         </button>
                     </td>
                 </tr>
