@@ -1,27 +1,18 @@
 package de.otto.edison.jobs.domain;
 
-import de.otto.edison.jobs.definition.JobDefinition;
 import net.jcip.annotations.ThreadSafe;
 
-import java.net.URI;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.*;
-import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-import static de.otto.edison.jobs.domain.Level.INFO;
-import static de.otto.edison.jobs.domain.Level.WARNING;
-import static java.lang.String.format;
-import static java.time.Clock.systemDefaultZone;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static java.time.OffsetDateTime.now;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 /**
