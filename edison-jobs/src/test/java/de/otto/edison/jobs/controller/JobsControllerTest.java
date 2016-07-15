@@ -25,10 +25,11 @@ import static java.time.Instant.ofEpochMilli;
 import static java.time.ZoneId.systemDefault;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Arrays.asList;
-import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
+import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class JobsControllerTest {
@@ -144,7 +145,7 @@ public class JobsControllerTest {
                 .post("/some-microservice/internal/jobs/someJobType")
                 .servletPath("/internal/jobs/someJobType"))
                 .andExpect(status().is(204))
-                .andExpect(MockMvcResultMatchers.header().string("Location", "http://localhost/some-microservice/internal/jobs/theJobId"));
+                .andExpect(header().string("Location", "http://localhost/some-microservice/internal/jobs/theJobId"));
 
         verify(jobService).startAsyncJob("someJobType");
     }
@@ -153,7 +154,8 @@ public class JobsControllerTest {
     public void shouldDisableJob() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/some-microservice/internal/jobs/someJobType/disable"))
-                .andExpect(status().is(SC_NO_CONTENT));
+                .andExpect(status().is(SC_MOVED_TEMPORARILY))
+                .andExpect(header().string("Location", "/some-microservice/internal/jobdefinitions"));
 
         verify(jobService).disableJobType("someJobType");
     }

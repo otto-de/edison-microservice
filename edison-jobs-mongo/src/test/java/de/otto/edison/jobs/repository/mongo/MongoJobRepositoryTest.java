@@ -20,7 +20,6 @@ import java.util.*;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.repository.mongo.JobStructure.*;
-import static de.otto.edison.jobs.repository.mongo.MongoJobRepository.RUNNING_JOBS_DOCUMENT;
 import static de.otto.edison.testsupport.util.Sets.hashSet;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
@@ -39,9 +38,15 @@ public class MongoJobRepositoryTest {
     public void setup() {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         database = fongo.getDatabase("jobsinfo");
-        repo = new MongoJobRepository(database, systemDefaultZone());
-        runningJobsCollection = database.getCollection(MongoJobRepository.RUNNING_JOBS_COLLECTION_NAME);
-        repo.initRunningJobsDocumentOnStartup();
+        runningJobsCollection = database.getCollection("jobmetadata");
+        repo = new MongoJobRepository(database);
+        repo.initJobsMetaDataDocumentsOnStartup();
+    }
+
+    @Test
+    public void shouldInitMetaDataCollection() {
+        assertThat(runningJobsCollection.count(new Document("_id", "RUNNING_JOBS")), is(1l));
+        assertThat(runningJobsCollection.count(new Document("_id", "DISABLED_JOBS")), is(1l));
     }
 
     @Test
@@ -293,7 +298,7 @@ public class MongoJobRepositoryTest {
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobInfo(jobId,jobType), hashSet(jobType));
+            repo.markJobAsRunningIfPossible(jobInfo(jobId, jobType), hashSet(jobType));
         }
 
         // then
@@ -357,7 +362,7 @@ public class MongoJobRepositoryTest {
         }
 
         // then
-        catch(JobBlockedException e) {
+        catch (JobBlockedException e) {
             assertThat(e.getMessage(), is("Disabled"));
             throw e;
         }
@@ -396,7 +401,7 @@ public class MongoJobRepositoryTest {
 
     private void addJobToRunningDocument(String jobType) {
         runningJobsCollection.updateOne(
-                new Document("_id", RUNNING_JOBS_DOCUMENT),
+                new Document("_id", "RUNNING_JOBS"),
                 new Document("$set",
                         new Document(jobType, jobType))
         );
@@ -404,15 +409,15 @@ public class MongoJobRepositoryTest {
 
 
     private void assertRunningDocumentContainsJob(String jobType, String jobId) {
-        Document runningJobsDocument = runningJobsCollection.find(new Document("_id", RUNNING_JOBS_DOCUMENT)).iterator().next();
+        Document runningJobsDocument = runningJobsCollection.find(new Document("_id", "RUNNING_JOBS")).iterator().next();
         assertThat(runningJobsDocument.entrySet(), is(new HashMap() {{
-            put("_id", RUNNING_JOBS_DOCUMENT);
+            put("_id", "RUNNING_JOBS");
             put(jobType, jobId);
         }}.entrySet()));
     }
 
     private void assertRunningDocumentNotContainsJob(String jobType) {
-        Document runningJobsDocument = runningJobsCollection.find(new Document("_id", RUNNING_JOBS_DOCUMENT)).iterator().next();
+        Document runningJobsDocument = runningJobsCollection.find(new Document("_id", "RUNNING_JOBS")).iterator().next();
         assertThat(runningJobsDocument.containsKey(jobType), is(false));
     }
 

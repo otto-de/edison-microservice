@@ -41,12 +41,15 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
 
+    private static final String JOB_INFO_COLLECTION_NAME = "jobinfo";
+    private static final String JOBS_META_DATA_COLLECTION_NAME = "jobmetadata";
+
+    private static final String RUNNING_JOBS_DOCUMENT = "RUNNING_JOBS";
+    private static final String DISABLED_JOBS_DOCUMENT = "DISABLED_JOBS";
+
     private static final int DESCENDING = -1;
-    public static final String COLLECTION_NAME = "jobinfo";
-    public static final String RUNNING_JOBS_COLLECTION_NAME = "runningJobs";
-    public static final String NO_LOG_MESSAGE_FOUND = "No log message found";
-    public static final String RUNNING_JOBS_DOCUMENT = "RUNNING_JOBS";
-    public static final String DISABLED_JOBS_DOCUMENT = "DISABLED_JOBS";
+    private static final String NO_LOG_MESSAGE_FOUND = "No log message found";
+
 
     private final MongoCollection<Document> jobInfoCollection;
     private final MongoCollection<Document> runningJobsCollection;
@@ -54,20 +57,19 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Autowired
     public MongoJobRepository(final MongoDatabase database) {
-        this(database, systemDefaultZone());
+        this.jobInfoCollection = database.getCollection(JOB_INFO_COLLECTION_NAME);
+        this.runningJobsCollection = database.getCollection(JOBS_META_DATA_COLLECTION_NAME);
+        this.clock = systemDefaultZone();
     }
 
     @PostConstruct
-    public void initRunningJobsDocumentOnStartup() {
-        if(runningJobsCollection.count(byId(RUNNING_JOBS_DOCUMENT))==0) {
+    public void initJobsMetaDataDocumentsOnStartup() {
+        if (runningJobsCollection.count(byId(RUNNING_JOBS_DOCUMENT)) == 0) {
             runningJobsCollection.insertOne(new Document("_id", RUNNING_JOBS_DOCUMENT));
         }
-    }
-
-    MongoJobRepository(final MongoDatabase database, final Clock clock) {
-        this.jobInfoCollection = database.getCollection(COLLECTION_NAME);
-        this.runningJobsCollection = database.getCollection(RUNNING_JOBS_COLLECTION_NAME);
-        this.clock = clock;
+        if (runningJobsCollection.count(byId(DISABLED_JOBS_DOCUMENT)) == 0) {
+            runningJobsCollection.insertOne(new Document("_id", DISABLED_JOBS_DOCUMENT));
+        }
     }
 
     @Override
@@ -97,23 +99,23 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public void markJobAsRunningIfPossible(JobInfo jobInfo, Set<String> blockingJobTypes) throws JobBlockedException {
         Document disabledJobsQuery = byId(DISABLED_JOBS_DOCUMENT);
         disabledJobsQuery.put(jobInfo.getJobType(), new Document("$exists", true));
-        if(runningJobsCollection.find(disabledJobsQuery).first() != null){
+        if (runningJobsCollection.find(disabledJobsQuery).first() != null) {
             throw new JobBlockedException("Disabled");
         }
         Document query = byId(RUNNING_JOBS_DOCUMENT);
-        for(String blockingJobType: blockingJobTypes) {
+        for (String blockingJobType : blockingJobTypes) {
             query.append(blockingJobType, new Document("$exists", false));
         }
         Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, new Document("$set", new Document(jobInfo.getJobType(), jobInfo.getJobId())));
-        if(updatedRunningJobsDocument==null)  {
+        if (updatedRunningJobsDocument == null) {
             throw new JobBlockedException("Blocked by some other job");
         }
     }
 
     @Override
     public void clearRunningMark(String jobType) {
-        Document query = byId(RUNNING_JOBS_DOCUMENT);
-        Document updateResult = runningJobsCollection.findOneAndUpdate(query, new Document("$unset", new Document(jobType, "")));
+        final Document query = byId(RUNNING_JOBS_DOCUMENT);
+        final Document updateResult = runningJobsCollection.findOneAndUpdate(query, new Document("$unset", new Document(jobType, "")));
         if (updateResult == null) {
             LOG.warn("Could not clear running Mark for Job {}", jobType);
         }
@@ -121,13 +123,13 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Override
     public RunningJobs runningJobsDocument() {
-        Document runningJobsDocument = runningJobsCollection.find(byId(RUNNING_JOBS_DOCUMENT))
+        final Document runningJobsDocument = runningJobsCollection.find(byId(RUNNING_JOBS_DOCUMENT))
                 .first();
         if (runningJobsDocument == null) {
             return new RunningJobs(emptyList());
         }
 
-        List<RunningJobs.RunningJob> runningJobs = runningJobsDocument.entrySet().stream()
+        final List<RunningJobs.RunningJob> runningJobs = runningJobsDocument.entrySet().stream()
                 .filter(entry -> !entry.getKey().equals("_id"))
                 .map(entry -> new RunningJobs.RunningJob(entry.getValue().toString(), entry.getKey()))
                 .collect(Collectors.toList());
@@ -141,7 +143,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                 byId(DISABLED_JOBS_DOCUMENT),
                 new Document("$set", new Document(jobType, "disabled")),
                 new FindOneAndUpdateOptions().upsert(true)
-                );
+        );
     }
 
     @Override
