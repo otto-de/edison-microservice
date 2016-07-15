@@ -15,6 +15,8 @@ import org.togglz.servlet.TogglzFilter;
 @Configuration
 public class TogglzWebConfiguration {
 
+    public static final String TOGGLES_URL_PATTERN = "/toggles/console/*";
+
     @Bean
     @ConditionalOnMissingBean(name = "togglzFilter")
     public FilterRegistrationBean togglzFilter() {
@@ -34,13 +36,13 @@ public class TogglzWebConfiguration {
                                                              @Value("${edison.togglz.ldap-authentication.rdn-identifier:}") String rdnIdentifier) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
         filterRegistration.setFilter(new LdapAuthenticationFilter(host, port, baseDn, rdnIdentifier));
-        filterRegistration.addUrlPatterns(prefix + "/toggles/console");
+        filterRegistration.addUrlPatterns(prefix + TOGGLES_URL_PATTERN);
         return filterRegistration;
     }
 
     @Bean
     public ServletRegistrationBean togglzServlet(@Value("${management.context-path:/internal}") String prefix) {
-        return new ServletRegistrationBean(new TogglzConsoleServlet(), prefix + "/toggles/console/*");
+        return new ServletRegistrationBean(new TogglzConsoleServlet(), prefix + TOGGLES_URL_PATTERN);
     }
 
 
