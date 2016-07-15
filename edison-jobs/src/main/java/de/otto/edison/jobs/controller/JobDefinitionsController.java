@@ -1,9 +1,8 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,14 +27,15 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @Controller
 public class JobDefinitionsController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JobDefinitionsController.class);
     public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";
 
-    private JobDefinitionService jobDefinitions;
+    private final JobDefinitionService jobDefinitions;
+    private final JobRepository jobRepository;
 
     @Autowired
-    public JobDefinitionsController(final JobDefinitionService service) {
+    public JobDefinitionsController(final JobDefinitionService service, JobRepository jobRepository) {
         this.jobDefinitions = service;
+        this.jobRepository = jobRepository;
     }
 
     @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "application/json")
@@ -58,6 +58,7 @@ public class JobDefinitionsController {
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
+            put("disabledJobs", jobRepository.findDisabledJobTypes());
             put("jobdefinitions", jobDefinitions.getJobDefinitions()
                     .stream()
                     .map((def) -> new HashMap<String, Object>() {{

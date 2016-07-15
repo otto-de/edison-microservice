@@ -7,24 +7,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
-import static java.net.URI.create;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-@RestController
+@Controller
 public class JobsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsController.class);
@@ -57,6 +56,7 @@ public class JobsController {
     }
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "application/json")
+    @ResponseBody
     public List<JobRepresentation> getJobsAsJson(@RequestParam(value = "type", required = false) String type,
                                                  @RequestParam(value = "count", defaultValue = "100") int count,
                                                  @RequestParam(value = "distinct", defaultValue = "false", required = false) boolean distinct,
@@ -101,17 +101,23 @@ public class JobsController {
         }
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(
             value = "/internal/jobs/{jobType}/disable",
             method = POST
-
     )
-    public void disableJobType(final @PathVariable String jobType) {
-
-        jobService.disableJob(jobType);
+    public String disableJobType(final @PathVariable String jobType) {
+        jobService.disableJobType(jobType);
+        return "redirect:/internal/jobdefinitions";
     }
 
+    @RequestMapping(
+            value = "/internal/jobs/{jobType}/enable",
+            method = POST
+    )
+    public String enableJobType(final @PathVariable String jobType) {
+        jobService.enableJobType(jobType);
+        return "redirect:/internal/jobdefinitions";
+    }
 
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "text/html")
     public ModelAndView getJobAsHtml(final HttpServletRequest request,
@@ -132,6 +138,7 @@ public class JobsController {
     }
 
     @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "application/json")
+    @ResponseBody
     public JobRepresentation getJob(final HttpServletRequest request,
                                     final HttpServletResponse response,
                                     @PathVariable("id") final String jobId) throws IOException {

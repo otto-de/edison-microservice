@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.synchronizedSet;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Objects.nonNull;
@@ -25,6 +26,7 @@ public class InMemJobRepository implements JobRepository {
 
     private final ConcurrentMap<String, JobInfo> jobs = new ConcurrentHashMap<>();
     private final HashMap<String, String> runningJobs = new HashMap<>();
+    private final Set<String> disabledJobTypes = synchronizedSet(new HashSet<>());
 
     @Override
     public List<JobInfo> findLatest(int maxCount) {
@@ -118,8 +120,12 @@ public class InMemJobRepository implements JobRepository {
 
     @Override
     public void markJobAsRunningIfPossible(JobInfo job, Set<String> blockingJobs) throws JobBlockedException {
-        synchronized(runningJobs) {
-            for(String mutexJobType: blockingJobs) {
+        if (disabledJobTypes.contains(job.getJobType())) {
+            throw new JobBlockedException("Disabled");
+        }
+
+        synchronized (runningJobs) {
+            for (String mutexJobType : blockingJobs) {
                 if (runningJobs.containsKey(mutexJobType)) {
                     throw new JobBlockedException("Blocked");
                 }
@@ -142,6 +148,21 @@ public class InMemJobRepository implements JobRepository {
                 .collect(Collectors.toList());
 
         return new RunningJobs(runningJobs);
+    }
+
+    @Override
+    public void disableJobType(String jobType) {
+        disabledJobTypes.add(jobType);
+    }
+
+    @Override
+    public void enableJobType(String jobType) {
+        disabledJobTypes.remove(jobType);
+    }
+
+    @Override
+    public List<String> findDisabledJobTypes() {
+        return new ArrayList(disabledJobTypes);
     }
 
 

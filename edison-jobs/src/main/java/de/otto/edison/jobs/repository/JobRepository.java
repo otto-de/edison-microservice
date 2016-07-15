@@ -36,9 +36,9 @@ public interface JobRepository {
     void appendMessage(String jobId, JobMessage jobMessage);
 
     /**
-     * Marks a job as running or throws JobBlockException if it was marked running before or is blocked by some other
-     * job from the mutex group. This operation must be implemented atomically on the persistent datastore (i. e. test
-     * and set)
+     * Marks a job as running or throws JobBlockException if it is either disabled, was marked running before or is
+     * blocked by some other job from the mutex group. This operation must be implemented atomically on the persistent
+     * datastore (i. e. test and set) to make sure a job is never marked as running twice.
      *
      * @param job the job to be marked
      * @param jobTypesMutex a list of job types that must not be marked running in order to mark this job.
@@ -58,4 +58,21 @@ public interface JobRepository {
      */
     RunningJobs runningJobsDocument();
 
+    /**
+     * Disables a job type, i.e. prevents it from being started
+     * @param jobType
+     */
+    void disableJobType(String jobType);
+
+    /**
+     * Reenables a job type that was disabled
+     *
+     * @param jobType
+     */
+    void enableJobType(String jobType);
+
+    /**
+     * @return a list of all job types that are currently disabled
+     */
+    List<String> findDisabledJobTypes();
 }

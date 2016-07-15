@@ -237,4 +237,37 @@ public class InMemJobRepositoryTest {
 
         assertThat(repository.runningJobsDocument(), is(expected));
     }
+
+    @Test(expectedExceptions = JobBlockedException.class)
+    public void shouldDisableJob() {
+        // given
+        String jobType = "irgendeinJobType";
+        repository.disableJobType(jobType);
+        JobInfo jobInfo = JobInfo.newJobInfo("someId", jobType, systemDefaultZone(), "lokalhorst");
+
+        // when
+        try {
+            repository.markJobAsRunningIfPossible(jobInfo, new HashSet<>());
+        }
+
+        // then
+        catch(JobBlockedException e) {
+            assertThat(e.getMessage(), is("Disabled"));
+            throw e;
+        }
+    }
+
+    @Test
+    public void shouldFindDisabledJobTypes() {
+        // given
+        String jobType = "irgendeinJobType";
+        repository.disableJobType(jobType);
+
+        // when
+        List<String> result = repository.findDisabledJobTypes();
+
+        // then
+        assertThat(result, hasSize(1));
+        assertThat(result.get(0), is(jobType));
+    }
 }

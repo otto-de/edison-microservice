@@ -3,7 +3,6 @@ package de.otto.edison.jobs.controller;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobService;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -13,10 +12,8 @@ import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -158,6 +155,6 @@ public class JobsControllerTest {
                 .post("/some-microservice/internal/jobs/someJobType/disable"))
                 .andExpect(status().is(SC_NO_CONTENT));
 
-        verify(jobService).disableJob("someJobType");
+        verify(jobService).disableJobType("someJobType");
     }
 }

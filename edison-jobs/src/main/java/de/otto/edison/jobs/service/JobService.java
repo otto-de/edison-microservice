@@ -258,7 +258,11 @@ public class JobService {
         };
     }
 
-    public void disableJob(String someJobType) {
-        throw new IllegalStateException("not implemented");
+    public void disableJobType(String jobType) {
+        repository.disableJobType(jobType);
+    }
+
+    public void enableJobType(String jobType) {
+        repository.enableJobType(jobType);
     }
 }

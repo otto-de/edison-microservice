@@ -254,6 +254,13 @@ public class JobServiceTest {
         verify(jobRepository).createOrUpdate(expected);
     }
 
+    @Test
+    public void shouldDisableJobType() {
+        jobService.disableJobType("myJobType");
+
+        verify(jobRepository).disableJobType("myJobType");
+    }
+
     private JobInfo.Builder defaultJobInfo() {
         return newJobInfo(JOB_ID, JOB_TYPE, clock, HOSTNAME).copy();
     }

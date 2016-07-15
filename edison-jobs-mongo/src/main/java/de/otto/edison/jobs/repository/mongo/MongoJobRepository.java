@@ -3,6 +3,7 @@ package de.otto.edison.jobs.repository.mongo;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
@@ -45,6 +46,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public static final String RUNNING_JOBS_COLLECTION_NAME = "runningJobs";
     public static final String NO_LOG_MESSAGE_FOUND = "No log message found";
     public static final String RUNNING_JOBS_DOCUMENT = "RUNNING_JOBS";
+    public static final String DISABLED_JOBS_DOCUMENT = "DISABLED_JOBS";
 
     private final MongoCollection<Document> jobInfoCollection;
     private final MongoCollection<Document> runningJobsCollection;
@@ -92,18 +94,21 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     }
 
     @Override
-    public void markJobAsRunningIfPossible(JobInfo jobInfo, Set<String> blockingJobs) throws JobBlockedException {
+    public void markJobAsRunningIfPossible(JobInfo jobInfo, Set<String> blockingJobTypes) throws JobBlockedException {
+        Document disabledJobsQuery = byId(DISABLED_JOBS_DOCUMENT);
+        disabledJobsQuery.put(jobInfo.getJobType(), new Document("$exists", true));
+        if(runningJobsCollection.find(disabledJobsQuery).first() != null){
+            throw new JobBlockedException("Disabled");
+        }
         Document query = byId(RUNNING_JOBS_DOCUMENT);
-        for(String blockingJob: blockingJobs) {
-            query.append(blockingJob, new Document("$exists", false));
+        for(String blockingJobType: blockingJobTypes) {
+            query.append(blockingJobType, new Document("$exists", false));
         }
         Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, new Document("$set", new Document(jobInfo.getJobType(), jobInfo.getJobId())));
         if(updatedRunningJobsDocument==null)  {
             throw new JobBlockedException("Blocked by some other job");
         }
     }
-
-
 
     @Override
     public void clearRunningMark(String jobType) {
@@ -128,6 +133,32 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                 .collect(Collectors.toList());
 
         return new RunningJobs(runningJobs);
+    }
+
+    @Override
+    public void disableJobType(String jobType) {
+        runningJobsCollection.findOneAndUpdate(
+                byId(DISABLED_JOBS_DOCUMENT),
+                new Document("$set", new Document(jobType, "disabled")),
+                new FindOneAndUpdateOptions().upsert(true)
+                );
+    }
+
+    @Override
+    public void enableJobType(String jobType) {
+        runningJobsCollection.findOneAndUpdate(
+                byId(DISABLED_JOBS_DOCUMENT),
+                new Document("$unset", new Document(jobType, "")),
+                new FindOneAndUpdateOptions().upsert(true)
+        );
+    }
+
+    @Override
+    public List<String> findDisabledJobTypes() {
+        Document disabledJobsDocument = runningJobsCollection.find(byId(DISABLED_JOBS_DOCUMENT)).first();
+        return disabledJobsDocument.keySet().stream()
+                .filter(k -> !k.equals("_id"))
+                .collect(toList());
     }
 
     @Override

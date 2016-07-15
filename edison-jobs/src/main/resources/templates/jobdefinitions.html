@@ -39,21 +39,22 @@
                     <td><a th:href="@{|/internal/jobs?type=${def.jobType}|}" class="btn btn-xs btn-primary">Open &raquo;</a></td>
                     <td>
                         <button type="button"
-                                class="triggerButton btn btn-xs btn-primary"
+                                class="triggerButton btn btn-xs btn-success"
                                 autocomplete="off"
-                                th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${def.jobType}"
+                                th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${def.jobType}, disabled=${disabledJobs.contains(def.jobType) ? 'disabled' : null}"
+                                title="Click to start job now"
                                 data-loading-text="Triggering...">
-                            Trigger &raquo;
+                            <span class="glyphicon glyphicon-play"></span>
                         </button>
                     </td>
                     <td>
-                        <button type="button"
-                                class="triggerButton btn btn-xs btn-warning"
-                                autocomplete="off"
-                                th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${def.jobType} + '/disable'"
-                                data-loading-text="Triggering...">
-                            Pause &raquo;
-                        </button>
+                        <form th:action="${baseUri} + '/internal/jobs/' + ${def.jobType} + '/' + ${disabledJobs.contains(def.jobType)?'enable':'disable'}" method="POST">
+                            <button type="submit" class="btn btn-xs"
+                                    th:classappend="${disabledJobs.contains(def.jobType)} ? btn-danger : btn-success"
+                                    th:title="${disabledJobs.contains(def.jobType)} ? 'Job is disabled. Click to enable' : 'Job is enabled. Click to disable'">
+                                <span class="glyphicon glyphicon-lock"></span>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

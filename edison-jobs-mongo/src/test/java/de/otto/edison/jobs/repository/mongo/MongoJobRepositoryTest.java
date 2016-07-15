@@ -44,7 +44,6 @@ public class MongoJobRepositoryTest {
         repo.initRunningJobsDocumentOnStartup();
     }
 
-
     @Test
     public void shouldStoreAndRetrieveJobInfo() {
         // given
@@ -343,6 +342,56 @@ public class MongoJobRepositoryTest {
         RunningJobs expected = new RunningJobs(Collections.singletonList(new RunningJobs.RunningJob("id", "type")));
 
         assertThat(repo.runningJobsDocument(), is(expected));
+    }
+
+    @Test(expectedExceptions = JobBlockedException.class)
+    public void shouldNotStartADisabledJob() {
+        // given
+        String jobType = "irgendeinJobType";
+        repo.disableJobType(jobType);
+        JobInfo jobInfo = JobInfo.newJobInfo("someId", jobType, systemDefaultZone(), "lokalhorst");
+
+        // when
+        try {
+            repo.markJobAsRunningIfPossible(jobInfo, new HashSet<>());
+        }
+
+        // then
+        catch(JobBlockedException e) {
+            assertThat(e.getMessage(), is("Disabled"));
+            throw e;
+        }
+    }
+
+    @Test
+    public void shouldStartAnEnabledJob() {
+        // given
+        String jobType = "irgendeinJobType";
+        repo.disableJobType(jobType);
+        repo.enableJobType(jobType);
+        JobInfo jobInfo = JobInfo.newJobInfo("someId", jobType, systemDefaultZone(), "lokalhorst");
+
+        // when
+        repo.markJobAsRunningIfPossible(jobInfo, new HashSet<>());
+
+        // then
+        List<RunningJobs.RunningJob> runningJobs = repo.runningJobsDocument().getRunningJobs();
+        assertThat(runningJobs, hasSize(1));
+        assertThat(runningJobs.get(0).jobType, is(jobType));
+    }
+
+    @Test
+    public void shouldFindDisabledJobTypes() {
+        // given
+        String jobType = "irgendeinJobType";
+        repo.disableJobType(jobType);
+
+        // when
+        List<String> result = repo.findDisabledJobTypes();
+
+        // then
+        assertThat(result, hasSize(1));
+        assertThat(result.get(0), is(jobType));
     }
 
     private void addJobToRunningDocument(String jobType) {
