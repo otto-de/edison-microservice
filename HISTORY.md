@@ -1,9 +1,7 @@
 # Release History
 
-## Release 0.66.0
+## Release 0.66.x
 * Add possibility to temporarily disable jobs via the jobdefinitions GUI
-
-## Release 0.65.1
 * Fix ClearDeadLocks Cleanup: Also clear a lock if the JobId does not exist anymore.
 
 ## Release 0.65.0
