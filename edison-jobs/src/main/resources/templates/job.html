@@ -17,11 +17,13 @@
             <dl class="dl-horizontal">
                 <dt>Status</dt>
                 <dd>
-                    <span th:if="${job.status} == 'OK'"  class="label label-success"><span th:text="${job.status}"></span></span>
-                    <span th:if="${job.status} != 'OK'"  class="label label-danger"><span th:text="${job.status}"></span></span>
+                    <th:block th:if="${job.state} != 'Running'">
+                        <span th:if="${job.status} == 'OK'"  class="label progress-bar progress-bar-success" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
+                        <span th:if="${job.status} == 'ERROR'"  class="label progress-bar progress-bar-danger" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
+                        <span th:if="${job.status} == 'DEAD'"  class="label progress-bar" style="width:10em; height:2em; background: rgba(230, 110, 30, 1);"><span th:text="${job.status}"></span></span>
+                    </th:block>
+                    <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:10em; height:2em;">RUNNING</span></th:block>
                 </dd>
-                <dt>State</dt>
-                <dd th:text="${job.state}">&nbsp;</dd>
                 <dt>Executed by</dt>
                 <dd th:text="${job.hostname}">&nbsp;</dd>
                 <dt>Started</dt>
