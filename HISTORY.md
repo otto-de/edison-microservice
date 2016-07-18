@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.66.2
+* Fix NullPointerException in disableJobs Feature
+
 ## Release 0.66.1
 * Add possibility to temporarily disable jobs via the jobdefinitions GUI
 * Fix ClearDeadLocks Cleanup: Also clear a lock if the JobId does not exist anymore.
