@@ -1,7 +1,9 @@
 # Release History
 
-## Release 0.66.3
+## Release 0.67.0
 * Fix circular dependencies in JobConfiguration
+* Update to latest Spring Boot version
+* Update outdated dependencies
 
 ## Release 0.66.2
 * Fix NullPointerException in disableJobs Feature
