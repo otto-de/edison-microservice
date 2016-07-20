@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.66.3
+* Fix circular dependencies in JobConfiguration
+
 ## Release 0.66.2
 * Fix NullPointerException in disableJobs Feature
 

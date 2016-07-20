@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,7 @@ import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
+import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.time.OffsetDateTime.now;
 import static java.util.Collections.emptyList;
@@ -144,10 +148,16 @@ public class JobService {
         this.stopJob(jobId, Optional.empty());
     }
 
+    public void killJobsDeadSince(final int seconds) {
+        final OffsetDateTime timeToMarkJobAsStopped = now(clock).minusSeconds(seconds);
+        LOG.info(format("JobCleanup: Looking for jobs older than %s ", timeToMarkJobAsStopped));
+        final List<JobInfo> deadJobs = repository.findRunningWithoutUpdateSince(timeToMarkJobAsStopped);
+        deadJobs.forEach(deadJob -> killJob(deadJob.getJobId()));
+    }
+
     public void killJob(String jobId) {
         this.stopJob(jobId, Optional.of(JobInfo.JobStatus.DEAD));
         repository.appendMessage(jobId, jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", OffsetDateTime.now(clock)));
-
     }
 
     private void stopJob(final String jobId, Optional<JobInfo.JobStatus> status) {

@@ -25,9 +25,6 @@ public class ExampleJobsConfiguration {
     @Autowired
     JobService jobService;
 
-    @Autowired
-    JobRepository jobRepository;
-
     @Bean
     public AsyncHttpClient httpClient() {
         return new AsyncHttpClient(new AsyncHttpClientConfig.Builder()
@@ -41,7 +38,7 @@ public class ExampleJobsConfiguration {
 
     @Bean
     public StopDeadJobs stopDeadJobsStrategy() {
-        return new StopDeadJobs(jobService, jobRepository, 60, systemDefaultZone());
+        return new StopDeadJobs(jobService, 60);
     }
 
     @Bean

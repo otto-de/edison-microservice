@@ -20,6 +20,7 @@ import org.testng.annotations.Test;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -183,6 +184,17 @@ public class JobServiceTest {
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.DEAD).setStopped(now).setLastUpdated(now).build();
         verify(jobRepository).clearRunningMark("superType");
         verify(jobRepository).createOrUpdate(expected);
+    }
+
+    @Test
+    public void shouldKillDeadJobsSince() {
+        JobInfo someJobInfo = defaultJobInfo().build();
+        when(jobRepository.findRunningWithoutUpdateSince(any())).thenReturn(Collections.singletonList(someJobInfo));
+        when(jobRepository.findOne(someJobInfo.getJobId())).thenReturn(Optional.of(someJobInfo));
+
+        jobService.killJobsDeadSince(60);
+
+        verify(jobRepository).clearRunningMark(someJobInfo.getJobType());
     }
 
     @Test

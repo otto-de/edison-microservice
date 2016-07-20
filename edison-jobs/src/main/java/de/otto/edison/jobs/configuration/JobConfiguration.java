@@ -47,12 +47,6 @@ public class JobConfiguration {
     @Value("${edison.jobs.cleanup.mark-dead-after:30}")
     int secondsToMarkJobsAsDead;
 
-    @Autowired
-    private JobService jobService;
-
-    @Autowired
-    private JobRepository jobRepository;
-
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
     public ScheduledExecutorService scheduledExecutorService() {
@@ -74,8 +68,8 @@ public class JobConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(StopDeadJobs.class)
-    public StopDeadJobs deadJobStrategy() {
-        return new StopDeadJobs(jobService, jobRepository, secondsToMarkJobsAsDead, systemDefaultZone());
+    public StopDeadJobs deadJobStrategy(final JobService jobService) {
+        return new StopDeadJobs(jobService, secondsToMarkJobsAsDead);
     }
 
     @Bean
