@@ -1,7 +1,7 @@
 package de.otto.edison.status.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import de.otto.edison.hateoas.HalRepresentation;
+import de.otto.edison.hal.HalRepresentation;
 import de.otto.edison.status.domain.*;
 
 import java.util.LinkedHashMap;
@@ -11,9 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static de.otto.edison.hateoas.Link.profile;
-import static de.otto.edison.hateoas.Link.self;
-import static de.otto.edison.hateoas.Links.linkingTo;
+import static de.otto.edison.hal.Link.profile;
+import static de.otto.edison.hal.Link.self;
+import static de.otto.edison.hal.Links.linkingTo;
 import static de.otto.edison.status.controller.UrlHelper.absoluteHrefOf;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

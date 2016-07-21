@@ -1,11 +1,11 @@
 
 dependencies {
     compile project(":edison-core")
-    compile project(":edison-hateoas")
 
     compile libs.jcip
     compile libs.logging
 
+    compile libs.hal
     compile libs.metrics
     compile libs.metricsSpring
 

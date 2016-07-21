@@ -3,7 +3,9 @@ package de.otto.edison.testsupport.util;
 import java.time.Instant;
 import java.util.*;
 
+import static java.time.Instant.parse;
 import static java.util.Collections.emptyMap;
+import static java.util.Date.from;
 import static java.util.stream.Collectors.toList;
 
 public class JsonMap {
@@ -26,25 +28,29 @@ public class JsonMap {
         }
     }
 
-    public JsonMap get(final String s) {
+    public void remove(final String key) {
         if (jsonObject == null) {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            final Object object = ((Map) jsonObject).get(s);
-            return object != null ? new JsonMap(object) : null;
+            ((Map) jsonObject).remove(key);
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
         }
     }
 
-    public JsonMap get(final Integer i) {
+    public JsonMap get(final String s) {
         if (jsonObject == null) {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            final Object object = ((Map) jsonObject).get(i);
-            return object != null ? new JsonMap(object) : null;
+            String[] segments = s.split("\\.");
+            if (segments.length < 2) {
+                final Object object = ((Map) jsonObject).get(s);
+                return object != null ? new JsonMap(object) : null;
+            } else {
+                return get(segments[0]).get(s.substring(s.indexOf(".")+1));
+            }
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
         }
@@ -56,7 +62,11 @@ public class JsonMap {
         }
         if (is(Map.class)) {
             final Object value = ((Map) jsonObject).get(key);
-            return value != null ? value.toString() : null;
+            if (value == null) {
+                return null;
+            } else {
+                return value.toString();
+            }
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
         }
@@ -174,6 +184,8 @@ public class JsonMap {
             } else {
                 if (Date.class.isAssignableFrom(value.getClass())) {
                     return (Date) value;
+                } if (String.class.isAssignableFrom(value.getClass())) {
+                    return from(parse(value.toString()));
                 } else {
                     throw new ClassCastException("Value of " + key + " is not a date but a " + value.getClass().getSimpleName());
                 }
@@ -189,7 +201,7 @@ public class JsonMap {
         }
         if (is(Map.class)) {
             final String value = getString(key);
-            return value != null ? Instant.parse(value) : null;
+            return value != null ? parse(value) : null;
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
         }
@@ -245,6 +257,7 @@ public class JsonMap {
         throw new IllegalStateException("not a map but a " + jsonObject.getClass().getSimpleName());
     }
 
+
     @SuppressWarnings("unchecked")
     public Set<String> keySet() {
         if (jsonObject == null) {
@@ -256,7 +269,6 @@ public class JsonMap {
         throw new IllegalStateException("not a map but a " + jsonObject.getClass().getSimpleName());
 
     }
-
 
     private boolean is(final Class<?> type) {
         return type.isAssignableFrom(jsonObject.getClass());
@@ -282,5 +294,4 @@ public class JsonMap {
     public String toString() {
         return jsonObject.toString();
     }
-
 }

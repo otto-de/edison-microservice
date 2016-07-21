@@ -6,13 +6,19 @@ import org.testng.annotations.Test;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import static de.otto.edison.testsupport.util.JsonMap.jsonMapFrom;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.time.Instant.now;
+import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -28,7 +34,47 @@ public class JsonMapTest {
         assertThat(jsonMapFrom(map).get("inner"), is(jsonMapFrom(inner)));
     }
 
-    // -------- String -------------
+    @Test
+    public void shouldGetInnerValueByDottedKeys() {
+        /**
+         * {
+         * "outer" : {
+         *      "innter": {
+         *          "key" : "value"
+         *      }
+         * }
+         */
+        Map<String, ?> inner = singletonMap("key", "value");
+        Map<String, ?> map = singletonMap("outer", singletonMap("inner", inner));
+        assertThat(jsonMapFrom(map).get("outer.inner").getString("key"), is("value"));
+    }
+
+    // -------- remove -------------
+
+    @Test
+    public void shouldRemoveKeyFromTopLevel() {
+        Map<String, ?> map = new HashMap<String,String>(){{put("removeMe", "hello world");}};
+        JsonMap jsonMap = jsonMapFrom(map);
+        jsonMap.remove("removeMe");
+        assertThat(jsonMap, is(jsonMapFrom(emptyMap())));
+    }
+
+    @Test
+    public void shouldRemoveKeyFromInnerObject() {
+        Map<String, ?> map = singletonMap("key", new HashMap<String,String>(){{put("removeMe", "hello world");}});
+        final JsonMap jsonMap = jsonMapFrom(map);
+        jsonMap.get("key").remove("removeMe");
+        assertThat(jsonMap, is(jsonMapFrom(singletonMap("key", emptyMap()))));
+    }
+
+    // -------- getString -------------
+
+    @Test
+    public void shouldGetNullForMissingString() {
+        Map<String, ?> map = singletonMap("key", null);
+        assertThat(jsonMapFrom(map).getString("key"), is(nullValue()));
+        assertThat(jsonMapFrom(map).getString("doesnotexist"), is(nullValue()));
+    }
 
     @Test
     public void shouldGetString() {
@@ -42,6 +88,33 @@ public class JsonMapTest {
         assertThat(empty.getString("key", "default"), is("default"));
     }
 
+    @Test
+    public void shouldGetStringFromDouble() {
+        Map<String, ?> map = singletonMap("key", 2.0d);
+        assertThat(jsonMapFrom(map).getString("key"), is("2.0"));
+    }
+
+    @Test
+    public void shouldGetStringFromLong() {
+        Map<String, ?> map = singletonMap("key", 2L);
+        assertThat(jsonMapFrom(map).getString("key"), is("2"));
+    }
+
+    @Test
+    public void shouldGetStringFromInteger() {
+        Map<String, ?> map = singletonMap("key", 1);
+        assertThat(jsonMapFrom(map).getString("key"), is("1"));
+    }
+
+    @Test
+    public void shouldGetStringFromBoolean() {
+        Map<String, ?> map = new HashMap<String,Boolean>() {{
+            put("somethingTrue", TRUE);
+            put("somethingFalse", FALSE);
+        }};
+        assertThat(jsonMapFrom(map).getString("somethingTrue"), is("true"));
+        assertThat(jsonMapFrom(map).getString("somethingFalse"), is("false"));
+    }
 
     // --------------- double ---------------
     @Test
@@ -57,13 +130,6 @@ public class JsonMapTest {
     }
 
     @Test
-    public void shouldAutomaticallyApplyToStringOnDouble() {
-        Map<String, ?> map = singletonMap("key", 2.0);
-        assertThat(jsonMapFrom(map).getString("key"), is("2.0"));
-    }
-
-
-    @Test
     public void shouldFallbackOnDefaultDouble() {
         JsonMap empty = jsonMapFrom(new HashMap<String, Object>());
         assertThat(empty.getDouble("key", 2.0), is(2.0));
@@ -74,27 +140,20 @@ public class JsonMapTest {
 
     @Test
     public void shouldGetBoolean() {
-        Map<String, ?> map = singletonMap("key", Boolean.TRUE);
-        assertThat(jsonMapFrom(map).getBoolean("key"), is(Boolean.TRUE));
+        Map<String, ?> map = singletonMap("key", TRUE);
+        assertThat(jsonMapFrom(map).getBoolean("key"), is(TRUE));
     }
 
     @Test
     public void shouldGetBooleanFromString() {
         Map<String, ?> map = singletonMap("key", "true");
-        assertThat(jsonMapFrom(map).getBoolean("key"), is(Boolean.TRUE));
+        assertThat(jsonMapFrom(map).getBoolean("key"), is(TRUE));
     }
-
-    @Test
-    public void shouldAutomaticallyApplyToStringOnBoolean() {
-        Map<String, ?> map = singletonMap("key", Boolean.TRUE);
-        assertThat(jsonMapFrom(map).getString("key"), is("true"));
-    }
-
 
     @Test
     public void shouldFallbackOnDefaultBoolean() {
         JsonMap empty = jsonMapFrom(new HashMap<String, Object>());
-        assertThat(empty.getBoolean("key", Boolean.TRUE), is(Boolean.TRUE));
+        assertThat(empty.getBoolean("key", TRUE), is(TRUE));
     }
 
 
@@ -106,20 +165,17 @@ public class JsonMapTest {
         assertThat(jsonMapFrom(map).getDate("key"), is(date));
     }
 
-    @Test(expectedExceptions = ClassCastException.class)
-    public void shouldThrowClassCastExceptionIfStringInsteadOfDate() {
-        Map<String, ?> map = singletonMap("key", "Tue Jul 13 00:00:00 CEST 1999");
-        jsonMapFrom(map).getDate("key");
+    @Test
+    public void shouldGetDateFromProperStringFormat() {
+        // 2012-04-23T18:25:43.511Z ISO 8601
+        Map<String, ?> map = singletonMap("key", "2012-04-23T18:25:43.511Z");
+        assertThat(jsonMapFrom(map).getDate("key"), is(Date.from(LocalDateTime.of(2012, 4, 23, 18, 25, 43, 511000000).toInstant(UTC))));
     }
 
-    @Test
-    public void shouldAutomaticallyApplyToStringOnDate() throws ParseException {
-        Map<String, Object> map = new HashMap<>();
-        SimpleDateFormat simpleDateFormat =
-                new SimpleDateFormat("dd-MM-yyyy", Locale.GERMAN);
-        Date date = simpleDateFormat.parse("13-07-1999");
-        map.put("key", date);
-        assertThat(jsonMapFrom(map).getString("key"), startsWith("Tue Jul 13 00:00:00"));
+    @Test(expectedExceptions = DateTimeParseException.class)
+    public void shouldThrowExceptionWhenGettingDateFromWrongStringFormat() {
+        Map<String, ?> map = singletonMap("key", "Tue Jul 13 00:00:00");
+        jsonMapFrom(map).getDate("key");
     }
 
     // -------------- int ------------------
@@ -133,12 +189,6 @@ public class JsonMapTest {
     public void shouldGetIntFromString() {
         Map<String, ?> map = singletonMap("key", "1");
         assertThat(jsonMapFrom(map).getInt("key"), is(1));
-    }
-
-    @Test
-    public void shouldAutomaticallyApplyToStringOnInt() {
-        Map<String, ?> map = singletonMap("key", 1);
-        assertThat(jsonMapFrom(map).getString("key"), is("1"));
     }
 
     @Test
@@ -162,12 +212,6 @@ public class JsonMapTest {
     }
 
     @Test
-    public void shouldAutomaticallyApplyToStringOnLong() {
-        Map<String, Long> map = singletonMap("key", 1L);
-        assertThat(jsonMapFrom(map).getString("key"), is("1"));
-    }
-
-    @Test
     public void shouldFallbackOnDefaultLong() {
         JsonMap empty = jsonMapFrom(new HashMap<String, Object>());
         assertThat(empty.getLong("key", 1L), is(1L));
@@ -180,6 +224,7 @@ public class JsonMapTest {
     }
 
     // --- Instant
+
     @Test
     public void shouldReturnNullIfInstantValueIsNotPresentAndNoDefaultSpecified() {
         JsonMap empty = jsonMapFrom(new HashMap<String, Object>());

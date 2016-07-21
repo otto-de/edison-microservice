@@ -1,6 +1,5 @@
 package de.otto.edison.example.configuration;
 
-import de.otto.edison.annotations.Beta;
 import de.otto.edison.cache.configuration.GuavaCacheConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.51.0
  */
 @Configuration
-@Beta
 public class CacheConfiguration {
 
     @Bean
