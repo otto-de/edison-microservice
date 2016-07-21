@@ -1,5 +1,9 @@
 # Release History
 
+## Current snapshot
+
+* indicate job errors as application error instead of warning
+
 ## Release 0.67.0
 * Fix circular dependencies in JobConfiguration
 * Update to latest Spring Boot version
