@@ -2,11 +2,12 @@
 
 ## Current snapshot
 
-* indicate job errors as application error instead of warning
 
 ## Release 0.68.0
 * Introduced dependency to github.com/otto-de/edison-hal
 * Added media type application/hal+json for /internal/status
+* indicate job errors as application error instead of warning
+* Catch and log RuntimeExceptions that may occur while persisting JobMessages and StateChanges
 
 ## Release 0.67.0
 * Fix circular dependencies in JobConfiguration
