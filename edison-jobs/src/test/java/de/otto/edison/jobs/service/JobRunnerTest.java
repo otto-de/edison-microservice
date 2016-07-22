@@ -54,7 +54,7 @@ public class JobRunnerTest {
     }
 
     @Test
-    public void shouldPublishErrorMessageOnFail() throws URISyntaxException {
+    public void shouldPublishErrorMessageWithStackTraceOnFail() throws URISyntaxException {
         // given
         JobRunner jobRunner = newJobRunner(
                 "42",
@@ -70,7 +70,8 @@ public class JobRunnerTest {
         jobRunner.start(jobRunnable);
 
         // then
-        verify(jobEventPublisher).error(contains("some error"));
+        verify(jobEventPublisher).error(startsWith("Fatal error in job NAME (42)\n" +
+                "java.lang.RuntimeException: some error\n"));
     }
 
     @Test
