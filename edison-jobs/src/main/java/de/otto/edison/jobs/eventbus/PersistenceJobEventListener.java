@@ -12,9 +12,6 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
-import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
-import static java.time.OffsetDateTime.now;
-
 public class PersistenceJobEventListener implements JobEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceJobEventListener.class);
@@ -27,33 +24,43 @@ public class PersistenceJobEventListener implements JobEventListener {
 
     @Override
     public void consumeStateChange(final StateChangeEvent event) {
-        if (event.getState() == StateChangeEvent.State.START) {
-            return;
+        try {
+            if (event.getState() == StateChangeEvent.State.START) {
+                return;
+            }
+
+            switch (event.getState()) {
+                case KEEP_ALIVE:
+                    jobService.keepAlive(event.getJobId());
+                    break;
+
+                case RESTART:
+                    jobService.markRestarted(event.getJobId());
+                    break;
+
+                case DEAD:
+                    jobService.killJob(event.getJobId());
+                    break;
+
+                case STOP:
+                    jobService.stopJob(event.getJobId());
+                    break;
+            }
         }
-
-        switch (event.getState()) {
-            case KEEP_ALIVE:
-                jobService.keepAlive(event.getJobId());
-                break;
-
-            case RESTART:
-                jobService.markRestarted(event.getJobId());
-                break;
-
-            case DEAD:
-                jobService.killJob(event.getJobId());
-                break;
-
-            case STOP:
-                jobService.stopJob(event.getJobId());
-                break;
+        catch(RuntimeException e) {
+            LOG.error("Failed to persist job state change: jobId="+event.getJobId()+", state="+event.getState(), e);
         }
     }
 
     @Override
     public void consumeMessage(final MessageEvent messageEvent) {
-        JobMessage jobMessage = convertMessage(messageEvent);
-        jobService.appendMessage(messageEvent.getJobId(), jobMessage);
+        try {
+            JobMessage jobMessage = convertMessage(messageEvent);
+            jobService.appendMessage(messageEvent.getJobId(), jobMessage);
+        }
+        catch(RuntimeException e) {
+            LOG.error("Failed to persist job message (jobId="+messageEvent.getJobId()+"): "+messageEvent.getMessage(), e);
+        }
     }
 
     private JobMessage convertMessage(MessageEvent messageEvent) {

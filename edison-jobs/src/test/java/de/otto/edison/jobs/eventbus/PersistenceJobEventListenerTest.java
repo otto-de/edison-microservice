@@ -11,15 +11,13 @@ import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
-import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
-import static java.time.Instant.now;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -82,6 +80,27 @@ public class PersistenceJobEventListenerTest {
         subject.consumeMessage(messageEvent);
 
         verify(jobServiceMock).appendMessage(JOB_ID, JobMessage.jobMessage(Level.INFO, "some message", timestamp));
+    }
+
+    @Test
+    public void shouldNotThrowIfSomethingFailsInDatabase() {
+        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, MessageEvent.Level.INFO, "some message");
+        OffsetDateTime timestamp = OffsetDateTime.ofInstant(Instant.ofEpochMilli(messageEvent.getTimestamp()), ZoneId.systemDefault());
+        final JobMessage expectedJobMessage = JobMessage.jobMessage(Level.INFO, "some message", timestamp);
+        doThrow(new RuntimeException("Miserable failure")).when(jobServiceMock).appendMessage(JOB_ID, expectedJobMessage);
+
+        subject.consumeMessage(messageEvent);
+
+        verify(jobServiceMock).appendMessage(JOB_ID, expectedJobMessage);
+    }
+
+
+    @Test
+    public void shouldNotThrowIfStateChangeFailsInDatabase() throws Exception {
+        doThrow(new RuntimeException("Unexpected disturbance in the force")).when(jobServiceMock).stopJob(JOB_ID);
+        subject.consumeStateChange(stateChangedEvent(STOP));
+
+        verify(jobServiceMock).stopJob(JOB_ID);
     }
 
     private StateChangeEvent stateChangedEvent(StateChangeEvent.State stop) {
