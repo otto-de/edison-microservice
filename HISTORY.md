@@ -3,6 +3,9 @@
 ## Current snapshot
 
 
+## Release 0.68.1
+* Hide feature toggles menu entry if feature toggles UI is disabled
+
 ## Release 0.68.0
 * Introduced dependency to github.com/otto-de/edison-hal
 * Added media type application/hal+json for /internal/status
