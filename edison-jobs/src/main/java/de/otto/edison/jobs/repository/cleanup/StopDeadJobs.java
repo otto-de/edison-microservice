@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class StopDeadJobs implements JobCleanupStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(StopDeadJobs.class);
-    private static final long STOP_DEAD_JOBS_CLEANUP_INTERVAL = 10L * 60L * 1000L;
+    private static final long STOP_DEAD_JOBS_CLEANUP_INTERVAL = 1L * 60L * 1000L;
 
     private final int stopJobAfterSeconds;
     private final JobService jobService;
