@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static java.time.OffsetDateTime.now;
@@ -50,7 +49,7 @@ public class JobStatusDetailIndicator implements StatusDetailIndicator {
             return jobs.isEmpty() ? statusDetailWhenNoJobAvailable() : toStatusDetail(jobs.get(0));
         } catch (final Exception e) {
             LOG.error("could not retrieve job status");
-            return StatusDetail.statusDetail(name, ERROR, "could not retrieve job status");
+            return StatusDetail.statusDetail(name, Status.ERROR, "could not retrieve job status");
         }
     }
 
@@ -58,26 +57,15 @@ public class JobStatusDetailIndicator implements StatusDetailIndicator {
         Status status;
         String message;
 
-        switch(jobInfo.getStatus()) {
-            case OK:
-                if(jobTooOld(jobInfo)) {
-                    status = WARNING;
-                    message = JOB_TOO_OLD_MESSAGE + (maxAge.isPresent() ? maxAge.get() : "N/A");
-                } else {
-                    status = OK;
-                    message = SUCCESS_MESSAGE;
-                }
-                break;
-
-            case ERROR:
-                status = ERROR;
-                message = ERROR_MESSAGE;
-                break;
-
-            case DEAD:
-            default:
-                status = WARNING;
-                message = ERROR_MESSAGE;
+        if (JobInfo.JobStatus.OK.equals(jobInfo.getStatus()) && jobTooOld(jobInfo)) {
+            status = WARNING;
+            message = JOB_TOO_OLD_MESSAGE + (maxAge.isPresent() ? maxAge.get() : "N/A");
+        } else if (JobInfo.JobStatus.OK.equals(jobInfo.getStatus())) {
+            status = OK;
+            message = SUCCESS_MESSAGE;
+        } else {
+            status = WARNING;
+            message = ERROR_MESSAGE;
         }
         return StatusDetail.statusDetail(name, status, message, runningDetailsFor(jobInfo));
     }

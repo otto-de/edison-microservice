@@ -233,7 +233,7 @@ public class JobStatusDetailIndicatorTest {
     }
 
     @Test
-    public void shouldIndicateErrorIfJobRunWasErrornous() {
+    public void shouldIndicateWarningIfJobRunWasErrornous() {
         // given
         OffsetDateTime now = now();
 
@@ -251,7 +251,7 @@ public class JobStatusDetailIndicatorTest {
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getStatus(), is(Status.ERROR));
+        assertThat(status.getStatus(), is(WARNING));
     }
 
     @Test
@@ -310,6 +310,28 @@ public class JobStatusDetailIndicatorTest {
 
         // then
         assertThat(status.getStatus(), is(Status.ERROR));
+    }
+
+    @Test
+    public void shouldFilterByJobType() {
+        // given
+        OffsetDateTime now = now();
+
+        JobInfo someJob = mock(JobInfo.class);
+        when(someJob.getJobType()).thenReturn("someJobType");
+        when(someJob.getJobId()).thenReturn("/some/job/url");
+        when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
+        when(someJob.getStopped()).thenReturn(Optional.empty());
+        when(someJob.getStatus()).thenReturn(ERROR);
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
+
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType2", Optional.of(ofHours(10)));
+
+        // when
+        StatusDetail status = jobStatusDetailIndicator.statusDetail();
+
+        // then
+        assertThat(status.getStatus(), is(WARNING));
     }
 
     @Test
