@@ -7,16 +7,12 @@ import de.otto.edison.status.domain.StatusDetail;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.status.JobStatusDetailIndicator.ERROR_MESSAGE;
 import static de.otto.edison.jobs.status.JobStatusDetailIndicator.SUCCESS_MESSAGE;
-import static de.otto.edison.status.domain.Status.OK;
-import static de.otto.edison.status.domain.Status.WARNING;
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofSeconds;
 import static java.time.OffsetDateTime.now;
@@ -52,13 +48,13 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getStatus(), is(OK));
+        assertThat(status.getStatus(), is(Status.OK));
     }
 
     @Test
@@ -74,13 +70,13 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofSeconds(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofSeconds(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getStatus(), is(WARNING));
+        assertThat(status.getStatus(), is(Status.WARNING));
         assertThat(status.getMessage(), containsString("Job didn't run in the past"));
     }
 
@@ -97,7 +93,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -119,7 +115,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -141,7 +137,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -155,7 +151,7 @@ public class JobStatusDetailIndicatorTest {
         // given
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList());
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -178,7 +174,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -201,7 +197,7 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.OK);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -220,10 +216,10 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
-        when(someJob.getStatus()).thenReturn(ERROR);
+        when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -233,7 +229,7 @@ public class JobStatusDetailIndicatorTest {
     }
 
     @Test
-    public void shouldIndicateWarningIfJobRunWasErrornous() {
+    public void shouldIndicateConfiguredErrorStatusIfJobRunWasErrornous() {
         // given
         OffsetDateTime now = now();
 
@@ -242,16 +238,38 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
-        when(someJob.getStatus()).thenReturn(ERROR);
+        when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getStatus(), is(WARNING));
+        assertThat(status.getStatus(), is(Status.ERROR));
+    }
+
+    @Test
+    public void shouldIndicateConfiguredWarningStatusIfJobRunWasErrornous() {
+        // given
+        OffsetDateTime now = now();
+
+        JobInfo someJob = mock(JobInfo.class);
+        when(someJob.getJobType()).thenReturn("someJobType");
+        when(someJob.getJobId()).thenReturn("/some/job/url");
+        when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
+        when(someJob.getStopped()).thenReturn(Optional.empty());
+        when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
+
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.WARNING);
+
+        // when
+        StatusDetail status = jobStatusDetailIndicator.statusDetail();
+
+        // then
+        assertThat(status.getStatus(), is(Status.WARNING));
     }
 
     @Test
@@ -267,13 +285,13 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.DEAD);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getStatus(), is(WARNING));
+        assertThat(status.getStatus(), is(Status.WARNING));
     }
 
     @Test
@@ -289,13 +307,13 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.DEAD);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getStatus(), is(WARNING));
+        assertThat(status.getStatus(), is(Status.WARNING));
     }
 
     @Test
@@ -303,7 +321,7 @@ public class JobStatusDetailIndicatorTest {
         // given
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenThrow(RuntimeException.class);
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
@@ -322,34 +340,33 @@ public class JobStatusDetailIndicatorTest {
         when(someJob.getJobId()).thenReturn("/some/job/url");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(1));
         when(someJob.getStopped()).thenReturn(Optional.empty());
-        when(someJob.getStatus()).thenReturn(ERROR);
+        when(someJob.getStatus()).thenReturn(JobInfo.JobStatus.ERROR);
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(Arrays.asList(someJob));
 
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType2", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType2", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getStatus(), is(WARNING));
+        assertThat(status.getStatus(), is(Status.ERROR));
     }
 
     @Test
     public void shouldAcceptIfNoJobRan() {
         // given
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
-
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();
 
         // then
-        assertThat(status.getStatus(), is(OK));
+        assertThat(status.getStatus(), is(Status.OK));
     }
 
     @Test
     public void shouldHaveName() {
         // given
-        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)));
+        JobStatusDetailIndicator jobStatusDetailIndicator = new JobStatusDetailIndicator(jobRepository, "someName", "someJobType", Optional.of(ofHours(10)), Status.ERROR);
 
         // when
         StatusDetail status = jobStatusDetailIndicator.statusDetail();

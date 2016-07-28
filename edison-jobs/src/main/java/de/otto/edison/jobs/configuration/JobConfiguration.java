@@ -14,7 +14,6 @@ import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,11 +22,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.time.Clock;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
-import static java.time.Clock.systemDefaultZone;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.stream.Collectors.toList;
 
@@ -46,6 +44,10 @@ public class JobConfiguration {
 
     @Value("${edison.jobs.cleanup.mark-dead-after:30}")
     int secondsToMarkJobsAsDead;
+
+    @Value("${edison.jobs.status.indicate-joberror-with-level:ERROR}")
+    String jobErrorStatusMapping;
+
 
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
@@ -76,6 +78,9 @@ public class JobConfiguration {
     @ConditionalOnProperty(name = "edison.jobs.status.enabled", havingValue = "true", matchIfMissing = true)
     public StatusDetailIndicator jobStatusDetailIndicator(final JobDefinitionService service) {
 
+
+        final Status jobErrorMapping = parseStatusMapping(this.jobErrorStatusMapping);
+
         final List<JobDefinition> jobDefinitions = service.getJobDefinitions();
 
         if (jobDefinitions.isEmpty()) {
@@ -84,9 +89,18 @@ public class JobConfiguration {
             return new CompositeStatusDetailIndicator("Jobs",
                     jobDefinitions
                             .stream()
-                            .map(d -> new JobStatusDetailIndicator(jobRepository(), d.jobName(), d.jobType(), d.maxAge()))
+                            .map(d -> new JobStatusDetailIndicator(jobRepository(), d.jobName(), d.jobType(), d.maxAge(), jobErrorMapping))
                             .collect(toList())
             );
+        }
+    }
+
+    Status parseStatusMapping(String statusMapping) {
+        try {
+            return Status.valueOf(statusMapping);
+        } catch (IllegalArgumentException e) {
+            String errorString = "Incorrect JobError Status Mapping. Valid values are %s";
+            throw new IllegalArgumentException(String.format(errorString, Arrays.toString(Status.values())));
         }
     }
 }

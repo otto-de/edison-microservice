@@ -2,6 +2,8 @@
 
 ## Current snapshot
 * Add JobEvents class. Use it to avoid handing a JobEventPublisher to helper classes of a Job.
+* Indicate job errors with configured mapping in application status (default is ERROR).
+  The property name is `edison.jobs.status.indicate-joberror-with-level`, possible values are `OK`, `WARNING` and `ERROR`
 
 ## Release 0.68.1
 * Hide feature toggles menu entry if feature toggles UI is disabled
