@@ -1,6 +1,7 @@
 # Release History
 
 ## Current snapshot
+* Status page header and title configurable via property `edison.status.application.title`
 
 ## Release 0.69.0
 * Add JobEvents class. Use it to avoid handing a JobEventPublisher to helper classes of a Job.

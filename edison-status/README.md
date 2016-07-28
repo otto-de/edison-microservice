@@ -35,6 +35,7 @@ Optional VCS information about the deployed application:
 (e.g. https://github.com/otto-de/edison-microservice/commit/{commit})
 
 Optional information about the application:
+* edison.status.application.title: A short title that is used in the top navigation and the html title tag.
 * edison.status.application.description: A human-readable short description of the application's purpose.
 * edison.status.application.group: Information about the group of services this service is belonging to.
 Example: 'order', 'user', 'campaign'

@@ -14,13 +14,15 @@ public class StatusControllerAcceptanceTest {
 
     @Test
     public void shouldGetInternalStatusAsHtml() throws IOException {
+
         when(
                 internal_status_is_retrieved_as("text/html")
         );
 
         then(
                 assertThat(the_status_code().value(), is(200)),
-                assertThat(the_returned_content(), startsWith("<!DOCTYPE html>"))
+                assertThat(the_returned_content(), startsWith("<!DOCTYPE html>")),
+                assertThat(the_returned_content(), containsString("<title>test title</title>"))
         );
     }
 
