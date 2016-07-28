@@ -3,6 +3,7 @@ package de.otto.edison.jobs.service;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -22,19 +23,29 @@ import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class JobRunnerTest {
 
+    @Mock
     private ScheduledExecutorService executor;
+    @Mock
     private ScheduledFuture scheduledJob;
+    @Mock
     private JobEventPublisher jobEventPublisher;
+    private JobRunner jobRunner;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        executor = mock(ScheduledExecutorService.class);
-        jobEventPublisher = mock(JobEventPublisher.class);
+        initMocks(this);
 
-        scheduledJob = mock(ScheduledFuture.class);
+        jobRunner = newJobRunner(
+                "42",
+                "NAME",
+                executor,
+                jobEventPublisher
+        );
+
         doReturn(scheduledJob)
                 .when(executor).scheduleAtFixedRate(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class));
     }
@@ -42,7 +53,6 @@ public class JobRunnerTest {
     @Test
     public void shouldExecuteJob() {
         // given
-        JobRunner jobRunner = newJobRunner("42", "TYPE", executor, jobEventPublisher);
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty()));
 
@@ -56,12 +66,6 @@ public class JobRunnerTest {
     @Test
     public void shouldPublishErrorMessageWithStackTraceOnFail() throws URISyntaxException {
         // given
-        JobRunner jobRunner = newJobRunner(
-                "42",
-                "NAME",
-                executor,
-                jobEventPublisher
-        );
         JobRunnable jobRunnable = mock(JobRunnable.class);
         when(jobRunnable.getJobDefinition()).thenReturn(fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty()));
         doThrow(new RuntimeException("some error")).when(jobRunnable).execute(jobEventPublisher);
@@ -77,13 +81,6 @@ public class JobRunnerTest {
     @Test
     public void shouldRestartJobOnException() {
         // given
-        JobRunner jobRunner = newJobRunner(
-                "42",
-                "NAME",
-                executor,
-                jobEventPublisher
-        );
-
         JobRunnable jobRunnable = mock(JobRunnable.class);
 
         when(jobRunnable.getJobDefinition())
@@ -103,14 +100,6 @@ public class JobRunnerTest {
 
     @Test
     public void shouldSendKeepAliveEventWithinPingJob() {
-        //given
-        JobRunner jobRunner = newJobRunner(
-                "42",
-                "NAME",
-                executor,
-                jobEventPublisher
-        );
-
         // when
         jobRunner.start(getMockedRunnable());
 
@@ -125,14 +114,6 @@ public class JobRunnerTest {
 
     @Test
     public void shouldStopPingJobWhenJobIsFinished() {
-        //given
-        JobRunner jobRunner = newJobRunner(
-                "42",
-                "NAME",
-                executor,
-                jobEventPublisher
-        );
-
         // when
         jobRunner.start(getMockedRunnable());
 
