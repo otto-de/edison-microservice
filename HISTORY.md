@@ -1,7 +1,7 @@
 # Release History
 
 ## Current snapshot
-
+* Add JobEvents class. Use it to avoid handing a JobEventPublisher to helper classes of a Job.
 
 ## Release 0.68.1
 * Hide feature toggles menu entry if feature toggles UI is disabled
