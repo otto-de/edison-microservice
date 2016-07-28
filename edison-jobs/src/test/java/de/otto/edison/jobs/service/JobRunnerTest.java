@@ -2,6 +2,7 @@ package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
+import de.otto.edison.jobs.eventbus.JobEvents;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
@@ -121,11 +122,46 @@ public class JobRunnerTest {
         verify(scheduledJob).cancel(false);
     }
 
+    @Test
+    public void shouldInitJobEventsOnJobStart() {
+        jobRunner.start(new StubRunnable(()-> JobEvents.info("test")));
+
+        verify(jobEventPublisher).info("test");
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void shouldDestroyReferenceToJobEventPublisherWhenJobFinishes() {
+        jobRunner.start(getMockedRunnable());
+
+        JobEvents.info("I should produce an error");
+    }
+
     private JobRunnable getMockedRunnable() {
         final JobRunnable jobRunnable = mock(JobRunnable.class);
         JobDefinition jobDefinition = mock(JobDefinition.class);
         when(jobDefinition.jobType()).thenReturn("TYPE");
         when(jobRunnable.getJobDefinition()).thenReturn(jobDefinition);
         return jobRunnable;
+    }
+
+    private static class StubRunnable implements JobRunnable {
+
+        private final Runnable runnable;
+
+        StubRunnable(Runnable runnable) {
+            this.runnable = runnable;
+        }
+
+        @Override
+        public JobDefinition getJobDefinition() {
+            JobDefinition jobDefinition = mock(JobDefinition.class);
+            when(jobDefinition.jobType()).thenReturn("TYPE");
+            return jobDefinition;
+        }
+
+        @Override
+        public void execute(JobEventPublisher jobEventPublisher) {
+            runnable.run();
+        }
     }
 }

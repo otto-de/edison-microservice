@@ -18,12 +18,12 @@ public class JobEventsTest {
 
     @AfterMethod
     public void tearDown() throws Exception {
-        JobEvents.destroy();
+        JobEvents.deregister();
     }
 
     @Test
     public void shouldReportErrorViaJobEventPublisher() {
-        JobEvents.init(jobEventPublisherMock);
+        JobEvents.register(jobEventPublisherMock);
 
         JobEvents.error("some error");
 
@@ -31,9 +31,9 @@ public class JobEventsTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void shouldThrowErrorIfJobEventsAreAlreadyInitialised() {
-        JobEvents.init(jobEventPublisherMock);
-        JobEvents.init(jobEventPublisherMock);
+    public void shouldThrowErrorIfJobEventsAreAlreadyRegistered() {
+        JobEvents.register(jobEventPublisherMock);
+        JobEvents.register(jobEventPublisherMock);
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -74,9 +74,9 @@ public class JobEventsTest {
 
     private Runnable infoRunnable(JobEventPublisher jobEventPublisher) {
         return () -> {
-            JobEvents.init(jobEventPublisher);
+            JobEvents.register(jobEventPublisher);
             JobEvents.info("Info");
-            JobEvents.destroy();
+            JobEvents.deregister();
         };
     }
 }

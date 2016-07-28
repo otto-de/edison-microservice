@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
+import de.otto.edison.jobs.eventbus.JobEvents;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
@@ -44,11 +45,13 @@ public final class JobRunner {
     public void start(final JobRunnable runnable) {
         start();
         try {
+            JobEvents.register(jobEventPublisher);
             final int restarts = runnable.getJobDefinition().restarts();
             executeAndRetry(runnable, restarts);
         } catch (final RuntimeException e) {
             error(e);
         } finally {
+            JobEvents.deregister();
             stop(runnable.getJobDefinition().jobType());
         }
     }

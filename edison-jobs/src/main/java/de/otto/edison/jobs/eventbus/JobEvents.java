@@ -4,7 +4,10 @@ public class JobEvents {
 
     public static ThreadLocal<JobEventPublisher> jobEventPublisherThreadLocal = new InheritableThreadLocal<>();
 
-    public static void init(JobEventPublisher jobEventPublisher) {
+    /**
+     * Internal method. Should only be called inside edison-jobs.
+     */
+    public static void register(JobEventPublisher jobEventPublisher) {
         if (JobEvents.jobEventPublisherThreadLocal.get() != null) {
             throw new IllegalStateException("JobEventPublisher has already been initialised. " +
                     "Either you forgot to call destroy() or you called init() twice");
@@ -12,7 +15,10 @@ public class JobEvents {
         JobEvents.jobEventPublisherThreadLocal.set(jobEventPublisher);
     }
 
-    public static void destroy() {
+    /**
+     * Internal method. Should only be called inside edison-jobs.
+     */
+    public static void deregister() {
         JobEvents.jobEventPublisherThreadLocal.remove();
     }
 
