@@ -99,7 +99,7 @@ public class JobConfiguration {
         try {
             return Status.valueOf(statusMapping);
         } catch (IllegalArgumentException e) {
-            String errorString = "Incorrect JobError Status Mapping. Valid values are %s";
+            String errorString = "Incorrect JobStatus Mapping (look for edison.jobs.status.indicate-joberror-with-level in your properties). Valid values are %s";
             throw new IllegalArgumentException(String.format(errorString, Arrays.toString(Status.values())));
         }
     }
