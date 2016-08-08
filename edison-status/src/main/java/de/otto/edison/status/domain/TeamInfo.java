@@ -7,7 +7,7 @@ import net.jcip.annotations.Immutable;
 /**
  * Information about the team that is responsible for developing and running the service.
  *
- * (yes, it should always be one team beeing responsible).
+ * (yes, it should always be one team being responsible).
  */
 @Beta
 @Immutable
