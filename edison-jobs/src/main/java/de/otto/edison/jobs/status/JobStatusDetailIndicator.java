@@ -96,6 +96,8 @@ public class JobStatusDetailIndicator implements StatusDetailIndicator {
         details.put("uri", uri);
         if (!jobInfo.getStopped().isPresent()) {
             details.put("running", uri);
+        } else {
+            details.put("stopped", ISO_DATE_TIME.format(jobInfo.getStopped().get()));
         }
         details.put("started", ISO_DATE_TIME.format(jobInfo.getStarted()));
 
