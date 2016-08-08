@@ -1,7 +1,10 @@
 # Release History
 
 ## Current snapshot
+
+## Release 0.69.1
 * Status page header and title configurable via property `edison.status.application.title`
+* Add time of start/stop to job status detail
 
 ## Release 0.69.0
 * Add JobEvents class. Use it to avoid handing a JobEventPublisher to helper classes of a Job.
