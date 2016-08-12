@@ -1,7 +1,10 @@
 # Release History
 
 ## Current snapshot
+
+## Release 0.69.1
 * Job Overview shows distinct jobs as default (old behaviour can be activated via distinct=false parameter)
+* Add possibility to add slf4j markers to jobevents 
 
 ## Release 0.69.1
 * Status page header and title configurable via property `edison.status.application.title`

@@ -4,10 +4,12 @@ import de.otto.edison.jobs.eventbus.events.MessageEvent.Level;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent.State;
 import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
+import org.slf4j.Marker;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.*;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
@@ -33,7 +35,11 @@ public class JobEventPublisher {
     }
 
     public void message(final Level level, final String message) {
-        applicationEventPublisher.publishEvent(newMessageEvent(jobRunnable, jobId, level, message));
+        applicationEventPublisher.publishEvent(newMessageEvent(jobRunnable, jobId, level, message, Optional.empty()));
+    }
+
+    public void message(final Marker marker, final Level level, final String message) {
+        applicationEventPublisher.publishEvent(newMessageEvent(jobRunnable, jobId, level, message, Optional.of(marker)));
     }
 
     public void info(final String message) {
@@ -46,6 +52,18 @@ public class JobEventPublisher {
 
     public void error(final String message) {
         message(ERROR, message);
+    }
+
+    public void info(final Marker marker, final String message) {
+        message(marker, INFO, message);
+    }
+
+    public void warn(final Marker marker, final String message) {
+        message(marker, WARN, message);
+    }
+
+    public void error(final Marker marker, final String message) {
+        message(marker, ERROR, message);
     }
 
     public static JobEventPublisher newJobEventPublisher(final ApplicationEventPublisher applicationEventPublisher,

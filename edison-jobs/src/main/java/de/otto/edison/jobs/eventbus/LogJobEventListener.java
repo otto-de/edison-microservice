@@ -17,15 +17,28 @@ public class LogJobEventListener implements JobEventListener {
 
     @Override
     public void consumeMessage(final MessageEvent messageEvent) {
+        String msg = String.format("'%s': '%s'", messageEvent.getMessage(), messageEvent.getJobId());
         switch (messageEvent.getLevel()) {
             case INFO:
-                LOG.info("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobId());
+                if (messageEvent.getMarker().isPresent()) {
+                    LOG.info(messageEvent.getMarker().get(), msg);
+                } else {
+                    LOG.info(msg);
+                }
                 break;
             case WARN:
-                LOG.warn("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobId());
+                if (messageEvent.getMarker().isPresent()) {
+                    LOG.warn(messageEvent.getMarker().get(), msg);
+                } else {
+                    LOG.warn(msg);
+                }
                 break;
             case ERROR:
-                LOG.error("'{}': '{}'", messageEvent.getMessage(), messageEvent.getJobId());
+                if (messageEvent.getMarker().isPresent()) {
+                    LOG.error(messageEvent.getMarker().get(), msg);
+                } else {
+                    LOG.error(msg);
+                }
         }
     }
 }

@@ -2,7 +2,10 @@ package de.otto.edison.jobs.eventbus.events;
 
 import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
+import org.slf4j.Marker;
 import org.springframework.context.ApplicationEvent;
+
+import java.util.Optional;
 
 @Immutable
 public class MessageEvent extends ApplicationEvent {
@@ -10,15 +13,18 @@ public class MessageEvent extends ApplicationEvent {
     private final String jobId;
     private final Level level;
     private final String message;
+    private final Optional<Marker> marker;
 
     private MessageEvent(final JobRunnable jobRunnable,
-                        final String jobId,
-                        final Level level,
-                        final String message) {
+                         final String jobId,
+                         final Level level,
+                         final String message,
+                         final Optional<Marker> marker) {
         super(jobRunnable);
         this.jobId = jobId;
         this.level = level;
         this.message = message;
+        this.marker = marker;
     }
 
     public String getJobId() {
@@ -31,6 +37,10 @@ public class MessageEvent extends ApplicationEvent {
 
     public Level getLevel() {
         return level;
+    }
+
+    public Optional<Marker> getMarker() {
+        return marker;
     }
 
     @Override
@@ -63,8 +73,12 @@ public class MessageEvent extends ApplicationEvent {
                 '}';
     }
 
-    public static MessageEvent newMessageEvent(final JobRunnable jobRunnable, final String jobId, final Level level, final String message) {
-        return new MessageEvent(jobRunnable, jobId, level, message);
+    public static MessageEvent newMessageEvent(final JobRunnable jobRunnable,
+                                               final String jobId,
+                                               final Level level,
+                                               final String message,
+                                               final Optional<Marker> marker) {
+        return new MessageEvent(jobRunnable, jobId, level, message, marker);
     }
 
     public enum Level {

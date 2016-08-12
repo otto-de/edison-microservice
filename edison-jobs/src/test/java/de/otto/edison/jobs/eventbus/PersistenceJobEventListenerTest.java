@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
@@ -74,7 +75,7 @@ public class PersistenceJobEventListenerTest {
 
     @Test
     public void shouldPersistMessage() throws Exception {
-        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, MessageEvent.Level.INFO, "some message");
+        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, MessageEvent.Level.INFO, "some message", Optional.empty());
         OffsetDateTime timestamp = OffsetDateTime.ofInstant(Instant.ofEpochMilli(messageEvent.getTimestamp()), ZoneId.systemDefault());
 
         subject.consumeMessage(messageEvent);
@@ -84,7 +85,7 @@ public class PersistenceJobEventListenerTest {
 
     @Test
     public void shouldNotThrowIfSomethingFailsInDatabase() {
-        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, MessageEvent.Level.INFO, "some message");
+        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, MessageEvent.Level.INFO, "some message", Optional.empty());
         OffsetDateTime timestamp = OffsetDateTime.ofInstant(Instant.ofEpochMilli(messageEvent.getTimestamp()), ZoneId.systemDefault());
         final JobMessage expectedJobMessage = JobMessage.jobMessage(Level.INFO, "some message", timestamp);
         doThrow(new RuntimeException("Miserable failure")).when(jobServiceMock).appendMessage(JOB_ID, expectedJobMessage);
