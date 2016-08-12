@@ -1,6 +1,7 @@
 # Release History
 
 ## Current snapshot
+* Job Overview shows distinct jobs as default (old behaviour can be activated via distinct=false parameter)
 
 ## Release 0.69.1
 * Status page header and title configurable via property `edison.status.application.title`
