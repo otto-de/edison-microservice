@@ -44,7 +44,7 @@ public class JobsController {
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")
     public ModelAndView getJobsAsHtml(@RequestParam(value = "type", required = false) String type,
                                       @RequestParam(value = "count", defaultValue = "100") int count,
-                                      @RequestParam(value = "distinct", defaultValue = "false", required = false) boolean distinct,
+                                      @RequestParam(value = "distinct", defaultValue = "true", required = false) boolean distinct,
                                       HttpServletRequest request) {
         final List<JobRepresentation> jobRepresentations = getJobInfos(type, count, distinct).stream()
                 .map((j) -> representationOf(j, true, baseUriOf(request)))
@@ -59,7 +59,7 @@ public class JobsController {
     @ResponseBody
     public List<JobRepresentation> getJobsAsJson(@RequestParam(value = "type", required = false) String type,
                                                  @RequestParam(value = "count", defaultValue = "100") int count,
-                                                 @RequestParam(value = "distinct", defaultValue = "false", required = false) boolean distinct,
+                                                 @RequestParam(value = "distinct", defaultValue = "true", required = false) boolean distinct,
                                                  HttpServletRequest request) {
         return getJobInfos(type, count, distinct)
                 .stream()
