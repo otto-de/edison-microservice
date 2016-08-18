@@ -1,6 +1,7 @@
 # Release History
 
 ## Current snapshot
+* do not show distinct jobs if type is given
 
 ## Release 0.69.1
 * Job Overview shows distinct jobs as default (old behaviour can be activated via distinct=false parameter)
