@@ -161,7 +161,7 @@ public class JobsController {
 
     private List<JobInfo> getJobInfos(String type, int count, boolean distinct) {
         final List<JobInfo> jobInfos;
-        if (distinct) {
+        if (type != null && distinct) {
             jobInfos = jobService.findJobsDistinct();
         } else {
             jobInfos = jobService.findJobs(Optional.ofNullable(type), count);
