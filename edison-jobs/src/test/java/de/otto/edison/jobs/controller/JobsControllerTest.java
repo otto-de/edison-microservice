@@ -105,6 +105,27 @@ public class JobsControllerTest {
         assertThat(job, is(asList(representationOf(firstJob, false, ""), representationOf(secondJob, false, ""))));
     }
 
+
+    @Test
+    public void shouldNotReturnAllJobsDistinctIfTypeIsGiven() throws IOException {
+        // given
+        JobInfo firstJob = newJobInfo("11", "jobType1", fixed(ofEpochMilli(0), systemDefault()), "localhost");
+        JobInfo secondJob = newJobInfo("12", "jobType2", fixed(ofEpochMilli(1), systemDefault()), "localhost");
+        JobInfo thirdJob = newJobInfo("13", "jobType3", fixed(ofEpochMilli(2), systemDefault()), "localhost");
+        JobInfo fourthJob = newJobInfo("14", "jobType2", fixed(ofEpochMilli(2), systemDefault()), "localhost");
+
+        when(jobService.findJobs(Optional.of("jobType2"), 100)).thenReturn(asList(secondJob, fourthJob));
+
+        // when
+        Object job = jobsController.getJobsAsJson("jobType2", 100, true, mock(HttpServletRequest.class));
+
+        // then
+        assertThat(job, is(asList(representationOf(secondJob, false, ""), representationOf(fourthJob, false, ""))));
+
+        verify(jobService, times(1)).findJobs(Optional.of("jobType2"), 100);
+        verifyNoMoreInteractions(jobService);
+    }
+
     @Test
     public void shouldReturnAllJobsDistinct() throws IOException {
         // given
