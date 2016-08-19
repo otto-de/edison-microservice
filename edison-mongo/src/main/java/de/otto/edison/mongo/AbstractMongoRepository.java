@@ -2,7 +2,9 @@ package de.otto.edison.mongo;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -53,13 +55,8 @@ public abstract class AbstractMongoRepository<K, V> {
 
     public V createOrUpdate(final V value) {
         final K key = keyOf(value);
-        final Document existing = collection().find(byId(key)).first();
         Document doc = encode(value);
-        if (existing != null) {
-            collection().replaceOne(byId(key), doc);
-        } else {
-            collection().insertOne(doc);
-        }
+        collection().replaceOne(byId(key), doc, new UpdateOptions().upsert(true));
         return decode(doc);
     }
 
