@@ -1,7 +1,10 @@
 # Release History
 
-## Current snapshot
+## current snapshot
+
+## Release 0.70.0
 * do not show distinct jobs if type is given
+* optimize createOrUpdate in AbstractMongoRepository by using upsert
 
 ## Release 0.69.1
 * Job Overview shows distinct jobs as default (old behaviour can be activated via distinct=false parameter)
