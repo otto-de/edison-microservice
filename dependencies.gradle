@@ -43,11 +43,11 @@ ext.libs = [
         servlet:
                 "javax.servlet:javax.servlet-api:3.1.0",
         togglz     : [
-                "org.togglz:togglz-servlet:2.2.0.Final",
-                "org.togglz:togglz-console:2.2.0.Final",
-                "org.togglz:togglz-spring-web:2.2.0.Final"],
+                "org.togglz:togglz-servlet:2.3.0.Final",
+                "org.togglz:togglz-console:2.3.0.Final",
+                "org.togglz:togglz-spring-web:2.3.0.Final"],
         testTogglz:
-                "org.togglz:togglz-testing:2.2.0.Final",
+                "org.togglz:togglz-testing:2.3.0.Final",
         mongoDb: [
                 "org.mongodb:mongodb-driver:3.3.0"],
         fakeMongo:

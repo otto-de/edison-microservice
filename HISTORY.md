@@ -2,6 +2,7 @@
 
 ## current snapshot
 * Upgrade mongodb-driver to 3.3.0
+* Upgrade togglz to 2.3.0.Final
 
 ## Release 0.70.0
 * do not show distinct jobs if type is given
