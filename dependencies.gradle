@@ -49,7 +49,7 @@ ext.libs = [
         testTogglz:
                 "org.togglz:togglz-testing:2.2.0.Final",
         mongoDb: [
-                "org.mongodb:mongodb-driver:3.2.2"],
+                "org.mongodb:mongodb-driver:3.3.0"],
         fakeMongo:
                 "com.github.fakemongo:fongo:2.0.7",
         guava:

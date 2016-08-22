@@ -1,6 +1,7 @@
 # Release History
 
 ## current snapshot
+* Upgrade mongodb-driver to 3.3.0
 
 ## Release 0.70.0
 * do not show distinct jobs if type is given
