@@ -1,8 +1,11 @@
 # Release History
 
-## current snapshot
+## Current snapshot
+
+## Release 0.71.0
 * Upgrade mongodb-driver to 3.3.0
 * Upgrade togglz to 2.3.0.Final
+* Reduce default shutdown period from 30 to 25 seconds
 
 ## Release 0.70.0
 * do not show distinct jobs if type is given
