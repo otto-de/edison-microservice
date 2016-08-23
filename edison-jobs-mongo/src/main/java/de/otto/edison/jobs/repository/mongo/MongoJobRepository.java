@@ -1,9 +1,10 @@
 package de.otto.edison.jobs.repository.mongo;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.GroupCommand;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.*;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
@@ -13,6 +14,7 @@ import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.mongo.AbstractMongoRepository;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,15 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.mongodb.client.model.Aggregates.group;
+import static com.mongodb.client.model.Aggregates.sort;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.exists;
+import static com.mongodb.client.model.Sorts.descending;
+import static com.mongodb.client.model.Updates.push;
+import static com.mongodb.client.model.Updates.set;
+import static com.mongodb.client.model.Updates.unset;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.repository.mongo.DateTimeConverters.toDate;
@@ -49,6 +60,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     private static final int DESCENDING = -1;
     private static final String NO_LOG_MESSAGE_FOUND = "No log message found";
+    public static final String ID = "_id";
 
 
     private final MongoCollection<Document> jobInfoCollection;
@@ -64,18 +76,18 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @PostConstruct
     public void initJobsMetaDataDocumentsOnStartup() {
-        if (runningJobsCollection.count(byId(RUNNING_JOBS_DOCUMENT)) == 0) {
-            runningJobsCollection.insertOne(new Document("_id", RUNNING_JOBS_DOCUMENT));
+        if (runningJobsCollection.count(eq(ID, RUNNING_JOBS_DOCUMENT)) == 0) {
+            runningJobsCollection.insertOne(new Document(ID, RUNNING_JOBS_DOCUMENT));
         }
-        if (runningJobsCollection.count(byId(DISABLED_JOBS_DOCUMENT)) == 0) {
-            runningJobsCollection.insertOne(new Document("_id", DISABLED_JOBS_DOCUMENT));
+        if (runningJobsCollection.count(eq(ID, DISABLED_JOBS_DOCUMENT)) == 0) {
+            runningJobsCollection.insertOne(new Document(ID, DISABLED_JOBS_DOCUMENT));
         }
     }
 
     @Override
     public JobStatus findStatus(String jobId) {
         return JobStatus.valueOf(collection()
-                .find(byId(jobId))
+                .find(eq(ID, jobId))
                 .projection(new Document(STATUS.key(), true))
                 .first().getString(STATUS.key()));
     }
@@ -84,29 +96,29 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public void removeIfStopped(final String id) {
         findOne(id).ifPresent(jobInfo -> {
             if (jobInfo.isStopped()) {
-                collection().deleteOne(byId(id));
+                collection().deleteOne(eq(ID, id));
             }
         });
     }
 
     @Override
     public void appendMessage(String jobId, JobMessage jobMessage) {
-        Document document = new Document("$push", new Document(MESSAGES.key(), encodeJobMessage(jobMessage)));
-        collection().updateOne(byId(jobId), document);
+        collection().updateOne(eq(ID, jobId), push(MESSAGES.key(), encodeJobMessage(jobMessage)));
     }
 
     @Override
     public void markJobAsRunningIfPossible(JobInfo jobInfo, Set<String> blockingJobTypes) throws JobBlockedException {
-        Document disabledJobsQuery = byId(DISABLED_JOBS_DOCUMENT);
-        disabledJobsQuery.put(jobInfo.getJobType(), new Document("$exists", true));
-        if (runningJobsCollection.find(disabledJobsQuery).first() != null) {
+        Bson disabledJobsFilter = and(eq(ID, DISABLED_JOBS_DOCUMENT), exists(jobInfo.getJobType()));
+
+        if (runningJobsCollection.find(disabledJobsFilter).first() != null) {
             throw new JobBlockedException("Disabled");
         }
-        Document query = byId(RUNNING_JOBS_DOCUMENT);
-        for (String blockingJobType : blockingJobTypes) {
-            query.append(blockingJobType, new Document("$exists", false));
-        }
-        Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, new Document("$set", new Document(jobInfo.getJobType(), jobInfo.getJobId())));
+
+        Bson query = and(eq(ID, RUNNING_JOBS_DOCUMENT), and(blockingJobTypes.stream()
+                        .map(type -> Filters.not(Filters.exists(type)))
+                        .collect(toList())));
+
+        Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, set(jobInfo.getJobType(), jobInfo.getJobId()));
         if (updatedRunningJobsDocument == null) {
             throw new JobBlockedException("Blocked by some other job");
         }
@@ -114,8 +126,8 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Override
     public void clearRunningMark(String jobType) {
-        final Document query = byId(RUNNING_JOBS_DOCUMENT);
-        final Document updateResult = runningJobsCollection.findOneAndUpdate(query, new Document("$unset", new Document(jobType, "")));
+        final Bson query = eq(ID, RUNNING_JOBS_DOCUMENT);
+        final Document updateResult = runningJobsCollection.findOneAndUpdate(query, unset(jobType));
         if (updateResult == null) {
             LOG.warn("Could not clear running Mark for Job {}", jobType);
         }
@@ -123,14 +135,14 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Override
     public RunningJobs runningJobsDocument() {
-        final Document runningJobsDocument = runningJobsCollection.find(byId(RUNNING_JOBS_DOCUMENT))
+        final Document runningJobsDocument = runningJobsCollection.find(eq(ID, RUNNING_JOBS_DOCUMENT))
                 .first();
         if (runningJobsDocument == null) {
             return new RunningJobs(emptyList());
         }
 
         final List<RunningJobs.RunningJob> runningJobs = runningJobsDocument.entrySet().stream()
-                .filter(entry -> !entry.getKey().equals("_id"))
+                .filter(entry -> !entry.getKey().equals(ID))
                 .map(entry -> new RunningJobs.RunningJob(entry.getValue().toString(), entry.getKey()))
                 .collect(Collectors.toList());
 
@@ -140,8 +152,8 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     @Override
     public void disableJobType(String jobType) {
         runningJobsCollection.findOneAndUpdate(
-                byId(DISABLED_JOBS_DOCUMENT),
-                new Document("$set", new Document(jobType, "disabled")),
+                eq(ID, DISABLED_JOBS_DOCUMENT),
+                set(jobType, "disabled"),
                 new FindOneAndUpdateOptions().upsert(true)
         );
     }
@@ -149,17 +161,17 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     @Override
     public void enableJobType(String jobType) {
         runningJobsCollection.findOneAndUpdate(
-                byId(DISABLED_JOBS_DOCUMENT),
-                new Document("$unset", new Document(jobType, "")),
+                eq(ID, DISABLED_JOBS_DOCUMENT),
+                unset(jobType),
                 new FindOneAndUpdateOptions().upsert(true)
         );
     }
 
     @Override
     public List<String> findDisabledJobTypes() {
-        Document disabledJobsDocument = runningJobsCollection.find(byId(DISABLED_JOBS_DOCUMENT)).first();
+        Document disabledJobsDocument = runningJobsCollection.find(eq(ID, DISABLED_JOBS_DOCUMENT)).first();
         return disabledJobsDocument.keySet().stream()
-                .filter(k -> !k.equals("_id"))
+                .filter(k -> !k.equals(ID))
                 .collect(toList());
     }
 
@@ -177,7 +189,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public List<JobInfo> findLatestJobsDistinct() {
         List<String> allJobIds = findAllJobIdsDistinct();
         return collection()
-                .find(new Document("_id", new Document("$in", allJobIds)))
+                .find(Filters.in(ID, allJobIds))
                 .map(this::decode)
                 .into(new ArrayList<>());
     }
