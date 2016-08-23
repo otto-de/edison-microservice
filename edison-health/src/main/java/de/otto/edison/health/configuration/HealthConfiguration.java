@@ -13,7 +13,7 @@ public class HealthConfiguration {
     @Value("${edison.gracefulshutdown.indicateErrorAfter:5000}")
     private long timeBeforeIndicateError;
 
-    @Value("${edison.gracefulshutdown.phaseOutAfter:25000}")
+    @Value("${edison.gracefulshutdown.phaseOutAfter:20000}")
     private long timeForPhaseOut;
 
     @Bean

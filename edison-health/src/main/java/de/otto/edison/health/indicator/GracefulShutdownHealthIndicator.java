@@ -3,6 +3,8 @@ package de.otto.edison.health.indicator;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.SmartLifecycle;
@@ -14,6 +16,7 @@ import static org.springframework.boot.actuate.health.Health.up;
 public class GracefulShutdownHealthIndicator implements SmartLifecycle, HealthIndicator {
 
     private static final Logger LOG = LoggerFactory.getLogger(GracefulShutdownHealthIndicator.class);
+    private static final Marker SHUTDOWN_MARKER = MarkerFactory.getMarker("EDISON_SHUTDOWN");
 
     private final long timeBeforeIndicateError;
     private final long timeForPhaseOut;
@@ -35,12 +38,12 @@ public class GracefulShutdownHealthIndicator implements SmartLifecycle, HealthIn
         try {
             waitForSettingHealthCheckToDown();
 
-            LOG.info("set health check to down");
+            LOG.info(SHUTDOWN_MARKER, "set health check to down");
             indicateDown();
 
             waitForShutdown();
         } catch (InterruptedException e) {
-            LOG.error("graceful shutdown interrupted", e);
+            LOG.error(SHUTDOWN_MARKER, "graceful shutdown interrupted", e);
         } finally {
             callback.run();
         }
@@ -51,13 +54,13 @@ public class GracefulShutdownHealthIndicator implements SmartLifecycle, HealthIn
     }
 
     void waitForSettingHealthCheckToDown() throws InterruptedException {
-        LOG.info("shutdown signal received ...");
+        LOG.info(SHUTDOWN_MARKER, "shutdown signal received ...");
         Thread.sleep(timeBeforeIndicateError);
     }
 
     void waitForShutdown() throws InterruptedException {
         Thread.sleep(timeForPhaseOut);
-        LOG.info("grace period ended, starting shutdown now");
+        LOG.info(SHUTDOWN_MARKER, "grace period ended, starting shutdown now");
     }
 
     @Override
