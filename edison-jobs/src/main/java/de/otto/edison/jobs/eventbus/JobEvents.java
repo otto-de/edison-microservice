@@ -19,7 +19,7 @@ public class JobEvents {
     public static void register(JobEventPublisher jobEventPublisher) {
         if (JobEvents.jobEventPublisherThreadLocal.get() != null) {
             throw new IllegalStateException("JobEventPublisher has already been initialised. " +
-                    "Either you forgot to call destroy() or you called init() twice");
+                    "Either you forgot to call destroy(deregister) or you called register(JobEventPublisher) twice");
         }
         JobEvents.jobEventPublisherThreadLocal.set(jobEventPublisher);
     }
@@ -48,7 +48,7 @@ public class JobEvents {
 
     private static void checkInitialisation() {
         if (jobEventPublisherThreadLocal.get() == null) {
-            throw new IllegalStateException("JobEventPublisher has not been initialised. Try calling JobEvents.init() first");
+            throw new IllegalStateException("JobEventPublisher has not been initialised. Try calling JobEvents.register(JobEventPublisher) first");
         }
     }
 }
