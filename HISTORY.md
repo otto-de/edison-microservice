@@ -2,6 +2,11 @@
 
 ## Current snapshot
 
+## Release 0.72.0
+* Upgrade Spring Boot to 1.4.0-RELEASE
+* Upgrade Spring to 4.3.2-RELEASE
+* Add spring-boot-starter-test dependency for @SpringBootTest annotation
+
 ## Release 0.71.0
 * Upgrade mongodb-driver to 3.3.0
 * Upgrade togglz to 2.3.0.Final

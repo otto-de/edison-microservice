@@ -1,16 +1,15 @@
 package de.otto.edison.togglz.configuration;
 
+import de.otto.edison.togglz.authentication.LdapAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
-import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.togglz.console.TogglzConsoleServlet;
 import org.togglz.servlet.TogglzFilter;
-
-import de.otto.edison.togglz.authentication.LdapAuthenticationFilter;
 
 @Configuration
 public class TogglzWebConfiguration {

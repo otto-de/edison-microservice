@@ -1,5 +1,6 @@
 package de.otto.edison.testsupport.util;
 
+import java.util.Collections;
 import java.util.HashSet;
 
 public final class Sets {
@@ -9,9 +10,7 @@ public final class Sets {
         if(values==null) {
             return result;
         }
-        for(T value: values) {
-            result.add(value);
-        }
+        Collections.addAll(result, values);
         return result;
     }
 }

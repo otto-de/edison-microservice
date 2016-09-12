@@ -5,13 +5,13 @@ import de.otto.edison.metrics.load.LoadDetector;
 import de.otto.edison.metrics.load.LoadDetector.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 
-@SpringApplicationConfiguration(classes = {PropertyPlaceholderAutoConfiguration.class,
+@SpringBootTest(classes = {PropertyPlaceholderAutoConfiguration.class,
         MetricRegistry.class, MetricsLoadAutoConfiguration.class})
 public class MetricsLoadAutoConfigurationTest extends AbstractTestNGSpringContextTests {
 
