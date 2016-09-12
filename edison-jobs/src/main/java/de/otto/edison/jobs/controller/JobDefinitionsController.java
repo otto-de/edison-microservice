@@ -1,30 +1,41 @@
 package de.otto.edison.jobs.controller;
 
-import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.jobs.service.JobDefinitionService;
+import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
+
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
+import static de.otto.edison.jobs.controller.Link.link;
+import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.time.Duration;
-import java.util.*;
-
-import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
-import static de.otto.edison.jobs.controller.Link.link;
-import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
-import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.toList;
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.service.JobDefinitionService;
 
 @Controller
+@ConditionalOnProperty(name = "edison.jobs.web.controller.enabled", havingValue = "true", matchIfMissing = true)
 public class JobDefinitionsController {
 
     public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";
