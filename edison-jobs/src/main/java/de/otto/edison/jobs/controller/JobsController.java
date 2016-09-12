@@ -1,29 +1,42 @@
 package de.otto.edison.jobs.controller;
 
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.service.JobService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import static java.util.stream.Collectors.toList;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
+
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
+import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
-import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
-import static java.util.stream.Collectors.toList;
-import static javax.servlet.http.HttpServletResponse.*;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.service.JobService;
 
 @Controller
+@ConditionalOnProperty(name = "edison.jobs.web.controller.enabled", havingValue = "true", matchIfMissing = true)
 public class JobsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsController.class);
