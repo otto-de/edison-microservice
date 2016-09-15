@@ -7,6 +7,10 @@
 * Upgrade Spring to 4.3.2-RELEASE
 * Add spring-boot-starter-test dependency for @SpringBootTest annotation
 
+ * IMPORTANT: Please follow the Migration Guide on
+ https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.4-Release-Notes
+ when upgrading an existing service to this Edison Microservice version
+
 ## Release 0.71.0
 * Upgrade mongodb-driver to 3.3.0
 * Upgrade togglz to 2.3.0.Final
