@@ -66,52 +66,111 @@ public abstract class AbstractMongoRepository<K, V> {
         return decode(doc);
     }
 
-    public void update(final V value) {
+    /**
+     * Updates the document if it is already present in the repository.
+     *
+     * @param value the new value
+     * @return true, if the document was updated, false otherwise.
+     */
+    public boolean update(final V value) {
         final K key = keyOf(value);
-        collection().replaceOne(byId(key), encode(value));
+        return collection()
+                .replaceOne(byId(key), encode(value))
+                .getModifiedCount() == 1;
     }
 
-    public void updateIfMatch(final V value, final String eTag) {
-        Bson query = and(eq(AbstractMongoRepository.ID, keyOf(value)), eq(ETAG, eTag));
-
-        Document updatedETaggable = collection().findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
-        if (isNull(updatedETaggable)) {
-            Optional<V> findById = findOne(keyOf(value));
-            if (findById.isPresent()) {
-                throw new ConcurrentModificationException("Entity concurrently modified: " + keyOf(value));
-            }
-
-            throw new NotFoundException("Entity does not exist: " + keyOf(value));
-        }
+    /**
+     * Updates the document if the document's ETAG is matching the given etag (conditional put).
+     * <p>
+     *     Using this method requires that the document contains an "etag" field that is updated if
+     *     the document is changed.
+     * </p>
+     *
+     * @param value the new value
+     * @param eTag the etag used for conditional update
+     * @return true, if the document was updated, false otherwise.
+     */
+    public boolean updateIfMatch(final V value, final String eTag) {
+        final Bson query = and(eq(AbstractMongoRepository.ID, keyOf(value)), eq(ETAG, eTag));
+        final Document updatedETaggable = collection().findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
+        return updatedETaggable != null;
     }
 
     public long size() {
         return collection().count();
     }
 
+    /**
+     * Deletes the document identified by key.
+     * @param key the identifier of the deleted document
+     * @return DeleteResult
+     */
     public DeleteResult delete(final K key) {
         return collection().deleteOne(byId(key));
     }
 
+    /**
+     * Deletes all documents from this repository.
+     *
+     * @return DeleteResult
+     */
     public DeleteResult deleteAll() {
         return collection().deleteMany(matchAll());
     }
 
-    protected Document byId(final K key) {
+    /**
+     * Returns a query that is selecting documents by ID.
+     *
+     * @param key the document's key
+     * @return query Document
+     */
+    protected final Document byId(final K key) {
         return key != null ? new Document(ID, key.toString()) : new Document();
     }
 
-    protected Document matchAll() {
+    /**
+     * Returns a query that is selecting all documents.
+     *
+     * @return query Document
+     */
+    protected final Document matchAll() {
         return new Document();
     }
 
+    /**
+     * @return the MongoCollection used by this repository to store {@link Document documents}
+     */
     protected abstract MongoCollection<Document> collection();
 
+    /**
+     * Returns the key / identifier from the given value.
+     *
+     * @param value the value
+     * @return key
+     */
     protected abstract K keyOf(final V value);
 
+    /**
+     * Encode a value into a MongoDB {@link Document}.
+     *
+     * @param value the value
+     * @return Document
+     */
     protected abstract Document encode(final V value);
 
+    /**
+     * Decode a MongoDB {@link Document} into a value.
+     *
+     * @param document the Document
+     * @return V
+     */
     protected abstract V decode(final Document document);
 
+    /**
+     * Ensure that the MongoDB indexes required by the repository do exist.
+     * <p>
+     *     This method is called once after startup of the application.
+     * </p>
+     */
     protected abstract void ensureIndexes();
 }

@@ -30,6 +30,40 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test
+    public void shouldUpdateExistingDocument() throws Exception {
+        // given
+        TestObject testObject = new TestObject("someId", "someValue");
+        testee.create(testObject);
+
+        TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue");
+
+        // when
+        final boolean updated = testee.update(testObjectToUpdate);
+
+        // then
+        assertThat(updated, is(true));
+        final TestObject updatedTestObject = testee.findOne("someId").get();
+        assertThat(updatedTestObject.eTag, notNullValue());
+        assertThat(updatedTestObject.eTag, is(not(testObject.eTag)));
+        assertThat(updatedTestObject.id, is("someId"));
+        assertThat(updatedTestObject.value, is("someUpdatedValue"));
+    }
+
+    @Test
+    public void shouldNotUpdateMissingDocument() throws Exception {
+        // given
+
+        TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue");
+
+        // when
+        final boolean updated = testee.update(testObjectToUpdate);
+
+        // then
+        assertThat(updated, is(false));
+        assertThat(testee.findOne("someId").isPresent(), is(false));
+    }
+
+    @Test
     public void shouldUpdateIfETagMatch() throws Exception {
         // given
         TestObject testObject = new TestObject("someId", "someValue");
@@ -39,45 +73,40 @@ public class AbstractMongoRepositoryTest {
         TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue", etagFromCreated);
 
         // when
-        testee.updateIfMatch(testObjectToUpdate, etagFromCreated);
+        final boolean updated = testee.updateIfMatch(testObjectToUpdate, etagFromCreated);
         TestObject updatedTestObject = testee.findOne("someId").get();
 
         // then
+        assertThat(updated, is(true));
         assertThat(updatedTestObject.eTag, notNullValue());
         assertThat(updatedTestObject.eTag, is(not(etagFromCreated)));
         assertThat(updatedTestObject.id, is("someId"));
         assertThat(updatedTestObject.value, is("someUpdatedValue"));
     }
 
-    @Test(expectedExceptions = ConcurrentModificationException.class)
+    @Test
     public void shouldNotUpdateIfEtagNotMatch() throws Exception {
         // given
         TestObject testObject = new TestObject("someId", "someValue", "someEtagWhichIsNotInTheDb");
         testee.create(testObject);
 
         // when
-        try {
-            testee.updateIfMatch(testObject, "someOtherETag");
-            Assert.fail();
-        } catch (ConcurrentModificationException e) {
-            // then
-            throw e;
-        }
+        final boolean updated = testee.updateIfMatch(testObject, "someOtherETag");
+
+        // then
+        assertThat(updated, is(false));
     }
 
-    @Test(expectedExceptions = NotFoundException.class)
+    @Test
     public void shouldNotUpdateIfEtagNotExists() throws Exception {
         // given
         TestObject testObject = new TestObject("someId", "someValue");
 
         // when
-        try {
-            testee.updateIfMatch(testObject, "someETag");
-            Assert.fail();
-        } catch (NotFoundException e) {
-            // then
-            throw e;
-        }
+        final boolean updated = testee.updateIfMatch(testObject, "someETag");
+
+        // then
+        assertThat(updated, is(false));
     }
 
     @Test
