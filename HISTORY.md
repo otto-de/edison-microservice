@@ -2,6 +2,9 @@
 
 ## Current snapshot
 
+## Release 0.72.1
+* Add some logging information
+
 ## Release 0.72.0
 * Upgrade Spring Boot to 1.4.0-RELEASE
 * Upgrade Spring to 4.3.2-RELEASE
