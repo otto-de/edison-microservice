@@ -52,7 +52,7 @@ public final class JobRunner {
             error(e);
         } finally {
             JobEvents.deregister();
-            stop(runnable.getJobDefinition().jobType());
+            stop();
         }
     }
 
@@ -75,7 +75,7 @@ public final class JobRunner {
         final String jobId = this.jobId.toString();
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
         MDC.put("job_type", jobType);
-        LOG.info("[started]");
+        LOG.info("job started '{}'", jobId);
     }
 
     public void ping() {
@@ -95,12 +95,12 @@ public final class JobRunner {
         );
     }
 
-    private synchronized void stop(String jobType) {
+    private synchronized void stop() {
         pingJob.cancel(false);
 
         try {
             jobEventPublisher.stateChanged(STOP);
-            LOG.info("stopped job {}", jobId);
+            LOG.info("job stopped '{}'", jobId);
         } finally {
             MDC.clear();
         }
