@@ -42,6 +42,13 @@ public class MongoFeatureRepository extends AbstractMongoRepository<String, Feat
         this.userProvider = userProvider;
     }
 
+    /**
+     * Get the persisted state of a feature from the repository. If the repository doesn't contain any information regarding
+     * this feature it must return <code>null</code>.
+     *
+     * @param feature The feature to read the state for
+     * @return The persisted feature state or <code>null</code>
+     */
     @Override
     public FeatureState getFeatureState(final Feature feature) {
         Optional<FeatureState> featureState = findOne(feature.name());
@@ -52,6 +59,13 @@ public class MongoFeatureRepository extends AbstractMongoRepository<String, Feat
         return featureState.get();
     }
 
+    /**
+     * Persist the supplied feature state. The repository implementation must ensure that subsequent calls to
+     * {@link #getFeatureState(Feature)} return the same state as persisted using this method.
+     *
+     * @param featureState The feature state to persist
+     * @throws UnsupportedOperationException if this state repository does not support updates
+     */
     @Override
     public void setFeatureState(final FeatureState featureState) {
         createOrUpdate(featureState);
