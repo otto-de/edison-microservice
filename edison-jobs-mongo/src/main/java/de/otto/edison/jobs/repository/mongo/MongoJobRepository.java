@@ -1,10 +1,10 @@
 package de.otto.edison.jobs.repository.mongo;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.GroupCommand;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.*;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
@@ -26,15 +26,8 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.mongodb.client.model.Aggregates.group;
-import static com.mongodb.client.model.Aggregates.sort;
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.exists;
-import static com.mongodb.client.model.Sorts.descending;
-import static com.mongodb.client.model.Updates.push;
-import static com.mongodb.client.model.Updates.set;
-import static com.mongodb.client.model.Updates.unset;
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Updates.*;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.repository.mongo.DateTimeConverters.toDate;
@@ -114,13 +107,18 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
             throw new JobBlockedException("Disabled");
         }
 
-        Bson query = and(eq(ID, RUNNING_JOBS_DOCUMENT), and(blockingJobTypes.stream()
-                        .map(type -> Filters.not(Filters.exists(type)))
-                        .collect(toList())));
+        Bson query = and(
+                eq(ID, RUNNING_JOBS_DOCUMENT),
+                and(
+                        blockingJobTypes.stream()
+                                .map(type -> Filters.not(Filters.exists(type)))
+                                .collect(toList())
+                )
+        );
 
         Document updatedRunningJobsDocument = runningJobsCollection.findOneAndUpdate(query, set(jobInfo.getJobType(), jobInfo.getJobId()));
         if (updatedRunningJobsDocument == null) {
-            throw new JobBlockedException("Blocked by some other job");
+            throw new JobBlockedException("job blocked by other '" + jobInfo.getJobType() + "' job");
         }
     }
 
