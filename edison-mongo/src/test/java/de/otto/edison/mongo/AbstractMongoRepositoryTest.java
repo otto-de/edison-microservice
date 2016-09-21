@@ -4,11 +4,9 @@ import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.ConcurrentModificationException;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -73,11 +71,11 @@ public class AbstractMongoRepositoryTest {
         TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue", etagFromCreated);
 
         // when
-        final boolean updated = testee.updateIfMatch(testObjectToUpdate, etagFromCreated);
+        final UpdateIfMatchResult updateIfMatchResult = testee.updateIfMatch(testObjectToUpdate, etagFromCreated);
         TestObject updatedTestObject = testee.findOne("someId").get();
 
         // then
-        assertThat(updated, is(true));
+        assertThat(updateIfMatchResult, is(UpdateIfMatchResult.OK));
         assertThat(updatedTestObject.eTag, notNullValue());
         assertThat(updatedTestObject.eTag, is(not(etagFromCreated)));
         assertThat(updatedTestObject.id, is("someId"));
@@ -91,10 +89,10 @@ public class AbstractMongoRepositoryTest {
         testee.create(testObject);
 
         // when
-        final boolean updated = testee.updateIfMatch(testObject, "someOtherETag");
+        final UpdateIfMatchResult updated = testee.updateIfMatch(testObject, "someOtherETag");
 
         // then
-        assertThat(updated, is(false));
+        assertThat(updated, is(UpdateIfMatchResult.CONCURRENTLY_MODIFIED));
     }
 
     @Test
@@ -103,10 +101,10 @@ public class AbstractMongoRepositoryTest {
         TestObject testObject = new TestObject("someId", "someValue");
 
         // when
-        final boolean updated = testee.updateIfMatch(testObject, "someETag");
+        final UpdateIfMatchResult updated = testee.updateIfMatch(testObject, "someETag");
 
         // then
-        assertThat(updated, is(false));
+        assertThat(updated, is(UpdateIfMatchResult.NOT_FOUND));
     }
 
     @Test

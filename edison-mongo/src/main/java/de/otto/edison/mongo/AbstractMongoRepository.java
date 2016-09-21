@@ -4,19 +4,18 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.ReturnDocument.AFTER;
+import static de.otto.edison.mongo.UpdateIfMatchResult.*;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 
@@ -88,12 +87,22 @@ public abstract class AbstractMongoRepository<K, V> {
      *
      * @param value the new value
      * @param eTag the etag used for conditional update
-     * @return true, if the document was updated, false otherwise.
+     * @return {@link UpdateIfMatchResult}
      */
-    public boolean updateIfMatch(final V value, final String eTag) {
+    public UpdateIfMatchResult updateIfMatch(final V value, final String eTag) {
         final Bson query = and(eq(AbstractMongoRepository.ID, keyOf(value)), eq(ETAG, eTag));
+
         final Document updatedETaggable = collection().findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
-        return updatedETaggable != null;
+        if (isNull(updatedETaggable)) {
+            final boolean documentExists = collection().count(eq(AbstractMongoRepository.ID, keyOf(value))) != 0;
+            if (documentExists) {
+                return CONCURRENTLY_MODIFIED;
+            }
+
+            return NOT_FOUND;
+        }
+
+        return OK;
     }
 
     public long size() {

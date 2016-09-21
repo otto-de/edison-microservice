@@ -1,10 +1,8 @@
 # Release History
 
 ## Current snapshot
-
-## Release 0.73.0
 * Refactored AbstractRepository.update() and updateIfMatch to return a 
-boolean instead of throwing undocumented exceptions.
+Enum (UpdateIfMatchResult) instead of throwing undocumented exceptions.
 * Removed NotFoundException from edison-mongo
 
 ## Release 0.72.1
