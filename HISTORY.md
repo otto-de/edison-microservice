@@ -1,9 +1,10 @@
 # Release History
 
 ## Current snapshot
-* Refactored AbstractRepository.update() and updateIfMatch to return a 
-Enum (UpdateIfMatchResult) instead of throwing undocumented exceptions.
-* Removed NotFoundException from edison-mongo
+* [edison-mongo] Refactored AbstractRepository.update() which returns an boolean now.
+* [edison-mongo] **Breaking change:** UpdateIfMatch returns an enum (UpdateIfMatchResult) instead of throwing undocumented exceptions.
+                 To migrate, you have to remove the exception handling and evaluate the return code to handle it properly.
+* [edison-mongo] Removed NotFoundException from edison-mongo
 
 ## Release 0.72.1
 * Add some logging information
