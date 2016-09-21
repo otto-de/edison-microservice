@@ -90,9 +90,9 @@ public final class JobRunner {
         StringWriter stacktrace = new StringWriter();
         PrintWriter pw = new PrintWriter(stacktrace);
         e.printStackTrace(pw);
-        jobEventPublisher.error("Fatal error in job " + jobType + " (" + jobId + ")\n"
-                + stacktrace.toString()
-        );
+        String message = String.format("Fatal error in job %s (%s)\n%s", jobType, jobId, stacktrace.toString());
+        jobEventPublisher.error(message);
+        LOG.error(String.format("Fatal error in job %s (%s)", jobType, jobId), e);
     }
 
     private synchronized void stop() {
