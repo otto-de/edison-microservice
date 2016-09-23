@@ -27,20 +27,6 @@ public class StatusControllerAcceptanceTest {
     }
 
     @Test
-    public void shouldGetInternalStatusAsHalJson() throws IOException {
-        when(
-                internal_status_is_retrieved_as("application/hal+json")
-        );
-
-        then(
-                assertThat(the_status_code().value(), is(200)),
-                assertThat(the_response_headers().get("Content-Type"), contains("application/hal+json;charset=UTF-8")),
-                assertThat(the_returned_json().at("/_links/self/href").asText(), is("http://localhost:8085/teststatus/internal/status.json")),
-                assertThat(the_returned_json().at("/_links/profile/href").asText(), is("http://otto-de.github.io/profiles/monitoring/status"))
-        );
-    }
-
-    @Test
     public void shouldGetInternalStatusAsMonitoringStatusJson() throws IOException {
         when(
                 internal_status_is_retrieved_as("application/vnd.otto.monitoring.status+json")
@@ -48,9 +34,7 @@ public class StatusControllerAcceptanceTest {
 
         then(
                 assertThat(the_status_code().value(), is(200)),
-                assertThat(the_response_headers().get("Content-Type"), contains("application/vnd.otto.monitoring.status+json;charset=UTF-8")),
-                assertThat(the_returned_json().at("/_links/self/href").asText(), is("http://localhost:8085/teststatus/internal/status.json")),
-                assertThat(the_returned_json().at("/_links/profile/href").asText(), is("http://otto-de.github.io/profiles/monitoring/status"))
+                assertThat(the_response_headers().get("Content-Type"), contains("application/vnd.otto.monitoring.status+json;charset=UTF-8"))
         );
     }
 

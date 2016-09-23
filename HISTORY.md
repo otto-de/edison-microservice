@@ -1,6 +1,7 @@
 # Release History
 
 ## Current snapshot
+* Removed dependency to edison-hal (was introduced for testing purposes only).
 
 ## Release 0.73.0
 * [edison-mongo] Refactored AbstractRepository.update() which returns an boolean now.

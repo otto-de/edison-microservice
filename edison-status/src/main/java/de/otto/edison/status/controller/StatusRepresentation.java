@@ -1,7 +1,6 @@
 package de.otto.edison.status.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import de.otto.edison.hal.HalRepresentation;
 import de.otto.edison.status.domain.*;
 
 import java.util.LinkedHashMap;
@@ -11,13 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static de.otto.edison.hal.Link.profile;
-import static de.otto.edison.hal.Link.self;
-import static de.otto.edison.hal.Links.linkingTo;
-import static de.otto.edison.status.controller.UrlHelper.absoluteHrefOf;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StatusRepresentation extends HalRepresentation {
+public class StatusRepresentation {
 
     private static final Pattern STATUS_DETAIL_JSON_SEPARATOR_PATTERN = Pattern.compile("\\s(.)");
 
@@ -27,12 +21,6 @@ public class StatusRepresentation extends HalRepresentation {
     public List<ServiceSpec> serviceSpecs;
 
     private StatusRepresentation(final ApplicationStatus applicationStatus) {
-        super(
-                linkingTo(
-                        self(absoluteHrefOf("/internal/status.json")),
-                        profile("http://otto-de.github.io/profiles/monitoring/status")
-                )
-        );
         this.application = new ApplicationRepresentation(applicationStatus);
         this.system = applicationStatus.system;
         this.team = applicationStatus.team;

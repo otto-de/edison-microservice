@@ -11,9 +11,6 @@ ext.libs = [
                 "org.springframework.boot:spring-boot-starter-actuator:" + springBootVersion],
         springBootThymeleaf:
                 "org.springframework.boot:spring-boot-starter-thymeleaf:" + springBootVersion,
-
-        hal: [
-                "de.otto.edison:edison-hal:0.1.0"],
         bootstrap:
                 "org.webjars:bootstrap:3.3.6",
         asyncHttp:
