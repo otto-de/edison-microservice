@@ -1,7 +1,7 @@
 package de.otto.edison.status.indicator;
 
 import de.otto.edison.status.domain.StatusDetail;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
@@ -105,7 +105,7 @@ public class MutableStatusDetailIndicatorTest {
         assertThat(indicator.statusDetail().getDetails(), not(hasEntry("bar", "baz")));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void shouldFailToUpdateStatusWithDifferentName() {
         // given
         final MutableStatusDetailIndicator indicator = new MutableStatusDetailIndicator(statusDetail("foo", OK, "message"));

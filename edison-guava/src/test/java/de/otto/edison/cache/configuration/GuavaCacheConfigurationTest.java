@@ -1,7 +1,7 @@
 package de.otto.edison.cache.configuration;
 
 import org.springframework.cache.support.AbstractCacheManager;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -10,7 +10,7 @@ import static org.hamcrest.core.Is.is;
 
 public class GuavaCacheConfigurationTest {
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void shouldFailOnErrorInSpecification() {
         // given
         final GuavaCacheConfiguration configuration = new GuavaCacheConfiguration();

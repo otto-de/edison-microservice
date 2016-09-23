@@ -1,11 +1,11 @@
 package de.otto.edison.jobs.configuration;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 public class JobConfigurationTest {
 
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void shouldErrorOnWrongStatusMapping() {
         new JobConfiguration().parseStatusMapping("wrong");
     }

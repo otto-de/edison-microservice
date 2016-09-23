@@ -1,7 +1,7 @@
 package de.otto.edison.jobs.domain;
 
 import de.otto.edison.jobs.controller.JobRepresentation;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.time.Clock;
 import java.time.Instant;

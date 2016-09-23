@@ -13,8 +13,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.ModelAndView;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +48,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Test
 public class JobDefinitionsControllerTest {
 
     JobDefinitionsController controller;
@@ -61,7 +60,7 @@ public class JobDefinitionsControllerTest {
 
     private MockMvc mockMvc;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         initMocks(this);
         controller = new JobDefinitionsController(jobDefinitionService, jobRepository);

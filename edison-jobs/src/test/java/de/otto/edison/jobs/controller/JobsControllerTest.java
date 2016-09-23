@@ -7,8 +7,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.ModelAndView;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class JobsControllerTest {
     private MockMvc mockMvc;
     private JobsController jobsController;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         jobService = mock(JobService.class);
         jobsController = new JobsController(jobService);

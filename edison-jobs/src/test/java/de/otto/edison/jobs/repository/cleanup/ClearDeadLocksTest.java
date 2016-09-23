@@ -4,8 +4,8 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.mockito.Mock;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -32,7 +32,7 @@ public class ClearDeadLocksTest {
     private Clock fixedClock;
     private OffsetDateTime now;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         initMocks(this);
         fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());

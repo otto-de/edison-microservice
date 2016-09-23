@@ -4,8 +4,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import de.otto.edison.metrics.configuration.MetricsLoadProperties;
 import de.otto.edison.metrics.load.LoadDetector.Status;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.TreeMap;
 
@@ -20,7 +20,7 @@ public class MetricsTimerStrategyTest {
     private MetricRegistry metricRegistry;
     private MetricsTimerStrategy strategy;
 
-    @BeforeMethod
+    @Before
     public void setUp() {
         metricRegistry = mock(MetricRegistry.class);
         MetricsLoadProperties properties = new MetricsLoadProperties();

@@ -1,7 +1,8 @@
 package de.otto.edison.testsupport.util;
 
 
-import org.testng.annotations.Test;
+
+import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -172,7 +173,7 @@ public class JsonMapTest {
         assertThat(jsonMapFrom(map).getDate("key"), is(Date.from(LocalDateTime.of(2012, 4, 23, 18, 25, 43, 511000000).toInstant(UTC))));
     }
 
-    @Test(expectedExceptions = DateTimeParseException.class)
+    @Test(expected = DateTimeParseException.class)
     public void shouldThrowExceptionWhenGettingDateFromWrongStringFormat() {
         Map<String, ?> map = singletonMap("key", "Tue Jul 13 00:00:00");
         jsonMapFrom(map).getDate("key");

@@ -1,7 +1,7 @@
 package de.otto.edison.togglz.authentication;
 
+import org.junit.Test;
 import org.springframework.util.Base64Utils;
-import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Test
 public class CredentialsTest {
 
     @Test

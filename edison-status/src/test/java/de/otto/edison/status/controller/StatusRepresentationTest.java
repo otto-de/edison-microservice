@@ -4,7 +4,7 @@ import de.otto.edison.status.domain.ApplicationInfo;
 import de.otto.edison.status.domain.SystemInfo;
 import de.otto.edison.status.domain.TeamInfo;
 import de.otto.edison.status.domain.VersionInfo;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,6 +1,7 @@
 package de.otto.edison.acceptance;
 
-import org.testng.annotations.Test;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 
@@ -18,7 +19,8 @@ import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
 public class HealthEndpointAcceptanceTest {
 
-    @Test(enabled = false) // disabled, because Spring Boot is caching health checks for one second.
+    @Test
+    @Ignore("Disabled, because Spring Boot is caching health checks for one second.")
     public void shouldGetApplicationHealth() throws IOException {
         given(
                 an_healthy_application()

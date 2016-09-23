@@ -40,7 +40,7 @@ subprojects {
     // Minor Release: 0.X.0: Additional Features, updates from minor releases in Spring
     // Micro Release: 0.0.X: Bugfixes, non-breaking changes, updates from micro releases in Spring
     // DO NOT FORGET TO DOCUMENT CHANGES IN HISTORY.MD
-    version = '0.73.1-SNAPSHOT'
+    version = '0.74.0-SNAPSHOT'
 
     repositories {
         mavenCentral()
@@ -57,10 +57,10 @@ subprojects {
         // pass -Dspring.profiles.active=local and other system properties to the test task
         systemProperties = System.properties
 
-        description "Tell gradle to use TestNG with all groups"
-        useTestNG()
-        options {
-            useDefaultListeners = true
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                println "Test Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+            }
         }
     }
 

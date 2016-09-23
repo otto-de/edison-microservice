@@ -8,8 +8,8 @@ import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsCollectionWithSize;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -26,13 +26,12 @@ import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.testng.Assert.assertTrue;
 
 public class InMemJobRepositoryTest {
 
     InMemJobRepository repository;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         repository = new InMemJobRepository();
     }
@@ -188,10 +187,10 @@ public class InMemJobRepositoryTest {
 
         // Then
         assertThat(jobsType1.size(), is(2));
-        assertTrue(jobsType1.stream().anyMatch(job -> job.getJobId().equals("1")));
-        assertTrue(jobsType1.stream().anyMatch(job -> job.getJobId().equals("3")));
+        assertThat(jobsType1.stream().anyMatch(job -> job.getJobId().equals("1")), is(true));
+        assertThat(jobsType1.stream().anyMatch(job -> job.getJobId().equals("3")), is(true));
         assertThat(jobsType2.size(), is(1));
-        assertTrue(jobsType2.stream().anyMatch(job -> job.getJobId().equals("2")));
+        assertThat(jobsType2.stream().anyMatch(job -> job.getJobId().equals("2")), is(true));
     }
 
     @Test
@@ -238,7 +237,7 @@ public class InMemJobRepositoryTest {
         assertThat(repository.runningJobsDocument(), is(expected));
     }
 
-    @Test(expectedExceptions = JobBlockedException.class)
+    @Test(expected = JobBlockedException.class)
     public void shouldDisableJob() {
         // given
         String jobType = "irgendeinJobType";

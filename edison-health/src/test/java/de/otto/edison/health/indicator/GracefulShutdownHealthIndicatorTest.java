@@ -1,7 +1,7 @@
 package de.otto.edison.health.indicator;
 
 import org.mockito.InOrder;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -12,7 +12,6 @@ import static org.mockito.Mockito.spy;
 import static org.springframework.boot.actuate.health.Health.down;
 import static org.springframework.boot.actuate.health.Health.up;
 
-@Test
 public class GracefulShutdownHealthIndicatorTest {
 
     private static final int SOME_LONG_WHICH_WE_DONT_CARE_ABOUT = 7;

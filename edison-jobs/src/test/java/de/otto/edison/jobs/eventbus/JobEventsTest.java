@@ -1,8 +1,8 @@
 package de.otto.edison.jobs.eventbus;
 
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,7 +16,7 @@ public class JobEventsTest {
 
     private JobEventPublisher jobEventPublisherMock = mock(JobEventPublisher.class);
 
-    @AfterMethod
+    @After
     public void tearDown() throws Exception {
         JobEvents.deregister();
     }
@@ -30,25 +30,25 @@ public class JobEventsTest {
         verify(jobEventPublisherMock).error("some error");
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void shouldThrowErrorIfJobEventsAreAlreadyRegistered() {
         JobEvents.register(jobEventPublisherMock);
         JobEvents.register(jobEventPublisherMock);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void shouldThrowErrorIfNotSetupOnInfo() {
         JobEvents.info("Some info");
         verifyZeroInteractions(jobEventPublisherMock);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void shouldThrowErrorIfNotSetupOnWarning() {
         JobEvents.warn("Some warning");
         verifyZeroInteractions(jobEventPublisherMock);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void shouldThrowErrorIfNotSetupOnError() {
         JobEvents.error("Some error");
         verifyZeroInteractions(jobEventPublisherMock);

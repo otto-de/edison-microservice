@@ -4,8 +4,8 @@ import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.UUID;
 
@@ -14,12 +14,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsNot.not;
 
-@Test
 public class AbstractMongoRepositoryTest {
 
     private TestRepository testee;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         Fongo fongo = new Fongo("inmemory-mongodb");
         MongoDatabase database = fongo.getDatabase("db");

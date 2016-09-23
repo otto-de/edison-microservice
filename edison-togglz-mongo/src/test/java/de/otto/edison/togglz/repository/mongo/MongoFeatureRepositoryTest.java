@@ -3,8 +3,8 @@ package de.otto.edison.togglz.repository.mongo;
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.togglz.FeatureClassProvider;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
@@ -17,12 +17,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Test
 public class MongoFeatureRepositoryTest {
 
     private MongoFeatureRepository testee;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         Fongo fongo = new Fongo("inmemory-mongodb");
         MongoDatabase database = fongo.getDatabase("features");

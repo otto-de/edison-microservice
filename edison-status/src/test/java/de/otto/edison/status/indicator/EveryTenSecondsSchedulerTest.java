@@ -4,7 +4,7 @@ package de.otto.edison.status.indicator;
 import de.otto.edison.status.domain.*;
 import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
 import de.otto.edison.status.scheduler.Scheduler;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
@@ -15,7 +15,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Test
 public class EveryTenSecondsSchedulerTest {
 
     public static final ApplicationStatus SOME_STATUS = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(statusDetail("test", Status.OK, "everything is fine")), emptyList());

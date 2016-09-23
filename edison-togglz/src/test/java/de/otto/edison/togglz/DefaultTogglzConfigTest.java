@@ -1,8 +1,8 @@
 package de.otto.edison.togglz;
 
 import de.otto.edison.testsupport.applicationdriver.SpringTestBase;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.cache.CachingStateRepository;
 
@@ -17,7 +17,7 @@ public class DefaultTogglzConfigTest extends SpringTestBase {
 
     private TogglzConfig togglzConfig;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         togglzConfig = applicationContext().getBean(TogglzConfig.class);
 

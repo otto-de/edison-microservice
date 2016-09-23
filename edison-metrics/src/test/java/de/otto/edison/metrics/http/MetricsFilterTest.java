@@ -4,7 +4,7 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

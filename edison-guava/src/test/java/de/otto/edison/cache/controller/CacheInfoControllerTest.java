@@ -3,7 +3,7 @@ package de.otto.edison.cache.controller;
 import de.otto.edison.cache.configuration.GuavaCacheConfig;
 import org.springframework.boot.actuate.endpoint.CachePublicMetrics;
 import org.springframework.boot.actuate.metrics.Metric;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.util.Collections;
 import java.util.Map;

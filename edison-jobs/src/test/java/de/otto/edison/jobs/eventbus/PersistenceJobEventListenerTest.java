@@ -8,8 +8,8 @@ import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.service.JobRunnable;
 import de.otto.edison.jobs.service.JobService;
 import org.mockito.Mock;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -22,7 +22,6 @@ import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChang
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-@Test
 public class PersistenceJobEventListenerTest {
 
     public static final String JOB_ID = "some/job/id";
@@ -36,7 +35,7 @@ public class PersistenceJobEventListenerTest {
 
 
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         initMocks(this);
 

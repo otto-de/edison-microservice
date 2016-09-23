@@ -1,6 +1,6 @@
 package de.otto.edison.status.indicator;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.is;
 
 public class CompositeStatusDetailIndicatorTest {
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void shouldNotAcceptEmptyListOfDelegates() {
         new CompositeStatusDetailIndicator("foo", emptyList());
     }

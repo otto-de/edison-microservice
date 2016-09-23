@@ -4,8 +4,8 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -25,12 +25,11 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Test
 public class JobStatusDetailIndicatorTest {
 
     private JobRepository jobRepository;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         jobRepository = mock(JobRepository.class);
     }

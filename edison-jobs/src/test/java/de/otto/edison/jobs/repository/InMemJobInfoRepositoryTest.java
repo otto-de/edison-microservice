@@ -2,7 +2,7 @@ package de.otto.edison.jobs.repository;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.time.Clock;
 

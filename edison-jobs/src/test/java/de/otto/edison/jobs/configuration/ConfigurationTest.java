@@ -4,7 +4,7 @@ import de.otto.edison.jobs.repository.cleanup.JobCleanupStrategy;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.testsupport.applicationdriver.SpringTestBase;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.util.Collection;
 import java.util.Map;

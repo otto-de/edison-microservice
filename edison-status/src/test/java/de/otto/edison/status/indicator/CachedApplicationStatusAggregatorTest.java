@@ -1,7 +1,7 @@
 package de.otto.edison.status.indicator;
 
 import de.otto.edison.status.domain.*;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Arrays.asList;
@@ -11,7 +11,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-@Test
 public class CachedApplicationStatusAggregatorTest {
 
     public static final StatusDetail OK_DETAIL_ONE = statusDetail("one", Status.OK, "a message");

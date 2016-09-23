@@ -2,7 +2,7 @@ package de.otto.edison.togglz.controller;
 
 import de.otto.edison.togglz.EmptyFeatures;
 import de.otto.edison.togglz.TestFeatures;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.util.Map;
 
@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
-@Test
 public class FeatureTogglesRepresentationTest {
 
     private FeatureTogglesRepresentation testee;

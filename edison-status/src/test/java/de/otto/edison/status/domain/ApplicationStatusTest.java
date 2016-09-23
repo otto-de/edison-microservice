@@ -1,6 +1,6 @@
 package de.otto.edison.status.domain;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.Status.ERROR;

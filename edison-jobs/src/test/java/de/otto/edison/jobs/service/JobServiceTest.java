@@ -14,8 +14,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.context.ApplicationEventPublisher;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -70,7 +70,7 @@ public class JobServiceTest {
     private Clock clock;
 
 
-    @BeforeMethod
+    @Before
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         initMocks(this);

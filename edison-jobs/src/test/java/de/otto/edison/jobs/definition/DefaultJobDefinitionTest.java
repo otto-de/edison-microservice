@@ -1,13 +1,13 @@
 package de.otto.edison.jobs.definition;
 
 import org.hamcrest.Matchers;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.util.Optional;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.validateCron;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.testng.Assert.fail;
+import static org.junit.Assert.fail;
 
 public class DefaultJobDefinitionTest {
 

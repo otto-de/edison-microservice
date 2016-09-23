@@ -5,8 +5,8 @@ import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.eventbus.JobEvents;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.net.URISyntaxException;
 import java.util.Optional;
@@ -36,7 +36,7 @@ public class JobRunnerTest {
     private JobEventPublisher jobEventPublisher;
     private JobRunner jobRunner;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         initMocks(this);
 
@@ -129,7 +129,7 @@ public class JobRunnerTest {
         verify(jobEventPublisher).info("test");
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void shouldDestroyReferenceToJobEventPublisherWhenJobFinishes() {
         jobRunner.start(getMockedRunnable());
 

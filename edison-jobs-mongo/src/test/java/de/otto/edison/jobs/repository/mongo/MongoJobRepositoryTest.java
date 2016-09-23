@@ -11,8 +11,8 @@ import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import org.bson.Document;
 import org.hamcrest.Matchers;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -34,7 +34,7 @@ public class MongoJobRepositoryTest {
     private MongoDatabase database;
     private MongoCollection<Document> runningJobsCollection;
 
-    @BeforeMethod
+    @Before
     public void setup() {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         database = fongo.getDatabase("jobsinfo");
@@ -289,7 +289,7 @@ public class MongoJobRepositoryTest {
         assertRunningDocumentContainsJob(jobType, jobId);
     }
 
-    @Test(expectedExceptions = JobBlockedException.class)
+    @Test(expected = JobBlockedException.class)
     public void shouldNotStartJobIfAlreadyRunning() throws Exception {
         // given
         final String jobType = "myJobType";
@@ -308,7 +308,7 @@ public class MongoJobRepositoryTest {
         }
     }
 
-    @Test(expectedExceptions = JobBlockedException.class)
+    @Test(expected = JobBlockedException.class)
     public void shouldNotStartJobIfBlockedByAnotherJob() throws Exception {
         // given
         final String jobType = "myJobType";
@@ -349,7 +349,7 @@ public class MongoJobRepositoryTest {
         assertThat(repo.runningJobsDocument(), is(expected));
     }
 
-    @Test(expectedExceptions = JobBlockedException.class)
+    @Test(expected = JobBlockedException.class)
     public void shouldNotStartADisabledJob() {
         // given
         String jobType = "irgendeinJobType";

@@ -1,8 +1,8 @@
 package de.otto.edison.togglz.authentication;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.util.Base64Utils;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,13 +15,12 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
-@Test
 public class LdapAuthenticationFilterTest {
 
     private LdapAuthenticationFilter testee;
     private HttpServletResponse response;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         testee = new LdapAuthenticationFilter("someHost", 389, "someBaseDn", "someRdnIdentifier");
         response = mock(HttpServletResponse.class);

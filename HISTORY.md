@@ -2,6 +2,7 @@
 
 ## Current snapshot
 * Removed dependency to edison-hal (was introduced for testing purposes only).
+* Removed usage of testng and replaced it by Junit
 
 ## Release 0.73.0
 * [edison-mongo] Refactored AbstractRepository.update() which returns an boolean now.

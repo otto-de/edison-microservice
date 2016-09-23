@@ -1,6 +1,6 @@
 package de.otto.edison.status.domain;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.util.Map;
 
