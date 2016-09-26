@@ -1,6 +1,7 @@
 # Release History
 
 ## Current snapshot
+* [edison-mongo] Make AbstractRepository.byId() and AbstractRepository.matchAll() non final again
 
 ## Release 0.75.0
 * [edison-jobs],[edison-mongo] Add setJobStatus and setLastUpdate to JobRepository interface and both
