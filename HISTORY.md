@@ -1,6 +1,8 @@
 # Release History
 
 ## Current snapshot
+
+## Release 0.74.0
 * Removed dependency to edison-hal (was introduced for testing purposes only).
 * Removed usage of testng and replaced it by Junit
 
