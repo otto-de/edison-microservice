@@ -15,10 +15,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
+import static de.otto.edison.jobs.repository.mongo.DateTimeConverters.toDate;
 import static de.otto.edison.jobs.repository.mongo.JobStructure.*;
 import static de.otto.edison.testsupport.util.Sets.hashSet;
 import static java.time.Clock.systemDefaultZone;
@@ -71,6 +74,37 @@ public class MongoJobRepositoryTest {
         final Optional<JobInfo> jobInfo = repo.findOne("http://localhost/foo/B");
         // then
         assertThat(jobInfo.get(), is(writtenFoo));
+    }
+
+    @Test
+    public void shouldUpdateJobStatus() {
+        //Given
+        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO"); //default jobStatus is 'OK'
+        repo.createOrUpdate(foo);
+
+        //When
+        repo.setJobStatus(foo.getJobId(), ERROR);
+        JobStatus status = repo.findStatus("http://localhost/foo");
+
+        //Then
+        assertThat(status, is(ERROR));
+    }
+
+    @Test
+    public void shouldUpdateJobLastUpdateTime() {
+        //Given
+        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO");
+        repo.createOrUpdate(foo);
+
+        OffsetDateTime myTestTime = OffsetDateTime.of(1979, 2, 5, 1, 2, 3, 4, ZoneOffset.UTC);
+
+        //When
+        repo.setLastUpdate(foo.getJobId(), myTestTime);
+
+        final Optional<JobInfo> jobInfo = repo.findOne(foo.getJobId());
+
+        //Then
+        assertThat(toDate(jobInfo.get().getLastUpdated()), is(toDate(myTestTime)));
     }
 
     @Test
@@ -236,7 +270,7 @@ public class MongoJobRepositoryTest {
             put(MESSAGES.key(), asList(infoLogDocument, errorLogDocument));
             put(JOB_TYPE.key(), "SomeType");
             put(ID.key(), "/SomeType/ID");
-            put(STATUS.key(), JobStatus.ERROR.toString());
+            put(STATUS.key(), ERROR.toString());
         }};
 
         //when

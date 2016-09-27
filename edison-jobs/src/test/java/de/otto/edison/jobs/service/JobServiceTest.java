@@ -9,13 +9,13 @@ import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.context.ApplicationEventPublisher;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -199,38 +199,25 @@ public class JobServiceTest {
 
     @Test
     public void shouldUpdateTimeStampOnKeepAlive() {
-        OffsetDateTime earlier = OffsetDateTime.ofInstant(now(clock).minus(10, MINUTES), systemDefault());
-        JobInfo jobInfo = defaultJobInfo()
-                .setStarted(earlier)
-                .setLastUpdated(earlier).build();
-        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(jobInfo));
-
+        //when
         jobService.keepAlive(JOB_ID);
 
-        JobInfo expected = jobInfo.copy()
-                .setLastUpdated(OffsetDateTime.now(clock))
-                .build();
-        verify(jobRepository).createOrUpdate(expected);
+        //then
+        OffsetDateTime now = OffsetDateTime.now(clock);
+        verify(jobRepository).setLastUpdate(JOB_ID, now);
     }
 
     @Test
     public void shouldMarkRestarted() {
-        JobInfo jobInfo = defaultJobInfo()
-                .setStatus(JobInfo.JobStatus.ERROR)
-                .build();
-        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(jobInfo));
-
         //when
         jobService.markRestarted(JOB_ID);
 
         // then
         OffsetDateTime now = OffsetDateTime.now(clock);
-        JobInfo expected = jobInfo.copy()
-                .setLastUpdated(now)
-                .setStatus(JobInfo.JobStatus.OK)
-                .build();
-        verify(jobRepository).createOrUpdate(expected);
+
         verify(jobRepository).appendMessage(JOB_ID, jobMessage(Level.WARNING, "Restarting job ..", now));
+        verify(jobRepository).setLastUpdate(JOB_ID, now);
+        verify(jobRepository).setJobStatus(JOB_ID, JobInfo.JobStatus.OK);
     }
 
     @Test

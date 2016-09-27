@@ -100,6 +100,16 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     }
 
     @Override
+    public void setJobStatus(String jobId, JobStatus jobStatus) {
+        collection().updateOne(eq(ID, jobId), set(STATUS.key(), jobStatus.name()));
+    }
+
+    @Override
+    public void setLastUpdate(String jobId, OffsetDateTime lastUpdate) {
+        collection().updateOne(eq(ID, jobId), set(LAST_UPDATED.key(), toDate(lastUpdate)));
+    }
+
+    @Override
     public void markJobAsRunningIfPossible(JobInfo jobInfo, Set<String> blockingJobTypes) throws JobBlockedException {
         Bson disabledJobsFilter = and(eq(ID, DISABLED_JOBS_DOCUMENT), exists(jobInfo.getJobType()));
 

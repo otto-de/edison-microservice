@@ -12,17 +12,24 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.time.Clock.fixed;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -268,5 +275,49 @@ public class InMemJobRepositoryTest {
         // then
         assertThat(result, hasSize(1));
         assertThat(result.get(0), is(jobType));
+    }
+
+    @Test
+    public void shouldUpdateJobStatus() {
+        //Given
+        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO"); //default jobStatus is 'OK'
+        repository.createOrUpdate(foo);
+
+        //When
+        repository.setJobStatus(foo.getJobId(), ERROR);
+        JobStatus status = repository.findStatus("http://localhost/foo");
+
+        //Then
+        assertThat(status, is(ERROR));
+    }
+
+    @Test
+    public void shouldUpdateJobLastUpdateTime() {
+        //Given
+        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO");
+        repository.createOrUpdate(foo);
+
+        OffsetDateTime myTestTime = OffsetDateTime.of(1979, 2, 5, 1, 2, 3, 4, ZoneOffset.UTC);
+
+        //When
+        repository.setLastUpdate(foo.getJobId(), myTestTime);
+
+        final Optional<JobInfo> jobInfo = repository.findOne(foo.getJobId());
+
+        //Then
+        assertThat(jobInfo.get().getLastUpdated(), is(myTestTime));
+    }
+
+    private JobInfo jobInfo(final String jobId, final String type) {
+        return JobInfo.newJobInfo(
+                jobId,
+                type,
+                now(), now(), Optional.of(now()), OK,
+                asList(
+                        jobMessage(Level.INFO, "foo", now()),
+                        jobMessage(Level.WARNING, "bar", now())),
+                systemDefaultZone(),
+                "localhost"
+        );
     }
 }

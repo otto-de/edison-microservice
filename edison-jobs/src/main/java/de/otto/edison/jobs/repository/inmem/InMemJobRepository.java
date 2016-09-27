@@ -119,6 +119,18 @@ public class InMemJobRepository implements JobRepository {
     }
 
     @Override
+    public void setJobStatus(String jobId, JobStatus jobStatus) {
+        JobInfo jobInfo = jobs.get(jobId);
+        jobs.replace(jobId, jobInfo.copy().setStatus(jobStatus).build());
+    }
+
+    @Override
+    public void setLastUpdate(String jobId, OffsetDateTime lastUpdate) {
+        JobInfo jobInfo = jobs.get(jobId);
+        jobs.replace(jobId, jobInfo.copy().setLastUpdated(lastUpdate).build());
+    }
+
+    @Override
     public void markJobAsRunningIfPossible(JobInfo job, Set<String> blockingJobs) throws JobBlockedException {
         if (disabledJobTypes.contains(job.getJobType())) {
             throw new JobBlockedException("Disabled");

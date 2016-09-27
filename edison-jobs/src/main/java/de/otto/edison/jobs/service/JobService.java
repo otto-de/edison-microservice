@@ -191,29 +191,20 @@ public class JobService {
     }
 
     public void keepAlive(String jobId) {
-        repository.findOne(jobId)
-                .ifPresent(
-                        jobInfo -> repository.createOrUpdate(jobInfo.copy()
-                                .setLastUpdated(now(clock))
-                                .build()));
+        repository.setLastUpdate(jobId, now(clock));
     }
 
     public void markRestarted(String jobId) {
         OffsetDateTime currentTimestamp = now(clock);
         repository.appendMessage(jobId, jobMessage(Level.WARNING, "Restarting job ..", currentTimestamp));
-        repository.findOne(jobId)
-                .ifPresent(jobInfo -> repository.createOrUpdate(jobInfo.copy()
-                        .setLastUpdated(currentTimestamp)
-                        .setStatus(JobInfo.JobStatus.OK)
-                        .build())
-                );
+        repository.setLastUpdate(jobId, currentTimestamp);
+        repository.setJobStatus(jobId, JobInfo.JobStatus.OK);
     }
 
     private JobInfo createJobInfo(String jobType) {
         return newJobInfo(uuidProvider.getUuid(), jobType, clock,
                 systemInfo.getHostname());
     }
-
 
     private JobRunnable findJobRunnable(String jobType) {
         final Optional<JobRunnable> optionalRunnable = jobRunnables.stream().filter(r -> r.getJobDefinition().jobType().equalsIgnoreCase(jobType)).findFirst();

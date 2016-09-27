@@ -35,6 +35,10 @@ public interface JobRepository {
 
     void appendMessage(String jobId, JobMessage jobMessage);
 
+    void setJobStatus(String jobId, JobInfo.JobStatus jobStatus);
+
+    void setLastUpdate(String jobId, OffsetDateTime lastUpdate);
+
     /**
      * Marks a job as running or throws JobBlockException if it is either disabled, was marked running before or is
      * blocked by some other job from the mutex group. This operation must be implemented atomically on the persistent
