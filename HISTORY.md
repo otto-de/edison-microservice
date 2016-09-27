@@ -1,7 +1,11 @@
 # Release History
 
 ## Current snapshot
-* Add setJobStatus and setLastUpdate to JobRepository interface and both implementations - This fixes a race condition during keepalive and message
+
+## Release 0.75.0
+* [edison-jobs],[edison-mongo] Add setJobStatus and setLastUpdate to JobRepository interface and both
+  implementations - This fixes a race condition during keepalive and message.
+  This is a **breaking change** if you wrote your own JobRepository. 
 
 ## Release 0.74.0
 * Removed dependency to edison-hal (was introduced for testing purposes only).
