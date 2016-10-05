@@ -1,6 +1,6 @@
 # Release History
 
-## Current snapshot
+## 0.76.0
 * [edison-mongo] Make AbstractRepository.byId() and AbstractRepository.matchAll() non final again
 
 ## Release 0.75.0
