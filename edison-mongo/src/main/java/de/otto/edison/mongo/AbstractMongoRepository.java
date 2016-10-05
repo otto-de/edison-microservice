@@ -133,7 +133,7 @@ public abstract class AbstractMongoRepository<K, V> {
      * @param key the document's key
      * @return query Document
      */
-    protected final Document byId(final K key) {
+    protected Document byId(final K key) {
         return key != null ? new Document(ID, key.toString()) : new Document();
     }
 
@@ -142,7 +142,7 @@ public abstract class AbstractMongoRepository<K, V> {
      *
      * @return query Document
      */
-    protected final Document matchAll() {
+    protected Document matchAll() {
         return new Document();
     }
 
