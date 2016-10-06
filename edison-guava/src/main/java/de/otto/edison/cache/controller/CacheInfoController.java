@@ -27,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  *
  * @since 0.51.0
  *
- * @deprecated since 0.76.0, use {@link de.otto.edison.cache.controller.CacheInfoController} from edison-cache instead
+ * @deprecated since 0.76.0, use edison-cache instead
  */
 @Controller
 @Beta

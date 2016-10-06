@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @since 0.51.0
  *
- * @deprecated since 0.76.0, use {@link de.otto.edison.cache.configuration.CacheConfiguration} from edison-cache instead
+ * @deprecated since 0.76.0, use edison-cache instead
  */
 @Configuration
 @EnableCaching
