@@ -28,10 +28,13 @@ import static java.util.stream.Collectors.toList;
  * the ApplicationContext.
  *
  * @since 0.51.0
+ *
+ * @deprecated since 0.76.0, use {@link de.otto.edison.cache.configuration.CacheConfiguration} from edison-cache instead
  */
 @Configuration
 @EnableCaching
 @Beta
+@Deprecated
 public class GuavaCacheConfiguration {
 
     @Autowired(required = false)

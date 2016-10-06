@@ -26,9 +26,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  * Controller that is responsible for serving cache metrics in JSON or HTML format.
  *
  * @since 0.51.0
+ *
+ * @deprecated since 0.76.0, use {@link de.otto.edison.cache.controller.CacheInfoController} from edison-cache instead
  */
 @Controller
 @Beta
+@Deprecated
 public class CacheInfoController {
 
     @Autowired

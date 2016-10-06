@@ -10,8 +10,11 @@ import java.util.Map;
  * Statistics and specification of configured Guava caches.
  *
  * @since 0.51.0
+ *
+ * @deprecated since 0.76.0, use {@link de.otto.edison.cache.controller.CacheInfo} from edison-cache instead
  */
 @Beta
+@Deprecated
 public final class CacheInfo {
 
     private final String name;

@@ -27,9 +27,12 @@ import static com.google.common.collect.ImmutableList.copyOf;
  * available under /internal/metrics, they will be reported according to the edison-metrics reporters, and they
  * will be accessible as HTML under /internal/cacheinfos.
  *
+ * @deprecated since 0.76.0, use {@link de.otto.edison.cache.configuration.CaffeineCacheConfig} from edison-cache instead
+ *
  * @since 0.51.0
  */
 @Beta
+@Deprecated
 public final class GuavaCacheConfig {
 
     private static final Splitter KEYS_SPLITTER = Splitter.on(',').trimResults();
