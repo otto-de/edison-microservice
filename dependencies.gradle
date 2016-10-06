@@ -53,5 +53,8 @@ ext.libs = [
                 "com.github.fakemongo:fongo:2.0.7",
         guava:
                 "com.google.guava:guava:19.0",
-        jaywayJsonPath: "com.jayway.jsonpath:json-path:2.2.0"
+        caffeine:
+                "com.github.ben-manes.caffeine:caffeine:2.3.3",
+        jaywayJsonPath:
+                "com.jayway.jsonpath:json-path:2.2.0"
 ]
