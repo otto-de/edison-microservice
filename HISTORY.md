@@ -1,7 +1,9 @@
 # Release History
 
 ## Release 0.76.0
-* [edison-mongo] Make AbstractRepository.byId() and AbstractRepository.matchAll() non final again
+* **[edison-mongo]** Make AbstractRepository.byId() and AbstractRepository.matchAll() non final again
+* **[edison-guava]** Make edison-guava deprecated in favor of the new and shiny edison-cache
+* **[edison-cache]** Create edison-cache with support for Caffeine caches instead of Guava
 
 ## Release 0.75.0
 * [edison-jobs],[edison-mongo] Add setJobStatus and setLastUpdate to JobRepository interface and both
