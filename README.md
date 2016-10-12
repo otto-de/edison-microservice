@@ -35,8 +35,9 @@ This project contains a number of independent libraries that may be used to crea
 
 
 ## Documentation
+* [edison-cache](edison-cache/README.md)
 * [edison-core](edison-core/README.md)
-* [edison-guava](edison-guava/README.md)
+* [edison-guava](edison-guava/README.md) (deprecated)
 * edison-health
 * [edison-jobs](edison-jobs/README.md)
 * [edison-jobs-mongo](edison-jobs-mongo/README.md)
