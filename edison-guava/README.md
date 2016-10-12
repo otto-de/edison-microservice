@@ -6,6 +6,8 @@ Support for Guava caches in Edison microservices.
 
 BETA - work in progress.
 
+DEPRECATED - will be removed soon. Use edison-cache instead.
+
 ## About
 
 Many of otto.de's microservices make use of the [Google Guava](https://github.com/google/guava) libraries. 
