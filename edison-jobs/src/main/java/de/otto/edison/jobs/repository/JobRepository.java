@@ -79,4 +79,9 @@ public interface JobRepository {
      * @return a list of all job types that are currently disabled
      */
     List<String> findDisabledJobTypes();
+
+	/**
+	 * @return all jobs without loading the job messages
+	 */
+	List<JobInfo> findAllJobInfoWithoutMessages();
 }

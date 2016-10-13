@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.synchronizedSet;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
@@ -176,6 +177,14 @@ public class InMemJobRepository implements JobRepository {
     public List<String> findDisabledJobTypes() {
         return new ArrayList(disabledJobTypes);
     }
+
+	@Override
+	public List<JobInfo> findAllJobInfoWithoutMessages() {
+        return jobs.values().stream()
+	                .sorted(STARTED_TIME_DESC_COMPARATOR)
+	                .map(job->job.copy().setMessages(emptyList()).build())
+	                .collect(toList());
+	}
 
 
 }

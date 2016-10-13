@@ -28,6 +28,7 @@ import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -127,6 +128,22 @@ public class MongoJobRepositoryTest {
         final List<JobInfo> jobInfos = repo.findAll();
         // then
         assertThat(jobInfos, hasSize(2));
+    }
+
+    @Test
+    public void shouldStoreAndRetrieveAllJobInfoWithoutMessages() {
+        // given
+    	JobInfo job1 = someJobInfo("http://localhost/foo");
+    	JobInfo job2 = someJobInfo("http://localhost/bar");
+   	
+        repo.createOrUpdate(job1);
+        repo.createOrUpdate(job2);
+        // when
+        final List<JobInfo> jobInfos = repo.findAllJobInfoWithoutMessages();
+        // then
+        assertThat(jobInfos, hasSize(2));
+        assertThat(jobInfos.get(0), is(job1.copy().setMessages(emptyList()).build()));
+        assertThat(jobInfos.get(1), is(job2.copy().setMessages(emptyList()).build()));
     }
 
     @Test

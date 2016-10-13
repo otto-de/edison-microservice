@@ -337,4 +337,26 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
         return new Document(STARTED.key(), order);
     }
 
+	@Override
+	public List<JobInfo> findAllJobInfoWithoutMessages() {
+        return collection()
+                .find()
+                .projection(new Document(getJobInfoWithoutMessagesProjection()))
+                .map(this::decode)
+                .into(new ArrayList<>());
+	}
+	
+	private Map<String, Object> getJobInfoWithoutMessagesProjection() {
+		Map<String, Object> projection = new HashMap<String, Object>();
+		projection.put(JobStructure.ID.key(), true);
+		projection.put(JOB_TYPE.key(), true);
+		projection.put(STARTED.key(), true);
+		projection.put(LAST_UPDATED.key(), true);
+		projection.put(STOPPED.key(), true);
+		projection.put(STATUS.key(), true);
+		projection.put(HOSTNAME.key(), true);
+		return projection;
+		
+	}
+
 }

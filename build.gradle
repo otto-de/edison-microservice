@@ -27,6 +27,17 @@ idea {
     }
 }
 
+eclipse {
+  classpath {
+    //customizing the classes output directory:
+    defaultOutputDir = file('build/bin')
+
+    //default settings for downloading sources and Javadoc:
+    downloadSources = true
+    downloadJavadoc = false
+  }
+}
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'

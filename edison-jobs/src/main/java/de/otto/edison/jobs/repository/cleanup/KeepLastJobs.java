@@ -51,7 +51,7 @@ public class KeepLastJobs implements JobCleanupStrategy {
      */
     @Scheduled(fixedRate = KEEP_LAST_JOBS_CLEANUP_INTERVAL)
     public void doCleanUp() {
-        final List<JobInfo> jobs = jobRepository.findAll();
+        final List<JobInfo> jobs = jobRepository.findAllJobInfoWithoutMessages();
 
         findJobsToDelete(jobs)
                 .forEach(jobInfo -> jobRepository.removeIfStopped(jobInfo.getJobId()));
