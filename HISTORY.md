@@ -1,5 +1,9 @@
 # Release History
 
+## Release 0.76.1
+* **[edison-jobs]** KeepLastJobs is not loading Job messages anymore, avoiding OutOfMemory errors
+for lots of large jobs.
+
 ## Release 0.76.0
 * **[edison-mongo]** Make AbstractRepository.byId() and AbstractRepository.matchAll() non final again
 * **[edison-guava]** Make edison-guava deprecated in favor of the new and shiny edison-cache
