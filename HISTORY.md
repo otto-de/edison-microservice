@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.77.0
+* **[edison-service]** Make edison-cache the default caching behaviour
+
 ## Release 0.76.1
 * **[edison-jobs]** KeepLastJobs is not loading Job messages anymore, avoiding OutOfMemory errors
 for lots of large jobs.

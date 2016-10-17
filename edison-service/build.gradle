@@ -5,7 +5,7 @@ dependencies {
     compile project(":edison-status")
     compile project(":edison-jobs")
     compile project(":edison-metrics")
-    compile project(":edison-guava")
+    compile project(":edison-cache")
     compile project(":edison-togglz")
     compile project(":edison-servicediscovery-client")
 
