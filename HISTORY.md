@@ -1,5 +1,8 @@
 # Release History
 
+## Release 0.78.0
+* **[edison-mongo]** Support streaming for findAll methods. The old methods are deprecated now, so please use the new ones.
+
 ## Release 0.77.0
 * **[edison-service]** Make edison-cache the default caching behaviour
 
