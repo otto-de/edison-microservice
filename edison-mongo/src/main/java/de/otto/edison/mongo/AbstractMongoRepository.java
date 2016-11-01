@@ -26,6 +26,8 @@ public abstract class AbstractMongoRepository<K, V> {
     protected static final String ID = "_id";
     protected static final String ETAG = "etag";
 
+    private static final boolean DISABLE_PARALLEL_STREAM_PROCESSING = false;
+
     @PostConstruct
     public void postConstruct() {
         ensureIndexes();
@@ -43,16 +45,15 @@ public abstract class AbstractMongoRepository<K, V> {
      * The {@link Stream} requests elements from the iterable in a lazy fashion as they will usually,
      * so p.e. passing <code>collection().find()</code> as parameter will not result in the
      * whole collection being read into memory.
-     *
+     * <p>
      * Parallel processing of the iterable is not used.
      *
      * @param iterable any {@link Iterable}
-     * @param <T> the type of elements returned by the iterator
+     * @param <T>      the type of elements returned by the iterator
      * @return a {@link Stream} wrapping the given {@link Iterable}
      */
-    protected static <T> Stream<T> toStream(Iterable<T> iterable) {
-        boolean parallelStreamProcessing = false;
-        return StreamSupport.stream(iterable.spliterator(), parallelStreamProcessing);
+    protected static <T> Stream<T> toStream(final Iterable<T> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), DISABLE_PARALLEL_STREAM_PROCESSING);
     }
 
     public Stream<V> findAllAsStream() {
@@ -64,7 +65,7 @@ public abstract class AbstractMongoRepository<K, V> {
         return findAllAsStream().collect(toList());
     }
 
-    public Stream<V> findAllAsStream(int skip, int limit) {
+    public Stream<V> findAllAsStream(final int skip, final int limit) {
         return toStream(
                 collection()
                         .find()
@@ -73,7 +74,7 @@ public abstract class AbstractMongoRepository<K, V> {
                 .map(this::decode);
     }
 
-    public List<V> findAll(int skip, int limit) {
+    public List<V> findAll(final int skip, final int limit) {
         return findAllAsStream(skip, limit).collect(toList());
     }
 
@@ -136,6 +137,7 @@ public abstract class AbstractMongoRepository<K, V> {
 
     /**
      * Deletes the document identified by key.
+     *
      * @param key the identifier of the deleted document
      * @return DeleteResult
      */
