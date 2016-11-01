@@ -8,9 +8,10 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -18,6 +19,7 @@ import static com.mongodb.client.model.ReturnDocument.AFTER;
 import static de.otto.edison.mongo.UpdateIfMatchResult.*;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractMongoRepository<K, V> {
 
@@ -36,20 +38,43 @@ public abstract class AbstractMongoRepository<K, V> {
                 .first());
     }
 
+    /**
+     * Convert given {@link Iterable} to a standard Java8-{@link Stream}.
+     * The {@link Stream} requests elements from the iterable in a lazy fashion as they will usually,
+     * so p.e. passing <code>collection().find()</code> as parameter will not result in the
+     * whole collection being read into memory.
+     *
+     * Parallel processing of the iterable is not used.
+     *
+     * @param iterable any {@link Iterable}
+     * @param <T> the type of elements returned by the iterator
+     * @return a {@link Stream} wrapping the given {@link Iterable}
+     */
+    protected static <T> Stream<T> toStream(Iterable<T> iterable) {
+        boolean parallelStreamProcessing = false;
+        return StreamSupport.stream(iterable.spliterator(), parallelStreamProcessing);
+    }
+
+    public Stream<V> findAllAsStream() {
+        return toStream(collection().find())
+                .map(this::decode);
+    }
+
     public List<V> findAll() {
-        return collection()
-                .find()
-                .map(this::decode)
-                .into(new ArrayList<>());
+        return findAllAsStream().collect(toList());
+    }
+
+    public Stream<V> findAllAsStream(int skip, int limit) {
+        return toStream(
+                collection()
+                        .find()
+                        .skip(skip)
+                        .limit(limit))
+                .map(this::decode);
     }
 
     public List<V> findAll(int skip, int limit) {
-        return collection()
-                .find()
-                .skip(skip)
-                .limit(limit)
-                .map(this::decode)
-                .into(new ArrayList<>());
+        return findAllAsStream(skip, limit).collect(toList());
     }
 
     public V createOrUpdate(final V value) {
@@ -81,12 +106,12 @@ public abstract class AbstractMongoRepository<K, V> {
     /**
      * Updates the document if the document's ETAG is matching the given etag (conditional put).
      * <p>
-     *     Using this method requires that the document contains an "etag" field that is updated if
-     *     the document is changed.
+     * Using this method requires that the document contains an "etag" field that is updated if
+     * the document is changed.
      * </p>
      *
      * @param value the new value
-     * @param eTag the etag used for conditional update
+     * @param eTag  the etag used for conditional update
      * @return {@link UpdateIfMatchResult}
      */
     public UpdateIfMatchResult updateIfMatch(final V value, final String eTag) {
@@ -178,7 +203,7 @@ public abstract class AbstractMongoRepository<K, V> {
     /**
      * Ensure that the MongoDB indexes required by the repository do exist.
      * <p>
-     *     This method is called once after startup of the application.
+     * This method is called once after startup of the application.
      * </p>
      */
     protected abstract void ensureIndexes();

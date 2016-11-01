@@ -7,9 +7,13 @@ import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsNot.not;
@@ -130,8 +134,76 @@ public class AbstractMongoRepositoryTest {
         // then
         assertThat(resultingObject, notNullValue());
         assertThat(resultingObject.eTag, notNullValue());
+        assertThat(resultingObject.id, notNullValue());
     }
 
+    private void createTestObjects(String... values) {
+        Arrays.stream(values)
+                .map(value -> new TestObject(null, value))
+                .forEach(testee::create);
+    }
+
+    @Test
+    public void shouldFindAllEntries() {
+        createTestObjects("testObject01", "testObject02", "testObject03", "testObject04", "testObject05", "testObject06");
+
+        // when
+        List<TestObject> foundObjects = testee.findAll();
+
+        // then
+        assertThat(foundObjects, hasSize(6));
+        assertThat(foundObjects.get(0).value, is("testObject01"));
+        assertThat(foundObjects.get(1).value, is("testObject02"));
+        assertThat(foundObjects.get(2).value, is("testObject03"));
+        assertThat(foundObjects.get(3).value, is("testObject04"));
+        assertThat(foundObjects.get(4).value, is("testObject05"));
+        assertThat(foundObjects.get(5).value, is("testObject06"));
+    }
+
+    @Test
+    public void shouldStreamAllEntries() {
+        createTestObjects("testObject01", "testObject02", "testObject03", "testObject04", "testObject05", "testObject06");
+
+        // when
+        List<TestObject> foundObjects = testee.findAllAsStream().collect(toList());
+
+        // then
+        assertThat(foundObjects, hasSize(6));
+        assertThat(foundObjects.get(0).value, is("testObject01"));
+        assertThat(foundObjects.get(1).value, is("testObject02"));
+        assertThat(foundObjects.get(2).value, is("testObject03"));
+        assertThat(foundObjects.get(3).value, is("testObject04"));
+        assertThat(foundObjects.get(4).value, is("testObject05"));
+        assertThat(foundObjects.get(5).value, is("testObject06"));
+    }
+
+    @Test
+    public void shouldFindAllEntriesWithSkipAndLimit() {
+        createTestObjects("testObject01", "testObject02", "testObject03", "testObject04", "testObject05", "testObject06");
+
+        // when
+        List<TestObject> foundObjects = testee.findAll(2, 3);
+
+        // then
+        assertThat(foundObjects, hasSize(3));
+        assertThat(foundObjects.get(0).value, is("testObject03"));
+        assertThat(foundObjects.get(1).value, is("testObject04"));
+        assertThat(foundObjects.get(2).value, is("testObject05"));
+    }
+
+    @Test
+    public void shouldStreamAllEntriesWithSkipAndLimit() {
+        createTestObjects("testObject01", "testObject02", "testObject03", "testObject04", "testObject05", "testObject06");
+
+        // when
+        List<TestObject> foundObjects = testee.findAllAsStream(2, 3).collect(toList());
+
+        // then
+        assertThat(foundObjects, hasSize(3));
+        assertThat(foundObjects.get(0).value, is("testObject03"));
+        assertThat(foundObjects.get(1).value, is("testObject04"));
+        assertThat(foundObjects.get(2).value, is("testObject05"));
+    }
 
     // ~~
 
@@ -157,7 +229,9 @@ public class AbstractMongoRepositoryTest {
         protected Document encode(TestObject value) {
             Document document = new Document();
 
-            document.append("_id", value.id);
+            if (value.id != null) {
+                document.append("_id", value.id);
+            }
             document.append("etag", UUID.randomUUID().toString());
             document.append("value", value.value);
 
@@ -167,7 +241,7 @@ public class AbstractMongoRepositoryTest {
         @Override
         protected TestObject decode(Document document) {
             return new TestObject(
-                    document.getString("_id"),
+                    document.containsKey("_id") ? document.get("_id").toString() : null,
                     document.getString("value"),
                     document.getString("etag")
             );
