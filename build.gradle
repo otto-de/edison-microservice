@@ -4,8 +4,8 @@ apply plugin: 'eclipse'
 apply from: 'dependencies.gradle'
 
 buildscript {
-    ext.springBootVersion = "1.4.0.RELEASE"
-    ext.springVersion = "4.3.2.RELEASE"
+    ext.springBootVersion = "1.4.2.RELEASE"
+    ext.springVersion = "4.3.4.RELEASE"
 
     repositories {
         maven { url "http://repo.spring.io/libs-snapshot" }
@@ -51,7 +51,7 @@ subprojects {
     // Minor Release: 0.X.0: Additional Features, updates from minor releases in Spring
     // Micro Release: 0.0.X: Bugfixes, non-breaking changes, updates from micro releases in Spring
     // DO NOT FORGET TO DOCUMENT CHANGES IN HISTORY.MD
-    version = '0.78.0'
+    version = '0.79.0-SNAPSHOT'
 
     repositories {
         mavenCentral()

@@ -1,6 +1,10 @@
 # Release History
 
 ## Release 0.78.0
+* **[edison]** Upgrade spring boot to 1.4.2.RELEASE
+* **[edison]** Upgrade spring version to 4.3.4.RELEASE
+
+## Release 0.78.0
 * **[edison-mongo]** Support streaming for findAll methods. The old methods are deprecated now, so please use the new ones.
 
 ## Release 0.77.0
