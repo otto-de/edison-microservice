@@ -14,7 +14,7 @@ ext.libs = [
         bootstrap:
                 "org.webjars:bootstrap:3.3.6",
         asyncHttp:
-                "com.ning:async-http-client:1.9.38",
+                "com.ning:async-http-client:1.9.40",
         jcip: [
                 "net.jcip:jcip-annotations:1.0"],
         logging: [
