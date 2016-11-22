@@ -1,5 +1,8 @@
 # Release History
 
+## release 0.79.2
+* **[edison-mongo]** Bugfix: AbstractMongoRepository does not accept null as ID of objects anymore.
+
 ## Release 0.79.1
 * **[edison]** Upgrade thymeleaf to version 3.0.2.RELEASE
 * **[edison-jobs]** jobdetails page uses div tags instead of spans
