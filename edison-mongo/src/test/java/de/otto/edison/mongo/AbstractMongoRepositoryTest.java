@@ -145,7 +145,7 @@ public class AbstractMongoRepositoryTest {
 
     private void createTestObjects(String... values) {
         Arrays.stream(values)
-                .map(value -> new TestObject(null, value))
+                .map(value -> new TestObject(value, value))
                 .forEach(testee::create);
     }
 
