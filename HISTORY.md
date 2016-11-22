@@ -1,5 +1,9 @@
 # Release History
 
+## Release 0.79.1
+* **[edison]** Upgrade thymeleaf to version 3.0.2.RELEASE
+* **[edison-jobs]** jobdetails page uses div tags instead of spans
+
 ## Release 0.79.0
 * **[edison]** Upgrade spring boot to 1.4.2.RELEASE
 * **[edison]** Upgrade spring version to 4.3.4.RELEASE

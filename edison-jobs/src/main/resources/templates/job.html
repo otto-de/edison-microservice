@@ -36,9 +36,7 @@
                 <dd th:text="${job.lastUpdated}">&nbsp;</dd>
                 <dt>Messages</dt>
                 <dd>
-<pre class=".pre-scrollable">
-<span th:each="message : ${job.messages}" th:text="${message}" />
-</pre>
+                <pre class="pre-scrollable"><div th:each="message : ${job.messages}" th:text="${message}" ></div></pre>
                 </dd>
             </dl>
         </div>

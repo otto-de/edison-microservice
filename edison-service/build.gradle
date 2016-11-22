@@ -12,6 +12,7 @@ dependencies {
     compile libs.bootstrap
 
     compile libs.springBootThymeleaf
+    compile libs.thymeleaf3
 
     testCompile project(":edison-testsupport")
 }
