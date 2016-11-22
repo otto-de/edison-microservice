@@ -100,6 +100,7 @@ public class MongoFeatureRepository extends AbstractMongoRepository<String, Feat
         final String name = document.getString(NAME);
         final Boolean enabled = document.getBoolean(ENABLED);
         final String strategy = document.getString(STRATEGY);
+        @SuppressWarnings("unchecked")
         final Map<String, String> parameters = document.get(PARAMETERS, Map.class);
 
         final FeatureState featureState = new FeatureState(resolveEnumValue(name));

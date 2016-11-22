@@ -16,6 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.IsNot.not;
 
 public class AbstractMongoRepositoryTest {
@@ -110,8 +111,8 @@ public class AbstractMongoRepositoryTest {
         assertThat(updated, is(UpdateIfMatchResult.NOT_FOUND));
     }
 
-    @Test
-    public void shouldCreateOrUpdateWithMissingId() throws Exception {
+    @Test(expected = NullPointerException.class)
+    public void shouldNotCreateOrUpdateWithMissingId() throws Exception {
         // given
         TestObject testObject = new TestObject(null, "someValue");
 
@@ -119,12 +120,11 @@ public class AbstractMongoRepositoryTest {
         TestObject resultingObject = testee.createOrUpdate(testObject);
 
         // then
-        assertThat(resultingObject, notNullValue());
-        assertThat(resultingObject.eTag, notNullValue());
+        // NullPointerException is thrown
     }
 
-    @Test
-    public void shouldCreateWithMissingId() throws Exception {
+    @Test(expected = NullPointerException.class)
+    public void shouldNotCreateWithMissingId() throws Exception {
         // given
         TestObject testObject = new TestObject(null, "someValue");
 
@@ -132,9 +132,15 @@ public class AbstractMongoRepositoryTest {
         TestObject resultingObject = testee.create(testObject);
 
         // then
-        assertThat(resultingObject, notNullValue());
-        assertThat(resultingObject.eTag, notNullValue());
-        assertThat(resultingObject.id, notNullValue());
+        // NullPointerException is thrown
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldFindOneWithMissingId() throws Exception {
+        // when
+        testee.findOne(null);
+        // then
+        // NullPointerException is thrown
     }
 
     private void createTestObjects(String... values) {

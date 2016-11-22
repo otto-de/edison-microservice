@@ -87,16 +87,20 @@ public abstract class AbstractMongoRepository<K, V> {
     }
 
     public V createOrUpdate(final V value) {
-        final K key = keyOf(value);
         Document doc = encode(value);
-        collection().replaceOne(byId(key), doc, new UpdateOptions().upsert(true));
+        collection().replaceOne(byId(keyOf(value)), doc, new UpdateOptions().upsert(true));
         return decode(doc);
     }
 
     public V create(final V value) {
-        Document doc = encode(value);
-        collection().insertOne(doc);
-        return decode(doc);
+        final K key = keyOf(value);
+        if (key != null) {
+            Document doc = encode(value);
+            collection().insertOne(doc);
+            return decode(doc);
+        } else {
+            throw new NullPointerException("Key must not be null");
+        }
     }
 
     /**
@@ -107,9 +111,13 @@ public abstract class AbstractMongoRepository<K, V> {
      */
     public boolean update(final V value) {
         final K key = keyOf(value);
-        return collection()
-                .replaceOne(byId(key), encode(value))
-                .getModifiedCount() == 1;
+        if (key != null) {
+            return collection()
+                    .replaceOne(byId(key), encode(value))
+                    .getModifiedCount() == 1;
+        } else {
+            throw new IllegalArgumentException("Key must not be null");
+        }
     }
 
     /**
@@ -124,19 +132,24 @@ public abstract class AbstractMongoRepository<K, V> {
      * @return {@link UpdateIfMatchResult}
      */
     public UpdateIfMatchResult updateIfMatch(final V value, final String eTag) {
-        final Bson query = and(eq(AbstractMongoRepository.ID, keyOf(value)), eq(ETAG, eTag));
+        final K key = keyOf(value);
+        if (key != null) {
+            final Bson query = and(eq(AbstractMongoRepository.ID, key), eq(ETAG, eTag));
 
-        final Document updatedETaggable = collection().findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
-        if (isNull(updatedETaggable)) {
-            final boolean documentExists = collection().count(eq(AbstractMongoRepository.ID, keyOf(value))) != 0;
-            if (documentExists) {
-                return CONCURRENTLY_MODIFIED;
+            final Document updatedETaggable = collection().findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
+            if (isNull(updatedETaggable)) {
+                final boolean documentExists = collection().count(eq(AbstractMongoRepository.ID, key)) != 0;
+                if (documentExists) {
+                    return CONCURRENTLY_MODIFIED;
+                }
+
+                return NOT_FOUND;
             }
 
-            return NOT_FOUND;
+            return OK;
+        } else {
+            throw new IllegalArgumentException("Key must not be null");
         }
-
-        return OK;
     }
 
     public long size() {
@@ -169,7 +182,11 @@ public abstract class AbstractMongoRepository<K, V> {
      * @return query Document
      */
     protected Document byId(final K key) {
-        return key != null ? new Document(ID, key.toString()) : new Document();
+        if (key != null) {
+            return new Document(ID, key.toString());
+        } else {
+            throw new NullPointerException("Key must not be null");
+        }
     }
 
     /**
@@ -188,7 +205,9 @@ public abstract class AbstractMongoRepository<K, V> {
 
     /**
      * Returns the key / identifier from the given value.
-     *
+     * <p>
+     *     The key of a document must never be null.
+     * </p>
      * @param value the value
      * @return key
      */
