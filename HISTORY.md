@@ -1,5 +1,8 @@
 # Release History
 
+## release 0.79.3
+* **[edison-cache]** Allow registering custom built caches via `CacheRegistry` to gather cache metrics
+
 ## release 0.79.2
 * **[edison-mongo]** Bugfix: AbstractMongoRepository does not accept null as ID of objects anymore.
 

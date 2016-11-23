@@ -33,6 +33,7 @@ public class CacheInfoController {
 
     @Autowired
     CachePublicMetrics cacheMetrics;
+
     @Autowired(required = false)
     List<CaffeineCacheConfig> cacheConfigs;
 

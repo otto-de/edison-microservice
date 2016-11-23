@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.51.0
  */
 @Configuration
-public class CacheConfiguration {
+public class ExampleCacheConfiguration {
 
     @Bean
     public GuavaCacheConfig helloCacheConfig() {

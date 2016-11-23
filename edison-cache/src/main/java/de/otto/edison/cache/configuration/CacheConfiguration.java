@@ -1,24 +1,17 @@
 package de.otto.edison.cache.configuration;
 
 import de.otto.edison.annotations.Beta;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.cache.CacheStatistics;
 import org.springframework.boot.actuate.cache.CaffeineCacheStatisticsProvider;
 import org.springframework.boot.actuate.metrics.Metric;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
-import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
-import static com.github.benmanes.caffeine.cache.Caffeine.from;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Configuration that is exposing a CacheManager and cache statistics for Caffeine caches.
@@ -34,21 +27,6 @@ import static java.util.stream.Collectors.toList;
 @EnableCaching
 @Beta
 public class CacheConfiguration {
-
-    @Autowired(required = false)
-    List<CaffeineCacheConfig> cacheConfigs;
-
-    @Bean
-    @ConditionalOnBean(CaffeineCacheConfig.class)
-    public CacheManager cacheManager() {
-        final SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
-        simpleCacheManager.setCaches(cacheConfigs
-                .stream()
-                .map(config-> new CaffeineCache(config.cacheName, from(config.spec).build()))
-                .collect(toList()));
-        return simpleCacheManager;
-    }
-
     @Bean
     public CaffeineCacheStatisticsProvider caffeineCacheCacheStatisticsProvider() {
         return new CaffeineCacheStatisticsProvider() {
