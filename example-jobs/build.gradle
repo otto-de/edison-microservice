@@ -1,6 +1,8 @@
 apply plugin: 'spring-boot'
 
 dependencies {
+    compile project(":edison-jobs")
+    compile project(":edison-togglz")
     compile project(":edison-service")
     //compile project(":edison-jobs-mongo")  // Enable to get persistent job information
 
