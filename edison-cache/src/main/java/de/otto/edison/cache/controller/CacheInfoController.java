@@ -4,6 +4,7 @@ import de.otto.edison.annotations.Beta;
 import de.otto.edison.cache.configuration.CaffeineCacheConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.CachePublicMetrics;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  */
 @Controller
 @Beta
+@ConditionalOnProperty(name = "edison.cache.web.controller.enabled", havingValue = "true", matchIfMissing = true)
 public class CacheInfoController {
 
     @Autowired
