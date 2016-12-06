@@ -1,6 +1,7 @@
 apply plugin: 'spring-boot'
 
 dependencies {
+    compile project(":edison-status")
     compile project(":edison-service")
     compile libs.springBootDev
 
