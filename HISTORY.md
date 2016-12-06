@@ -1,5 +1,11 @@
 # Release History
 
+## release 0.80.0
+* **[edison-service]** Make edison-service independent of other edison packages
+  - This might break your build because you did not write your project dependencies explicitly in
+    your build script. Just add the missing edison packages and everything will be fine.
+* **[edison-cache]** Allow CacheInfoController to be disabled
+
 ## release 0.79.3
 * **[edison-cache]** Allow registering custom built caches via `CacheRegistry` to gather cache metrics
 
