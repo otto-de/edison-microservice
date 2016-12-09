@@ -1,9 +1,6 @@
 package de.otto.edison.mongo;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
@@ -27,6 +24,8 @@ public class MongoConfiguration {
     private static final Logger LOG = getLogger(MongoConfiguration.class);
 
     private List<ServerAddress> databaseServers;
+    @Value("${edison.mongo.readPreference:primary}")
+    private String readPreference;
     @Value("${edison.mongo.maxWaitTime:5000}")
     private int maxWaitTime = 5000;
     @Value("${edison.mongo.connectTimeout:5000}")
@@ -73,6 +72,7 @@ public class MongoConfiguration {
     public MongoClient mongoClient() {
         LOG.info("Creating MongoClient");
         final MongoClientOptions settings = MongoClientOptions.builder()
+                .readPreference(ReadPreference.valueOf(readPreference))
                 .minConnectionsPerHost(connectionsPerHostMin)
                 .connectionsPerHost(connectionsPerHostMax)
                 .connectTimeout(connectTimeout)

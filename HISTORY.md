@@ -1,5 +1,8 @@
 # Release History
 
+## release 0.81.0
+* **[edison-mongo]** Allow configuration of mongo read preference by setting the property `edison.mongo.readPreference`. The default configuration is primary.
+
 ## release 0.80.0
 * **[edison-service]** Make edison-service independent of other edison packages
   - This might break your build because you did not write your project dependencies explicitly in
