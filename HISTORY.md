@@ -1,5 +1,8 @@
 # Release History
 
+## release 0.82.0
+* **[edison-jobs]** Show only latest 10 jobs in Job Overview by default
+
 ## release 0.81.0
 * **[edison-mongo]** Allow configuration of mongo read preference by setting the property `edison.mongo.readPreference`. The default configuration is primary.
 

@@ -71,7 +71,7 @@ public class JobsController {
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "application/json")
     @ResponseBody
     public List<JobRepresentation> getJobsAsJson(@RequestParam(value = "type", required = false) String type,
-                                                 @RequestParam(value = "count", defaultValue = "100") int count,
+                                                 @RequestParam(value = "count", defaultValue = "10") int count,
                                                  @RequestParam(value = "distinct", defaultValue = "true", required = false) boolean distinct,
                                                  HttpServletRequest request) {
         return getJobInfos(type, count, distinct)
