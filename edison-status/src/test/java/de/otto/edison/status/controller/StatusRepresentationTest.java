@@ -12,6 +12,7 @@ import java.util.Map;
 import static de.otto.edison.status.controller.StatusRepresentation.statusRepresentationOf;
 import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
+import static de.otto.edison.status.domain.ClusterInfo.clusterInfo;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
@@ -28,7 +29,8 @@ public class StatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithoutDetails() {
         // given
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(applicationInfo("app", "", "test", "local"), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(applicationInfo("app", "", "test", "local"), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList()),
+                clusterInfo("productive", "BLU")
         );
         // then
         assertThat(json.application.name, is("app"));
@@ -37,10 +39,23 @@ public class StatusRepresentationTest {
     }
 
     @Test
+    public void shouldCreateStatusRepresentationWithClusterInfo() {
+        // given
+        final StatusRepresentation json = statusRepresentationOf(
+                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo("1.0.0", "0815", "http://example.org/commits/{commit}"), mock(TeamInfo.class), emptyList(), emptyList()),
+                clusterInfo("productive", "BLU")
+        );
+        // then
+        assertThat(json.application.staging, is("productive"));
+        assertThat(json.application.color, is("BLU"));
+    }
+
+    @Test
     public void shouldCreateStatusRepresentationWithVersionInfo() {
         // given
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo("1.0.0", "0815", "http://example.org/commits/{commit}"), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo("1.0.0", "0815", "http://example.org/commits/{commit}"), mock(TeamInfo.class), emptyList(), emptyList()),
+                clusterInfo("productive", "BLU")
         );
         // then
         assertThat(json.application.version, is("1.0.0"));
@@ -54,7 +69,8 @@ public class StatusRepresentationTest {
         final StatusRepresentation json = statusRepresentationOf(
                 applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(
                         statusDetail("someDetail", WARNING, "detailed warning")), emptyList()
-                )
+                ),
+                clusterInfo("productive", "BLU")
         );
         // then
         assertThat(json.application.status, is(WARNING));
@@ -73,7 +89,8 @@ public class StatusRepresentationTest {
                 applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                                 statusDetail("Some Detail", OK, "perfect"),
                                 statusDetail("Some Other Detail", WARNING, "detailed warning", detailMap)), emptyList()
-                )
+                ),
+                clusterInfo("productive", "BLU")
         );
         // then
         assertThat(json.application.status, is(WARNING));
