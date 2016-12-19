@@ -1,5 +1,8 @@
 # Release History
 
+## SNAPSHOT
+* **[edison-jobs]** add _primaryPreferred_ for jobRepository to avoid data loss while updating a jobState 
+
 ## release 0.82.0
 * **[edison-jobs]** Show only latest 10 jobs in Job Overview by default
 

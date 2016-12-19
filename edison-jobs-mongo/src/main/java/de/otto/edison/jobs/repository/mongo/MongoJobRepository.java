@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.repository.mongo;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.ReadPreference;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -26,6 +27,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.mongodb.ReadPreference.primaryPreferred;
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
@@ -62,8 +64,8 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Autowired
     public MongoJobRepository(final MongoDatabase database) {
-        this.jobInfoCollection = database.getCollection(JOB_INFO_COLLECTION_NAME);
-        this.runningJobsCollection = database.getCollection(JOBS_META_DATA_COLLECTION_NAME);
+        this.jobInfoCollection = database.getCollection(JOB_INFO_COLLECTION_NAME).withReadPreference(primaryPreferred());
+        this.runningJobsCollection = database.getCollection(JOBS_META_DATA_COLLECTION_NAME).withReadPreference(primaryPreferred());
         this.clock = systemDefaultZone();
     }
 
