@@ -1,6 +1,8 @@
 # Release History
 
 ## SNAPSHOT
+
+## release 0.82.1
 * **[edison-jobs]** add _primaryPreferred_ for jobRepository to avoid data loss while updating a jobState 
 
 ## release 0.82.0
