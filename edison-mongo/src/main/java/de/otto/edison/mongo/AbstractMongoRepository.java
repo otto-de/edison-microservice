@@ -16,7 +16,9 @@ import java.util.stream.StreamSupport;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.ReturnDocument.AFTER;
-import static de.otto.edison.mongo.UpdateIfMatchResult.*;
+import static de.otto.edison.mongo.UpdateIfMatchResult.CONCURRENTLY_MODIFIED;
+import static de.otto.edison.mongo.UpdateIfMatchResult.NOT_FOUND;
+import static de.otto.edison.mongo.UpdateIfMatchResult.OK;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -61,10 +63,6 @@ public abstract class AbstractMongoRepository<K, V> {
                 .map(this::decode);
     }
 
-    /**
-     * @deprecated Use {@link #findAllAsStream()} instead and collect the stream
-     */
-    @Deprecated
     public List<V> findAll() {
         return findAllAsStream().collect(toList());
     }
@@ -78,10 +76,6 @@ public abstract class AbstractMongoRepository<K, V> {
                 .map(this::decode);
     }
 
-    /**
-     * @deprecated Use {@link #findAllAsStream(int, int)} instead and collect the stream
-     */
-    @Deprecated
     public List<V> findAll(final int skip, final int limit) {
         return findAllAsStream(skip, limit).collect(toList());
     }
