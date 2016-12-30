@@ -37,19 +37,16 @@ This project contains a number of independent libraries that may be used to crea
 ## Documentation
 * [edison-cache](edison-cache/README.md)
 * [edison-core](edison-core/README.md)
-* [edison-guava](edison-guava/README.md) (deprecated)
 * [edison-jobs](edison-jobs/README.md)
 * [edison-jobs-mongo](edison-jobs-mongo/README.md)
 * edison-metrics
 * edison-mongo
-* edison-service
 * edison-servicediscovery-client
 * edison-testsupport
 * edison-togglz
 * edison-togglz-mongo
 * edison-togglz-testsupport
 * example-jobs
-* [example-layout](example-layout/README.md)
 * example-metrics
 * example-status
 
@@ -73,7 +70,6 @@ The examples can be started with gradle:
     gradle clean example-jobs:bootRun
     gradle clean example-metrics:bootRun
     gradle clean example-status:bootRun
-    gradle clean example-layout:bootRun
 
 Open in your browser [http://localhost:8080/example/](http://localhost:8080/example/)
 
