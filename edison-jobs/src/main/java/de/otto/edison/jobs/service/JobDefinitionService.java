@@ -25,7 +25,6 @@ public class JobDefinitionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobDefinitionService.class);
 
-
     @Autowired(required = false)
     private List<JobRunnable> jobRunnables = new ArrayList<>();
     private List<JobDefinition> jobDefinitions = new ArrayList<>();
@@ -52,14 +51,25 @@ public class JobDefinitionService {
         }
     }
 
+    /**
+     * Returns all registered JobDefinitions, or an empty list.
+     *
+     * @return list of JobDefinitions
+     */
     public List<JobDefinition> getJobDefinitions() {
         return new ArrayList<>(jobDefinitions);
     }
 
+    /**
+     * Returns an optional JobDefinition matching the given jobType.
+     *
+     * @param jobType case insensitive {@link JobDefinition#jobType() job type}
+     * @return optional JobDefinition
+     */
     public Optional<JobDefinition> getJobDefinition(final String jobType) {
         return jobDefinitions
                 .stream()
-                .filter((j) -> j.jobType().equals(jobType))
+                .filter((j) -> j.jobType().equalsIgnoreCase(jobType))
                 .findAny();
     }
 
