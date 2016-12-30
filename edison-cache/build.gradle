@@ -4,7 +4,6 @@ dependencies {
 
     compile libs.guava
     compile libs.caffeine
-    compile libs.bootstrap
     compile libs.metricsSpring
 
     compile libs.springBootThymeleaf

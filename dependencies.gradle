@@ -11,8 +11,6 @@ ext.libs = [
                 "org.springframework.boot:spring-boot-starter-actuator:" + springBootVersion],
         springBootThymeleaf:
                 "org.springframework.boot:spring-boot-starter-thymeleaf:" + springBootVersion,
-        bootstrap:
-                "org.webjars:bootstrap:3.3.7-1",
         asyncHttp:
                 "com.ning:async-http-client:1.9.40",
         jcip: [
