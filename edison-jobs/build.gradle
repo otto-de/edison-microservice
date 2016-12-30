@@ -6,7 +6,6 @@ dependencies {
     compile libs.asyncHttp
 
     compile project(":edison-core")
-    compile project(":edison-status")
 
     testCompile project(":edison-testsupport")
     testCompile libs.jaywayJsonPath

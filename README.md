@@ -22,12 +22,12 @@ Have a look at the [release history](HISTORY.md) for details about updates and c
 This project contains a number of independent libraries that may be used to create microservices on top of Spring Boot. The libraries are used in different projects at OTTO. It's purpose is to provide a common implementation for cross-cutting requirements like:
 
 * Health checks that are used to tell the load balancer or mesos platform whether or not a service is healthy.
-* A [Status page/document](https://github.com/otto-de/edison-microservice/tree/master/edison-status) that may be used to give information about the current state of the service. Status information may also include details about sub-components, background jobs like imports, and so on.
+* A [Status page/document](https://github.com/otto-de/edison-microservice/tree/master/edison-core) that may be used to give information about the current state of the service. Status information may also include details about sub-components, background jobs like imports, and so on.
 * A simple job handling library that is used to run asynchronous background jobs, which for example can be used to run data imports from other systems.
 * An optional MongoDB-based implementation of a JobRepository
 * Support for MongoDB-based repositories in case you do not like Spring Data
 * Reporting of metrics to Graphite
-* Support for [Guava caches](https://github.com/otto-de/edison-microservice/tree/master/edison-guava)
+* Support for [Caffeine caches](https://github.com/otto-de/edison-microservice/tree/master/edison-cache)
 * Logging of messages to Kafka queues
 * Support for feature toggles based on the Togglz library
 
@@ -38,14 +38,12 @@ This project contains a number of independent libraries that may be used to crea
 * [edison-cache](edison-cache/README.md)
 * [edison-core](edison-core/README.md)
 * [edison-guava](edison-guava/README.md) (deprecated)
-* edison-health
 * [edison-jobs](edison-jobs/README.md)
 * [edison-jobs-mongo](edison-jobs-mongo/README.md)
 * edison-metrics
 * edison-mongo
 * edison-service
 * edison-servicediscovery-client
-* [edison-status](edison-status/README.md)
 * edison-testsupport
 * edison-togglz
 * edison-togglz-mongo

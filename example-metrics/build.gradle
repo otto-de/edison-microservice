@@ -1,9 +1,8 @@
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 
 dependencies {
-    compile project(":edison-service")
-    compile project(":edison-guava")
-    compile libs.springBootDev
+    compile project(":edison-core")
+    compile project(":edison-cache")
 
     testCompile project(":edison-testsupport")
 }
