@@ -1,26 +1,39 @@
 # Release History
 
-## SNAPSHOT
+## Release 1.0.0.RC1 (SNAPSHOT)
 
-## release 0.82.1
+**Breaking Changes:**
+* **[edison]** Refactored module structure: moved edison-status, edison-health and edison-microservice 
+into edison-core.
+* **[edison-guava]** Removed the deprecated module edison-guava. This is now replaced by edison-cache.
+
+**Bugfixes:**
+* Fixed broken link from job messages to /jobdefinitions/<jobType>. JobDefinitionService.getJobDefition(jobType)
+is now case insensitive.
+
+**New Features:**
+* **[edison-core]** Added feature to configure the entries of the navigation bar of /internal/* pages. See
+de.otto.edison navigation for details and have a look at the NavigationConfiguration in the examples. 
+
+## Release 0.82.1
 * **[edison-jobs]** add _primaryPreferred_ for jobRepository to avoid data loss while updating a jobState 
 
-## release 0.82.0
+## Release 0.82.0
 * **[edison-jobs]** Show only latest 10 jobs in Job Overview by default
 
-## release 0.81.0
+## Release 0.81.0
 * **[edison-mongo]** Allow configuration of mongo read preference by setting the property `edison.mongo.readPreference`. The default configuration is primary.
 
-## release 0.80.0
+## Release 0.80.0
 * **[edison-service]** Make edison-service independent of other edison packages
   - This might break your build because you did not write your project dependencies explicitly in
     your build script. Just add the missing edison packages and everything will be fine.
 * **[edison-cache]** Allow CacheInfoController to be disabled
 
-## release 0.79.3
+## Release 0.79.3
 * **[edison-cache]** Allow registering custom built caches via `CacheRegistry` to gather cache metrics
 
-## release 0.79.2
+## Release 0.79.2
 * **[edison-mongo]** Bugfix: AbstractMongoRepository does not accept null as ID of objects anymore.
 
 ## Release 0.79.1

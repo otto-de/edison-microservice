@@ -9,20 +9,8 @@
             Admin <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-            <li>
-                <a th:href="@{/internal/status}">Status</a>
-            </li>
-            <li th:if="${@environment.getProperty('edison.jobs.web.controller.enabled') == null or @environment.getProperty('edison.jobs.web.controller.enabled') == 'true'}">
-                <a th:href="@{/internal/jobs}">Job Overview</a>
-            </li>
-            <li th:if="${@environment.getProperty('edison.jobs.web.controller.enabled') == null or @environment.getProperty('edison.jobs.web.controller.enabled') == 'true'}">
-                <a th:href="@{/internal/jobdefinitions}">Job Definitions</a>
-            </li>
-            <li th:if="${@environment.getProperty('foo') == null or @environment.getProperty('edison.cache.web.controller.enabled') == 'true'}">
-                <a th:href="@{/internal/cacheinfos}">Cache Info</a>
-            </li>
-            <li th:if="${@environment.getProperty('edison.togglz.web.console') == null or @environment.getProperty('edison.togglz.web.console') == 'true'}">
-                <a th:href="@{/internal/toggles/console}">Feature Toggles</a>
+            <li th:each="item : ${@rightNavBar.items}">
+                <a th:href="@{${item.link}}" th:text="${item.title}" />
             </li>
             <li role="separator" class="divider"></li>
             <li><a th:href="@{/internal/health}">health</a></li>

@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.controller;
 
+import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
@@ -22,6 +23,8 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.otto.edison.navigation.NavBar;
+import de.otto.edison.navigation.NavBarItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Controller;
@@ -44,9 +47,12 @@ public class JobDefinitionsController {
     private final JobRepository jobRepository;
 
     @Autowired
-    public JobDefinitionsController(final JobDefinitionService service, JobRepository jobRepository) {
+    public JobDefinitionsController(final JobDefinitionService service,
+                                    final JobRepository jobRepository,
+                                    final NavBar rightNavBar) {
         this.jobDefinitions = service;
         this.jobRepository = jobRepository;
+        rightNavBar.register(navBarItem(10, "Job Definitions", INTERNAL_JOBDEFINITIONS));
     }
 
     @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "application/json")

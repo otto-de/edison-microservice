@@ -1,4 +1,4 @@
-package de.otto.edison.example.jobs;
+package de.otto.edison.example.configuration;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;

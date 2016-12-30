@@ -4,6 +4,7 @@ import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobRunnable;
+import de.otto.edison.navigation.NavBar;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -63,7 +64,7 @@ public class JobDefinitionsControllerTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        controller = new JobDefinitionsController(jobDefinitionService, jobRepository);
+        controller = new JobDefinitionsController(jobDefinitionService, jobRepository, mock(NavBar.class));
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 

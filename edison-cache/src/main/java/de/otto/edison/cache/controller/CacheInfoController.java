@@ -2,6 +2,8 @@ package de.otto.edison.cache.controller;
 
 import de.otto.edison.annotations.Beta;
 import de.otto.edison.cache.configuration.CaffeineCacheConfig;
+import de.otto.edison.navigation.NavBar;
+import de.otto.edison.navigation.NavBarItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.CachePublicMetrics;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +21,7 @@ import java.util.Optional;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
+import static de.otto.edison.navigation.NavBarItem.*;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -38,6 +42,14 @@ public class CacheInfoController {
 
     @Autowired(required = false)
     List<CaffeineCacheConfig> cacheConfigs;
+
+    @Autowired
+    NavBar rightNavBar;
+
+    @PostConstruct
+    public void postConstruct() {
+        rightNavBar.register(navBarItem(bottom(), "Cache Statistics", "/internal/cacheinfos"));
+    }
 
     @RequestMapping(value = "/internal/cacheinfos", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody

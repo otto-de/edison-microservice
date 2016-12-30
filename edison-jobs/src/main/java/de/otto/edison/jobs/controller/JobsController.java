@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.controller;
 
+import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static java.util.stream.Collectors.toList;
 
 import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
@@ -20,6 +21,8 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.otto.edison.navigation.NavBar;
+import de.otto.edison.navigation.NavBarItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +44,14 @@ public class JobsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsController.class);
 
+    private final JobService jobService;
+
+
     @Autowired
-    private JobService jobService;
-    @Value("${server.context-path}")
-    private String serverContextPath;
-
-
-    public JobsController() {
-    }
-
-    JobsController(final JobService jobService) {
+    JobsController(final JobService jobService,
+                   final NavBar rightNavBar) {
         this.jobService = jobService;
+        rightNavBar.register(navBarItem(10, "Job Overview", "/internal/jobs"));
     }
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")

@@ -2,9 +2,9 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobService;
+import de.otto.edison.navigation.NavBar;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.ModelAndView;
 import org.junit.Before;
@@ -29,6 +29,7 @@ import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,7 +43,7 @@ public class JobsControllerTest {
     @Before
     public void setUp() throws Exception {
         jobService = mock(JobService.class);
-        jobsController = new JobsController(jobService);
+        jobsController = new JobsController(jobService, mock(NavBar.class));
         mockMvc = MockMvcBuilders
                 .standaloneSetup(jobsController)
                 .defaultRequest(MockMvcRequestBuilders.get("/").contextPath("/some-microservice"))
@@ -73,21 +74,21 @@ public class JobsControllerTest {
                 .get("/some-microservice/internal/jobs/42")
                 .servletPath("/internal/jobs/42"))
                 .andExpect(status().is(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("OK"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.messages").isArray())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.jobType").value("TEST"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hostname").value("localhost"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.started").value(nowAsString))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.stopped").value(""))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastUpdated").value(nowAsString))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.jobUri").value("http://localhost/some-microservice/internal/jobs/42"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isArray())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.links[0].href").value("http://localhost/some-microservice/internal/jobs/42"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.links[1].href").value("http://localhost/some-microservice/internal/jobdefinitions/TEST"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.links[2].href").value("http://localhost/some-microservice/internal/jobs"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.links[3].href").value("http://localhost/some-microservice/internal/jobs?type=TEST"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.runtime").value(""))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.state").value("Running"));
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.messages").isArray())
+                .andExpect(jsonPath("$.jobType").value("TEST"))
+                .andExpect(jsonPath("$.hostname").value("localhost"))
+                .andExpect(jsonPath("$.started").value(nowAsString))
+                .andExpect(jsonPath("$.stopped").value(""))
+                .andExpect(jsonPath("$.lastUpdated").value(nowAsString))
+                .andExpect(jsonPath("$.jobUri").value("http://localhost/some-microservice/internal/jobs/42"))
+                .andExpect(jsonPath("$.links").isArray())
+                .andExpect(jsonPath("$.links[0].href").value("http://localhost/some-microservice/internal/jobs/42"))
+                .andExpect(jsonPath("$.links[1].href").value("http://localhost/some-microservice/internal/jobdefinitions/TEST"))
+                .andExpect(jsonPath("$.links[2].href").value("http://localhost/some-microservice/internal/jobs"))
+                .andExpect(jsonPath("$.links[3].href").value("http://localhost/some-microservice/internal/jobs?type=TEST"))
+                .andExpect(jsonPath("$.runtime").value(""))
+                .andExpect(jsonPath("$.state").value("Running"));
         verify(jobService).findJob("42");
     }
 
