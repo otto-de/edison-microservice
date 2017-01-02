@@ -43,7 +43,6 @@ This project contains a number of independent libraries that may be used to crea
 * edison-testsupport
 * edison-togglz
 * edison-togglz-mongo
-* edison-togglz-testsupport
 * example-jobs
 * example-metrics
 * example-status

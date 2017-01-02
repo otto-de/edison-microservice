@@ -9,6 +9,7 @@ Beginning with 1.0.0, we will start using semantic versioning of releases.
 into edison-core.
 * **[edison]** Removed remaining dependencies to guava library.
 * **[edison]** Graceful shutdown is now disabled by default. Enable it by setting edison.gracefulshutdown.enabled=true.
+* **[edison-testsupport-togglz]** Content of this module was moved to edison-testsupport.
 * **[edison-servicediscovery-client]** Renamed module to edison-serviceregistry-client. Renamed package
 de.otto.edison.discovery to de.otto.edison.registry.
 * **[edison-guava]** Removed the deprecated module edison-guava. This is now replaced by edison-cache.

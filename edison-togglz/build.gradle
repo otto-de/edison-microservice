@@ -9,7 +9,6 @@ dependencies {
 
     testCompile libs.testUnit
     testCompile project(":edison-testsupport")
-    testCompile project(":edison-togglz-testsupport")
 }
 
 artifacts {
