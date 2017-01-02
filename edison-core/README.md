@@ -11,7 +11,12 @@ of internal pages of Edison Microservices.
 You can replace fragments of these pages by copying + modifying these fragments. For example, you can add
 menu items to the main menu by overriding templates/fragments/navbar/main.html.
 
-# 2. de.otto.edison.heath
+# 2. de.otto.edison.health
+
+The health package is relying on Spring Boot HealthIndicators, but with a slightly different focus. While
+
+In contrast to Spring Boot, Edison is using health to indicate that a single instance of a service is healthy
+or unhealthy. Load Balancers are using health checks to determine, whether or not a service should get load, or not.
 
 ## 2.1
 

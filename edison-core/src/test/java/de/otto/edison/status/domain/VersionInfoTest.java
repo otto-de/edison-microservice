@@ -2,6 +2,7 @@ package de.otto.edison.status.domain;
 
 import org.junit.Test;
 
+import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
 import static de.otto.edison.status.domain.VersionInfo.versionInfo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -12,7 +13,7 @@ public class VersionInfoTest {
     @Test
     public void shouldReplaceCommitHashInTemplate() {
         // given
-        VersionInfo versionInfo = versionInfo("42.0.1-RELEASE", "ab0816", "http://example.org/test/{commit}");
+        VersionInfo versionInfo = versionInfo(versionInfoProperties("42.0.1-RELEASE", "ab0816", "http://example.org/test/{commit}"));
         // then
         assertThat(versionInfo.url, is("http://example.org/test/ab0816"));
     }
@@ -20,7 +21,7 @@ public class VersionInfoTest {
     @Test
     public void shouldReplaceVersionInTemplate() {
         // given
-        VersionInfo versionInfo = versionInfo("42.0.1-RELEASE", "ab0816", "http://example.org/test/{version}");
+        VersionInfo versionInfo = versionInfo(versionInfoProperties("42.0.1-RELEASE", "ab0816", "http://example.org/test/{version}"));
         // then
         assertThat(versionInfo.url, is("http://example.org/test/42.0.1-RELEASE"));
     }

@@ -6,6 +6,7 @@ import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
 import static de.otto.edison.status.domain.Criticality.MISSION_CRITICAL;
 import static de.otto.edison.status.domain.Expectations.highExpectations;
 import static de.otto.edison.status.domain.ServiceSpec.serviceSpec;
@@ -33,7 +34,7 @@ public class StatusAcceptanceConfiguration {
 
     @Bean
     VersionInfo versionInfo() {
-        return VersionInfo.versionInfo("1.0.0", "ab1234", "http://example.org/vcs/{version}");
+        return VersionInfo.versionInfo(versionInfoProperties("1.0.0", "ab1234", "http://example.org/vcs/{version}"));
     }
 
     // some serviceSpecs:

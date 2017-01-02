@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
 import static de.otto.edison.status.controller.StatusRepresentation.statusRepresentationOf;
 import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
@@ -40,7 +41,7 @@ public class StatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithVersionInfo() {
         // given
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo("1.0.0", "0815", "http://example.org/commits/{commit}"), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo(versionInfoProperties("1.0.0", "0815", "http://example.org/commits/{commit}")), mock(TeamInfo.class), emptyList(), emptyList())
         );
         // then
         assertThat(json.application.version, is("1.0.0"));

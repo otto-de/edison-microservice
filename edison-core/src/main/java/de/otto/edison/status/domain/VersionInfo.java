@@ -1,5 +1,6 @@
 package de.otto.edison.status.domain;
 
+import de.otto.edison.status.configuration.VersionInfoProperties;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -15,14 +16,14 @@ public class VersionInfo {
     public final String commit;
     public final String url;
 
-    private VersionInfo(final String version, final String commit, final String vcsUrlTemplate) {
-        this.version = version;
-        this.commit = commit;
-        this.url = vcsUrlTemplate.isEmpty() ? "" : vcsUrlTemplate.replace("{commit}", commit).replace("{version}", version);
+    private VersionInfo(final VersionInfoProperties versionInfoProperties) {
+        this.version = versionInfoProperties.version;
+        this.commit = versionInfoProperties.commit;
+        this.url = versionInfoProperties.urlTemplate.replace("{commit}", commit).replace("{version}", version);
     }
 
-    public static VersionInfo versionInfo(final String version, final String commit, final String vcsUrlTemplate) {
-        return new VersionInfo(version, commit, vcsUrlTemplate);
+    public static VersionInfo versionInfo(final VersionInfoProperties versionInfoProperties) {
+        return new VersionInfo(versionInfoProperties);
     }
 
     @Override

@@ -4,6 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Properties used to configure the graceful shutdown of Edison microservices.
+ *
+ * @since 1.0.0
  */
 @ConfigurationProperties(prefix = "edison.gracefulshutdown")
 public class GracefulShutdownProperties {
