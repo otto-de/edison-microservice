@@ -1,6 +1,6 @@
 package de.otto.edison.cache.configuration;
 
-import com.google.common.collect.Maps;
+import de.otto.edison.annotations.Beta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cache.Cache;
@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static com.github.benmanes.caffeine.cache.Caffeine.from;
 
 @Service
 @ConditionalOnBean(CaffeineCacheConfig.class)
+@Beta
 public class DefaultCacheRegistry implements CacheManager, CacheRegistry {
 
     private List<CaffeineCacheConfig> cacheConfigs;
@@ -23,7 +25,7 @@ public class DefaultCacheRegistry implements CacheManager, CacheRegistry {
 
     public DefaultCacheRegistry(@Autowired(required = false) List<CaffeineCacheConfig> cacheConfigs) {
         this.cacheConfigs = cacheConfigs;
-        caches = Maps.newConcurrentMap();
+        caches = new ConcurrentHashMap<>();
         this.cacheConfigs
                 .stream()
                 .map(config -> new CaffeineCache(config.cacheName, from(config.spec).build()))

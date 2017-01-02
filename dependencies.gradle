@@ -53,8 +53,6 @@ ext.libs = [
                 "org.mongodb:mongodb-driver:3.4.0"],
         fakeMongo:
                 "com.github.fakemongo:fongo:2.0.10",
-        guava:
-                "com.google.guava:guava:20.0",
         caffeine:
                 "com.github.ben-manes.caffeine:caffeine:2.3.5",
         jaywayJsonPath:

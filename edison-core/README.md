@@ -1,11 +1,9 @@
 # Edison Core
 
-
-!!!TODO!!!
-
 Core library of edison-microservice.
 
-## About
+
+# 1. Internal Pages
 
 This library primarily contains some Thymeleaf template fragments that are commonly used to render the UI
 of internal pages of Edison Microservices.
@@ -13,7 +11,11 @@ of internal pages of Edison Microservices.
 You can replace fragments of these pages by copying + modifying these fragments. For example, you can add
 menu items to the main menu by overriding templates/fragments/navbar/main.html.
 
-# Edison Status
+# 2. de.otto.edison.heath
+
+TODO 
+
+# 3. de.otto.edison.status
 
 Edison Microservices are self-describing services: they expose information about the current state and about
 the application, system, responsible team and dependencies to other services. The purpose of this library is
@@ -26,7 +28,7 @@ The /internal/status API contains information about the application status:
 (see de.otto.edison.status.indicator.StatusDetailIndicator)
 * A possibility to add information about required services (see de.otto.edison.about.spec.ServiceSpec)
 
-## Usage
+## 3.2 Usage
 
 The example-status shows how to use and configure the status library.
 1. Add a dependency to edison-status (or directly add a dependency to edison-service)
@@ -36,7 +38,7 @@ be automatically added to the status details section of the status page / JSON d
 4. Optionally override the behaviour of the StatusAggregator and/or schedulers (see 'Conditional Spring Beans'). This
 should generally not be necessary.
 
-## Environment Properties
+## 3.3 Environment Properties
 
 The following properties should be added to your application.properties or application.yml configuration.
 
@@ -62,7 +64,7 @@ Optional information about the system:
 * HOSTNAME: if server.hostname is not configured, the system environment's HOSTNAME is tried. If this is not available, 
 the SystemInfoConfiguration is trying to get the hostname using InetAddress.getLocalHost().getHostName().
 
-## Conditional Spring Beans
+## 3.4 Conditional Spring Beans
 
 By default, the status of the application is calculated every 10 seconds and cached in the meantime. You
 can change this default behaviour in the following ways:
@@ -77,3 +79,7 @@ StatusAggregator every 10 seconds.
 
 3. Provide a 'cronScheduler' bean and configure edison.status.scheduler.cron in your application properties with
 a valid cron expression. This way, the cron scheduler is used instead of the fixedDelayScheduler.
+
+# 4. de.otto.edison.metrics
+
+TODO

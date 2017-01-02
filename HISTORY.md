@@ -7,9 +7,12 @@ Beginning with 1.0.0, we will start using semantic versioning of releases.
 **Breaking Changes:**
 * **[edison]** Refactored module structure: moved edison-status, edison-health, edison-metrics and edison-microservice 
 into edison-core.
+* **[edison]** Removed dependency to guava library.
 * **[edison-servicediscovery-client]** Renamed module to edison-serviceregistry-client. Renamed package
 de.otto.edison.discovery to de.otto.edison.registry.
 * **[edison-guava]** Removed the deprecated module edison-guava. This is now replaced by edison-cache.
+* **[edison-cache]** Removed edison.cache.web.controller.enabled. Because the main purpose of edison-cache
+is to provide cache statistics as HTML and/or JSON, it makes no sense to deactivate the controller.
 
 **Bugfixes:**
 * Fixed broken link from job messages to /jobdefinitions/<jobType>. JobDefinitionService.getJobDefition(jobType)

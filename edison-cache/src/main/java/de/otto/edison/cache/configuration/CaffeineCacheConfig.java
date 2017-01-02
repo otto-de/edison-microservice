@@ -1,8 +1,6 @@
 package de.otto.edison.cache.configuration;
 
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
-import com.google.common.base.Splitter;
-import de.otto.edison.annotations.Beta;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.LinkedHashMap;
@@ -10,8 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.benmanes.caffeine.cache.CaffeineSpec.parse;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.copyOf;
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 /**
  * Configuration of a {@link org.springframework.cache.caffeine.CaffeineCache Caffeine Cache} with a name and a specification string.
@@ -28,13 +27,7 @@ import static com.google.common.collect.ImmutableList.copyOf;
  *
  * @since 0.76.0
  */
-@Beta
 public final class CaffeineCacheConfig {
-
-    private static final Splitter KEYS_SPLITTER = Splitter.on(',').trimResults();
-
-    /** Splits the key from the value. */
-    private static final Splitter KEY_VALUE_SPLITTER = Splitter.on('=').trimResults();
 
     /**
      * The name of the cache.
@@ -99,12 +92,17 @@ public final class CaffeineCacheConfig {
      */
     public Map<String,String> toMap() {
         final Map<String,String> map = new LinkedHashMap<>();
-        for (final String keyValuePair : KEYS_SPLITTER.split(spec.toParsableString())) {
-            final List<String> keyAndValue = copyOf(KEY_VALUE_SPLITTER.split(keyValuePair));
-            checkArgument(!keyAndValue.isEmpty(), "blank key-value pair");
-            checkArgument(keyAndValue.size() <= 2, "key-value pair %s with more than one equals sign", keyValuePair);
+        for (final String keyValuePair : split(spec.toParsableString(), ",")) {
+            final List<String> keyAndValue = split(keyValuePair, "=");
+            if (keyAndValue.isEmpty()) throw new IllegalStateException("blank key-value pair");
+            if (keyAndValue.size() > 2) throw new IllegalStateException(format("key-value pair %s with more than one equals sign", keyValuePair));
             map.put(keyAndValue.get(0), keyAndValue.size() == 1 ? "true" : keyAndValue.get(1));
         }
         return map;
+    }
+
+    private List<String> split(final String s, final String regex) {
+        final String[] keyValues = s.split(regex);
+        return keyValues != null ? asList(keyValues) : emptyList();
     }
 }

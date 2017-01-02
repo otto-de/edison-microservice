@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Example for some cache configurations that are automatically used by edison-cache to configure Guava caches
+ * Example for some cache configurations that are automatically used by edison-cache to configure Caffeine caches
  * accordingly.
  *
  * The format of the cache specifications is described in {@link CaffeineCacheConfig}.

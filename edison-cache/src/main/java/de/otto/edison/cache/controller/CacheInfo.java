@@ -11,7 +11,6 @@ import java.util.Map;
  *
  * @since 0.76.0
  */
-@Beta
 public final class CacheInfo {
 
     private final String name;
