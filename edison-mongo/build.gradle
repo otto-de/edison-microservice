@@ -34,7 +34,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'mongo'
+                name 'edison-mongo'
                 packaging 'jar'
                 description 'Mongo library of the edison-microservice project.'
                 url 'http://github.com/otto-de/edison-microservice'
