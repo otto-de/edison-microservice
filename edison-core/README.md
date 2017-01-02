@@ -13,7 +13,44 @@ menu items to the main menu by overriding templates/fragments/navbar/main.html.
 
 # 2. de.otto.edison.heath
 
-TODO 
+## 2.1
+
+ApplicationHealthIndicator is a bean that is used to signal application health for /internal/health.
+
+```java
+@Autowired ApplicationHealthIndicator healthIndicator;
+
+...
+void someMethod() {
+    try {
+    
+    } catch (final Error err) {    
+        healthIndicator
+                .indicateHealth(down()
+                .withException(err)
+                .build());
+    }
+}
+```
+ The health check is used by load balancers and/or clients to determine, which service is currently 
+ able to handle requests.
+
+## 2.2 Graceful Shutdown
+
+Graceful shutdown is a feature that helps to shutdown services without interrupting client requests in execution.
+After getting a signal to shutdown the service, there are two phases:
+1. The Service is continuing to stay healty for a few seconds.
+2. After this, the service is starting to respond with HTTP server errors, so clients will start to
+take the service out of load balancing. After this period, the service actually stops.
+
+Graceful shutdown of services can be configured as follows:
+
+* **edison.gracefulshutdown.enabled:** 
+Enable/Disable graceful shutdown.
+* **edison.gracefulshutdown.indicateErrorAfter:5000**
+Number of millis to wait before the health check is starting to respond with HTTP server errors.
+* **edison.gracefulshutdown.phaseOutAfter:20000**
+number of millis to send server errors, before the service is finally shutting down.
 
 # 3. de.otto.edison.status
 

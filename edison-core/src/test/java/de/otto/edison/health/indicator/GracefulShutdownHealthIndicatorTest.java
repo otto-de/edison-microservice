@@ -1,7 +1,8 @@
 package de.otto.edison.health.indicator;
 
-import org.mockito.InOrder;
+import de.otto.edison.health.configuration.GracefulShutdownProperties;
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -14,15 +15,13 @@ import static org.springframework.boot.actuate.health.Health.up;
 
 public class GracefulShutdownHealthIndicatorTest {
 
-    private static final int SOME_LONG_WHICH_WE_DONT_CARE_ABOUT = 7;
-
     @Test
     public void shouldHealthyOnStartup() throws Exception {
         // given
         GracefulShutdownHealthIndicator gracefulShutdownHealthIndicator;
 
         // when
-        gracefulShutdownHealthIndicator = new GracefulShutdownHealthIndicator(SOME_LONG_WHICH_WE_DONT_CARE_ABOUT, SOME_LONG_WHICH_WE_DONT_CARE_ABOUT);
+        gracefulShutdownHealthIndicator = new GracefulShutdownHealthIndicator(mock(GracefulShutdownProperties.class));
 
         // then
         assertThat(gracefulShutdownHealthIndicator.health(), is(up().build()));
@@ -32,7 +31,7 @@ public class GracefulShutdownHealthIndicatorTest {
     public void shouldIndicateErrorWhileShutdown() throws Exception {
         // given
         GracefulShutdownHealthIndicator gracefulShutdownHealthIndicator = spy(
-                new GracefulShutdownHealthIndicator(SOME_LONG_WHICH_WE_DONT_CARE_ABOUT, SOME_LONG_WHICH_WE_DONT_CARE_ABOUT));
+                new GracefulShutdownHealthIndicator(mock(GracefulShutdownProperties.class)));
         Runnable runnable = mock(Runnable.class);
 
         doAnswer(invocation -> {

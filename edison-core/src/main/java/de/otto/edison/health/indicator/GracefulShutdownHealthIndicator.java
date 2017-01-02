@@ -1,5 +1,6 @@
 package de.otto.edison.health.indicator;
 
+import de.otto.edison.health.configuration.GracefulShutdownProperties;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +19,12 @@ public class GracefulShutdownHealthIndicator implements SmartLifecycle, HealthIn
     private static final Logger LOG = LoggerFactory.getLogger(GracefulShutdownHealthIndicator.class);
     private static final Marker SHUTDOWN_MARKER = MarkerFactory.getMarker("EDISON_SHUTDOWN");
 
-    private final long timeBeforeIndicateError;
-    private final long timeForPhaseOut;
+    private final GracefulShutdownProperties properties;
 
     private volatile Health health = up().build();
 
-    public GracefulShutdownHealthIndicator(final long timeBeforeIndicateError, final long timeForPhaseOut) {
-        this.timeBeforeIndicateError = timeBeforeIndicateError;
-        this.timeForPhaseOut = timeForPhaseOut;
+    public GracefulShutdownHealthIndicator(final GracefulShutdownProperties properties) {
+        this.properties = properties;
     }
 
     @Override
@@ -55,11 +54,11 @@ public class GracefulShutdownHealthIndicator implements SmartLifecycle, HealthIn
 
     void waitForSettingHealthCheckToDown() throws InterruptedException {
         LOG.info(SHUTDOWN_MARKER, "shutdown signal received ...");
-        Thread.sleep(timeBeforeIndicateError);
+        Thread.sleep(properties.indicateErrorAfter);
     }
 
     void waitForShutdown() throws InterruptedException {
-        Thread.sleep(timeForPhaseOut);
+        Thread.sleep(properties.phaseOutAfter);
         LOG.info(SHUTDOWN_MARKER, "grace period ended, starting shutdown now");
     }
 

@@ -1,9 +1,8 @@
 # edison-microservice:edison-cache
 
-Support for Caffine caches in Edison microservices.
+Optional add-on for Edison Microservices, adding support for Caffeine caching statistics. 
 
 Many of otto.de's microservices make use of the [Caffeine](https://github.com/ben-manes/caffeine) cache. 
-Edison-cache is providing some code to integrate the cache statistics of Caffeine caches into the Edison internal pages.
 
 ## Usage
 

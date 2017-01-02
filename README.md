@@ -28,15 +28,14 @@ This project contains a number of independent libraries that may be used to crea
 * Support for MongoDB-based repositories in case you do not like Spring Data
 * Reporting of metrics to Graphite
 * Support for [Caffeine caches](https://github.com/otto-de/edison-microservice/tree/master/edison-cache)
-* Logging of messages to Kafka queues
 * Support for feature toggles based on the Togglz library
 
 ... plus all the features of [Spring Boot](http://projects.spring.io/spring-boot/).
 
 
 ## Documentation
-* [edison-cache](edison-cache/README.md)
 * [edison-core](edison-core/README.md)
+* [edison-cache](edison-cache/README.md)
 * [edison-jobs](edison-jobs/README.md)
 * [edison-jobs-mongo](edison-jobs-mongo/README.md)
 * edison-mongo
