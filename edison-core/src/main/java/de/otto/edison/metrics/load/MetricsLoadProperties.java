@@ -1,6 +1,5 @@
-package de.otto.edison.metrics.configuration;
+package de.otto.edison.metrics.load;
 
-import de.otto.edison.metrics.load.LoadDetector;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "edison.metrics.load")

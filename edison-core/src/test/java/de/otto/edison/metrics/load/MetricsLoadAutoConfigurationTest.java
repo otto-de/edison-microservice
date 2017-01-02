@@ -1,7 +1,6 @@
-package de.otto.edison.metrics.configuration;
+package de.otto.edison.metrics.load;
 
 import com.codahale.metrics.MetricRegistry;
-import de.otto.edison.metrics.load.LoadDetector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,6 @@ package de.otto.edison.metrics.load;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import de.otto.edison.metrics.configuration.MetricsLoadProperties;
 import de.otto.edison.metrics.load.LoadDetector.Status;
 import org.junit.Before;
 import org.junit.Test;

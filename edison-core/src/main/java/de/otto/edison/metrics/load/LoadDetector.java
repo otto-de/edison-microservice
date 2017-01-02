@@ -2,7 +2,6 @@ package de.otto.edison.metrics.load;
 
 import com.codahale.metrics.MetricRegistry;
 import de.otto.edison.annotations.Beta;
-import de.otto.edison.metrics.configuration.MetricsLoadProperties;
 
 /**
  * Implementation of this interface allow to steer whether the application

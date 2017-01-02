@@ -1,9 +1,7 @@
-package de.otto.edison.metrics.configuration;
+package de.otto.edison.metrics.load;
 
 import com.codahale.metrics.MetricRegistry;
 import de.otto.edison.annotations.Beta;
-import de.otto.edison.metrics.load.EverythingFineStrategy;
-import de.otto.edison.metrics.load.LoadDetector;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

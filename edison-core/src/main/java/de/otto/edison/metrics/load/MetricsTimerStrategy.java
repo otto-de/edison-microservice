@@ -3,7 +3,6 @@ package de.otto.edison.metrics.load;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import de.otto.edison.annotations.Beta;
-import de.otto.edison.metrics.configuration.MetricsLoadProperties;
 import org.slf4j.Logger;
 
 import java.util.Map;
