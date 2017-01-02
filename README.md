@@ -64,9 +64,9 @@ recommended to first read it's documentation before starting with Edison.
 
 The examples can be started with gradle:
 
-    gradle clean example-jobs:bootRun
-    gradle clean example-metrics:bootRun
-    gradle clean example-status:bootRun
+    gradle example-jobs:bootRun
+    gradle example-metrics:bootRun
+    gradle example-status:bootRun
 
 Open in your browser [http://localhost:8080/example/](http://localhost:8080/example/)
 
