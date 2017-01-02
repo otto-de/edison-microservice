@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class HealthConfiguration {
 
     @Bean
-    @ConditionalOnProperty(name = "edison.gracefulshutdown.enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(name = "edison.gracefulshutdown.enabled", havingValue = "true")
     public GracefulShutdownHealthIndicator gracefulShutdownHealthIndicator(final GracefulShutdownProperties properties) {
         return new GracefulShutdownHealthIndicator(properties);
     }
