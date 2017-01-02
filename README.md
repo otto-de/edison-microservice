@@ -39,9 +39,8 @@ This project contains a number of independent libraries that may be used to crea
 * [edison-core](edison-core/README.md)
 * [edison-jobs](edison-jobs/README.md)
 * [edison-jobs-mongo](edison-jobs-mongo/README.md)
-* edison-metrics
 * edison-mongo
-* edison-servicediscovery-client
+* edison-serviceregistry-client
 * edison-testsupport
 * edison-togglz
 * edison-togglz-mongo

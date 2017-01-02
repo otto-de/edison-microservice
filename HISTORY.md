@@ -7,6 +7,8 @@ Beginning with 1.0.0, we will start using semantic versioning of releases.
 **Breaking Changes:**
 * **[edison]** Refactored module structure: moved edison-status, edison-health, edison-metrics and edison-microservice 
 into edison-core.
+* **[edison-servicediscovery-client]** Renamed module to edison-serviceregistry-client. Renamed package
+de.otto.edison.discovery to de.otto.edison.registry.
 * **[edison-guava]** Removed the deprecated module edison-guava. This is now replaced by edison-cache.
 
 **Bugfixes:**

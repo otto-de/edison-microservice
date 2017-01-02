@@ -34,7 +34,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'servicediscovery-client'
+                name 'serviceregistry-client'
                 packaging 'jar'
                 description 'Library to access discovery services.'
                 url 'http://github.com/otto-de/edison-microservice'
