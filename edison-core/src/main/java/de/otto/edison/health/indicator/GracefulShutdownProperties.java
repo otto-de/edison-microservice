@@ -1,12 +1,10 @@
-package de.otto.edison.health.configuration;
+package de.otto.edison.health.indicator;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Properties used to configure the graceful shutdown of Edison microservices.
  */
-@Configuration
 @ConfigurationProperties(prefix = "edison.gracefulshutdown")
 public class GracefulShutdownProperties {
 

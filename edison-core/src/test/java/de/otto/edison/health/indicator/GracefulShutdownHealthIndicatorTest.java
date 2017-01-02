@@ -1,6 +1,5 @@
 package de.otto.edison.health.indicator;
 
-import de.otto.edison.health.configuration.GracefulShutdownProperties;
 import org.junit.Test;
 import org.mockito.InOrder;
 

@@ -1,6 +1,5 @@
 package de.otto.edison.health.indicator;
 
-import de.otto.edison.health.configuration.GracefulShutdownProperties;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
