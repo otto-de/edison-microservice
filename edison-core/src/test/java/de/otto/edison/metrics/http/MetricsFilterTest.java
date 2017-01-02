@@ -3,8 +3,8 @@ package de.otto.edison.metrics.http;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MetricsFilterTest {
 

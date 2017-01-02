@@ -2,8 +2,10 @@
 
 ## Release 1.0.0.RC1 (SNAPSHOT)
 
+Beginning with 1.0.0, we will start using semantic versioning of releases.
+ 
 **Breaking Changes:**
-* **[edison]** Refactored module structure: moved edison-status, edison-health and edison-microservice 
+* **[edison]** Refactored module structure: moved edison-status, edison-health, edison-metrics and edison-microservice 
 into edison-core.
 * **[edison-guava]** Removed the deprecated module edison-guava. This is now replaced by edison-cache.
 
@@ -14,6 +16,7 @@ is now case insensitive.
 **New Features:**
 * **[edison-core]** Added feature to configure the entries of the navigation bar of /internal/* pages. See
 de.otto.edison navigation for details and have a look at the NavigationConfiguration in the examples. 
+* **[edison-jobs]** JobEvents not @Beta anymore.
 
 ## Release 0.82.1
 * **[edison-jobs]** add _primaryPreferred_ for jobRepository to avoid data loss while updating a jobState 

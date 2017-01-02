@@ -9,7 +9,7 @@ import de.otto.edison.annotations.Beta;
  * @since 16.09.15
  */
 @Beta
-public interface DiscoveryClient {
+public interface RegistryClient {
 
     /**
      * Registers the service at a configured ServiceDiscovery.

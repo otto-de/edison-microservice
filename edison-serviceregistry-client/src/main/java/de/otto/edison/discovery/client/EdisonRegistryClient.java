@@ -27,9 +27,9 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Component
 @ConditionalOnProperty("edison.servicediscovery.servers")
 @Beta
-public class EdisonDiscoveryClient implements DiscoveryClient {
+public class EdisonRegistryClient implements RegistryClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EdisonDiscoveryClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EdisonRegistryClient.class);
 
     @Value("${spring.application.name}")
     private String applicationName;

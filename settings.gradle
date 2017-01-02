@@ -1,5 +1,4 @@
 include "edison-testsupport"
-include "edison-metrics"
 include "edison-mongo"
 include "edison-jobs"
 include "edison-jobs-mongo"
