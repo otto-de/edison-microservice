@@ -15,6 +15,8 @@ de.otto.edison.discovery to de.otto.edison.registry.
 * **[edison-guava]** Removed the deprecated module edison-guava. This is now replaced by edison-cache.
 * **[edison-cache]** Removed edison.cache.web.controller.enabled. Because the main purpose of edison-cache
 is to provide cache statistics as HTML and/or JSON, it makes no sense to deactivate the controller.
+* **[edison-jobs-mongo]** This library was combined with edison-jobs. Adding and configuring both edison-jobs
+and edison-mongo will use MongoJobRepository as implementation of the JobRepository interface.
 
 **Bugfixes:**
 * Fixed broken link from job messages to /jobdefinitions/<jobType>. JobDefinitionService.getJobDefition(jobType)

@@ -1,4 +1,4 @@
-package de.otto.edison.jobs.repository.mongo;
+package de.otto.edison.mongo.jobs;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
@@ -13,14 +13,14 @@ import static java.util.Date.from;
  * @author Guido Steinacker
  * @since 20.07.15
  */
-public class DateTimeConverters {
+class DateTimeConverters {
     private DateTimeConverters() {}
 
-    public static Date toDate(final OffsetDateTime offsetDateTime) {
+    static Date toDate(final OffsetDateTime offsetDateTime) {
         return from(offsetDateTime.toInstant());
     }
 
-    public static OffsetDateTime toOffsetDateTime(final Date date) {
+    static OffsetDateTime toOffsetDateTime(final Date date) {
         return date == null ? null : ofInstant(date.toInstant(), systemDefault());
     }
 

@@ -7,7 +7,10 @@ dependencies {
     compile libs.jcip
     compile libs.mongoDb
 
+    compileOnly project(":edison-jobs")
+
     testCompile project(":edison-testsupport")
+    testCompile project(":edison-jobs")
     testCompile libs.fakeMongo
 }
 

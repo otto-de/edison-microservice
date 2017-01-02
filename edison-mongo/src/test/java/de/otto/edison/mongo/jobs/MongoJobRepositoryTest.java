@@ -1,4 +1,4 @@
-package de.otto.edison.jobs.repository.mongo;
+package de.otto.edison.mongo.jobs;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
@@ -9,6 +9,7 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
+import de.otto.edison.mongo.jobs.MongoJobRepository;
 import org.bson.Document;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -21,8 +22,8 @@ import java.util.*;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-import static de.otto.edison.jobs.repository.mongo.DateTimeConverters.toDate;
-import static de.otto.edison.jobs.repository.mongo.JobStructure.*;
+import static de.otto.edison.mongo.jobs.DateTimeConverters.toDate;
+import static de.otto.edison.mongo.jobs.JobStructure.*;
 import static de.otto.edison.testsupport.util.Sets.hashSet;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;

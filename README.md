@@ -37,8 +37,7 @@ This project contains a number of independent libraries that may be used to crea
 * [edison-core](edison-core/README.md): Main library of Edison Microservices.
 * [edison-cache](edison-cache/README.md): Optional support for Caffeine caches in Edison.
 * [edison-jobs](edison-jobs/README.md): Optional module providing a simple job library.
-* [edison-jobs-mongo](edison-jobs-mongo/README.md)
-* edison-mongo: Support for MongoDB.
+* [edison-mongo](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository. 
 * edison-togglz: Optional support for feature toggles for Edison Microservices based on togglz.org.
 * edison-togglz-mongo: Mongo persistence for feature toggles.
 * edison-serviceregistry-client

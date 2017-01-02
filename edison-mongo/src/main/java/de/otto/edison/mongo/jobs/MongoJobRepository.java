@@ -1,7 +1,6 @@
-package de.otto.edison.jobs.repository.mongo;
+package de.otto.edison.mongo.jobs;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.ReadPreference;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -19,6 +18,8 @@ import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -32,9 +33,6 @@ import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-import static de.otto.edison.jobs.repository.mongo.DateTimeConverters.toDate;
-import static de.otto.edison.jobs.repository.mongo.DateTimeConverters.toOffsetDateTime;
-import static de.otto.edison.jobs.repository.mongo.JobStructure.*;
 import static java.time.Clock.systemDefaultZone;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
@@ -42,7 +40,6 @@ import static java.util.Date.from;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
-@Repository(value = "jobRepository")
 public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo> implements JobRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
@@ -62,7 +59,6 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     private final MongoCollection<Document> runningJobsCollection;
     private final Clock clock;
 
-    @Autowired
     public MongoJobRepository(final MongoDatabase database) {
         this.jobInfoCollection = database.getCollection(JOB_INFO_COLLECTION_NAME).withReadPreference(primaryPreferred());
         this.runningJobsCollection = database.getCollection(JOBS_META_DATA_COLLECTION_NAME).withReadPreference(primaryPreferred());
@@ -83,8 +79,8 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public JobStatus findStatus(String jobId) {
         return JobStatus.valueOf(collection()
                 .find(eq(ID, jobId))
-                .projection(new Document(STATUS.key(), true))
-                .first().getString(STATUS.key()));
+                .projection(new Document(JobStructure.STATUS.key(), true))
+                .first().getString(JobStructure.STATUS.key()));
     }
 
     @Override
@@ -98,17 +94,17 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Override
     public void appendMessage(String jobId, JobMessage jobMessage) {
-        collection().updateOne(eq(ID, jobId), push(MESSAGES.key(), encodeJobMessage(jobMessage)));
+        collection().updateOne(eq(ID, jobId), push(JobStructure.MESSAGES.key(), encodeJobMessage(jobMessage)));
     }
 
     @Override
     public void setJobStatus(String jobId, JobStatus jobStatus) {
-        collection().updateOne(eq(ID, jobId), set(STATUS.key(), jobStatus.name()));
+        collection().updateOne(eq(ID, jobId), set(JobStructure.STATUS.key(), jobStatus.name()));
     }
 
     @Override
     public void setLastUpdate(String jobId, OffsetDateTime lastUpdate) {
-        collection().updateOne(eq(ID, jobId), set(LAST_UPDATED.key(), toDate(lastUpdate)));
+        collection().updateOne(eq(ID, jobId), set(JobStructure.LAST_UPDATED.key(), DateTimeConverters.toDate(lastUpdate)));
     }
 
     @Override
@@ -241,8 +237,8 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public List<JobInfo> findRunningWithoutUpdateSince(final OffsetDateTime timeOffset) {
         return collection()
                 .find(new Document()
-                        .append(STOPPED.key(), singletonMap("$exists", false))
-                        .append(LAST_UPDATED.key(), singletonMap("$lt", from(timeOffset.toInstant()))))
+                        .append(JobStructure.STOPPED.key(), singletonMap("$exists", false))
+                        .append(JobStructure.LAST_UPDATED.key(), singletonMap("$lt", from(timeOffset.toInstant()))))
                 .map(this::decode)
                 .into(new ArrayList<>());
     }
@@ -251,25 +247,25 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     protected final Document encode(final JobInfo job) {
         final Document document = new Document()
                 .append(JobStructure.ID.key(), job.getJobId())
-                .append(JOB_TYPE.key(), job.getJobType())
-                .append(STARTED.key(), toDate(job.getStarted()))
-                .append(LAST_UPDATED.key(), toDate(job.getLastUpdated()))
-                .append(MESSAGES.key(), job.getMessages().stream()
+                .append(JobStructure.JOB_TYPE.key(), job.getJobType())
+                .append(JobStructure.STARTED.key(), DateTimeConverters.toDate(job.getStarted()))
+                .append(JobStructure.LAST_UPDATED.key(), DateTimeConverters.toDate(job.getLastUpdated()))
+                .append(JobStructure.MESSAGES.key(), job.getMessages().stream()
                         .map(MongoJobRepository::encodeJobMessage)
                         .collect(toList()))
-                .append(STATUS.key(), job.getStatus().name())
-                .append(HOSTNAME.key(), job.getHostname());
+                .append(JobStructure.STATUS.key(), job.getStatus().name())
+                .append(JobStructure.HOSTNAME.key(), job.getHostname());
         if (job.isStopped()) {
-            document.append(STOPPED.key(), toDate(job.getStopped().get()));
+            document.append(JobStructure.STOPPED.key(), DateTimeConverters.toDate(job.getStopped().get()));
         }
         return document;
     }
 
     private static Document encodeJobMessage(JobMessage jm) {
         return new Document() {{
-            put(MSG_LEVEL.key(), jm.getLevel().name());
-            put(MSG_TS.key(), toDate(jm.getTimestamp()));
-            put(MSG_TEXT.key(), jm.getMessage());
+            put(JobStructure.MSG_LEVEL.key(), jm.getLevel().name());
+            put(JobStructure.MSG_TS.key(), DateTimeConverters.toDate(jm.getTimestamp()));
+            put(JobStructure.MSG_TEXT.key(), jm.getMessage());
         }};
     }
 
@@ -277,19 +273,19 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     protected final JobInfo decode(final Document document) {
         return newJobInfo(
                 document.getString(JobStructure.ID.key()),
-                document.getString(JOB_TYPE.key()),
-                toOffsetDateTime(document.getDate(STARTED.key())),
-                toOffsetDateTime(document.getDate(LAST_UPDATED.key())),
-                ofNullable(toOffsetDateTime(document.getDate(STOPPED.key()))),
-                JobStatus.valueOf(document.getString(STATUS.key())),
+                document.getString(JobStructure.JOB_TYPE.key()),
+                DateTimeConverters.toOffsetDateTime(document.getDate(JobStructure.STARTED.key())),
+                DateTimeConverters.toOffsetDateTime(document.getDate(JobStructure.LAST_UPDATED.key())),
+                ofNullable(DateTimeConverters.toOffsetDateTime(document.getDate(JobStructure.STOPPED.key()))),
+                JobStatus.valueOf(document.getString(JobStructure.STATUS.key())),
                 getMessagesFrom(document),
                 clock,
-                document.getString(HOSTNAME.key()));
+                document.getString(JobStructure.HOSTNAME.key()));
     }
 
     @SuppressWarnings("unchecked")
     private List<JobMessage> getMessagesFrom(final Document document) {
-        List<Document> messages = (List<Document>) document.get(MESSAGES.key());
+        List<Document> messages = (List<Document>) document.get(JobStructure.MESSAGES.key());
         if (messages != null) {
             return messages.stream()
                     .map(this::toJobMessage)
@@ -301,9 +297,9 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     private JobMessage toJobMessage(final Document document) {
         return jobMessage(
-                Level.valueOf(document.get(MSG_LEVEL.key()).toString()),
+                Level.valueOf(document.get(JobStructure.MSG_LEVEL.key()).toString()),
                 getMessage(document),
-                toOffsetDateTime(document.getDate(MSG_TS.key()))
+                DateTimeConverters.toOffsetDateTime(document.getDate(JobStructure.MSG_TS.key()))
         );
     }
 
@@ -319,24 +315,24 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Override
     protected final void ensureIndexes() {
-        collection().createIndex(new BasicDBObject(JOB_TYPE.key(), 1));
-        collection().createIndex(new BasicDBObject(STARTED.key(), 1));
+        collection().createIndex(new BasicDBObject(JobStructure.JOB_TYPE.key(), 1));
+        collection().createIndex(new BasicDBObject(JobStructure.STARTED.key(), 1));
     }
 
     private String getMessage(Document document) {
-        return document.get(MSG_TEXT.key()) == null ? NO_LOG_MESSAGE_FOUND : document.get(MSG_TEXT.key()).toString();
+        return document.get(JobStructure.MSG_TEXT.key()) == null ? NO_LOG_MESSAGE_FOUND : document.get(JobStructure.MSG_TEXT.key()).toString();
     }
 
     private Document byType(final String type) {
-        return new Document(JOB_TYPE.key(), type);
+        return new Document(JobStructure.JOB_TYPE.key(), type);
     }
 
     private Document byTypeAndStatus(final String type, final JobStatus status) {
-        return new Document(JOB_TYPE.key(), type).append(STATUS.key(), status.name());
+        return new Document(JobStructure.JOB_TYPE.key(), type).append(JobStructure.STATUS.key(), status.name());
     }
 
     private Document orderByStarted(final int order) {
-        return new Document(STARTED.key(), order);
+        return new Document(JobStructure.STARTED.key(), order);
     }
 
 	@Override
@@ -351,12 +347,12 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 	private Map<String, Object> getJobInfoWithoutMessagesProjection() {
 		Map<String, Object> projection = new HashMap<String, Object>();
 		projection.put(JobStructure.ID.key(), true);
-		projection.put(JOB_TYPE.key(), true);
-		projection.put(STARTED.key(), true);
-		projection.put(LAST_UPDATED.key(), true);
-		projection.put(STOPPED.key(), true);
-		projection.put(STATUS.key(), true);
-		projection.put(HOSTNAME.key(), true);
+		projection.put(JobStructure.JOB_TYPE.key(), true);
+		projection.put(JobStructure.STARTED.key(), true);
+		projection.put(JobStructure.LAST_UPDATED.key(), true);
+		projection.put(JobStructure.STOPPED.key(), true);
+		projection.put(JobStructure.STATUS.key(), true);
+		projection.put(JobStructure.HOSTNAME.key(), true);
 		return projection;
 		
 	}
