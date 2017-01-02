@@ -17,7 +17,7 @@ public class GracefulShutdownProperties {
      *     a test server instance.
      * </p>
      */
-    public final boolean enabled = true;
+    private boolean enabled = false;
 
     /**
      * Milliseconds to wait before /internal/health is starting to respond with server errors,
@@ -26,7 +26,7 @@ public class GracefulShutdownProperties {
      *     {@code edison.gracefulshutdown.indicateErrorAfter = 5000}
      * </p>
      */
-    public final long indicateErrorAfter = 5000L;
+    private long indicateErrorAfter = 5000L;
 
     /**
      * Milliseconds to respond /internal/health checks with server errors, before actually shutting down the application.
@@ -34,6 +34,29 @@ public class GracefulShutdownProperties {
      *     edison.gracefulshutdown.phaseOutAfter = 20000
      * </p>
      */
-    public final long phaseOutAfter = 20000L;
+    private long phaseOutAfter = 20000L;
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public long getIndicateErrorAfter() {
+        return indicateErrorAfter;
+    }
+
+    public long getPhaseOutAfter() {
+        return phaseOutAfter;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setIndicateErrorAfter(long indicateErrorAfter) {
+        this.indicateErrorAfter = indicateErrorAfter;
+    }
+
+    public void setPhaseOutAfter(long phaseOutAfter) {
+        this.phaseOutAfter = phaseOutAfter;
+    }
 }

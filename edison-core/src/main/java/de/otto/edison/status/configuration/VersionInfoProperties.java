@@ -15,9 +15,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "edison.status.vcs")
 public class VersionInfoProperties {
-    public String version = "unknown";
-    public String commit = "unknown";
-    public String urlTemplate = "";
+    private String version = "unknown";
+    private String commit = "unknown";
+    private String urlTemplate = "";
 
     /**
      * Used for testing purposes.
@@ -33,5 +33,29 @@ public class VersionInfoProperties {
         p.commit = commit;
         p.urlTemplate = urlTemplate;
         return p;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getCommit() {
+        return commit;
+    }
+
+    public String getUrlTemplate() {
+        return urlTemplate;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setCommit(String commit) {
+        this.commit = commit;
+    }
+
+    public void setUrlTemplate(String urlTemplate) {
+        this.urlTemplate = urlTemplate;
     }
 }

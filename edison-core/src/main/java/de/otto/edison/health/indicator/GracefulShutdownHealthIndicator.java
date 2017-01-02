@@ -53,11 +53,11 @@ public class GracefulShutdownHealthIndicator implements SmartLifecycle, HealthIn
 
     void waitForSettingHealthCheckToDown() throws InterruptedException {
         LOG.info(SHUTDOWN_MARKER, "shutdown signal received ...");
-        Thread.sleep(properties.indicateErrorAfter);
+        Thread.sleep(properties.getIndicateErrorAfter());
     }
 
     void waitForShutdown() throws InterruptedException {
-        Thread.sleep(properties.phaseOutAfter);
+        Thread.sleep(properties.getPhaseOutAfter());
         LOG.info(SHUTDOWN_MARKER, "grace period ended, starting shutdown now");
     }
 

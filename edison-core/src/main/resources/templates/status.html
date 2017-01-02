@@ -65,7 +65,7 @@
                             <dt>Git Commit:</dt>
                             <dd th:text="${vcs.commit}">Git commit</dd>
                             <dt>VCS:</dt>
-                            <dd th:text="${vcs.url}"></dd>
+                            <dd><a th:if="${#strings.startsWith(vcs.url, 'http')}" th:href="${vcs.url}">Open VCS UI</a></dd>
                         </dl>
                     </div>
                 </div>

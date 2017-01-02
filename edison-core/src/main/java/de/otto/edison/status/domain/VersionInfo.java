@@ -17,9 +17,9 @@ public class VersionInfo {
     public final String url;
 
     private VersionInfo(final VersionInfoProperties versionInfoProperties) {
-        this.version = versionInfoProperties.version;
-        this.commit = versionInfoProperties.commit;
-        this.url = versionInfoProperties.urlTemplate.replace("{commit}", commit).replace("{version}", version);
+        this.version = versionInfoProperties.getVersion();
+        this.commit = versionInfoProperties.getCommit();
+        this.url = versionInfoProperties.getUrlTemplate().replace("{commit}", commit).replace("{version}", version);
     }
 
     public static VersionInfo versionInfo(final VersionInfoProperties versionInfoProperties) {
