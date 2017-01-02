@@ -1,6 +1,5 @@
 package de.otto.edison.navigation;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +14,17 @@ import static java.util.Arrays.asList;
  * <p>
  *     You can add additional {@link NavBarItem NavBarItems} by calling {@link NavBar#register(NavBarItem)}.
  * </p>
+ * <pre><code>
+ *    {@literal @}Autowired
+ *     private NavBar rightNavBar;
+ *
+ *    {@literal @}PostConstruct
+ *     public void postConstruct() {
+ *         rightNavBar.register(
+ *                 navBarItem(bottom(), "Cache Statistics", "/internal/cacheinfos")
+ *         );
+ *     }
+ * </code></pre>
  *
  * @since 1.0.0
  */
@@ -22,13 +32,11 @@ import static java.util.Arrays.asList;
 public class NavBarConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(name = "mainNavBar", value = NavBar.class)
     public NavBar mainNavBar() {
         return emptyNavBar();
     }
 
     @Bean
-    //@ConditionalOnMissingBean(name = "rightNavBar", value = NavBar.class)
     public NavBar rightNavBar() {
         return navBar(asList(
                 navBarItem(top(), "Status", "/internal/status")
