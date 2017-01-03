@@ -1,0 +1,30 @@
+<configuration>
+
+    <contextName>example</contextName>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{ISO8601} %-5p logger="%c" message="%m" thread="%t" %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="jobAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{ISO8601} %-5p logger="%c" message="%m" job="%X{job_id}" jobType="%X{job_type}" thread="%t" %n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="de.otto.edison.example.togglz" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="org">
+        <level value="INFO"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="console"/>
+    </root>
+
+</configuration>
