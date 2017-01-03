@@ -1,4 +1,4 @@
-package de.otto.edison.togglz.repository.mongo;
+package de.otto.edison.mongo.togglz;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -7,8 +7,6 @@ import de.otto.edison.togglz.FeatureClassProvider;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
@@ -19,7 +17,6 @@ import java.util.Optional;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
-@Repository
 public class MongoFeatureRepository extends AbstractMongoRepository<String, FeatureState> implements StateRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoFeatureRepository.class);
@@ -33,7 +30,6 @@ public class MongoFeatureRepository extends AbstractMongoRepository<String, Feat
     private final FeatureClassProvider featureClassProvider;
     private final UserProvider userProvider;
 
-    @Autowired
     public MongoFeatureRepository(final MongoDatabase database,
                                   final FeatureClassProvider featureClassProvider,
                                   final UserProvider userProvider) {

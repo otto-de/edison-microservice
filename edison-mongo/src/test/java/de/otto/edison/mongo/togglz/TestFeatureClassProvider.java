@@ -1,4 +1,4 @@
-package de.otto.edison.togglz.repository.mongo;
+package de.otto.edison.mongo.togglz;
 
 import de.otto.edison.togglz.FeatureClassProvider;
 import org.togglz.core.Feature;

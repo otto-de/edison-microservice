@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
-@ConditionalOnClass(name = "de.otto.edison.mongo.jobs.MongoJobRepository")
+@ConditionalOnClass(name = "de.otto.edison.mongo.jobs.configuration.JobConfiguration")
 public class MongoJobsConfiguration {
 
     private static final Logger LOG = getLogger(MongoJobsConfiguration.class);

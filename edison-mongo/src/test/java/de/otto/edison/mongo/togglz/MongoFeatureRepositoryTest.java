@@ -1,4 +1,4 @@
-package de.otto.edison.togglz.repository.mongo;
+package de.otto.edison.mongo.togglz;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoDatabase;

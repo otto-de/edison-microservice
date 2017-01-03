@@ -2,7 +2,6 @@ apply plugin: 'org.springframework.boot'
 
 dependencies {
     compile project(":edison-togglz")
-    compile project(":edison-togglz-mongo")
     compile project(":edison-mongo")
 
     // in-memory impl of MongoDB to avoid dependency to MongoDB server:
