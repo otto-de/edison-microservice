@@ -12,7 +12,7 @@ public class NavigationConfiguration {
     @Autowired
     public NavigationConfiguration(final NavBar mainNavBar) {
         mainNavBar.register(navBarItem(0, "Home", "/"));
-        mainNavBar.register(navBarItem(1, "Status", "/internal/status"));
-        mainNavBar.register(navBarItem(2, "Cache Statistics", "/internal/cacheinfos"));
+        mainNavBar.register(navBarItem(1, "Cache Statistics", "/internal/cacheinfos"));
+        mainNavBar.register(navBarItem(2, "Metrics", "/internal/metrics"));
     }
 }

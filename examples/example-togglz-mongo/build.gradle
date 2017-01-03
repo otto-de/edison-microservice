@@ -4,8 +4,7 @@ dependencies {
     compile project(":edison-togglz")
     compile project(":edison-mongo")
 
-    // in-memory impl of MongoDB to avoid dependency to MongoDB server:
-    compile libs.fakeMongo
+    compile libs.fakeMongo            // In-Memory impl of MongoDB; not intended for production
 
     testCompile project(":edison-testsupport")
 }
