@@ -1,4 +1,4 @@
-package de.otto.edison.discovery.client;
+package de.otto.edison.registry.client;
 
 import de.otto.edison.annotations.Beta;
 

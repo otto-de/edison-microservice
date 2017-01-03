@@ -1,7 +1,6 @@
 include "edison-testsupport"
 include "edison-mongo"
 include "edison-jobs"
-include "edison-serviceregistry-client"
 include "edison-togglz"
 include "edison-cache"
 include "edison-core"

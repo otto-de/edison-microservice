@@ -8,6 +8,8 @@ dependencies {
     compile libs.metrics
     compile libs.metricsSpring
 
+    compileOnly libs.asyncHttp
+
     testCompile libs.testUnit
     testCompile libs.asyncHttp
     testCompile project(":edison-testsupport")

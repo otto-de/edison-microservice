@@ -1,4 +1,4 @@
-package de.otto.edison.discovery.client;
+package de.otto.edison.registry.client;
 
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -19,17 +20,21 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
- * Simple Edison implementation of a DiscoveryClient.
+ * Simple implementation of a RegistryClient using AsyncHttpClient to register the service.
+ * <p>
+ *     In order to use this class, a dependency to com.ning:async-http-client:1.9.40 or later must be added to your build.
+ * </p>
  *
  * @author Guido Steinacker
- * @since 16.09.15
+ * @since 1.0.0
  */
 @Component
 @ConditionalOnProperty("edison.servicediscovery.servers")
+@ConditionalOnClass(AsyncHttpClient.class)
 @Beta
-public class EdisonRegistryClient implements RegistryClient {
+public class AsyncHttpRegistryClient implements RegistryClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EdisonRegistryClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncHttpRegistryClient.class);
 
     @Value("${spring.application.name}")
     private String applicationName;
