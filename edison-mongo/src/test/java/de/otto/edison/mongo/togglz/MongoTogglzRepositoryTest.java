@@ -17,9 +17,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MongoFeatureRepositoryTest {
+public class MongoTogglzRepositoryTest {
 
-    private MongoFeatureRepository testee;
+    private MongoTogglzRepository testee;
 
     @Before
     public void setUp() throws Exception {
@@ -28,7 +28,7 @@ public class MongoFeatureRepositoryTest {
         FeatureClassProvider featureClassProvider = new TestFeatureClassProvider();
         UserProvider userProvider = mock(UserProvider.class);
         when(userProvider.getCurrentUser()).thenReturn(new SimpleFeatureUser("someUser"));
-        testee = new MongoFeatureRepository(database, featureClassProvider, userProvider);
+        testee = new MongoTogglzRepository(database, featureClassProvider, userProvider);
     }
 
     @Test

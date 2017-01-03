@@ -17,9 +17,9 @@ import java.util.Optional;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
-public class MongoFeatureRepository extends AbstractMongoRepository<String, FeatureState> implements StateRepository {
+public class MongoTogglzRepository extends AbstractMongoRepository<String, FeatureState> implements StateRepository {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MongoFeatureRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MongoTogglzRepository.class);
 
     private static final String NAME = "_id";
     private static final String ENABLED = "enabled";
@@ -30,9 +30,9 @@ public class MongoFeatureRepository extends AbstractMongoRepository<String, Feat
     private final FeatureClassProvider featureClassProvider;
     private final UserProvider userProvider;
 
-    public MongoFeatureRepository(final MongoDatabase database,
-                                  final FeatureClassProvider featureClassProvider,
-                                  final UserProvider userProvider) {
+    public MongoTogglzRepository(final MongoDatabase database,
+                                 final FeatureClassProvider featureClassProvider,
+                                 final UserProvider userProvider) {
         this.featureClassProvider = featureClassProvider;
         this.collection = database.getCollection("togglz");
         this.userProvider = userProvider;

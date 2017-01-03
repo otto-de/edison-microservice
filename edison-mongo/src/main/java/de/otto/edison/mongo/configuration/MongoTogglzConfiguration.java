@@ -1,7 +1,7 @@
 package de.otto.edison.mongo.configuration;
 
 import com.mongodb.client.MongoDatabase;
-import de.otto.edison.mongo.togglz.MongoFeatureRepository;
+import de.otto.edison.mongo.togglz.MongoTogglzRepository;
 import de.otto.edison.togglz.FeatureClassProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +17,6 @@ public class MongoTogglzConfiguration {
     StateRepository stateRepository(final MongoDatabase database,
                                     final FeatureClassProvider featureClassProvider,
                                     final UserProvider userProvider) {
-        return new MongoFeatureRepository(database, featureClassProvider, userProvider);
+        return new MongoTogglzRepository(database, featureClassProvider, userProvider);
     }
 }
