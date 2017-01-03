@@ -7,10 +7,10 @@ import static org.springframework.boot.SpringApplication.run;
 
 @PropertySource("version.properties")
 @SpringBootApplication(scanBasePackages = "de.otto.edison")
-public class ExampleServer {
+public class ExampleStatusServer {
 
     public static void main(String[] args) {
-        run(ExampleServer.class, args);
+        run(ExampleStatusServer.class, args);
     }
 
 }

@@ -1,9 +1,10 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    compile project(":edison-jobs")
-//    compile project(":edison-togglz")
-//    compile project(":edison-mongo")  // Enable to get persistent job information
+    compile project(":edison-togglz")
+//    compile project(":edison-togglz-mongo")
+//    compile libs.fakeMongo
+//    compile project(":edison-mongo")
 
     testCompile project(":edison-testsupport")
 }

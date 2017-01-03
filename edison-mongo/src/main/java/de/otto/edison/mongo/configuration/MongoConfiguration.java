@@ -2,12 +2,9 @@ package de.otto.edison.mongo.configuration;
 
 import com.mongodb.*;
 import com.mongodb.client.MongoDatabase;
-import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.mongo.jobs.MongoJobRepository;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -96,12 +93,6 @@ public class MongoConfiguration {
     @ConditionalOnMissingBean(MongoDatabase.class)
     public MongoDatabase mongoDatabase() {
         return mongoClient().getDatabase(databaseName);
-    }
-
-    @Bean
-    @ConditionalOnClass(name = "de.otto.edison.jobs.repository.JobRepository")
-    public JobRepository jobRepository(final MongoDatabase mongoDatabase) {
-        return new MongoJobRepository(mongoDatabase);
     }
 
     private List<MongoCredential> getMongoCredentials() {
