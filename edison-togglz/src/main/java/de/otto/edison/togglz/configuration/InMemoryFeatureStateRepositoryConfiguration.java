@@ -1,7 +1,6 @@
 package de.otto.edison.togglz.configuration;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -15,12 +14,19 @@ import org.togglz.core.user.UserProvider;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Configuration
 public class InMemoryFeatureStateRepositoryConfiguration {
+
+    private static final Logger LOG = getLogger(InMemoryFeatureStateRepositoryConfiguration.class);
 
     @Bean
     @ConditionalOnMissingBean(StateRepository.class)
     public StateRepository stateRepository() {
+        LOG.warn("===============================");
+        LOG.warn("Using in-memory StateRepository for feature toggles");
+        LOG.warn("===============================");
         return createInMemoryStateRepository();
     }
 
@@ -28,7 +34,7 @@ public class InMemoryFeatureStateRepositoryConfiguration {
     private StateRepository createInMemoryStateRepository() {
         return new StateRepository() {
 
-            Logger LOG = LoggerFactory.getLogger(TogglzConfiguration.class);
+            Logger LOG = getLogger(TogglzConfiguration.class);
 
             private Map<String, FeatureState> featureStore = new HashMap<>();
 

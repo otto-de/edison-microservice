@@ -58,7 +58,9 @@ public class JobConfiguration {
     @Bean
     @ConditionalOnMissingBean(JobRepository.class)
     public JobRepository jobRepository() {
+        LOG.warn("===============================");
         LOG.warn("Using in-memory JobRepository");
+        LOG.warn("===============================");
         return new InMemJobRepository();
     }
 

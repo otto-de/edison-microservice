@@ -18,6 +18,9 @@ public class MongoJobsConfiguration {
 
     @Bean
     public JobRepository jobRepository(final MongoDatabase mongoDatabase) {
+        LOG.info("===============================");
+        LOG.info("Using MongoJobRepository with " + mongoDatabase.getClass().getSimpleName() + " MongoDatabase impl.");
+        LOG.info("===============================");
         return new MongoJobRepository(mongoDatabase);
     }
 
