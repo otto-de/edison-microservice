@@ -3,10 +3,10 @@ package de.otto.edison.jobs.service;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.testsupport.TestServer;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.Test;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Clock;

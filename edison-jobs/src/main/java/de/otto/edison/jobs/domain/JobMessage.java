@@ -2,8 +2,6 @@ package de.otto.edison.jobs.domain;
 
 import java.time.OffsetDateTime;
 
-import static java.time.OffsetDateTime.now;
-
 /**
  * @author Guido Steinacker
  * @since 23.02.15

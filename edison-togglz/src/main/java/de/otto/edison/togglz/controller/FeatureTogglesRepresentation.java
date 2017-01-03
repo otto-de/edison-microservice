@@ -5,12 +5,9 @@ import net.jcip.annotations.Immutable;
 import org.togglz.core.Feature;
 import org.togglz.core.annotation.Label;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.StreamSupport;
 
-import static java.util.Arrays.*;
-import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
 import static org.togglz.core.context.FeatureContext.getFeatureManager;
 

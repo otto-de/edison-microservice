@@ -3,9 +3,7 @@ package de.otto.edison.status.domain;
 import org.junit.Test;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
-import static de.otto.edison.status.domain.Status.ERROR;
-import static de.otto.edison.status.domain.Status.OK;
-import static de.otto.edison.status.domain.Status.WARNING;
+import static de.otto.edison.status.domain.Status.*;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;

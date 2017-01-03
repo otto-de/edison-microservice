@@ -3,12 +3,12 @@ package de.otto.edison.jobs.controller;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.ModelAndView;
-import org.junit.Before;
-import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -30,8 +30,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class JobsControllerTest {
 

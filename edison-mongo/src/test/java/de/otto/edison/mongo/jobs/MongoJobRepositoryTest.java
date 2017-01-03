@@ -9,7 +9,6 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
-import de.otto.edison.mongo.jobs.MongoJobRepository;
 import org.bson.Document;
 import org.hamcrest.Matchers;
 import org.junit.Before;

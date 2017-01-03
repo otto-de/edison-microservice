@@ -6,7 +6,6 @@ import de.otto.edison.health.indicator.ApplicationHealthIndicator;
 import de.otto.edison.testsupport.applicationdriver.SpringTestBase;
 import de.otto.edison.testsupport.dsl.Given;
 import de.otto.edison.testsupport.dsl.When;
-import org.springframework.boot.actuate.health.Health;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

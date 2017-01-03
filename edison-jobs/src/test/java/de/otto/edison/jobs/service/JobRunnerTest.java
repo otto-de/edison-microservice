@@ -3,10 +3,10 @@ package de.otto.edison.jobs.service;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.eventbus.JobEvents;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 
 import java.net.URISyntaxException;
 import java.util.Optional;

@@ -10,7 +10,6 @@ import static de.otto.edison.togglz.controller.FeatureTogglesRepresentation.togg
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 
 public class FeatureTogglesRepresentationTest {
 

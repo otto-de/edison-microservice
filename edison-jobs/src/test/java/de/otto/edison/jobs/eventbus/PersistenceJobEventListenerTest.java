@@ -7,9 +7,9 @@ import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.service.JobRunnable;
 import de.otto.edison.jobs.service.JobService;
-import org.mockito.Mock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;

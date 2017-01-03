@@ -5,9 +5,7 @@ import net.jcip.annotations.Immutable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static de.otto.edison.status.domain.Status.ERROR;
-import static de.otto.edison.status.domain.Status.OK;
-import static de.otto.edison.status.domain.Status.WARNING;
+import static de.otto.edison.status.domain.Status.*;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 

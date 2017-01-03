@@ -1,7 +1,6 @@
 package de.otto.edison.togglz.configuration;
 
 import de.otto.edison.navigation.NavBar;
-import de.otto.edison.navigation.NavBarItem;
 import de.otto.edison.togglz.authentication.LdapAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -13,7 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.togglz.console.TogglzConsoleServlet;
 import org.togglz.servlet.TogglzFilter;
 
-import static de.otto.edison.navigation.NavBarItem.*;
+import static de.otto.edison.navigation.NavBarItem.bottom;
+import static de.otto.edison.navigation.NavBarItem.navBarItem;
 
 @Configuration
 public class TogglzWebConfiguration {

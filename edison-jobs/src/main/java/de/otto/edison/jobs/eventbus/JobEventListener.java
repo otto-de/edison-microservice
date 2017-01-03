@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.eventbus;
 
-import de.otto.edison.jobs.eventbus.events.*;
+import de.otto.edison.jobs.eventbus.events.MessageEvent;
+import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import org.springframework.context.event.EventListener;
 
 public interface JobEventListener {

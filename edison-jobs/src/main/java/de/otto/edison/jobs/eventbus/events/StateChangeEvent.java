@@ -4,8 +4,6 @@ import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
 import org.springframework.context.ApplicationEvent;
 
-import java.net.URI;
-
 @Immutable
 public class StateChangeEvent extends ApplicationEvent {
 

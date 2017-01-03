@@ -5,10 +5,7 @@ import org.mockito.InOrder;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 import static org.springframework.boot.actuate.health.Health.down;
 import static org.springframework.boot.actuate.health.Health.up;
 

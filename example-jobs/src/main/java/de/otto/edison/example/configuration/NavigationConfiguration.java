@@ -1,11 +1,10 @@
 package de.otto.edison.example.configuration;
 
 import de.otto.edison.navigation.NavBar;
-import de.otto.edison.navigation.NavBarItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static de.otto.edison.navigation.NavBarItem.*;
+import static de.otto.edison.navigation.NavBarItem.navBarItem;
 
 @Component
 public class NavigationConfiguration {

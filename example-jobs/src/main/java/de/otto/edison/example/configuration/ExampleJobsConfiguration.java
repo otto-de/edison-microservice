@@ -2,7 +2,6 @@ package de.otto.edison.example.configuration;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
-import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.service.JobMutexGroup;
@@ -10,10 +9,6 @@ import de.otto.edison.jobs.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Optional;
-
-import static java.time.Clock.systemDefaultZone;
 
 /**
  * @author Guido Steinacker

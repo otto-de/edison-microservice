@@ -1,13 +1,10 @@
 package de.otto.edison.cache.controller;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import de.otto.edison.cache.configuration.CaffeineCacheConfig;
 import de.otto.edison.navigation.NavBar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.CachePublicMetrics;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

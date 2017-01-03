@@ -15,9 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.otto.edison.status.domain.Status.ERROR;
-import static de.otto.edison.status.domain.Status.OK;
-import static de.otto.edison.status.domain.Status.WARNING;
+import static de.otto.edison.status.domain.Status.*;
 import static java.time.OffsetDateTime.now;
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 

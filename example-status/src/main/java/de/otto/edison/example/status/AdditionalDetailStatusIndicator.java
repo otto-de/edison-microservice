@@ -4,12 +4,9 @@ import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalTime;
 import java.util.LinkedHashMap;
 
 import static de.otto.edison.status.domain.Status.OK;
-import static de.otto.edison.status.domain.Status.WARNING;
-import static java.time.LocalTime.now;
 
 /**
  * StatusDetails may contain additional information about the status.
