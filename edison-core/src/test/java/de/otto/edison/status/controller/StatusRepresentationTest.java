@@ -1,5 +1,6 @@
 package de.otto.edison.status.controller;
 
+import de.otto.edison.status.configuration.StatusProperties;
 import de.otto.edison.status.domain.ApplicationInfo;
 import de.otto.edison.status.domain.SystemInfo;
 import de.otto.edison.status.domain.TeamInfo;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static de.otto.edison.status.configuration.StatusProperties.statusProperties;
 import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
 import static de.otto.edison.status.controller.StatusRepresentation.statusRepresentationOf;
 import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
@@ -28,11 +30,12 @@ public class StatusRepresentationTest {
     @Test
     public void shouldCreateStatusRepresentationWithoutDetails() {
         // given
+        StatusProperties statusProperties = statusProperties("app-title", "group", "local-env", "desc");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(applicationInfo("app", "", "test", "local"), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(applicationInfo(statusProperties), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
         );
         // then
-        assertThat(json.application.name, is("app"));
+        assertThat(json.application.name, is("app-title"));
         assertThat(json.application.status, is(OK));
         assertThat(json.application.statusDetails.size(), is(0));
     }
@@ -60,7 +63,7 @@ public class StatusRepresentationTest {
         // then
         assertThat(json.application.status, is(WARNING));
         @SuppressWarnings("unchecked")
-        final Map<String, String> someDetail = (Map)json.application.statusDetails.get("someDetail");
+        final Map<String, String> someDetail = (Map) json.application.statusDetails.get("someDetail");
         assertThat(someDetail.get("status"), is("WARNING"));
         assertThat(someDetail.get("message"), is("detailed warning"));
     }
@@ -68,23 +71,23 @@ public class StatusRepresentationTest {
     @Test
     public void shouldCreateStatusRepresentationWithMultipleDetails() {
         // given
-    	final Map<String,String> detailMap = new HashMap<>();
-    	detailMap.put("Count", "1000");
+        final Map<String, String> detailMap = new HashMap<>();
+        detailMap.put("Count", "1000");
         final StatusRepresentation json = statusRepresentationOf(
                 applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
-                                statusDetail("Some Detail", OK, "perfect"),
-                                statusDetail("Some Other Detail", WARNING, "detailed warning", detailMap)), emptyList()
+                        statusDetail("Some Detail", OK, "perfect"),
+                        statusDetail("Some Other Detail", WARNING, "detailed warning", detailMap)), emptyList()
                 )
         );
         // then
         assertThat(json.application.status, is(WARNING));
         @SuppressWarnings("unchecked")
-        final Map<String, String> someDetail = (Map)json.application.statusDetails.get("someDetail");
+        final Map<String, String> someDetail = (Map) json.application.statusDetails.get("someDetail");
         assertThat(someDetail.get("status"), is("OK"));
         assertThat(someDetail.get("message"), is("perfect"));
         assertThat(someDetail.get("status"), is("OK"));
         @SuppressWarnings("unchecked")
-        final Map<String, String> someOtherDetail = (Map)json.application.statusDetails.get("someOtherDetail");
+        final Map<String, String> someOtherDetail = (Map) json.application.statusDetails.get("someOtherDetail");
         assertThat(someOtherDetail.get("status"), is("WARNING"));
         assertThat(someOtherDetail.get("message"), is("detailed warning"));
         assertThat(someOtherDetail.get("count"), is("1000"));

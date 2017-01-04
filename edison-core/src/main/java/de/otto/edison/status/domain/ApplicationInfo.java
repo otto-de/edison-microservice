@@ -1,5 +1,6 @@
 package de.otto.edison.status.domain;
 
+import de.otto.edison.status.configuration.StatusProperties;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -8,13 +9,21 @@ import net.jcip.annotations.Immutable;
 @Immutable
 public class ApplicationInfo {
 
-    /** The name of the application. */
+    /**
+     * The name of the application.
+     */
     public final String name;
-    /** A short description of the application's purpose. */
+    /**
+     * A short description of the application's purpose.
+     */
     public final String description;
-    /** The group of services, this application is part of. Examples are 'order', 'search' or 'navigation'. */
+    /**
+     * The group of services, this application is part of. Examples are 'order', 'search' or 'navigation'.
+     */
     public final String group;
-    /** The staging environment, this application is running in. Examples are 'develop', 'prelive' or 'live'. */
+    /**
+     * The staging environment, this application is running in. Examples are 'develop', 'prelive' or 'live'.
+     */
     public final String environment;
 
 
@@ -29,11 +38,8 @@ public class ApplicationInfo {
         this.environment = environment;
     }
 
-    public static ApplicationInfo applicationInfo(final String name,
-                                                  final String description,
-                                                  final String group,
-                                                  final String environment) {
-        return new ApplicationInfo(name, description, group, environment);
+    public static ApplicationInfo applicationInfo(final StatusProperties statusProps) {
+        return new ApplicationInfo(statusProps.getTitle(), statusProps.getDescription(), statusProps.getGroup(), statusProps.getEnvironment());
     }
 
     @Override
