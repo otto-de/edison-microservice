@@ -1,6 +1,6 @@
 package de.otto.edison.status.domain;
 
-import de.otto.edison.status.configuration.ApplicationProperties;
+import de.otto.edison.status.configuration.ApplicationInfoProperties;
 import net.jcip.annotations.Immutable;
 
 import java.util.Objects;
@@ -34,16 +34,16 @@ public class ApplicationInfo {
 
 
     private ApplicationInfo(final String name,
-                            final ApplicationProperties applicationProperties) {
+                            final ApplicationInfoProperties applicationInfoProperties) {
         if (name.isEmpty()) throw new IllegalArgumentException("name must not be empty");
         this.name = name;
-        this.title = applicationProperties.getTitle();
-        this.description = applicationProperties.getDescription();
-        this.group = applicationProperties.getGroup();
-        this.environment = applicationProperties.getEnvironment();
+        this.title = applicationInfoProperties.getTitle();
+        this.description = applicationInfoProperties.getDescription();
+        this.group = applicationInfoProperties.getGroup();
+        this.environment = applicationInfoProperties.getEnvironment();
     }
 
-    public static ApplicationInfo applicationInfo(final String serviceName, final ApplicationProperties statusProps) {
+    public static ApplicationInfo applicationInfo(final String serviceName, final ApplicationInfoProperties statusProps) {
         return new ApplicationInfo(serviceName, statusProps);
     }
 

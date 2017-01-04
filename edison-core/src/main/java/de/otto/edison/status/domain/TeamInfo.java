@@ -2,6 +2,7 @@ package de.otto.edison.status.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.otto.edison.annotations.Beta;
+import de.otto.edison.status.configuration.TeamInfoProperties;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -29,10 +30,8 @@ public class TeamInfo {
         this.businessContact = businessContact;
     }
 
-    public static TeamInfo teamInfo(final String name,
-                                    final String technicalContact,
-                                    final String businessContact) {
-        return new TeamInfo(name, technicalContact, businessContact);
+    public static TeamInfo teamInfo(final TeamInfoProperties teamInfoProperties) {
+        return new TeamInfo(teamInfoProperties.getName(), teamInfoProperties.getTechnicalContact(), teamInfoProperties.getBusinessContact());
     }
 
     @Override

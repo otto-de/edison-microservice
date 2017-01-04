@@ -1,12 +1,14 @@
 package de.otto.edison.acceptance.status;
 
+import de.otto.edison.status.configuration.TeamInfoProperties;
 import de.otto.edison.status.domain.*;
 import de.otto.edison.status.indicator.MutableStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static de.otto.edison.status.configuration.ApplicationProperties.statusProperties;
+import static de.otto.edison.status.configuration.ApplicationInfoProperties.applicationInfoProperties;
+import static de.otto.edison.status.configuration.TeamInfoProperties.*;
 import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
 import static de.otto.edison.status.domain.Criticality.MISSION_CRITICAL;
 import static de.otto.edison.status.domain.Expectations.highExpectations;
@@ -25,12 +27,12 @@ public class StatusAcceptanceConfiguration {
 
     @Bean
     ApplicationInfo applicationInfo() {
-        return ApplicationInfo.applicationInfo("test-app", statusProperties("Some Test", "test-group", "test-env", "desc"));
+        return ApplicationInfo.applicationInfo("test-app", applicationInfoProperties("Some Test", "test-group", "test-env", "desc"));
     }
 
     @Bean
     TeamInfo teamInfo() {
-        return TeamInfo.teamInfo("Test Team", "technical@example.org", "business@example.org");
+        return TeamInfo.teamInfo(teamInfoProperties("Test Team", "technical@example.org", "business@example.org"));
     }
 
     @Bean
