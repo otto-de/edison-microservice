@@ -4,6 +4,7 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import de.otto.edison.annotations.Beta;
+import de.otto.edison.registry.configuration.ServiceRegistryProperties;
 import de.otto.edison.status.configuration.ApplicationInfoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -30,8 +32,9 @@ import static org.springframework.util.StringUtils.isEmpty;
  * @since 1.0.0
  */
 @Component
-@ConditionalOnProperty("edison.servicediscovery.servers")
+@ConditionalOnProperty("edison.serviceregistry.servers")
 @ConditionalOnClass(AsyncHttpClient.class)
+@EnableConfigurationProperties(ServiceRegistryProperties.class)
 @Beta
 public class AsyncHttpRegistryClient implements RegistryClient {
 
@@ -42,26 +45,20 @@ public class AsyncHttpRegistryClient implements RegistryClient {
 
     @Autowired
     private AsyncHttpClient httpClient;
-    @Value("${edison.servicediscovery.servers}")
-    private String discoveryServers;
-    @Value("${edison.servicediscovery.service}")
-    private String serviceUrl;
-    @Value("${edison.servicediscovery.expire-after:15}")
-    private long expireAfterMinutes;
-    @Value("${edison.servicediscovery.refresh-after:5}")
-    private long refreshAfterMinutes;
+    @Autowired
+    private ServiceRegistryProperties serviceRegistryProperties;
     @Autowired
     private ApplicationInfoProperties applicationInfoProperties;
 
     @PostConstruct
     public void postConstruct() {
-        LOG.info("Scheduling registration at Edison JobTrigger every '{}' minutes.", refreshAfterMinutes);
-        newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::registerService, 0, refreshAfterMinutes, MINUTES);
+        LOG.info("Scheduling registration at Edison JobTrigger every '{}' minutes.", serviceRegistryProperties.getRefreshAfter());
+        newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::registerService, 0, serviceRegistryProperties.getRefreshAfter(), MINUTES);
     }
 
     @Override
     public void registerService() {
-        stream(discoveryServers.split(","))
+        stream(serviceRegistryProperties.getServers().split(","))
                 .filter(server -> !isEmpty(server))
                 .forEach(discoveryServer -> {
                     try {
@@ -73,10 +70,10 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                                 .setBody(
                                         "{\n" +
                                                 "   \"groups\":[\"" + applicationInfoProperties.getGroup() + "\"],\n" +
-                                                "   \"expire\":" + expireAfterMinutes + ",\n" +
+                                                "   \"expire\":" + serviceRegistryProperties.getExpireAfter() + ",\n" +
                                                 "   \"links\":[{\n" +
                                                 "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +
-                                                "      \"href\" : \"" + serviceUrl + "\",\n" +
+                                                "      \"href\" : \"" + serviceRegistryProperties.getService() + "\",\n" +
                                                 "      \"title\":\"" + applicationName + "\"\n" +
                                                 "   }]  \n" +
                                                 "}"
