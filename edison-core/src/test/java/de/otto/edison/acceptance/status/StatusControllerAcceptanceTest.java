@@ -22,7 +22,7 @@ public class StatusControllerAcceptanceTest {
         then(
                 assertThat(the_status_code().value(), is(200)),
                 assertThat(the_returned_content(), startsWith("<!DOCTYPE html>")),
-                assertThat(the_returned_content(), containsString("<title>Edison µService</title>"))
+                assertThat(the_returned_content(), containsString("<title>Some Test</title>"))
         );
     }
 

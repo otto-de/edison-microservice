@@ -9,7 +9,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" th:href="@{/internal/status}" th:text="${@environment.getProperty('edison.status.application.title','Edison µService')}">Edison µService</a>
+                <a class="navbar-brand" th:href="@{/internal/status}" th:text="${@applicationInfo.title}">Edison µService</a>
             </div>
 
 </body>

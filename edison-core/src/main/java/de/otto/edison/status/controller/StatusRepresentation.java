@@ -58,6 +58,7 @@ public class StatusRepresentation {
     @JsonIgnoreProperties(ignoreUnknown = true)
     class ApplicationRepresentation {
         public String name;
+        public String title;
         public String description;
         public String group;
         public String environment;
@@ -72,6 +73,7 @@ public class StatusRepresentation {
 
         private ApplicationRepresentation(final ApplicationStatus applicationStatus) {
             this.name = applicationStatus.application.name;
+            this.title = applicationStatus.application.title;
             this.description = applicationStatus.application.description;
             this.group = applicationStatus.application.group;
             this.environment = applicationStatus.application.environment;

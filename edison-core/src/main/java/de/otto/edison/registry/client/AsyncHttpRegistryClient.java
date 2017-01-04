@@ -4,7 +4,7 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import de.otto.edison.annotations.Beta;
-import de.otto.edison.status.configuration.StatusProperties;
+import de.otto.edison.status.configuration.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class AsyncHttpRegistryClient implements RegistryClient {
     @Value("${edison.servicediscovery.refresh-after:5}")
     private long refreshAfterMinutes;
     @Autowired
-    private StatusProperties statusProperties;
+    private ApplicationProperties applicationProperties;
 
     @PostConstruct
     public void postConstruct() {
@@ -67,12 +67,12 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                     try {
                         LOG.debug("Updating registration of service at '{}'", discoveryServer);
                         httpClient
-                                .preparePut(discoveryServer + "/environments/" + statusProperties.getEnvironment() + "/" + applicationName)
+                                .preparePut(discoveryServer + "/environments/" + applicationProperties.getEnvironment() + "/" + applicationName)
                                 .setHeader("Content-Type", "application/vnd.otto.edison.links+json")
                                 .setHeader("Accept", "application/vnd.otto.edison.links+json")
                                 .setBody(
                                         "{\n" +
-                                                "   \"groups\":[\"" + statusProperties.getGroup() + "\"],\n" +
+                                                "   \"groups\":[\"" + applicationProperties.getGroup() + "\"],\n" +
                                                 "   \"expire\":" + expireAfterMinutes + ",\n" +
                                                 "   \"links\":[{\n" +
                                                 "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +

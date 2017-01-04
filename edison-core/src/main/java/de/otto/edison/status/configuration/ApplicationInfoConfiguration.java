@@ -13,13 +13,16 @@ import org.springframework.context.annotation.Configuration;
  * This is used for /internal/status
  */
 @Configuration
-@EnableConfigurationProperties(StatusProperties.class)
+@EnableConfigurationProperties(ApplicationProperties.class)
 public class ApplicationInfoConfiguration {
+
+    @Value("${spring.application.name:unknown}")
+    private String serviceName;
 
     @Bean
     @ConditionalOnMissingBean(ApplicationInfo.class)
-    public ApplicationInfo applicationInfo(StatusProperties statusProperties) {
-        return ApplicationInfo.applicationInfo(statusProperties);
+    public ApplicationInfo applicationInfo(ApplicationProperties applicationProperties) {
+        return ApplicationInfo.applicationInfo(serviceName, applicationProperties);
     }
 
 }

@@ -1,7 +1,9 @@
 package de.otto.edison.status.domain;
 
-import de.otto.edison.status.configuration.StatusProperties;
+import de.otto.edison.status.configuration.ApplicationProperties;
 import net.jcip.annotations.Immutable;
+
+import java.util.Objects;
 
 /**
  * Information about the application, like name, description, group and environment.
@@ -13,6 +15,10 @@ public class ApplicationInfo {
      * The name of the application.
      */
     public final String name;
+    /**
+     * Human readable title of the application
+     */
+    public final String title;
     /**
      * A short description of the application's purpose.
      */
@@ -28,47 +34,41 @@ public class ApplicationInfo {
 
 
     private ApplicationInfo(final String name,
-                            final String description,
-                            final String group,
-                            final String environment) {
+                            final ApplicationProperties applicationProperties) {
         if (name.isEmpty()) throw new IllegalArgumentException("name must not be empty");
         this.name = name;
-        this.description = description;
-        this.group = group;
-        this.environment = environment;
+        this.title = applicationProperties.getTitle();
+        this.description = applicationProperties.getDescription();
+        this.group = applicationProperties.getGroup();
+        this.environment = applicationProperties.getEnvironment();
     }
 
-    public static ApplicationInfo applicationInfo(final StatusProperties statusProps) {
-        return new ApplicationInfo(statusProps.getTitle(), statusProps.getDescription(), statusProps.getGroup(), statusProps.getEnvironment());
+    public static ApplicationInfo applicationInfo(final String serviceName, final ApplicationProperties statusProps) {
+        return new ApplicationInfo(serviceName, statusProps);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ApplicationInfo that = (ApplicationInfo) o;
-
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (group != null ? !group.equals(that.group) : that.group != null) return false;
-        return !(environment != null ? !environment.equals(that.environment) : that.environment != null);
-
+        return Objects.equals(name, that.name) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(group, that.group) &&
+                Objects.equals(environment, that.environment);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (group != null ? group.hashCode() : 0);
-        result = 31 * result + (environment != null ? environment.hashCode() : 0);
-        return result;
+        return Objects.hash(name, title, description, group, environment);
     }
 
     @Override
     public String toString() {
         return "ApplicationInfo{" +
                 "name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", group='" + group + '\'' +
                 ", environment='" + environment + '\'' +

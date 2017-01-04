@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Properties used to configure the status page.
  */
 @ConfigurationProperties(prefix = "edison.status.application")
-public class StatusProperties {
+public class ApplicationProperties {
 
     /**
      * A short title that is used in the top navigation and the html title tag.
@@ -25,23 +25,32 @@ public class StatusProperties {
      */
     private String description = "";
 
-    public static StatusProperties statusProperties(final String title,
-                                                    final String group,
-                                                    final String environment,
-                                                    final String description) {
-        StatusProperties statusProperties = new StatusProperties();
-        statusProperties.setTitle(title);
-        statusProperties.setGroup(group);
-        statusProperties.setEnvironment(environment);
-        statusProperties.setDescription(description);
-        return statusProperties;
+    /**
+     * Only used in tests.
+     *
+     * @param title Human-readable title of the application
+     * @param group Application group
+     * @param environment Environment / stage of the application
+     * @param description Human-readable description of the application
+     * @return StatusProperties
+     */
+    public static ApplicationProperties statusProperties(final String title,
+                                                         final String group,
+                                                         final String environment,
+                                                         final String description) {
+        ApplicationProperties applicationProperties = new ApplicationProperties();
+        applicationProperties.setTitle(title);
+        applicationProperties.setGroup(group);
+        applicationProperties.setEnvironment(environment);
+        applicationProperties.setDescription(description);
+        return applicationProperties;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public StatusProperties setTitle(String title) {
+    public ApplicationProperties setTitle(String title) {
         this.title = title;
         return this;
     }
@@ -50,7 +59,7 @@ public class StatusProperties {
         return group;
     }
 
-    public StatusProperties setGroup(String group) {
+    public ApplicationProperties setGroup(String group) {
         this.group = group;
         return this;
     }
@@ -59,7 +68,7 @@ public class StatusProperties {
         return environment;
     }
 
-    public StatusProperties setEnvironment(String environment) {
+    public ApplicationProperties setEnvironment(String environment) {
         this.environment = environment;
         return this;
     }
@@ -68,8 +77,9 @@ public class StatusProperties {
         return description;
     }
 
-    public StatusProperties setDescription(String description) {
+    public ApplicationProperties setDescription(String description) {
         this.description = description;
         return this;
     }
+
 }

@@ -1,6 +1,6 @@
 package de.otto.edison.status.controller;
 
-import de.otto.edison.status.configuration.StatusProperties;
+import de.otto.edison.status.configuration.ApplicationProperties;
 import de.otto.edison.status.domain.ApplicationInfo;
 import de.otto.edison.status.domain.SystemInfo;
 import de.otto.edison.status.domain.TeamInfo;
@@ -10,7 +10,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.otto.edison.status.configuration.StatusProperties.statusProperties;
+import static de.otto.edison.status.configuration.ApplicationProperties.statusProperties;
 import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
 import static de.otto.edison.status.controller.StatusRepresentation.statusRepresentationOf;
 import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
@@ -30,12 +30,13 @@ public class StatusRepresentationTest {
     @Test
     public void shouldCreateStatusRepresentationWithoutDetails() {
         // given
-        StatusProperties statusProperties = statusProperties("app-title", "group", "local-env", "desc");
+        ApplicationProperties applicationProperties = statusProperties("Some Title", "group", "local-env", "desc");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(applicationInfo(statusProperties), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(applicationInfo("app-name", applicationProperties), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
         );
         // then
-        assertThat(json.application.name, is("app-title"));
+        assertThat(json.application.name, is("app-name"));
+        assertThat(json.application.title, is("Some Title"));
         assertThat(json.application.status, is(OK));
         assertThat(json.application.statusDetails.size(), is(0));
     }
