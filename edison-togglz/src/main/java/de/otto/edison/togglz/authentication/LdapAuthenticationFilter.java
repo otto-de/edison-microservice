@@ -3,6 +3,7 @@ package de.otto.edison.togglz.authentication;
 import com.unboundid.ldap.sdk.*;
 import com.unboundid.ldap.sdk.extensions.StartTLSExtendedRequest;
 import com.unboundid.util.ssl.SSLUtil;
+import de.otto.edison.togglz.configuration.LdapProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,19 +24,10 @@ public class LdapAuthenticationFilter implements Filter {
 
     private static Logger LOG = LoggerFactory.getLogger(LdapAuthenticationFilter.class);
 
-    private final String host;
-    private final int port;
-    private final String baseDn;
-    private final String rdnIdentifier;
+    private final LdapProperties ldapProperties;
 
-    public LdapAuthenticationFilter(final String host,
-                                    final int port,
-                                    final String baseDn,
-                                    final String rdnIdentifier) {
-        this.host = host;
-        this.port = port;
-        this.baseDn = baseDn;
-        this.rdnIdentifier = rdnIdentifier;
+    public LdapAuthenticationFilter(final LdapProperties ldapProperties) {
+        this.ldapProperties = ldapProperties;
     }
 
     @Override
@@ -57,25 +49,12 @@ public class LdapAuthenticationFilter implements Filter {
             unauthorized(httpResponse);
         } else {
             Optional<Credentials> credentials = Credentials.readFrom(httpRequest);
-            if (!configurationIsValid() || !credentials.isPresent() || !ldapAuthentication(credentials.get())) {
+            if (!ldapProperties.isValid() || !credentials.isPresent() || !ldapAuthentication(credentials.get())) {
                 unauthorized(httpResponse);
             } else {
                 chain.doFilter(request, response);
             }
         }
-    }
-
-    private boolean configurationIsValid() {
-        if (isEmpty(host)) {
-            LOG.error("host is undefined");
-        } else if (isEmpty(baseDn)) {
-            LOG.error("baseDn is undefined");
-        } else if (isEmpty(rdnIdentifier)) {
-            LOG.error("rdnIdentifier is undefined");
-        } else {
-            return true;
-        }
-        return false;
     }
 
     private void unauthorized(HttpServletResponse httpResponse) {
@@ -91,9 +70,13 @@ public class LdapAuthenticationFilter implements Filter {
             SSLContext context = sslUtil.createSSLContext();
             ExtendedRequest extRequest = new StartTLSExtendedRequest(context);
 
-            ldapConnection = new LDAPConnection(host, port);
+            ldapConnection = new LDAPConnection(ldapProperties.getHost(), ldapProperties.getPort());
             ldapConnection.processExtendedOperation(extRequest);
-            BindResult bindResult = ldapConnection.bind(rdnIdentifier + "=" + credentials.getUsername() + "," + baseDn, credentials.getPassword());
+            BindResult bindResult = ldapConnection.bind(
+                    ldapProperties.getRdnIdentifier() + "=" + credentials.getUsername() + "," +
+                            ldapProperties.getBaseDn(),
+                    credentials.getPassword()
+            );
             if (bindResult.getResultCode().equals(ResultCode.SUCCESS)) {
                 LOG.info("Login successful: " + credentials.getUsername());
                 authOK = true;

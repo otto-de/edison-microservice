@@ -5,6 +5,7 @@ import de.otto.edison.togglz.authentication.LdapAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import static de.otto.edison.navigation.NavBarItem.bottom;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 
 @Configuration
+@EnableConfigurationProperties(LdapProperties.class)
 public class TogglzWebConfiguration {
 
     public static final String TOGGLES_URL_PATTERN = "/toggles/console/*";
@@ -30,17 +32,12 @@ public class TogglzWebConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "edison.togglz", name = "ldap-authentication.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "edison.togglz.ldap-authentication", name = "enabled", havingValue = "true")
     @ConditionalOnMissingBean(name = "togglzAuthenticationFilter")
-    public FilterRegistrationBean togglzAuthenticationFilter(@Value("${management.context-path:/internal}") String prefix,
-                                                             @Value("${edison.togglz.ldap-authentication.host:}") String host,
-                                                             @Value("${edison.togglz.ldap-authentication.port:389}") int port,
-                                                             @Value("${edison.togglz.ldap-authentication.base-dn:}")
-                                                                     String baseDn,
-                                                             @Value("${edison.togglz.ldap-authentication.rdn-identifier:}")
-                                                                     String rdnIdentifier) {
+    public FilterRegistrationBean togglzAuthenticationFilter(final @Value("${management.context-path:/internal}") String prefix,
+                                                             final LdapProperties ldapProperties) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
-        filterRegistration.setFilter(new LdapAuthenticationFilter(host, port, baseDn, rdnIdentifier));
+        filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties));
         filterRegistration.addUrlPatterns(prefix + TOGGLES_URL_PATTERN);
         return filterRegistration;
     }
