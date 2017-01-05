@@ -2,6 +2,9 @@
 
 ## SNAPSHOT
 
+## release 0.82.2
+* ** [edision-mongo] use version of mongo driver to 3.4.1, fongo 2.0.11
+
 ## release 0.82.1
 * **[edison-jobs]** add _primaryPreferred_ for jobRepository to avoid data loss while updating a jobState 
 
