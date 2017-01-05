@@ -2,8 +2,8 @@ apply plugin: 'org.springframework.boot'
 
 dependencies {
     compile project(":edison-jobs")
-//    compile project(":edison-mongo")  // Enable to get persistent job information
-//    compile libs.fakeMongo            // In-Memory impl of MongoDB; not intended for production
+//  compile project(":edison-mongo")  // Enable to get persistent job information
+//  compile libs.fakeMongo            // In-Memory impl of MongoDB; not intended for production
 
     testCompile project(":edison-testsupport")
 }
