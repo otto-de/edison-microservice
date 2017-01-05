@@ -2,7 +2,6 @@
 
 Core library of edison-microservice.
 
-
 # 1. Internal Pages
 
 This library primarily contains some Thymeleaf template fragments that are commonly used to render the UI
