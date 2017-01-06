@@ -4,10 +4,16 @@ import de.otto.edison.status.domain.*;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import de.otto.edison.status.indicator.CachedApplicationStatusAggregator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
+import de.otto.edison.status.scheduler.CronScheduler;
+import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
+import de.otto.edison.status.scheduler.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
 
@@ -18,6 +24,7 @@ import static java.util.Collections.emptyList;
  * application using all StatusDetailIndicators configured in the Spring application context.
  */
 @Configuration
+@EnableScheduling
 public class ApplicationStatusAggregatorConfiguration {
 
     @Autowired(required = false)
@@ -25,6 +32,9 @@ public class ApplicationStatusAggregatorConfiguration {
 
     @Autowired(required = false)
     private List<ServiceSpec> serviceSpecs = emptyList();
+
+    @Autowired(required = false)
+    private List<InfoContributor> infoContributors = emptyList();
 
     /**
      * By default, a CachedApplicationStatusAggregator is used. The status is updated using a
@@ -51,4 +61,33 @@ public class ApplicationStatusAggregatorConfiguration {
         return new CachedApplicationStatusAggregator(applicationInfo, systemInfo, versionInfo, teamInfo, indicators, services);
     }
 
+    /**
+     * Cron scheduler that updating the status using a cron expression.
+     *
+     * This is used if edison.status.scheduler.cron is configured.
+     *
+     * @return CronScheduler
+     */
+    @Bean
+    @ConditionalOnProperty(name = "edison.status.scheduler.cron")
+    public Scheduler cronScheduler(final ApplicationStatusAggregator applicationStatusAggregator) {
+        return new CronScheduler(
+                applicationStatusAggregator
+        );
+    }
+
+    /**
+     * Scheduler that is updating the status every ten seconds.
+     *
+     * This is used by default, if no other scheduler is configured.
+     *
+     * @return Scheduler
+     */
+    @Bean
+    @ConditionalOnMissingBean(Scheduler.class)
+    public Scheduler fixedDelayScheduler(final ApplicationStatusAggregator applicationStatusAggregator) {
+        return new EveryTenSecondsScheduler(
+                applicationStatusAggregator
+        );
+    }
 }
