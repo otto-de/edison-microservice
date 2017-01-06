@@ -9,11 +9,20 @@ buildscript {
 
     repositories {
         maven { url "http://repo.spring.io/libs-snapshot" }
+        maven { url 'http://repo.spring.io/plugins-release' }
         mavenLocal()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:"+springBootVersion)
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
     }
+}
+
+configure(allprojects) {
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'propdeps-eclipse'
 }
 
 repositories {
@@ -62,6 +71,12 @@ subprojects {
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
+
+    dependencies {
+        optional "org.springframework.boot:spring-boot-configuration-processor:" + springBootVersion
+    }
+
+    compileJava.dependsOn(processResources)
 
     jar {
         manifest.attributes provider: 'gradle'
