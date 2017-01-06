@@ -20,15 +20,15 @@ public class StatusRepresentation {
     public TeamInfo team;
     public List<ServiceSpec> serviceSpecs;
 
-    private StatusRepresentation(final ApplicationStatus applicationStatus) {
-        this.application = new ApplicationRepresentation(applicationStatus);
+    private StatusRepresentation(final ApplicationStatus applicationStatus, final ClusterInfo clusterInfo) {
+        this.application = new ApplicationRepresentation(applicationStatus, clusterInfo);
         this.system = applicationStatus.system;
         this.team = applicationStatus.team;
         this.serviceSpecs = applicationStatus.serviceSpecs;
     }
 
-    public static StatusRepresentation statusRepresentationOf(final ApplicationStatus status) {
-        return new StatusRepresentation(status);
+    public static StatusRepresentation statusRepresentationOf(final ApplicationStatus status, final ClusterInfo clusterInfo) {
+        return new StatusRepresentation(status, clusterInfo);
     }
 
     private Map<String, ?> statusDetailsOf(final List<StatusDetail> statusDetails) {
@@ -64,13 +64,15 @@ public class StatusRepresentation {
         public String version;
         public String commit;
         public String vcsUrl;
+        public String staging;
+        public String color;
         public Status status;
         public Map<String,?> statusDetails;
 
         public ApplicationRepresentation() {
         }
 
-        private ApplicationRepresentation(final ApplicationStatus applicationStatus) {
+        private ApplicationRepresentation(final ApplicationStatus applicationStatus, final ClusterInfo clusterInfo) {
             this.name = applicationStatus.application.name;
             this.description = applicationStatus.application.description;
             this.group = applicationStatus.application.group;
@@ -78,6 +80,8 @@ public class StatusRepresentation {
             this.version = applicationStatus.vcs.version;
             this.commit = applicationStatus.vcs.commit;
             this.vcsUrl = applicationStatus.vcs.url;
+            this.staging = clusterInfo.staging;
+            this.color = clusterInfo.color;
             this.status = applicationStatus.status;
             this.statusDetails = statusDetailsOf(applicationStatus.statusDetails);
         }

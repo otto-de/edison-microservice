@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
@@ -32,9 +35,15 @@ public class StatusApi extends SpringTestBase {
     }
 
     public static When internal_status_is_retrieved_as(final String mediaType) throws IOException {
-        getResource("http://localhost:8085/teststatus/internal/status", of(mediaType));
-        return When.INSTANCE;
+        return internal_status_is_retrieved_as(mediaType, new HashMap<>());
     }
+
+    public static When internal_status_is_retrieved_as(final String mediaType, final Map<String, List<String>> headers)
+                throws IOException {
+
+            getResource("http://localhost:8085/teststatus/internal/status", of(mediaType), headers);
+            return When.INSTANCE;
+        }
 
     public static HttpStatus the_status_code() {
         return statusCode;
@@ -57,9 +66,18 @@ public class StatusApi extends SpringTestBase {
     }
 
     private static void getResource(final String url, final Optional<String> mediaType) throws IOException {
+        getResource(url, mediaType, new HashMap<>());
+    }
+
+    private static void getResource(final String url, final Optional<String> mediaType,
+            final Map<String, List<String>> requestHeaders) throws IOException {
+
         final HttpHeaders headers = new HttpHeaders();
         if (mediaType.isPresent()) {
             headers.setAccept(asList(parseMediaType(mediaType.get())));
+        }
+        if (requestHeaders != null) {
+            headers.putAll(requestHeaders);
         }
 
         final ResponseEntity<String> responseEntity = restTemplate.exchange(

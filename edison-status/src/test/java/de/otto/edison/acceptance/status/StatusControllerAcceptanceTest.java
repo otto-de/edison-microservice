@@ -1,18 +1,28 @@
 package de.otto.edison.acceptance.status;
 
-import de.otto.edison.testsupport.TestServer;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static de.otto.edison.acceptance.api.StatusApi.*;
+import static de.otto.edison.acceptance.api.StatusApi.internal_is_retrieved_as;
+import static de.otto.edison.acceptance.api.StatusApi.internal_status_is_retrieved_as;
+import static de.otto.edison.acceptance.api.StatusApi.the_response_headers;
+import static de.otto.edison.acceptance.api.StatusApi.the_returned_content;
+import static de.otto.edison.acceptance.api.StatusApi.the_returned_json;
+import static de.otto.edison.acceptance.api.StatusApi.the_status_code;
 import static de.otto.edison.testsupport.dsl.Then.assertThat;
 import static de.otto.edison.testsupport.dsl.Then.then;
 import static de.otto.edison.testsupport.dsl.When.when;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 
 public class StatusControllerAcceptanceTest {
 
@@ -38,7 +48,8 @@ public class StatusControllerAcceptanceTest {
 
         then(
                 assertThat(the_status_code().value(), is(200)),
-                assertThat(the_response_headers().get("Content-Type"), contains("application/vnd.otto.monitoring.status+json;charset=UTF-8"))
+                assertThat(the_response_headers().get("Content-Type"),
+                        contains("application/vnd.otto.monitoring.status+json;charset=UTF-8"))
         );
     }
 
@@ -56,15 +67,25 @@ public class StatusControllerAcceptanceTest {
 
     @Test
     public void shouldGetApplicationInfo() throws IOException {
+        final Map<String, List<String>> headers = new HashMap<>();
+        final List<String> staging = new ArrayList<>();
+        headers.put("x-staging", staging);
+        staging.add("productive");
+        final List<String> color = new ArrayList<>();
+        headers.put("x-color", color);
+        color.add("BLU");
+
         when(
-                internal_status_is_retrieved_as("application/json")
+                internal_status_is_retrieved_as("application/json", headers)
         );
 
         then(
                 assertThat(the_returned_json().at("/application/name").asText(), is("test-app")),
                 assertThat(the_returned_json().at("/application/description").asText(), is("desc")),
                 assertThat(the_returned_json().at("/application/environment").asText(), is("test-env")),
-                assertThat(the_returned_json().at("/application/group").asText(), is("test-group"))
+                assertThat(the_returned_json().at("/application/group").asText(), is("test-group")),
+                assertThat(the_returned_json().at("/application/staging").asText(), is("productive")),
+                assertThat(the_returned_json().at("/application/color").asText(), is("BLU"))
         );
 
     }
