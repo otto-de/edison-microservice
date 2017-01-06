@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/otto-de/edison-microservice.png?label=ready&title=Ready)](https://waffle.io/otto-de/edison-microservice)
 # edison-microservice
 
 Common basis for some of otto.de's micro-services using Spring Boot.
