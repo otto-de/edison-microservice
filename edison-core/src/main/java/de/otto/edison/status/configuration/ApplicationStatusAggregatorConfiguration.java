@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
 
+import static de.otto.edison.status.domain.ApplicationStatus.*;
 import static java.util.Collections.emptyList;
 
 /**
@@ -29,6 +30,9 @@ public class ApplicationStatusAggregatorConfiguration {
 
     @Autowired(required = false)
     private List<StatusDetailIndicator> statusDetailIndicators = emptyList();
+
+    @Autowired(required = false)
+    private ClusterInfo clusterInfo;
 
     @Autowired(required = false)
     private List<ServiceSpec> serviceSpecs = emptyList();
@@ -58,7 +62,9 @@ public class ApplicationStatusAggregatorConfiguration {
         final List<ServiceSpec> services = serviceSpecs != null
                 ? serviceSpecs
                 : emptyList();
-        return new CachedApplicationStatusAggregator(applicationInfo, systemInfo, versionInfo, teamInfo, indicators, services);
+        return new CachedApplicationStatusAggregator(
+                applicationStatus(applicationInfo, clusterInfo, systemInfo, versionInfo, teamInfo, emptyList(), services),
+                indicators);
     }
 
     /**

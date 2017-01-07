@@ -1,10 +1,7 @@
 package de.otto.edison.status.controller;
 
 import de.otto.edison.status.configuration.ApplicationInfoProperties;
-import de.otto.edison.status.domain.ApplicationInfo;
-import de.otto.edison.status.domain.SystemInfo;
-import de.otto.edison.status.domain.TeamInfo;
-import de.otto.edison.status.domain.VersionInfo;
+import de.otto.edison.status.domain.*;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -32,7 +29,7 @@ public class StatusRepresentationTest {
         // given
         ApplicationInfoProperties applicationInfoProperties = applicationInfoProperties("Some Title", "group", "local-env", "desc");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(applicationInfo("app-name", applicationInfoProperties), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(applicationInfo("app-name", applicationInfoProperties), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
         );
         // then
         assertThat(json.application.name, is("app-name"));
@@ -45,7 +42,7 @@ public class StatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithVersionInfo() {
         // given
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo(versionInfoProperties("1.0.0", "0815", "http://example.org/commits/{commit}")), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), VersionInfo.versionInfo(versionInfoProperties("1.0.0", "0815", "http://example.org/commits/{commit}")), mock(TeamInfo.class), emptyList(), emptyList())
         );
         // then
         assertThat(json.application.version, is("1.0.0"));
@@ -54,10 +51,22 @@ public class StatusRepresentationTest {
     }
 
     @Test
+    public void shouldCreateStatusRepresentationWithClusterInfo() {
+        // given
+        final ClusterInfo cluster = new ClusterInfo("BLU", "active");
+        final StatusRepresentation json = statusRepresentationOf(
+                applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
+        );
+        // then
+        assertThat(json.cluster.getColor(), is("BLU"));
+        assertThat(json.cluster.getColorState(), is("active"));
+    }
+
+    @Test
     public void shouldCreateStatusRepresentationWithSingleDetail() {
         // given
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(
+                applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(
                         statusDetail("someDetail", WARNING, "detailed warning")), emptyList()
                 )
         );
@@ -75,7 +84,7 @@ public class StatusRepresentationTest {
         final Map<String, String> detailMap = new HashMap<>();
         detailMap.put("Count", "1000");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
+                applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                         statusDetail("Some Detail", OK, "perfect"),
                         statusDetail("Some Other Detail", WARNING, "detailed warning", detailMap)), emptyList()
                 )

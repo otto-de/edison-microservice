@@ -23,12 +23,7 @@ public class CachedApplicationStatusAggregatorTest {
         // given
         final StatusDetailIndicator mockIndicator = someStatusDetailIndicator(OK_DETAIL_ONE);
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                mock(ApplicationInfo.class),
-                mock(SystemInfo.class),
-                mock(VersionInfo.class),
-                mock(TeamInfo.class),
-                singletonList(mockIndicator),
-                emptyList()
+                mock(ApplicationStatus.class), singletonList(mockIndicator)
         );
         statusAggregator.update();
         // when
@@ -43,15 +38,10 @@ public class CachedApplicationStatusAggregatorTest {
     public void shouldAggregateStatusDetails() throws Exception {
         // given
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                mock(ApplicationInfo.class),
-                mock(SystemInfo.class),
-                mock(VersionInfo.class),
-                mock(TeamInfo.class),
-                asList(
+                mock(ApplicationStatus.class), asList(
                         someStatusDetailIndicator(OK_DETAIL_ONE),
                         someStatusDetailIndicator(ERROR_DETAIL)
-                ),
-                emptyList()
+                )
         );
         statusAggregator.update();
         // when
@@ -66,15 +56,10 @@ public class CachedApplicationStatusAggregatorTest {
     public void shouldAggregateCompositeStatusDetails() throws Exception {
         // given
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                mock(ApplicationInfo.class),
-                mock(SystemInfo.class),
-                mock(VersionInfo.class),
-                mock(TeamInfo.class),
-                asList(
+                mock(ApplicationStatus.class), asList(
                         someCompositeStatusDetailIndicator(OK_DETAIL_ONE, WARNING_DETAIL),
                         someStatusDetailIndicator(OK_DETAIL_TWO)
-                ),
-                emptyList()
+                )
         );
         statusAggregator.update();
         // when

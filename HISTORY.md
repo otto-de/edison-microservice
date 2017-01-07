@@ -28,6 +28,7 @@ is now case insensitive.
 **New Features:**
 * **[edison-core]** Added feature to configure the entries of the navigation bar of /internal/* pages. See
 de.otto.edison navigation for details and have a look at the NavigationConfiguration in the examples. 
+* **[edison-core]** Added support to get status information for service that deployed using green/blue deployments.
 * **[edison-jobs]** JobEvents not @Beta anymore.
 
 ## Release 0.82.1

@@ -49,12 +49,11 @@ take the service out of load balancing. After this period, the service actually 
 
 Graceful shutdown of services can be configured as follows:
 
-* **edison.gracefulshutdown.enabled:** 
-Enable/Disable graceful shutdown.
-* **edison.gracefulshutdown.indicateErrorAfter:5000**
-Number of millis to wait before the health check is starting to respond with HTTP server errors.
-* **edison.gracefulshutdown.phaseOutAfter:20000**
-number of millis to send server errors, before the service is finally shutting down.
+* ```edison.gracefulshutdown.enabled:false``` Enable/Disable graceful shutdown.
+* ```edison.gracefulshutdown.indicateErrorAfter:5000``` Number of millis to wait before the health check 
+is starting to respond with HTTP server errors.
+* ```edison.gracefulshutdown.phaseOutAfter:20000``` Number of millis to send server errors, before the 
+service is finally shutting down.
 
 # 3. de.otto.edison.status
 
@@ -66,8 +65,8 @@ The /internal/status API contains information about the application status:
 * A REST API to get the current status and information about the service as JSON
 * An HTML representation / status page for human beeings.
 * A possibility to indicate the status of jobs, repositories or other components
-(see de.otto.edison.status.indicator.StatusDetailIndicator)
-* A possibility to add information about required services (see de.otto.edison.about.spec.ServiceSpec)
+(see ```de.otto.edison.status.indicator.StatusDetailIndicator```)
+* A possibility to add information about required services (see ```de.otto.edison.about.spec.ServiceSpec```)
 
 ## 3.2 Usage
 
@@ -83,27 +82,41 @@ should generally not be necessary.
 
 The following properties should be added to your application.properties or application.yml configuration.
 
-Required:
-* spring.application.name: The default Spring Boot property containing the name of the service.
-
-Optional VCS information about the deployed application:
-* edison.status.vcs.version: The version number (something like 1.5.2)
-* edison.status.vcs.commit: The GIT commit hash
-* edison.status.vcs.url-template: the URL template used to build an URL to the VCS
-(e.g. https://github.com/otto-de/edison-microservice/commit/{commit})
-
-Optional information about the application:
-* edison.status.application.title: A short title that is used in the top navigation and the html title tag.
-* edison.status.application.description: A human-readable short description of the application's purpose.
-* edison.status.application.group: Information about the group of services this service is belonging to.
-Example: 'order', 'user', 'campaign'
-* edison.status.application.environment: The staging environment (like develop, prelive, live) of the service.
+**Required:**
+* ```spring.application.name``` The default Spring Boot property containing the name of the service.
 
 Optional information about the system:
-* server.port: The port used to access the application
-* server.hostname: The hostname of the server
-* HOSTNAME: if server.hostname is not configured, the system environment's HOSTNAME is tried. If this is not available, 
+* ```server.port``` The port used to access the application
+* ```server.hostname``` The hostname of the server
+* ```HOSTNAME``` if server.hostname is not configured, the system environment's HOSTNAME is tried. If this is not available, 
 the SystemInfoConfiguration is trying to get the hostname using InetAddress.getLocalHost().getHostName().
+
+**
+* ```edison.status.redirect-internal.enabled:true``` Redirect /internal to /internal/status
+
+**de.edison.status.configuration.ApplicationInfoProperties:** Optional information about the application:
+* ```edison.status.application.title``` A short title that is used in the top navigation and the html title tag.
+* ```edison.status.application.description``` A human-readable short description of the application's purpose.
+* ```edison.status.application.group``` Information about the group of services this service is belonging to.
+Example: 'order', 'user', 'campaign'
+* ```edison.status.application.environment``` The stage environment (like develop, prelive, live) of the service.
+
+**de.edison.status.configuration.VersionInfoProperties:** Optional VCS information about the deployed application:
+* ```edison.status.vcs.version``` The version number (something like 1.5.2)
+* ```edison.status.vcs.commit:```The GIT commit hash
+* ```edison.status.vcs.url-template:```the URL template used to build an URL to the VCS
+(e.g. https://github.com/otto-de/edison-microservice/commit/{commit})
+
+**de.edison.status.configuration.TeamInfoProperties:** Optional information about the team responsible for the service:
+* ```edison.status.team.name```
+* ```edison.status.team.technical-contact```
+* ```edison.status.team.business-contact```
+
+**de.edison.status.configuration.ClusterInfoProperties:** Optional properties about how to access information about
+ the current cluster state in green/blue deployment scenarios:
+* ```edison.status.cluster.enabled:false```
+* ```edison.status.cluster.colorHeader:X-Color```
+* ```edison.status.cluster.colorStateHeader:X-Staging```
 
 ## 3.4 Conditional Spring Beans
 
@@ -115,10 +128,10 @@ could replace this default bean by providing an uncached implementation. If calc
 (for example, if you have to access a database), this might not be a good idea if the status ressource is retrieved
 frequently.
 
-2. Override the @ConditionalOnMissingBean named 'fixedDelayScheduler'. By default, this scheduler is updating the
+2. Override the ```@ConditionalOnMissingBean``` named ```fixedDelayScheduler```. By default, this scheduler is updating the
 StatusAggregator every 10 seconds.
 
-3. Provide a 'cronScheduler' bean and configure edison.status.scheduler.cron in your application properties with
+3. Provide a ```cronScheduler``` bean and configure ```edison.status.scheduler.cron``` in your application properties with
 a valid cron expression. This way, the cron scheduler is used instead of the fixedDelayScheduler.
 
 # 4. de.otto.edison.metrics

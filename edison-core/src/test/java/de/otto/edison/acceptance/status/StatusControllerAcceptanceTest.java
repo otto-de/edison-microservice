@@ -1,13 +1,16 @@
 package de.otto.edison.acceptance.status;
 
 import org.junit.Test;
+import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import static de.otto.edison.acceptance.api.StatusApi.*;
 import static de.otto.edison.testsupport.dsl.Then.assertThat;
 import static de.otto.edison.testsupport.dsl.Then.then;
 import static de.otto.edison.testsupport.dsl.When.when;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.*;
 
 public class StatusControllerAcceptanceTest {
@@ -88,6 +91,21 @@ public class StatusControllerAcceptanceTest {
                 assertThat(the_returned_json().at("/team/name").asText(), is("Test Team")),
                 assertThat(the_returned_json().at("/team/technicalContact").asText(), is("technical@example.org")),
                 assertThat(the_returned_json().at("/team/businessContact").asText(), is("business@example.org"))
+        );
+    }
+
+    @Test
+    public void shouldGetClusterInformation() throws IOException {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.put("X-Color", singletonList("BLU"));
+        headers.put("X-Staging", singletonList("STAGED"));
+        when(
+                internal_status_is_retrieved_as("application/json", headers)
+        );
+
+        then(
+                assertThat(the_returned_json().at("/cluster/color").asText(), is("BLU")),
+                assertThat(the_returned_json().at("/cluster/colorState").asText(), is("STAGED"))
         );
     }
 

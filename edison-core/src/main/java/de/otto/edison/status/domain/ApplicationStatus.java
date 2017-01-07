@@ -11,17 +11,19 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 @Immutable
-public final class ApplicationStatus {
+public class ApplicationStatus {
 
     public final ApplicationInfo application;
     public final SystemInfo system;
     public final VersionInfo vcs;
     public final TeamInfo team;
+    public final ClusterInfo cluster;
     public final Status status;
     public final List<StatusDetail> statusDetails;
     public final List<ServiceSpec> serviceSpecs;
 
     private ApplicationStatus(final ApplicationInfo application,
+                              final ClusterInfo cluster,
                               final SystemInfo system,
                               final VersionInfo vcs,
                               final TeamInfo team,
@@ -32,6 +34,7 @@ public final class ApplicationStatus {
                 .reduce(Status.OK, Status::plus);
         this.statusDetails = unmodifiableList(new ArrayList<>(details));
         this.application = application;
+        this.cluster = cluster;
         this.system = system;
         this.vcs = vcs;
         this.team = team;
@@ -39,12 +42,13 @@ public final class ApplicationStatus {
     }
 
     public static ApplicationStatus applicationStatus(final ApplicationInfo applicationInfo,
+                                                      final ClusterInfo clusterInfo,
                                                       final SystemInfo systemInfo,
                                                       final VersionInfo versionInfo,
                                                       final TeamInfo teamInfo,
                                                       final List<StatusDetail> details,
                                                       final List<ServiceSpec> serviceSpecs) {
-        return new ApplicationStatus(applicationInfo, systemInfo, versionInfo, teamInfo, details, serviceSpecs);
+        return new ApplicationStatus(applicationInfo, clusterInfo, systemInfo, versionInfo, teamInfo, details, serviceSpecs);
     }
 
     @Override
@@ -58,12 +62,11 @@ public final class ApplicationStatus {
         if (system != null ? !system.equals(that.system) : that.system != null) return false;
         if (vcs != null ? !vcs.equals(that.vcs) : that.vcs != null) return false;
         if (team != null ? !team.equals(that.team) : that.team != null) return false;
+        if (cluster != null ? !cluster.equals(that.cluster) : that.cluster != null) return false;
         if (status != that.status) return false;
         if (statusDetails != null ? !statusDetails.equals(that.statusDetails) : that.statusDetails != null)
             return false;
-        if (serviceSpecs != null ? !serviceSpecs.equals(that.serviceSpecs) : that.serviceSpecs != null) return false;
-
-        return true;
+        return serviceSpecs != null ? serviceSpecs.equals(that.serviceSpecs) : that.serviceSpecs == null;
     }
 
     @Override
@@ -72,6 +75,7 @@ public final class ApplicationStatus {
         result = 31 * result + (system != null ? system.hashCode() : 0);
         result = 31 * result + (vcs != null ? vcs.hashCode() : 0);
         result = 31 * result + (team != null ? team.hashCode() : 0);
+        result = 31 * result + (cluster != null ? cluster.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (statusDetails != null ? statusDetails.hashCode() : 0);
         result = 31 * result + (serviceSpecs != null ? serviceSpecs.hashCode() : 0);
@@ -85,6 +89,7 @@ public final class ApplicationStatus {
                 ", system=" + system +
                 ", vcs=" + vcs +
                 ", team=" + team +
+                ", cluster=" + cluster +
                 ", status=" + status +
                 ", statusDetails=" + statusDetails +
                 ", serviceSpecs=" + serviceSpecs +

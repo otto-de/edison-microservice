@@ -17,7 +17,7 @@ public class ApplicationStatusTest {
     @Test
     public void shouldHaveStatusOkIfDetailsAreOk() {
         // given
-        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(
+        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(
                 statusDetail("bar", OK, "a message"))
         , emptyList());
         // then
@@ -27,7 +27,7 @@ public class ApplicationStatusTest {
     @Test
     public void shouldHaveStatusWarningIfDetailsContainWarnings() {
         // given
-        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
+        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                 statusDetail("bar", OK, "a message"),
                 statusDetail("foobar", WARNING, "another message")
         ), emptyList());
@@ -38,7 +38,7 @@ public class ApplicationStatusTest {
     @Test
     public void shouldHaveStatusErrorIfDetailsContainWarnings() {
         // given
-        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
+        ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                 statusDetail("bar", OK, "a message"),
                 statusDetail("foobar", ERROR, "another message"),
                 statusDetail("foobar", WARNING, "yet another message")

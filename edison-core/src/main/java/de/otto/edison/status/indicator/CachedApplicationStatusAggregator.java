@@ -18,30 +18,12 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
 
     private volatile ApplicationStatus cachedStatus;
 
-    private final ApplicationInfo applicationInfo;
-    private final SystemInfo systemInfo;
-    private final VersionInfo versionInfo;
-    private final TeamInfo teamInfo;
     private final List<StatusDetailIndicator> indicators;
-    private final List<ServiceSpec> serviceSpecs;
 
-    public CachedApplicationStatusAggregator(final ApplicationInfo applicationInfo,
-                                             final SystemInfo systemInfo,
-                                             final VersionInfo versionInfo,
-                                             final TeamInfo teamInfo,
-                                             final List<StatusDetailIndicator> indicators,
-                                             final List<ServiceSpec> serviceSpecs) {
-        this.applicationInfo = applicationInfo;
-        this.systemInfo = systemInfo;
-        this.versionInfo = versionInfo;
-        this.teamInfo = teamInfo;
+    public CachedApplicationStatusAggregator(final ApplicationStatus applicationStatus,
+                                             final List<StatusDetailIndicator> indicators) {
+        this.cachedStatus = applicationStatus;
         this.indicators = indicators;
-        this.serviceSpecs = serviceSpecs;
-    }
-
-    @PostConstruct
-    public void postConstruct() {
-        update();
     }
 
     @Override
@@ -51,14 +33,17 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
 
     @Override
     public void update() {
-        this.cachedStatus = applicationStatus(applicationInfo, systemInfo, versionInfo, teamInfo, getStatusDetails(indicators), serviceSpecs);
-    }
-
-    private static List<StatusDetail> getStatusDetails(final List<StatusDetailIndicator> indicators) {
-        return indicators
-                    .stream()
-                    .flatMap(i->i.statusDetails().stream())
-                    .collect(toList());
+        cachedStatus = applicationStatus(
+                cachedStatus.application,
+                cachedStatus.cluster,
+                cachedStatus.system,
+                cachedStatus.vcs,
+                cachedStatus.team,
+                indicators
+                        .stream()
+                        .flatMap(i -> i.statusDetails().stream())
+                        .collect(toList()),
+                cachedStatus.serviceSpecs);
     }
 
 }

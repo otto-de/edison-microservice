@@ -1,6 +1,8 @@
 package de.otto.edison.status.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.status.domain.*;
 
 import java.util.LinkedHashMap;
@@ -10,12 +12,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(NON_NULL)
 public class StatusRepresentation {
 
     private static final Pattern STATUS_DETAIL_JSON_SEPARATOR_PATTERN = Pattern.compile("\\s(.)");
 
     public ApplicationRepresentation application;
+    public ClusterInfo cluster;
     public SystemInfo system;
     public TeamInfo team;
     public List<ServiceSpec> serviceSpecs;
@@ -25,6 +31,7 @@ public class StatusRepresentation {
         this.system = applicationStatus.system;
         this.team = applicationStatus.team;
         this.serviceSpecs = applicationStatus.serviceSpecs;
+        this.cluster = applicationStatus.cluster;
     }
 
     public static StatusRepresentation statusRepresentationOf(final ApplicationStatus status) {

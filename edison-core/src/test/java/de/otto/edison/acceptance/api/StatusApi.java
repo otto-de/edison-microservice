@@ -24,6 +24,7 @@ public class StatusApi extends SpringTestBase {
     private final static ObjectMapper objectMapper = new ObjectMapper();
     private static String content = null;
     private static HttpStatus statusCode;
+    private static HttpHeaders requestHeaders = new HttpHeaders();
     private static HttpHeaders responseHeaders;
 
     public static When internal_is_retrieved_as(final String mediaType) throws IOException {
@@ -32,6 +33,12 @@ public class StatusApi extends SpringTestBase {
     }
 
     public static When internal_status_is_retrieved_as(final String mediaType) throws IOException {
+        getResource("http://localhost:8084/testcore/internal/status", of(mediaType));
+        return When.INSTANCE;
+    }
+
+    public static When internal_status_is_retrieved_as(final String mediaType, final HttpHeaders headers) throws IOException {
+        requestHeaders = headers;
         getResource("http://localhost:8084/testcore/internal/status", of(mediaType));
         return When.INSTANCE;
     }
@@ -57,16 +64,16 @@ public class StatusApi extends SpringTestBase {
     }
 
     private static void getResource(final String url, final Optional<String> mediaType) throws IOException {
-        final HttpHeaders headers = new HttpHeaders();
         if (mediaType.isPresent()) {
-            headers.setAccept(asList(parseMediaType(mediaType.get())));
+            requestHeaders.setAccept(asList(parseMediaType(mediaType.get())));
         }
 
         final ResponseEntity<String> responseEntity = restTemplate.exchange(
                 url,
                 GET,
-                new HttpEntity<>("parameters", headers), String.class
+                new HttpEntity<>("parameters", requestHeaders), String.class
         );
+        requestHeaders = new HttpHeaders();
         content = responseEntity.getBody();
         statusCode = responseEntity.getStatusCode();
         responseHeaders = responseEntity.getHeaders();

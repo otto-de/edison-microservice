@@ -16,8 +16,13 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SystemInfoConfiguration.class, PropertyPlaceholderAutoConfiguration.class,
-        ApplicationInfoConfiguration.class, VersionInfoConfiguration.class, TeamInfoConfiguration.class,
+@SpringBootTest(classes = {
+        SystemInfoConfiguration.class,
+        ClusterInfoConfiguration.class,
+        PropertyPlaceholderAutoConfiguration.class,
+        ApplicationInfoConfiguration.class,
+        VersionInfoConfiguration.class,
+        TeamInfoConfiguration.class,
         ApplicationStatusAggregatorConfiguration.class})
 public class ApplicationStatusAggregatorConfigurationTest {
 
@@ -35,6 +40,7 @@ public class ApplicationStatusAggregatorConfigurationTest {
     public void checkOverallStatus() {
         assertThat(status.status, is(OK));
         assertThat(status.application, is(notNullValue()));
+        assertThat(status.cluster, is(notNullValue()));
         assertThat(status.system, is(notNullValue()));
         assertThat(status.vcs, is(notNullValue()));
         assertThat(status.team, is(notNullValue()));
