@@ -1,5 +1,6 @@
 package de.otto.edison.status.configuration;
 
+import de.otto.edison.annotations.Beta;
 import de.otto.edison.status.domain.ClusterInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -12,6 +13,7 @@ import static org.springframework.web.context.request.RequestContextHolder.getRe
 
 @Configuration
 @EnableConfigurationProperties(ClusterInfoProperties.class)
+@Beta
 public class ClusterInfoConfiguration {
 
     private final ClusterInfoProperties clusterInfoProperties;

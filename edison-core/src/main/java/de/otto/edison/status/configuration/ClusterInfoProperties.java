@@ -1,13 +1,13 @@
 package de.otto.edison.status.configuration;
 
+import de.otto.edison.annotations.Beta;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import static java.lang.String.format;
 
 /**
  * Properties used to configure the display of additional status information on /internal/status and /internal/info.
  */
 @ConfigurationProperties(prefix = "edison.status.cluster")
+@Beta
 public class ClusterInfoProperties {
 
     /**

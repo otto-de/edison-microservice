@@ -1,13 +1,14 @@
 package de.otto.edison.status.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import de.otto.edison.annotations.Beta;
 
 import java.util.function.Supplier;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonInclude(NON_NULL)
+@Beta
 public class ClusterInfo {
 
     private final Supplier<String> color;
