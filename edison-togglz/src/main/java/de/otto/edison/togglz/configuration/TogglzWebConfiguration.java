@@ -46,7 +46,7 @@ public class TogglzWebConfiguration {
     @ConditionalOnProperty(name = "edison.togglz.web.console", havingValue = "true", matchIfMissing = true)
     public ServletRegistrationBean togglzServlet(final @Value("${management.context-path:/internal}") String prefix,
                                                  final NavBar rightNavBar) {
-        rightNavBar.register(navBarItem(bottom(), "Feature Toggles", "/internal/toggles/console"));
+        rightNavBar.register(navBarItem(bottom(), "Feature Toggles", prefix + "/toggles/console"));
         return new ServletRegistrationBean(new TogglzConsoleServlet(), prefix + TOGGLES_URL_PATTERN);
     }
 }
