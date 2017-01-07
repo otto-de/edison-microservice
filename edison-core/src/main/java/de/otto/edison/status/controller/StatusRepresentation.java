@@ -1,6 +1,5 @@
 package de.otto.edison.status.controller;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.status.domain.*;
@@ -31,7 +30,7 @@ public class StatusRepresentation {
         this.system = applicationStatus.system;
         this.team = applicationStatus.team;
         this.serviceSpecs = applicationStatus.serviceSpecs;
-        this.cluster = applicationStatus.cluster;
+        this.cluster = applicationStatus.cluster.isEnabled() ? applicationStatus.cluster : null;
     }
 
     public static StatusRepresentation statusRepresentationOf(final ApplicationStatus status) {

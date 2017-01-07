@@ -1,13 +1,14 @@
 package de.otto.edison.status.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.annotations.Beta;
 
 import java.util.function.Supplier;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
-@JsonInclude(NON_NULL)
+@JsonInclude(NON_EMPTY)
 @Beta
 public class ClusterInfo {
 
@@ -30,5 +31,10 @@ public class ClusterInfo {
 
     public String getColorState() {
         return colorState.get();
+    }
+
+    @JsonIgnore
+    public boolean isEnabled() {
+        return !getColor().isEmpty() || !getColorState().isEmpty();
     }
 }
