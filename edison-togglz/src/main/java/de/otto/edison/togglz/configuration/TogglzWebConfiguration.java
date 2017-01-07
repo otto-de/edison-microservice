@@ -17,7 +17,7 @@ import static de.otto.edison.navigation.NavBarItem.bottom;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 
 @Configuration
-@EnableConfigurationProperties(LdapProperties.class)
+@EnableConfigurationProperties(TogglzProperties.class)
 public class TogglzWebConfiguration {
 
     public static final String TOGGLES_URL_PATTERN = "/toggles/console/*";
@@ -32,18 +32,18 @@ public class TogglzWebConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "edison.togglz.ldap-authentication", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "edison.togglz.console.ldap", name = "enabled", havingValue = "true")
     @ConditionalOnMissingBean(name = "togglzAuthenticationFilter")
     public FilterRegistrationBean togglzAuthenticationFilter(final @Value("${management.context-path:/internal}") String prefix,
-                                                             final LdapProperties ldapProperties) {
+                                                             final TogglzProperties togglzProperties) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
-        filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties));
+        filterRegistration.setFilter(new LdapAuthenticationFilter(togglzProperties.getConsole().getLdap()));
         filterRegistration.addUrlPatterns(prefix + TOGGLES_URL_PATTERN);
         return filterRegistration;
     }
 
     @Bean
-    @ConditionalOnProperty(name = "edison.togglz.web.console", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "edison.togglz.console", name = "enabled", havingValue = "true", matchIfMissing = true)
     public ServletRegistrationBean togglzServlet(final @Value("${management.context-path:/internal}") String prefix,
                                                  final NavBar rightNavBar) {
         rightNavBar.register(navBarItem(bottom(), "Feature Toggles", prefix + "/toggles/console"));

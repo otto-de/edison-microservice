@@ -3,7 +3,6 @@ package de.otto.edison.togglz.authentication;
 import com.unboundid.ldap.sdk.*;
 import com.unboundid.ldap.sdk.extensions.StartTLSExtendedRequest;
 import com.unboundid.util.ssl.SSLUtil;
-import de.otto.edison.togglz.configuration.LdapProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +15,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
+import static de.otto.edison.togglz.configuration.TogglzProperties.Console.Ldap;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -24,9 +24,9 @@ public class LdapAuthenticationFilter implements Filter {
 
     private static Logger LOG = LoggerFactory.getLogger(LdapAuthenticationFilter.class);
 
-    private final LdapProperties ldapProperties;
+    private final Ldap ldapProperties;
 
-    public LdapAuthenticationFilter(final LdapProperties ldapProperties) {
+    public LdapAuthenticationFilter(final Ldap ldapProperties) {
         this.ldapProperties = ldapProperties;
     }
 

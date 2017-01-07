@@ -16,6 +16,16 @@ _**Beginning with 1.0.0, we will start using semantic versioning of releases.**_
 * **[edison-core]** Renamed package `de.otto.edison.discovery` to `de.otto.edison.registry`. The `DiscoveryClient` 
 was renamed to `RegistryClient`.
 * **[edison-core]** Properties `edison.servicediscovery.*` renamed to `edison.serviceregistry.*`
+* **[edison-togglz]** Properties of `edison-togglz` including the togglz console and LDAP has changed. 
+The new structure of the properties is like this:
+  * `edison.togglz.cache-ttl=100` cache-ttl for feature toggles
+  * `edison.togglz.console.enabled=true` Enable / Disable Togglz web console
+  * `edison.togglz.console.ldap.enabled=true` Enable LDAP authentication for the web console
+  * `edison.togglz.console.ldap.host=localhost` LDAP host
+  * `edison.togglz.console.ldap.port=389` LDAP port
+  * `edison.togglz.console.ldap.base-dn=test` LDAP base dn
+  * `edison.togglz.console.ldap.rdn-identifier=test` LDAP rdn identifier
+
 * **[edison-guava]** Removed the deprecated module `edison-guava`. This is now replaced by edison-cache.
 * **[edison-cache]** Removed support for property `edison.cache.web.controller.enabled`. Because the main purpose of 
 `edison-cache` is to provide cache statistics as HTML and/or JSON, it makes no sense to deactivate the controller.
@@ -35,10 +45,10 @@ is now case insensitive.
 * **[edison-core]** Introduced `@ConfigurationProperties VersionInfoProperties`
 * **[edison-core]** Introduced ``@ConfigurationProperties ClusterInfoProperties`
 * **[edison-core]** Introduced `@ConfigurationProperties GracefulShutdownProperties`
-* **[edison-core]** Introduced `@ConfigurationProperties LdapProperties`
 * **[edison-core]** Introduced `@ConfigurationProperties MetricsLoadProperties`
 * **[edison-core]** Introduced `@ConfigurationProperties ServiceRegistryProperties`
 * **[edison-core]** Introduced `@ConfigurationProperties MongoProperties`
+* **[edison-core]** Introduced `@ConfigurationProperties ToggzProperties`
 * **[edison-jobs]** `JobEvents` not `@Beta` anymore.
 * **[edison-mongo]** Added auto-configuration for `FeatureRepository` and `JobRepository`
 

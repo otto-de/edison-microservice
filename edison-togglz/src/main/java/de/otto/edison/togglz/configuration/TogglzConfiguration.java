@@ -4,8 +4,8 @@ import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
 import de.otto.edison.togglz.authentication.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.togglz.core.Feature;
@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Configuration
+@EnableConfigurationProperties(TogglzProperties.class)
 public class TogglzConfiguration {
 
     @Bean
@@ -41,14 +42,12 @@ public class TogglzConfiguration {
         };
     }
 
-    @Value("${edison.togglz.cache.ttlMilliseconds:5000}")
-    private long cacheTtlMilliseconds;
-
     @Bean
     @Autowired
     public DefaultTogglzConfig defaultTogglzConfig(final StateRepository stateRepository,
-                                                   final FeatureClassProvider featureClassProvider) {
-        return new DefaultTogglzConfig(cacheTtlMilliseconds, stateRepository, getUserProvider(), featureClassProvider);
+                                                   final FeatureClassProvider featureClassProvider,
+                                                   final TogglzProperties togglzProperties) {
+        return new DefaultTogglzConfig(togglzProperties, stateRepository, getUserProvider(), featureClassProvider);
     }
 
     static enum Features implements Feature {

@@ -1,6 +1,5 @@
 package de.otto.edison.togglz.authentication;
 
-import de.otto.edison.togglz.configuration.LdapProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.Base64Utils;
@@ -11,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static de.otto.edison.togglz.configuration.LdapProperties.*;
-import static org.mockito.Mockito.*;
+import static de.otto.edison.togglz.configuration.TogglzProperties.Console.Ldap.ldapProperties;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
