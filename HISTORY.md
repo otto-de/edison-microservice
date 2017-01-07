@@ -2,36 +2,46 @@
 
 ## Release 1.0.0.RC1 (SNAPSHOT)
 
-Beginning with 1.0.0, we will start using semantic versioning of releases.
+_**Beginning with 1.0.0, we will start using semantic versioning of releases.**_
  
 **Breaking Changes:**
-* **[edison]** Refactored module structure: moved edison-status, edison-health, edison-metrics and edison-microservice 
-into edison-core.
+* **[edison]** Refactored module structure: 
+  * moved `edison-status`, `edison-health`, `edison-metrics`, `edison-microservice` and `èdison-servicediscovery-client`
+    into `edison-core`.
+  * moved `edison-jobs-mongo` into `edison-mongo`
+  * moved `edison-togglz-mongo` into `edison-mongo`
+  * moved `edison-togglz-testsupport` into `edison-testsupport`
 * **[edison]** Removed remaining dependencies to guava library.
-* **[edison]** Graceful shutdown is now disabled by default. Enable it by setting edison.gracefulshutdown.enabled=true.
-* **[edison-testsupport-togglz]** Content of this module was moved to edison-testsupport.
-* **[edison-servicediscovery-client]** Renamed module to edison-serviceregistry-client. Renamed package
-de.otto.edison.discovery to de.otto.edison.registry.
-* **[edison-guava]** Removed the deprecated module edison-guava. This is now replaced by edison-cache.
-* **[edison-cache]** Removed edison.cache.web.controller.enabled. Because the main purpose of edison-cache
-is to provide cache statistics as HTML and/or JSON, it makes no sense to deactivate the controller.
-* **[edison-jobs-mongo]** This library was combined with edison-jobs. Adding and configuring both edison-jobs
-and edison-mongo will use MongoJobRepository as implementation of the JobRepository interface.
-* **[edison-serviceregistry-client]** Contents of this lib was moved to edison-core. The DiscoveryClient was renamed
-to RegistryClient.
-* **[edison-serviceregistry-client]** Properties edison.servicediscovery.* renamed to edison.serviceregistry.*
+* **[edison]** Graceful shutdown is now disabled by default. Enable it by setting `edison.gracefulshutdown.enabled=true`.
+* **[edison-core]** Renamed package `de.otto.edison.discovery` to `de.otto.edison.registry`. The `DiscoveryClient` 
+was renamed to `RegistryClient`.
+* **[edison-core]** Properties `edison.servicediscovery.*` renamed to `edison.serviceregistry.*`
+* **[edison-guava]** Removed the deprecated module `edison-guava`. This is now replaced by edison-cache.
+* **[edison-cache]** Removed support for property `edison.cache.web.controller.enabled`. Because the main purpose of 
+`edison-cache` is to provide cache statistics as HTML and/or JSON, it makes no sense to deactivate the controller.
 
 **Bugfixes:**
-* Fixed broken link from job messages to /jobdefinitions/<jobType>. JobDefinitionService.getJobDefition(jobType)
+* **[edison-jobs]** Fixed broken link from job messages to /jobdefinitions/<jobType>. `JobDefinitionService.getJobDefition(jobType)`
 is now case insensitive.
+* **[edison-mongo]** Using `primaryPreferred` instead of `primary` to increase availability during master election.
 
 **New Features:**
 * **[edison-core]** Added feature to configure the entries of the navigation bar of /internal/* pages. See
-de.otto.edison navigation for details and have a look at the NavigationConfiguration in the examples. 
-* **[edison-core]** Added support to get status information for service that deployed using green/blue deployments.
-* **[edison-jobs]** JobEvents not @Beta anymore.
+`de.otto.edison navigation` for details and have a look at the `NavigationConfiguration` in the examples. 
+* **[edison-core]** Added support to get status information for service that deployed using green/blue deployments. See
+`ClusterInfo`, `ClusterInfoProperties` and `ClusterInfoConfiguration` for details.
+* **[edison-core]** Introduced `@ConfigurationProperties ApplicationInfoProperties`
+* **[edison-core]** Introduced `@ConfigurationProperties TeamInfoProperties`
+* **[edison-core]** Introduced `@ConfigurationProperties VersionInfoProperties`
+* **[edison-core]** Introduced ``@ConfigurationProperties ClusterInfoProperties`
+* **[edison-core]** Introduced `@ConfigurationProperties GracefulShutdownProperties`
+* **[edison-core]** Introduced `@ConfigurationProperties LdapProperties`
+* **[edison-core]** Introduced `@ConfigurationProperties MetricsLoadProperties`
+* **[edison-core]** Introduced `@ConfigurationProperties ServiceRegistryProperties`
+* **[edison-core]** Introduced `@ConfigurationProperties MongoProperties`
+* **[edison-jobs]** `JobEvents` not `@Beta` anymore.
+* **[edison-mongo]** Added auto-configuration for `FeatureRepository` and `JobRepository`
 
-## Release 0.82.1
 ## release 0.82.2
 * ** [edision-mongo] use version of mongo driver to 3.4.1, fongo 2.0.11
 
