@@ -11,7 +11,7 @@ Common basis for some of otto.de's micro-services using Spring Boot.
 ## Status
 
 [![Next Selected Stories](https://badge.waffle.io/otto-de/edison-microservice.svg?label=Ready&title=Selected)](http://waffle.io/otto-de/edison-microservice)
-[![Active Stories](https://badge.waffle.io/otto-de/edison-microservice.svg?label=In Progress&title=Doing)](http://waffle.io/otto-de/edison-microservice)
+[![Active Stories](https://badge.waffle.io/otto-de/edison-microservice.svg?label=In%20Progress&title=Doing)](http://waffle.io/otto-de/edison-microservice)
 
 [![Build Status](https://travis-ci.org/otto-de/edison-microservice.svg)](https://travis-ci.org/otto-de/edison-microservice) 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-service/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-service)
@@ -25,38 +25,31 @@ Have a look at the [release history](HISTORY.md) for details about updates and c
 This project contains a number of independent libraries that may be used to create microservices on top of Spring Boot. The libraries are used in different projects at OTTO. It's purpose is to provide a common implementation for cross-cutting requirements like:
 
 * Health checks that are used to tell the load balancer or mesos platform whether or not a service is healthy.
-* A [Status page/document](https://github.com/otto-de/edison-microservice/tree/master/edison-status) that may be used to give information about the current state of the service. Status information may also include details about sub-components, background jobs like imports, and so on.
+* A [Status page/document](https://github.com/otto-de/edison-microservice/tree/master/edison-core) that may be used to give information about the current state of the service. Status information may also include details about sub-components, background jobs like imports, and so on.
 * A simple job handling library that is used to run asynchronous background jobs, which for example can be used to run data imports from other systems.
 * An optional MongoDB-based implementation of a JobRepository
 * Support for MongoDB-based repositories in case you do not like Spring Data
 * Reporting of metrics to Graphite
-* Support for [Guava caches](https://github.com/otto-de/edison-microservice/tree/master/edison-guava)
-* Logging of messages to Kafka queues
+* Support for [Caffeine caches](https://github.com/otto-de/edison-microservice/tree/master/edison-cache)
 * Support for feature toggles based on the Togglz library
 
 ... plus all the features of [Spring Boot](http://projects.spring.io/spring-boot/).
 
 
 ## Documentation
-* [edison-cache](edison-cache/README.md)
-* [edison-core](edison-core/README.md)
-* [edison-guava](edison-guava/README.md) (deprecated)
-* edison-health
-* [edison-jobs](edison-jobs/README.md)
-* [edison-jobs-mongo](edison-jobs-mongo/README.md)
-* edison-metrics
-* edison-mongo
-* edison-service
-* edison-servicediscovery-client
-* [edison-status](edison-status/README.md)
-* edison-testsupport
-* edison-togglz
-* edison-togglz-mongo
-* edison-togglz-testsupport
+* [edison-core](edison-core/README.md): Main library of Edison Microservices.
+* [edison-cache](edison-cache/README.md): Optional support for Caffeine caches in Edison.
+* [edison-jobs](edison-jobs/README.md): Optional module providing a simple job library.
+* [edison-mongo](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and
+ Togglz StateRepository.
+* edison-togglz: Optional support for feature toggles for Edison Microservices based on togglz.org.
+* edison-serviceregistry-client
+* edison-testsupport: Test support for feature toggles plus some small utilities.
 * example-jobs
-* [example-layout](example-layout/README.md)
 * example-metrics
 * example-status
+* example-togglz
+* example-togglz-mongo
 
 ## Getting started
 
@@ -75,10 +68,9 @@ recommended to first read it's documentation before starting with Edison.
 
 The examples can be started with gradle:
 
-    gradle clean example-jobs:bootRun
-    gradle clean example-metrics:bootRun
-    gradle clean example-status:bootRun
-    gradle clean example-layout:bootRun
+    gradle example-jobs:bootRun
+    gradle example-metrics:bootRun
+    gradle example-status:bootRun
 
 Open in your browser [http://localhost:8080/example/](http://localhost:8080/example/)
 

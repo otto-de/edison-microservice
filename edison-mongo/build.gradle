@@ -7,7 +7,12 @@ dependencies {
     compile libs.jcip
     compile libs.mongoDb
 
+    compileOnly project(":edison-jobs")
+    compileOnly project(":edison-togglz")
+
     testCompile project(":edison-testsupport")
+    testCompile project(":edison-jobs")
+    testCompile project(":edison-togglz")
     testCompile libs.fakeMongo
 }
 
@@ -34,7 +39,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'mongo'
+                name 'edison-mongo'
                 packaging 'jar'
                 description 'Mongo library of the edison-microservice project.'
                 url 'http://github.com/otto-de/edison-microservice'

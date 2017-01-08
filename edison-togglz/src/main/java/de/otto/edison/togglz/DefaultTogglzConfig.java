@@ -1,5 +1,6 @@
 package de.otto.edison.togglz;
 
+import de.otto.edison.togglz.configuration.TogglzProperties;
 import org.togglz.core.Feature;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
@@ -8,15 +9,19 @@ import org.togglz.core.user.UserProvider;
 
 public class DefaultTogglzConfig implements TogglzConfig {
 
-    private StateRepository cachingStateRepository;
+    private StateRepository stateRepository;
     private UserProvider userProvider;
     private FeatureClassProvider featureClassProvider;
 
-    public DefaultTogglzConfig(final long ttlMilliseconds,
+    public DefaultTogglzConfig(final TogglzProperties properties,
                                final StateRepository stateRepository,
                                final UserProvider userProvider,
                                final FeatureClassProvider featureClassProvider) {
-        this.cachingStateRepository = new CachingStateRepository(stateRepository, ttlMilliseconds);
+        if (properties.getCacheTtl() > 0) {
+            this.stateRepository = new CachingStateRepository(stateRepository, properties.getCacheTtl());
+        } else {
+            this.stateRepository = stateRepository;
+        }
         this.userProvider = userProvider;
         this.featureClassProvider = featureClassProvider;
     }
@@ -28,7 +33,7 @@ public class DefaultTogglzConfig implements TogglzConfig {
 
     @Override
     public StateRepository getStateRepository() {
-        return cachingStateRepository;
+        return stateRepository;
     }
 
     @Override

@@ -1,9 +1,11 @@
 package de.otto.edison.togglz.configuration;
 
+import de.otto.edison.navigation.NavBar;
 import de.otto.edison.togglz.authentication.LdapAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +13,11 @@ import org.springframework.context.annotation.Configuration;
 import org.togglz.console.TogglzConsoleServlet;
 import org.togglz.servlet.TogglzFilter;
 
+import static de.otto.edison.navigation.NavBarItem.bottom;
+import static de.otto.edison.navigation.NavBarItem.navBarItem;
+
 @Configuration
+@EnableConfigurationProperties(TogglzProperties.class)
 public class TogglzWebConfiguration {
 
     public static final String TOGGLES_URL_PATTERN = "/toggles/console/*";
@@ -26,24 +32,21 @@ public class TogglzWebConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "edison.togglz", name = "ldap-authentication.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "edison.togglz.console.ldap", name = "enabled", havingValue = "true")
     @ConditionalOnMissingBean(name = "togglzAuthenticationFilter")
-    public FilterRegistrationBean togglzAuthenticationFilter(@Value("${management.context-path:/internal}") String prefix,
-                                                             @Value("${edison.togglz.ldap-authentication.host:}") String host,
-                                                             @Value("${edison.togglz.ldap-authentication.port:389}") int port,
-                                                             @Value("${edison.togglz.ldap-authentication.base-dn:}")
-                                                                     String baseDn,
-                                                             @Value("${edison.togglz.ldap-authentication.rdn-identifier:}")
-                                                                     String rdnIdentifier) {
+    public FilterRegistrationBean togglzAuthenticationFilter(final @Value("${management.context-path:/internal}") String prefix,
+                                                             final TogglzProperties togglzProperties) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
-        filterRegistration.setFilter(new LdapAuthenticationFilter(host, port, baseDn, rdnIdentifier));
+        filterRegistration.setFilter(new LdapAuthenticationFilter(togglzProperties.getConsole().getLdap()));
         filterRegistration.addUrlPatterns(prefix + TOGGLES_URL_PATTERN);
         return filterRegistration;
     }
 
     @Bean
-    @ConditionalOnProperty(name = "edison.togglz.web.console", havingValue = "true", matchIfMissing = true)
-    public ServletRegistrationBean togglzServlet(@Value("${management.context-path:/internal}") String prefix) {
+    @ConditionalOnProperty(prefix = "edison.togglz.console", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public ServletRegistrationBean togglzServlet(final @Value("${management.context-path:/internal}") String prefix,
+                                                 final NavBar rightNavBar) {
+        rightNavBar.register(navBarItem(bottom(), "Feature Toggles", prefix + "/toggles/console"));
         return new ServletRegistrationBean(new TogglzConsoleServlet(), prefix + TOGGLES_URL_PATTERN);
     }
 }

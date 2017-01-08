@@ -9,11 +9,20 @@ buildscript {
 
     repositories {
         maven { url "http://repo.spring.io/libs-snapshot" }
+        maven { url 'http://repo.spring.io/plugins-release' }
         mavenLocal()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:"+springBootVersion)
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
     }
+}
+
+configure(allprojects) {
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'propdeps-eclipse'
 }
 
 repositories {
@@ -24,6 +33,9 @@ repositories {
 idea {
     project {
         languageLevel = '1.8'
+        ipr.withXml { provider ->
+            provider.node.component.find { it.@name == 'VcsDirectoryMappings' }.mapping.@vcs = 'Git'
+        }
     }
 }
 
@@ -51,7 +63,7 @@ subprojects {
     // Minor Release: 0.X.0: Additional Features, updates from minor releases in Spring
     // Micro Release: 0.0.X: Bugfixes, non-breaking changes, updates from micro releases in Spring
     // DO NOT FORGET TO DOCUMENT CHANGES IN HISTORY.MD
-    version = '0.82.3-SNAPSHOT'
+    version = '1.0.0.RC1-SNAPSHOT'
 
     repositories {
         mavenCentral()
@@ -59,6 +71,12 @@ subprojects {
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
+
+    dependencies {
+        optional "org.springframework.boot:spring-boot-configuration-processor:" + springBootVersion
+    }
+
+    compileJava.dependsOn(processResources)
 
     jar {
         manifest.attributes provider: 'gradle'
@@ -87,5 +105,24 @@ subprojects {
 
     task allDeps(type: DependencyReportTask) {}
 
+    idea {
+        module {
+            iml {
+                withXml {
+                    def moduleRoot = it.asNode()
+                    def facetManager = moduleRoot.component.find { component -> component.'@name' == 'FacetManager'}
+                    if (!facetManager) {
+                        facetManager = moduleRoot.appendNode('component', [name: 'FacetManager'])
+                    }
+
+                    def springFacet = facetManager.facet.find { facet -> facet.'@type' == 'Spring' && facet.'@name' == 'Spring' }
+                    if (!springFacet) {
+                        springFacet = facetManager.appendNode('facet', [type: 'Spring', name: 'Spring'])
+                        springFacet.appendNode('configuration')
+                    }
+                }
+            }
+        }
+    }
 }
 

@@ -7,7 +7,6 @@ import net.jcip.annotations.Immutable;
 import org.slf4j.Marker;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
 

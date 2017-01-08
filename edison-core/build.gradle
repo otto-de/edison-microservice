@@ -1,7 +1,19 @@
 
 dependencies {
+    compile libs.springBootWeb
+    compile libs.springBootThymeleaf
+    compile libs.thymeleaf3
+    compile libs.jcip
+    compile libs.logging
+    compile libs.metrics
+    compile libs.metricsSpring
 
+    compileOnly libs.asyncHttp
+
+    testCompile libs.testUnit
+    testCompile libs.asyncHttp
     testCompile project(":edison-testsupport")
+
 
 }
 

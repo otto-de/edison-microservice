@@ -1,15 +1,8 @@
 # edison-microservice:edison-cache
 
-Support for Caffine caches in Edison microservices.
-
-## Status
-
-BETA - work in progress.
-
-## About
+Optional add-on for Edison Microservices, adding support for Caffeine caching statistics. 
 
 Many of otto.de's microservices make use of the [Caffeine](https://github.com/ben-manes/caffeine) cache. 
-Edison-cache is providing some code to integrate the cache statistics of Caffeine caches into the Edison internal pages.
 
 ## Usage
 
@@ -17,11 +10,12 @@ Edison-cache is providing some code to integrate the cache statistics of Caffein
  
 ```gradle
     dependencies {
-        compile "de.otto.edison:edison-service:0.77.0",
-        compile "de.otto.edison:edison-cache:0.77.0"
+        compile "de.otto.edison:edison-cache:1.0.0"
         ...
     }
 ```
+
+This will provided you with a transitive dependency to com.github.ben-manes.caffeine:caffeine:<version>.
  
 *Configure your Caffeine caches*:
 
@@ -56,9 +50,12 @@ Edison-cache is providing some code to integrate the cache statistics of Caffein
     }
 ```
 
-You can access information about your caches via HTTP GET /internal/cacheinfos.
+After configuring at least one CaffeineCacheConfig, you can access information about your caches via 
+HTTP GET /internal/cacheinfos in application/json and text/html format.
+
+The cache information is automatically added to the right navbar (see fragment right.html in edison-core).
 
 ## Examples
 
-Have a look at example-metrics.
+Example-metrics contains an example for edison-cache usage.
 

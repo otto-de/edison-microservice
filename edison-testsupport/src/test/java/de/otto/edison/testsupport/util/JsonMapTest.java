@@ -1,17 +1,13 @@
 package de.otto.edison.testsupport.util;
 
 
-
 import org.junit.Test;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static de.otto.edison.testsupport.util.JsonMap.jsonMapFrom;
@@ -24,7 +20,6 @@ import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.core.StringStartsWith.startsWith;
 
 public class JsonMapTest {
 

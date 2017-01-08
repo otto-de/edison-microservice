@@ -1,6 +1,85 @@
 # Release History
 
-## SNAPSHOT
+## Release 1.0.0.RC1 (SNAPSHOT)
+
+_**Beginning with 1.0.0, we will start using semantic versioning of releases.**_
+ 
+**Breaking Changes:**
+* **[edison]** Refactored module structure: 
+  * moved `edison-status`, `edison-health`, `edison-metrics`, `edison-microservice` and `èdison-servicediscovery-client`
+    into `edison-core`.
+  * moved `edison-jobs-mongo` into `edison-mongo`
+  * moved `edison-togglz-mongo` into `edison-mongo`
+  * moved `edison-togglz-testsupport` into `edison-testsupport`
+* **[edison]** Removed remaining dependencies to guava library.
+* **[edison]** Graceful shutdown is now disabled by default. Enable it by setting `edison.gracefulshutdown.enabled=true`.
+* **[edison-core]** Renamed package `de.otto.edison.discovery` to `de.otto.edison.registry`. The `DiscoveryClient` 
+was renamed to `RegistryClient`.
+* **[edison-core]** Properties `edison.servicediscovery.*` renamed to `edison.serviceregistry.*`
+* **[edison-togglz]** Properties of `edison-togglz` including the togglz console and LDAP has changed. 
+The new structure of the properties is like this:
+  * `edison.togglz.cache-ttl=100` cache-ttl for feature toggles
+  * `edison.togglz.console.enabled=true` Enable / Disable Togglz web console
+  * `edison.togglz.console.ldap.enabled=true` Enable LDAP authentication for the web console
+  * `edison.togglz.console.ldap.host=localhost` LDAP host
+  * `edison.togglz.console.ldap.port=389` LDAP port
+  * `edison.togglz.console.ldap.base-dn=test` LDAP base dn
+  * `edison.togglz.console.ldap.rdn-identifier=test` LDAP rdn identifier
+* **[edison-guava]** Removed the deprecated module `edison-guava`. This is now replaced by edison-cache.
+* **[edison-cache]** Removed support for property `edison.cache.web.controller.enabled`. Because the main purpose of 
+`edison-cache` is to provide cache statistics as HTML and/or JSON, it makes no sense to deactivate the controller.
+* **[edison-jobs]** Refactored `JobStatusDetailIndicator` to use a configurable `JobStatusCalculator` to map failed 
+jobs to `StatusDetails`. 
+
+  The application property `edison.jobs.status.calculator.default` is used to select one of the following 
+  calculator strategies:
+  * `warningOnLastJobFailed` the default, if nothing is configured. Reports a failed job as `Status.WARNING`
+  * `errorOnLastJobFailed` Reports a failed job as `Status.ERROR`
+  * `errorOnLastThreeJobsFailed` Reports a failed job as `Status.WARNING`, or `Status.ERROR` if the last three jobs 
+  were failing. 
+  * `errorOnLastTenJobsFailed` Reports a failed job as `Status.WARNING`, or `Status.ERROR` if the last ten jobs 
+  were failing. 
+* **[edison-jobs]** Renamed `edison.jobs.*` properties:
+  * `edison.jobs.web.controller.enabled:true` -> `edison.jobs.external-trigger:true`
+  * `edison.jobs.scheduler.thread-count:10` -> `edison.jobs.thread-count:10`
+* **[edison-jobs]** The previous, now unsupported property `edison.jobs.status.indicate-joberror-with-level:ERROR` 
+is replaced by setting  `edison.jobs.status.calculator.default=errorOnLastJobFailed`.
+* **[edison-jobs]** The new property-map `edison.jobs.status.calculator:` is used to configure the new 
+JobStatusCalculator strategies (see above) for single job types (-> `JobDefinition.jobType()`). The job types are
+case-insensitive, blanks are converted to `-`. 
+  
+  **Example**: A job type named `Delta Import` should use `errorOnLastThreeJobsFailed`, while all other jobs 
+  should use `errorOnLastJobFailed`:
+   * `edison.jobs.status.calculator.default = errorOnLastJobFailed`
+   * `edison.jobs.status.calculator.delta-import = errorOnLastThreeJobsFailed`
+
+**Bugfixes:**
+* **[edison-jobs]** Fixed broken link from job messages to /jobdefinitions/<jobType>. `JobDefinitionService.getJobDefition(jobType)`
+is now case insensitive.
+* **[edison-mongo]** Using `primaryPreferred` instead of `primary` to increase availability during master election.
+
+**New Features:**
+* **[edison-core]** Added feature to configure the entries of the navigation bar of /internal/* pages. See
+`de.otto.edison navigation` for details and have a look at the `NavigationConfiguration` in the examples. 
+* **[edison-core]** Added support to get status information for service that deployed using green/blue deployments. See
+`ClusterInfo`, `ClusterInfoProperties` and `ClusterInfoConfiguration` for details.
+* **[edison-core]** Introduced `@ConfigurationProperties and annotation-processor to provide auto-completion
+ in application.property files.
+  * ApplicationInfoProperties`
+  * `TeamInfoProperties`
+  * `VersionInfoProperties`
+  * `ClusterInfoProperties`
+  * `GracefulShutdownProperties`
+  * `MetricsLoadProperties`
+  * `ServiceRegistryProperties`
+  * `MongoProperties`
+  * `ToggzProperties`
+  * `JobsProperties`
+* **[edison-jobs]** `JobEvents` not `@Beta` anymore.
+* **[edison-mongo]** Added auto-configuration for `FeatureRepository` and `JobRepository`
+
+## release 0.82.2
+* ** [edision-mongo] use version of mongo driver to 3.4.1, fongo 2.0.11
 
 ## release 0.82.2
 * ** [edision-mongo] use version of mongo driver to 3.4.1, fongo 2.0.11
@@ -8,22 +87,22 @@
 ## release 0.82.1
 * **[edison-jobs]** add _primaryPreferred_ for jobRepository to avoid data loss while updating a jobState 
 
-## release 0.82.0
+## Release 0.82.0
 * **[edison-jobs]** Show only latest 10 jobs in Job Overview by default
 
-## release 0.81.0
+## Release 0.81.0
 * **[edison-mongo]** Allow configuration of mongo read preference by setting the property `edison.mongo.readPreference`. The default configuration is primary.
 
-## release 0.80.0
+## Release 0.80.0
 * **[edison-service]** Make edison-service independent of other edison packages
   - This might break your build because you did not write your project dependencies explicitly in
     your build script. Just add the missing edison packages and everything will be fine.
 * **[edison-cache]** Allow CacheInfoController to be disabled
 
-## release 0.79.3
+## Release 0.79.3
 * **[edison-cache]** Allow registering custom built caches via `CacheRegistry` to gather cache metrics
 
-## release 0.79.2
+## Release 0.79.2
 * **[edison-mongo]** Bugfix: AbstractMongoRepository does not accept null as ID of objects anymore.
 
 ## Release 0.79.1

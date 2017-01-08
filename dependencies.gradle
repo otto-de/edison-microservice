@@ -11,14 +11,12 @@ ext.libs = [
                 "org.springframework.boot:spring-boot-starter-actuator:" + springBootVersion],
         springBootThymeleaf:
                 "org.springframework.boot:spring-boot-starter-thymeleaf:" + springBootVersion,
-        bootstrap:
-                "org.webjars:bootstrap:3.3.6",
         asyncHttp:
                 "com.ning:async-http-client:1.9.40",
         jcip: [
                 "net.jcip:jcip-annotations:1.0"],
         logging: [
-                "ch.qos.logback:logback-classic:1.1.6"],
+                "ch.qos.logback:logback-classic:1.1.7"],
         metrics: [
                 "io.dropwizard.metrics:metrics-annotation:3.1.2",
                 "io.dropwizard.metrics:metrics-core:3.1.2",
@@ -36,12 +34,12 @@ ext.libs = [
                 "junit:junit:4.12",
                 "org.hamcrest:hamcrest-core:1.3",
                 "org.hamcrest:hamcrest-library:1.3",
-                "org.mockito:mockito-core:1.10.19",
+                "org.mockito:mockito-core:1.10.19", /* Can not update to current 2.2.28 release because of Spring is still depending on this version... */
                 "org.springframework:spring-test:" + springVersion,
                 "org.springframework.boot:spring-boot-starter-test:" + springBootVersion
         ],
         skyscreamer: [
-                "org.skyscreamer:jsonassert:1.3.0"
+                "org.skyscreamer:jsonassert:1.4.0"
         ],
         servlet:
                 "javax.servlet:javax.servlet-api:3.1.0",
@@ -55,8 +53,6 @@ ext.libs = [
                 "org.mongodb:mongodb-driver:3.4.1"],
         fakeMongo:
                 "com.github.fakemongo:fongo:2.0.11",
-        guava:
-                "com.google.guava:guava:20.0",
         caffeine:
                 "com.github.ben-manes.caffeine:caffeine:2.3.5",
         jaywayJsonPath:

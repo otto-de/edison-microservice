@@ -61,10 +61,6 @@ public abstract class AbstractMongoRepository<K, V> {
                 .map(this::decode);
     }
 
-    /**
-     * @deprecated Use {@link #findAllAsStream()} instead and collect the stream
-     */
-    @Deprecated
     public List<V> findAll() {
         return findAllAsStream().collect(toList());
     }
@@ -78,10 +74,6 @@ public abstract class AbstractMongoRepository<K, V> {
                 .map(this::decode);
     }
 
-    /**
-     * @deprecated Use {@link #findAllAsStream(int, int)} instead and collect the stream
-     */
-    @Deprecated
     public List<V> findAll(final int skip, final int limit) {
         return findAllAsStream(skip, limit).collect(toList());
     }

@@ -1,0 +1,21 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    compile project(":edison-togglz")
+//    compile project(":edison-togglz-mongo")
+//    compile libs.fakeMongo
+//    compile project(":edison-mongo")
+
+    testCompile project(":edison-testsupport")
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+

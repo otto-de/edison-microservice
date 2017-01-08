@@ -1,29 +1,11 @@
 package de.otto.edison.jobs.controller;
 
-import static java.util.stream.Collectors.toList;
-
-import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
-
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
-import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.service.JobService;
+import de.otto.edison.navigation.NavBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,26 +14,37 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.service.JobService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
+import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
+import static de.otto.edison.navigation.NavBarItem.navBarItem;
+import static java.util.stream.Collectors.toList;
+import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@ConditionalOnProperty(name = "edison.jobs.web.controller.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "edison.jobs", name = "external-trigger", havingValue = "true", matchIfMissing = true)
 public class JobsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsController.class);
 
+    private final JobService jobService;
+
+
     @Autowired
-    private JobService jobService;
-    @Value("${server.context-path}")
-    private String serverContextPath;
-
-
-    public JobsController() {
-    }
-
-    JobsController(final JobService jobService) {
+    JobsController(final JobService jobService,
+                   final NavBar rightNavBar) {
         this.jobService = jobService;
+        rightNavBar.register(navBarItem(10, "Job Overview", "/internal/jobs"));
     }
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")

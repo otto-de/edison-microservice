@@ -6,7 +6,6 @@ dependencies {
     compile libs.asyncHttp
 
     compile project(":edison-core")
-    compile project(":edison-status")
 
     testCompile project(":edison-testsupport")
     testCompile libs.jaywayJsonPath
@@ -37,7 +36,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'jobs'
+                name 'edison-jobs'
                 packaging 'jar'
                 description 'Jobs library of the edison-microservice project.'
                 url 'http://github.com/otto-de/edison-microservice'

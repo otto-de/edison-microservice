@@ -1,9 +1,9 @@
 package de.otto.edison.cache.controller;
 
 import de.otto.edison.cache.configuration.CaffeineCacheConfig;
+import org.junit.Test;
 import org.springframework.boot.actuate.endpoint.CachePublicMetrics;
 import org.springframework.boot.actuate.metrics.Metric;
-import org.junit.Test;
 
 import java.util.Collections;
 import java.util.Map;

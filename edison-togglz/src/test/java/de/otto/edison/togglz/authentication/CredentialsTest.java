@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.springframework.util.Base64Utils;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;

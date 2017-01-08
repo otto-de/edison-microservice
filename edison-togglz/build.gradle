@@ -9,7 +9,6 @@ dependencies {
 
     testCompile libs.testUnit
     testCompile project(":edison-testsupport")
-    testCompile project(":edison-togglz-testsupport")
 }
 
 artifacts {
@@ -35,9 +34,9 @@ uploadArchives {
             }
 
             pom.project {
-                name 'togglz'
+                name 'edison-togglz'
                 packaging 'jar'
-                description 'Status library of the edison-microservice project.'
+                description 'Feature toggles for Edison Microservices.'
                 url 'http://github.com/otto-de/edison-microservice'
 
                 scm {

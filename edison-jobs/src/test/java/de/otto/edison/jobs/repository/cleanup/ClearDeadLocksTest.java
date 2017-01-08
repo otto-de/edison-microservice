@@ -3,9 +3,9 @@ package de.otto.edison.jobs.repository.cleanup;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobRepository;
-import org.mockito.Mock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -15,9 +15,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ClearDeadLocksTest {

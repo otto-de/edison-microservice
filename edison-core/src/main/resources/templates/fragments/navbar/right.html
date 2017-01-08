@@ -2,9 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 
-                <ul class="nav navbar-nav navbar-right" th:with="url=${#httpServletRequest.getRequestURI()}" th:fragment="right">
-                    <li th:classappend="${url.endsWith('/internal') ? 'active' : ''}"><a th:href="@{/internal}">Admin</a></li>
-                </ul>
+<ul class="nav navbar-nav navbar-right" th:with="url=${#httpServletRequest.getRequestURI()}" th:fragment="right">
+    <!--li th:classappend="${url.endsWith('/internal') ? 'active' : ''}"><a th:href="@{/internal}">Admin</a></li-->
+    <li role="presentation" class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            Admin <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li th:each="item : ${@rightNavBar.items}">
+                <a th:href="@{${item.link}}" th:text="${item.title}" />
+            </li>
+            <li role="separator" class="divider"></li>
+            <li><a th:href="@{/internal/health}">health</a></li>
+            <li><a th:href="@{/internal/metrics}">metrics</a></li>
+            <li><a th:href="@{/internal/trace}">trace</a></li>
+            <li><a th:href="@{/internal/dump}">dump</a></li>
+            <li><a th:href="@{/internal/info}">info</a></li>
+            <li><a th:href="@{/internal/mappings}">mappings</a></li>
+            <li><a th:href="@{/internal/autoconfig}">autoconfig</a></li>
+            <li><a th:href="@{/internal/env}">env</a></li>
+            <li><a th:href="@{/internal/beans}">beans</a></li>
+        </ul>
+    </li>
+</ul>
 
 </body>
 </html>

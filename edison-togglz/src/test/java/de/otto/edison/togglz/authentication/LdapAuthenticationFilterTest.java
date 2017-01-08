@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.mockito.Mockito.*;
+import static de.otto.edison.togglz.configuration.TogglzProperties.Console.Ldap.ldapProperties;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -22,25 +25,25 @@ public class LdapAuthenticationFilterTest {
 
     @Before
     public void setUp() throws Exception {
-        testee = new LdapAuthenticationFilter("someHost", 389, "someBaseDn", "someRdnIdentifier");
+        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, "someBaseDn", "someRdnIdentifier"));
         response = mock(HttpServletResponse.class);
     }
 
     @Test
     public void shouldBeUnauthenticatedIfHostIsNotConfigured() throws Exception {
-        testee = new LdapAuthenticationFilter("", 389, "someBaseDn", "someRdnIdentifier");
+        testee = new LdapAuthenticationFilter(ldapProperties("", 389, "someBaseDn", "someRdnIdentifier"));
         assertValidRequestIsUnauthorized();
     }
 
     @Test
     public void shouldBeUnauthenticatedIfBaseDnIsNotConfigured() throws Exception {
-        testee = new LdapAuthenticationFilter("someHost", 389, "", "someRdnIdentifier");
+        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, "", "someRdnIdentifier"));
         assertValidRequestIsUnauthorized();
     }
 
     @Test
     public void shouldBeUnauthenticatedIfRdnIdentifierIsNotConfigured() throws Exception {
-        testee = new LdapAuthenticationFilter("someHost", 389, "someBaseDn", "");
+        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, "someBaseDn", ""));
         assertValidRequestIsUnauthorized();
     }
 

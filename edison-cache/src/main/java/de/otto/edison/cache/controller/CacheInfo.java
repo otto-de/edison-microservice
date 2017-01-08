@@ -1,6 +1,5 @@
 package de.otto.edison.cache.controller;
 
-import de.otto.edison.annotations.Beta;
 import de.otto.edison.cache.configuration.CaffeineCacheConfig;
 
 import java.util.LinkedHashMap;
@@ -11,7 +10,6 @@ import java.util.Map;
  *
  * @since 0.76.0
  */
-@Beta
 public final class CacheInfo {
 
     private final String name;
