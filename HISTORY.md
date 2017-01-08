@@ -1,6 +1,8 @@
 # Release History
 
-## Release 1.0.0.RC1 (SNAPSHOT)
+## Release 1.0.0.RC1
+
+First Release Candidate for Edison 1.0.0.
 
 _**Beginning with 1.0.0, we will start using semantic versioning of releases.**_
  

@@ -58,12 +58,16 @@ subprojects {
     apply plugin: 'project-report'
     apply plugin: 'signing'
 
-    group = 'de.otto.edison'
-    // Major Release: X.0.0: Breaking Changes
+
+    // Major Release: X.0.0: Breaking Changes. Should be avoided if possible, or planned for future release.
     // Minor Release: 0.X.0: Additional Features, updates from minor releases in Spring
     // Micro Release: 0.0.X: Bugfixes, non-breaking changes, updates from micro releases in Spring
+    //
     // DO NOT FORGET TO DOCUMENT CHANGES IN HISTORY.MD
-    version = '1.0.0.RC1-SNAPSHOT'
+    //
+    // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
+    version = '1.0.0.RC1'
+    group = 'de.otto.edison'
 
     repositories {
         mavenCentral()
