@@ -5,7 +5,9 @@
 First Release Candidate for Edison 1.0.0.
 
 _**Beginning with 1.0.0, we will start using semantic versioning of releases.**_
- 
+
+_Because a couple of modules have been removed in this release, you should probably delete your existing project and clone the current version from scratch_
+
 **Breaking Changes:**
 * **[edison]** Refactored module structure: 
   * moved `edison-status`, `edison-health`, `edison-metrics`, `edison-microservice` and `èdison-servicediscovery-client`
