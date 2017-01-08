@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -46,7 +47,12 @@ public class JobsConfiguration {
         this.jobsProperties = jobsProperties;
         final Map<String, String> calculator = this.jobsProperties.getStatus().getCalculator();
         if (!calculator.containsKey("default")) {
-            calculator.put("default", "warningOnLastJobFailed");
+            this.jobsProperties.getStatus().setCalculator(
+                    new HashMap<String,String>() {{
+                        putAll(calculator);
+                        put("default", "warningOnLastJobFailed");
+                    }}
+            );
         }
     }
 
@@ -118,17 +124,18 @@ public class JobsConfiguration {
     private JobStatusCalculator findJobStatusCalculator(final String jobType,
                                                         final List<JobStatusCalculator> calculators) {
         final Map<String, String> statusCalculators = jobsProperties.getStatus().getCalculator();
-        final String key;
-        if (statusCalculators.containsKey(jobType)) {
-            key = statusCalculators.get(jobType);
+        final String calculator;
+        final String normalizedJobType = jobType.toLowerCase().replace(" ", "-");
+        if (statusCalculators.containsKey(normalizedJobType)) {
+            calculator = statusCalculators.get(normalizedJobType);
         } else {
-            key = statusCalculators.get("default");
+            calculator = statusCalculators.get("default");
         }
         return calculators
                 .stream()
-                .filter(c -> key.equalsIgnoreCase(c.getKey()))
+                .filter(c -> calculator.equalsIgnoreCase(c.getKey()))
                 .findAny()
-                .orElseThrow(() -> new IllegalStateException("Unable to find JobStatusCalculator " + key));
+                .orElseThrow(() -> new IllegalStateException("Unable to find JobStatusCalculator " + calculator));
     }
 
 }

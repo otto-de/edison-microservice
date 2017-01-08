@@ -1,10 +1,11 @@
 package de.otto.edison.jobs.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Configuration properties used to configure the behaviour of module edison-jobs.
@@ -13,9 +14,13 @@ import java.util.Map;
  */
 @ConfigurationProperties(prefix = "edison.jobs")
 public class JobsProperties {
+    /** Enables / disabled the support for external triggers (->Edison JobTrigger). If false, the job controllers are not available. */
     private boolean externalTrigger = true;
+    /** Number of threads available to run jobs. */
     private int threadCount = 10;
+    /** Properties used to configure clean-up strategies. */
     private Cleanup cleanup = new Cleanup();
+    /** Properties used to configure the reporting of job status using StatusDetailIndicators. */
     private Status status = new Status();
 
     public boolean isExternalTrigger() {
@@ -72,9 +77,11 @@ public class JobsProperties {
     }
 
     public static class Status {
+        /** Enable / disable StatusDetailIndicators for jobs. */
         private boolean enabled = true;
 
-        @NestedConfigurationProperty
+        /** Configuration of the strategy used to map job state to StatusDetails. edison.jobs.status.calculator.default
+         * is used to configure the default strategy. */
         private Map<String,String> calculator = new HashMap<>();
 
         public boolean isEnabled() {
@@ -86,7 +93,12 @@ public class JobsProperties {
         }
 
         public Map<String, String> getCalculator() {
-            return calculator;
+            final Map<String, String> normalized = new HashMap<>();
+            calculator.entrySet().forEach(entry -> {
+                String key = entry.getKey().toLowerCase().replace(" ", "-");
+                normalized.put(key, entry.getValue());
+            });
+            return unmodifiableMap(normalized);
         }
 
         public void setCalculator(Map<String, String> calculator) {

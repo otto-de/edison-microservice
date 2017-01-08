@@ -9,6 +9,8 @@ import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.junit.Test;
 
+import java.util.HashMap;
+
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static de.otto.edison.status.domain.Status.OK;
 import static java.time.Duration.ofSeconds;
@@ -84,7 +86,9 @@ public class JobsConfigurationTest {
     public void shouldUseConfiguredJobStatusDetailIndicator() {
         // given
         final JobsProperties jobsProperties = new JobsProperties();
-        jobsProperties.getStatus().getCalculator().put("test", "errorOnLastJobFailed");
+        jobsProperties.getStatus().setCalculator(new HashMap<String, String>(){{
+            put("test", "errorOnLastJobFailed");
+        }});
 
         final JobsConfiguration jobConfiguration = new JobsConfiguration(jobsProperties);
 
@@ -102,15 +106,44 @@ public class JobsConfigurationTest {
         verify(testCalculator).statusDetail(any(JobDefinition.class));
     }
 
+    @Test
+    public void shouldNormalizeJobTypesInConfiguredJobStatusDetailIndicators() {
+        // given
+        final JobsProperties jobsProperties = new JobsProperties();
+        jobsProperties.getStatus().setCalculator(new HashMap<String, String>(){{
+            put("soMe-TeSt job", "errorOnLastJobFailed");
+        }});
+
+        final JobsConfiguration jobConfiguration = new JobsConfiguration(jobsProperties);
+
+        final JobStatusCalculator defaultCalculator = mock(JobStatusCalculator.class);
+        when(defaultCalculator.getKey()).thenReturn("warningOnLastJobFailed");
+
+        final JobStatusCalculator testCalculator = mock(JobStatusCalculator.class);
+        when(testCalculator.getKey()).thenReturn("errorOnLastJobFailed");
+
+        final JobDefinitionService jobDefinitionService = mock(JobDefinitionService.class);
+        when(jobDefinitionService.getJobDefinitions()).thenReturn(singletonList(
+                someJobDefinition("Some Test Job"))
+        );
+
+        // when
+        jobConfiguration.jobStatusDetailIndicator(
+                jobDefinitionService, asList(defaultCalculator, testCalculator)).statusDetail();
+
+        // then
+        verify(testCalculator).statusDetail(any(JobDefinition.class));
+    }
+
     private JobDefinitionService someJobDefinitionService() {
         final JobDefinitionService jobDefinitionService = mock(JobDefinitionService.class);
-        when(jobDefinitionService.getJobDefinitions()).thenReturn(singletonList(someJobDefinition()));
+        when(jobDefinitionService.getJobDefinitions()).thenReturn(singletonList(someJobDefinition("test")));
         return jobDefinitionService;
     }
 
-    private DefaultJobDefinition someJobDefinition() {
+    private DefaultJobDefinition someJobDefinition(final String jobType) {
         return fixedDelayJobDefinition(
-                "test",
+                jobType,
                 "test",
                 "",
                 ofSeconds(10),
