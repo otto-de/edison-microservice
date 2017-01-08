@@ -93,16 +93,16 @@ public class JobsProperties {
         }
 
         public Map<String, String> getCalculator() {
+            return calculator;
+        }
+
+        public void setCalculator(final Map<String, String> calculator) {
             final Map<String, String> normalized = new HashMap<>();
             calculator.entrySet().forEach(entry -> {
                 String key = entry.getKey().toLowerCase().replace(" ", "-");
                 normalized.put(key, entry.getValue());
             });
-            return unmodifiableMap(normalized);
-        }
-
-        public void setCalculator(Map<String, String> calculator) {
-            this.calculator = calculator;
+            this.calculator = normalized;
         }
     }
 }

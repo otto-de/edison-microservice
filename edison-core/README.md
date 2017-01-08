@@ -10,6 +10,31 @@ of internal pages of Edison Microservices.
 You can replace fragments of these pages by copying + modifying these fragments. For example, you can add
 menu items to the main menu by overriding templates/fragments/navbar/main.html.
 
+## 1.1 Customizing the Service Name
+
+The main navigation of /internal pages contains the Name of the Edison service. The name can be configured
+by setting `edison.status.application.title` in the application properties.
+
+## 1.2 Customizing menu itemsf
+
+Beside of replacing fragment HTMLs, it is easy to add more menu items to the navigation of /internal pages using
+the two `NavBar` beans configured in the `NavBarConfiguration`:
+* **`mainNavBar`:** Spring that is used to configure the main navigation bar at the top.
+* **`rightNavBar`:** Spring that is used to configure the "Admin" navigation bar at the right side of the menu.
+ 
+The NavBars can be configured like this:
+```java
+@Component
+class MyClass {
+    @Autowired NavBar mainNavBar;
+    
+    @PostConstruct
+    public void postConstruct() {
+        mainNavBar.register(navBarItem(bottom(), "Cache Statistics", "/internal/cacheinfos"));
+    }
+}
+```
+
 # 2. de.otto.edison.health
 
 The health package is relying on Spring Boot HealthIndicators, but with a slightly different focus. While
@@ -17,29 +42,57 @@ The health package is relying on Spring Boot HealthIndicators, but with a slight
 In contrast to Spring Boot, Edison is using health to indicate that a single instance of a service is healthy
 or unhealthy. Load Balancers are using health checks to determine, whether or not a service should get load, or not.
 
-## 2.1
+## 2.1 Endpoint /internal/health  
+
+The /internal/health endpoint is used by load balancers to identify if a service
+is able to handle requests. It responds with HTTP 200, if the service is available,
+or with some HTTP server error (5xx), if not.
+
+The response body contains health information from the different HealthIndicators
+(see next section):
+
+```
+GET /internal/health
+```
+Response Body:
+```
+{
+    "status": "UP",
+    "application": {
+        "status": "UP"
+    }
+}
+```
+## 2.2 Health Indicators
 
 ApplicationHealthIndicator is a bean that is used to signal application health for /internal/health.
 
-`java
-@Autowired ApplicationHealthIndicator healthIndicator;
+```java
+@Component
+class MyClass {
+    @Autowired 
+    final ApplicationHealthIndicator healthIndicator;
 
-...
-void someMethod() {
-    try {
-    
-    } catch (final Error err) {    
-        healthIndicator
-                .indicateHealth(down()
-                .withException(err)
-                .build());
+    public void someMethod() {
+        try {
+            doSomething();
+        } catch (final Error err) {    
+            healthIndicator.indicateHealth(
+                    down().withException(err).build()
+            );
+        }
     }
 }
-`
+```
  The health check is used by load balancers and/or clients to determine, which service is currently 
  able to handle requests.
 
-## 2.2 Graceful Shutdown
+## 2.3 Adding more Health Indicators
+
+All available `HealthIndicator` beans are automatically used to determine the current application health. The 
+`/internal/health` endpoint is returning information for all registered health indicators. 
+
+## 2.3 Graceful Shutdown
 
 Graceful shutdown is a feature that helps to shutdown services without interrupting client requests in execution.
 After getting a signal to shutdown the service, there are two phases:
@@ -68,7 +121,7 @@ The /internal/status API contains information about the application status:
 (see `de.otto.edison.status.indicator.StatusDetailIndicator`)
 * A possibility to add information about required services (see `de.otto.edison.about.spec.ServiceSpec`)
 
-## 3.2 Usage
+## 3.1 Usage
 
 The example-status shows how to use and configure the status library.
 1. Add a dependency to edison-status (or directly add a dependency to edison-service)
@@ -77,6 +130,11 @@ The example-status shows how to use and configure the status library.
 be automatically added to the status details section of the status page / JSON document.
 4. Optionally override the behaviour of the StatusAggregator and/or schedulers (see 'Conditional Spring Beans'). This
 should generally not be necessary.
+
+## 3.2 /internal/status
+
+
+
 
 ## 3.3 Environment Properties
 
