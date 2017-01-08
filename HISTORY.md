@@ -29,16 +29,29 @@ The new structure of the properties is like this:
 * **[edison-cache]** Removed support for property `edison.cache.web.controller.enabled`. Because the main purpose of 
 `edison-cache` is to provide cache statistics as HTML and/or JSON, it makes no sense to deactivate the controller.
 * **[edison-jobs]** Refactored `JobStatusDetailIndicator` to use a configurable `JobStatusCalculator` to map failed 
-jobs to `StatusDetails`. The application property `edison.jobs.status.calculator.default` is used
-to select one of the following calculator strategies:
+jobs to `StatusDetails`. 
+
+  The application property `edison.jobs.status.calculator.default` is used to select one of the following 
+  calculator strategies:
   * `warningOnLastJobFailed` the default, if nothing is configured. Reports a failed job as `Status.WARNING`
   * `errorOnLastJobFailed` Reports a failed job as `Status.ERROR`
   * `errorOnLastThreeJobsFailed` Reports a failed job as `Status.WARNING`, or `Status.ERROR` if the last three jobs 
   were failing. 
   * `errorOnLastTenJobsFailed` Reports a failed job as `Status.WARNING`, or `Status.ERROR` if the last ten jobs 
   were failing. 
+* **[edison-jobs]** Renamed `edison.jobs.*` properties:
+  * `edison.jobs.web.controller.enabled:true` -> `edison.jobs.external-trigger:true`
+  * `edison.jobs.scheduler.thread-count:10` -> `edison.jobs.thread-count:10`
 * **[edison-jobs]** The previous, now unsupported property `edison.jobs.status.indicate-joberror-with-level:ERROR` 
-is replaced by setting  `edison.jobs.status.calculator.default:errorOnLastJobFailed`.
+is replaced by setting  `edison.jobs.status.calculator.default=errorOnLastJobFailed`.
+* **[edison-jobs]** The new property-map `edison.jobs.status.calculator:` is used to configure the new 
+JobStatusCalculator strategies (see above) for single job types (-> `JobDefinition.jobType()`). The job types are
+case-insensitive, blanks are converted to `-`. 
+  
+  **Example**: A job type named `Delta Import` should use `errorOnLastThreeJobsFailed`, while all other jobs 
+  should use `errorOnLastJobFailed`:
+   * `edison.jobs.status.calculator.default = errorOnLastJobFailed`
+   * `edison.jobs.status.calculator.delta-import = errorOnLastThreeJobsFailed`
 
 **Bugfixes:**
 * **[edison-jobs]** Fixed broken link from job messages to /jobdefinitions/<jobType>. `JobDefinitionService.getJobDefition(jobType)`
@@ -50,15 +63,18 @@ is now case insensitive.
 `de.otto.edison navigation` for details and have a look at the `NavigationConfiguration` in the examples. 
 * **[edison-core]** Added support to get status information for service that deployed using green/blue deployments. See
 `ClusterInfo`, `ClusterInfoProperties` and `ClusterInfoConfiguration` for details.
-* **[edison-core]** Introduced `@ConfigurationProperties ApplicationInfoProperties`
-* **[edison-core]** Introduced `@ConfigurationProperties TeamInfoProperties`
-* **[edison-core]** Introduced `@ConfigurationProperties VersionInfoProperties`
-* **[edison-core]** Introduced ``@ConfigurationProperties ClusterInfoProperties`
-* **[edison-core]** Introduced `@ConfigurationProperties GracefulShutdownProperties`
-* **[edison-core]** Introduced `@ConfigurationProperties MetricsLoadProperties`
-* **[edison-core]** Introduced `@ConfigurationProperties ServiceRegistryProperties`
-* **[edison-core]** Introduced `@ConfigurationProperties MongoProperties`
-* **[edison-core]** Introduced `@ConfigurationProperties ToggzProperties`
+* **[edison-core]** Introduced `@ConfigurationProperties and annotation-processor to provide auto-completion
+ in application.property files.
+  * ApplicationInfoProperties`
+  * `TeamInfoProperties`
+  * `VersionInfoProperties`
+  * `ClusterInfoProperties`
+  * `GracefulShutdownProperties`
+  * `MetricsLoadProperties`
+  * `ServiceRegistryProperties`
+  * `MongoProperties`
+  * `ToggzProperties`
+  * `JobsProperties`
 * **[edison-jobs]** `JobEvents` not `@Beta` anymore.
 * **[edison-mongo]** Added auto-configuration for `FeatureRepository` and `JobRepository`
 

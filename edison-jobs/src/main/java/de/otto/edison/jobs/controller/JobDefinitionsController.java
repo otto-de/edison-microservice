@@ -28,7 +28,7 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@ConditionalOnProperty(name = "edison.jobs.web.controller.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "edison.jobs", name = "external-trigger", havingValue = "true", matchIfMissing = true)
 public class JobDefinitionsController {
 
     public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";

@@ -14,15 +14,17 @@ import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
@@ -32,30 +34,26 @@ import static java.util.stream.Collectors.toList;
 @Configuration
 @EnableAsync
 @EnableScheduling
-public class JobConfiguration {
+@EnableConfigurationProperties(JobsProperties.class)
+public class JobsConfiguration {
 
-    public static final Logger LOG = LoggerFactory.getLogger(JobConfiguration.class);
+    public static final Logger LOG = LoggerFactory.getLogger(JobsConfiguration.class);
 
-    @Value("${edison.jobs.scheduler.thread-count:10}")
-    int numberOfThreads;
+    private final JobsProperties jobsProperties;
 
-    @Value("${edison.jobs.cleanup.number-to-keep:100}")
-    int numberOfJobsToKeep;
-
-    @Value("${edison.jobs.cleanup.mark-dead-after:30}")
-    int secondsToMarkJobsAsDead;
-
-    @Value("${edison.jobs.status.calculator.default:warningOnLastJobFailed}")
-    String defaultStatusCalculator;
-    /*
-    @Value("${edison.jobs.status.calculator:}")
-    Map<String,String> statusCalculators = emptyMap();
-    */
+    @Autowired
+    public JobsConfiguration(final JobsProperties jobsProperties) {
+        this.jobsProperties = jobsProperties;
+        final Map<String, String> calculator = this.jobsProperties.getStatus().getCalculator();
+        if (!calculator.containsKey("default")) {
+            calculator.put("default", "warningOnLastJobFailed");
+        }
+    }
 
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
     public ScheduledExecutorService scheduledExecutorService() {
-        return newScheduledThreadPool(numberOfThreads);
+        return newScheduledThreadPool(jobsProperties.getThreadCount());
     }
 
     @Bean
@@ -70,13 +68,13 @@ public class JobConfiguration {
     @Bean
     @ConditionalOnMissingBean(KeepLastJobs.class)
     public KeepLastJobs keepLastJobsStrategy() {
-        return new KeepLastJobs(numberOfJobsToKeep);
+        return new KeepLastJobs(jobsProperties.getCleanup().getNumberOfToKeep());
     }
 
     @Bean
     @ConditionalOnMissingBean(StopDeadJobs.class)
     public StopDeadJobs deadJobStrategy(final JobService jobService) {
-        return new StopDeadJobs(jobService, secondsToMarkJobsAsDead);
+        return new StopDeadJobs(jobService, jobsProperties.getCleanup().markDeadAfter);
     }
 
     @Bean
@@ -119,12 +117,13 @@ public class JobConfiguration {
 
     private JobStatusCalculator findJobStatusCalculator(final String jobType,
                                                         final List<JobStatusCalculator> calculators) {
-        String key = defaultStatusCalculator;
-        /*
+        final Map<String, String> statusCalculators = jobsProperties.getStatus().getCalculator();
+        final String key;
         if (statusCalculators.containsKey(jobType)) {
             key = statusCalculators.get(jobType);
+        } else {
+            key = statusCalculators.get("default");
         }
-        */
         return calculators
                 .stream()
                 .filter(c -> key.equalsIgnoreCase(c.getKey()))
