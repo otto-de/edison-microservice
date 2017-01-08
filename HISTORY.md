@@ -25,10 +25,20 @@ The new structure of the properties is like this:
   * `edison.togglz.console.ldap.port=389` LDAP port
   * `edison.togglz.console.ldap.base-dn=test` LDAP base dn
   * `edison.togglz.console.ldap.rdn-identifier=test` LDAP rdn identifier
-
 * **[edison-guava]** Removed the deprecated module `edison-guava`. This is now replaced by edison-cache.
 * **[edison-cache]** Removed support for property `edison.cache.web.controller.enabled`. Because the main purpose of 
 `edison-cache` is to provide cache statistics as HTML and/or JSON, it makes no sense to deactivate the controller.
+* **[edison-jobs]** Refactored `JobStatusDetailIndicator` to use a configurable `JobStatusCalculator` to map failed 
+jobs to `StatusDetails`. The application property `edison.jobs.status.calculator.default` is used
+to select one of the following calculator strategies:
+  * `warningOnLastJobFailed` the default, if nothing is configured. Reports a failed job as `Status.WARNING`
+  * `errorOnLastJobFailed` Reports a failed job as `Status.ERROR`
+  * `errorOnLastThreeJobsFailed` Reports a failed job as `Status.WARNING`, or `Status.ERROR` if the last three jobs 
+  were failing. 
+  * `errorOnLastTenJobsFailed` Reports a failed job as `Status.WARNING`, or `Status.ERROR` if the last ten jobs 
+  were failing. 
+* **[edison-jobs]** The previous, now unsupported property `edison.jobs.status.indicate-joberror-with-level:ERROR` 
+is replaced by setting  `edison.jobs.status.calculator.default:errorOnLastJobFailed`.
 
 **Bugfixes:**
 * **[edison-jobs]** Fixed broken link from job messages to /jobdefinitions/<jobType>. `JobDefinitionService.getJobDefition(jobType)`
