@@ -84,13 +84,13 @@ class MyClass {
     }
 }
 ```
- The health check is used by load balancers and/or clients to determine, which service is currently 
- able to handle requests.
+The health check is used by load balancers and/or clients to determine, which service is currently 
+able to handle requests.
 
 ## 2.3 Adding more Health Indicators
 
-All available `HealthIndicator` beans are automatically used to determine the current application health. The 
-`/internal/health` endpoint is returning information for all registered health indicators. 
+All available Spring Boot Actuator `HealthIndicator` beans are automatically used to determine the current 
+application health. The `/internal/health` endpoint is returning information for all registered health indicators. 
 
 ## 2.3 Graceful Shutdown
 
