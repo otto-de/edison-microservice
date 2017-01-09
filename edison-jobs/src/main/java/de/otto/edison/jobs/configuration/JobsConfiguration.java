@@ -80,7 +80,7 @@ public class JobsConfiguration {
     @Bean
     @ConditionalOnMissingBean(StopDeadJobs.class)
     public StopDeadJobs deadJobStrategy(final JobService jobService) {
-        return new StopDeadJobs(jobService, jobsProperties.getCleanup().markDeadAfter);
+        return new StopDeadJobs(jobService, jobsProperties.getCleanup().getMarkDeadAfter());
     }
 
     @Bean
