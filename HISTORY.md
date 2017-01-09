@@ -1,5 +1,9 @@
 # Release History
 
+## Release 1.0.0.RC2 (CURRENT SNAPSHOT)
+
+* **[edison-core] Added @ConfigurationProperties MetricsConfiguration
+
 ## Release 1.0.0.RC1a
 
 * **[edison-jobs]** Fixed bug that prevented the configuration of `edison.jobs.status.calculator`. 
