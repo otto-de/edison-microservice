@@ -1,4 +1,4 @@
-# edison-microservice:edison-cache
+# Edison Cache
 
 Optional add-on for Edison Microservices, adding support for Caffeine caching statistics. 
 

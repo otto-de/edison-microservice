@@ -1,10 +1,10 @@
 # Edison Mongo
 
-MongoDB persistence for Edison Microservices.
+MongoDB persistence for Edison Microservices.  
 
-## Configuration
+## Usage
  
- TODO
+ *PENDING*
  
 ## MongoJobRepository
 

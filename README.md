@@ -44,7 +44,7 @@ Edison Modules:
 * [`edison-jobs`](edison-jobs/README.md): Optional module providing a simple job library.
 * [`edison-mongo`](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and
  Togglz StateRepository.
-* edison-togglz: Optional support for feature toggles for Edison Microservices based on togglz.org.
+* [`edison-togglz`](edison-togglz/README.md): Optional support for feature toggles for Edison Microservices based on togglz.org.
 * edison-testsupport: Test support for feature toggles plus some small utilities.
 
 Examples:

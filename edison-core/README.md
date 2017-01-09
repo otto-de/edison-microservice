@@ -1,6 +1,6 @@
 # Edison Core
 
-Core library of edison-microservice.
+Core library of edison-microservice. All Edison Microservices have to include this.
 
 # 1. Internal Pages
 
