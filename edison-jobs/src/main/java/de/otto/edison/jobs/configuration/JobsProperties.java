@@ -5,8 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Collections.unmodifiableMap;
-
 /**
  * Configuration properties used to configure the behaviour of module edison-jobs.
  *
@@ -56,8 +54,14 @@ public class JobsProperties {
     }
 
     public static class Cleanup {
-        int numberOfToKeep = 100;
-        int markDeadAfter = 30;
+        /**
+         * The number of jobs to keep by strategies like KeepLastJobs to clean up old jobs.
+         */
+        private int numberOfToKeep = 100;
+        /**
+         * Number of seconds without update after which a job is considered to be dead.
+         */
+        private int markDeadAfter = 30;
 
         public int getNumberOfToKeep() {
             return numberOfToKeep;
