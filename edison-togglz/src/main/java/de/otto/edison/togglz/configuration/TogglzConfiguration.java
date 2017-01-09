@@ -9,7 +9,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.togglz.core.Feature;
-import org.togglz.core.context.FeatureContext;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
@@ -50,11 +49,7 @@ public class TogglzConfiguration {
         return new DefaultTogglzConfig(togglzProperties, stateRepository, getUserProvider(), featureClassProvider);
     }
 
-    static enum Features implements Feature {
-        NONE;
-
-        public boolean isActive() {
-            return FeatureContext.getFeatureManager().isActive(this);
-        }
+    private enum Features implements Feature {
+        /* no features */
     }
 }

@@ -6,9 +6,8 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
-    // This is just a simple example on how you could formulate a feature toggle
-    @Label("Describe how switching on/off TEST_TOGGLE changes behaviour ...")
-    TEST_TOGGLE;
+    @Label("Toggles the 'Hello Edison' message displayed on http://localhost/8080/example page")
+    HELLO_TOGGLE;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
