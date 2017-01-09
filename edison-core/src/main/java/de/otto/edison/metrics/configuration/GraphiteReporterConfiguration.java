@@ -1,12 +1,11 @@
 package de.otto.edison.metrics.configuration;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,35 +23,36 @@ import static java.util.Arrays.asList;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
+ * Configuration to report metrics to Graphite.
+ *
  * @author Guido Steinacker
  * @since 19.02.15
  */
 @Configuration
-@ConditionalOnProperty(name = {
-        "edison.metrics.graphite.host",
-        "edison.metrics.graphite.port",
-        "edison.metrics.graphite.prefix"}
-)
+@EnableConfigurationProperties(MetricsProperties.class)
+@ConditionalOnProperty(
+        prefix = "edison.metrics.graphite",
+        name = {"host", "port", "prefix"})
 public class GraphiteReporterConfiguration {
 
     private static final Logger LOG = getLogger(GraphiteReporterConfiguration.class);
 
-    @Value("${edison.metrics.graphite.host}")
-    private String graphiteHost;
-    @Value("${edison.metrics.graphite.port}")
-    private String graphitePort;
-    @Value("${edison.metrics.graphite.prefix}")
-    private String graphitePrefix;
+    private final MetricRegistry metricRegistry;
+    private final MetricsProperties.Graphite graphiteMetricsProperties;
 
     @Autowired
-    private MetricRegistry metricRegistry;
+    public GraphiteReporterConfiguration(final MetricRegistry metricRegistry,
+                                         final MetricsProperties graphiteMetricsProperties) {
+        this.metricRegistry = metricRegistry;
+        this.graphiteMetricsProperties = graphiteMetricsProperties.getGraphite();
+    }
 
     @Bean
     public GraphiteReporter graphiteReporter() {
-        final InetSocketAddress address = new InetSocketAddress(graphiteHost, valueOf(graphitePort));
+        final InetSocketAddress address = new InetSocketAddress(graphiteMetricsProperties.getHost(), valueOf(graphiteMetricsProperties.getPort()));
         final GraphiteReporter graphiteReporter = forRegistry(metricRegistry)
-                .prefixedWith(graphitePrefix + "." + reverse(hostName()) + ".metrics")
-                .build(new Graphite(address));
+                .prefixedWith(graphiteMetricsProperties.getPrefix() + "." + reverse(hostName()) + ".metrics")
+                .build(new com.codahale.metrics.graphite.Graphite(address));
         graphiteReporter.start(1, TimeUnit.MINUTES);
         return graphiteReporter;
     }
