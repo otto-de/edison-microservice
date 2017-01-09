@@ -37,19 +37,23 @@ This project contains a number of independent libraries that may be used to crea
 
 
 ## Documentation
-* [edison-core](edison-core/README.md): Main library of Edison Microservices.
-* [edison-cache](edison-cache/README.md): Optional support for Caffeine caches in Edison.
-* [edison-jobs](edison-jobs/README.md): Optional module providing a simple job library.
-* [edison-mongo](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and
+
+Edison Modules:
+* [`edison-core`](edison-core/README.md): Main library of Edison Microservices.
+* [`edison-cache`](edison-cache/README.md): Optional support for Caffeine caches in Edison.
+* [`edison-jobs`](edison-jobs/README.md): Optional module providing a simple job library.
+* [`edison-mongo`](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and
  Togglz StateRepository.
 * edison-togglz: Optional support for feature toggles for Edison Microservices based on togglz.org.
-* edison-serviceregistry-client
 * edison-testsupport: Test support for feature toggles plus some small utilities.
-* example-jobs
-* example-metrics
-* example-status
-* example-togglz
-* example-togglz-mongo
+
+Examples:
+* `example-jobs`: Edison service using edison-jobs to run background tasks. 
+* `example-metrics`: Service that is using edison-core metrics.
+* `example-status`: Service only relying on `edison-core` to show the usage of health and status features. 
+* `example-togglz`: Example using `edison-togglz´ to implement feature toggles.
+* `example-togglz-mongo`: Same `edison-toggz`, but with a MongoDB configuration to auto-configure persistence of 
+feature toggles.
 
 ## Getting started
 
@@ -68,9 +72,9 @@ recommended to first read it's documentation before starting with Edison.
 
 The examples can be started with gradle:
 
-    gradle example-jobs:bootRun
-    gradle example-metrics:bootRun
-    gradle example-status:bootRun
+    gradle examples:example-jobs:bootRun
+    gradle examples:example-metrics:bootRun
+    gradle examples:example-status:bootRun
 
 Open in your browser [http://localhost:8080/example/](http://localhost:8080/example/)
 
