@@ -4,6 +4,7 @@ import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.navigation.NavBar;
+import de.otto.edison.status.domain.Link;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Controller;
@@ -19,9 +20,9 @@ import java.time.Duration;
 import java.util.*;
 
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
-import static de.otto.edison.jobs.controller.Link.link;
 import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
+import static de.otto.edison.status.domain.Link.link;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;

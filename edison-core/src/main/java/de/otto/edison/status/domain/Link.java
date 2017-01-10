@@ -1,4 +1,4 @@
-package de.otto.edison.jobs.controller;
+package de.otto.edison.status.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

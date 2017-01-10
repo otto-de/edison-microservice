@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.status.domain.Link;
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -8,8 +9,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.otto.edison.jobs.controller.Link.link;
-import static java.time.format.DateTimeFormatter.*;
+import static de.otto.edison.status.domain.Link.link;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
+import static java.time.format.DateTimeFormatter.ofLocalizedTime;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
 import static java.util.Arrays.asList;

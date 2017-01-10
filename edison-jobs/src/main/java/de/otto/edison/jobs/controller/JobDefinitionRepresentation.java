@@ -2,12 +2,13 @@ package de.otto.edison.jobs.controller;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.status.domain.Link;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.controller.Link.link;
+import static de.otto.edison.status.domain.Link.link;
 import static java.util.Arrays.asList;
 
 /**
