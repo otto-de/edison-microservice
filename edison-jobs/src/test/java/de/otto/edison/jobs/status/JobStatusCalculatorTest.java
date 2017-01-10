@@ -27,7 +27,6 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Matchers.anyString;
@@ -72,6 +71,21 @@ public class JobStatusCalculatorTest {
         assertThat(first.getStatus(), is(Status.OK));
         assertThat(first.getMessage(), is("Last job was successful"));
         assertThat(second.getStatus(), is(Status.OK));
+    }
+
+    @Test
+    public void shouldReturnStatusDetailWithJobLink() {
+        // given
+        final JobInfo jobInfo = someStoppedJob(OK, 1);
+        final List<JobInfo> jobs = singletonList(jobInfo);
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobs);
+
+        // when
+        StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
+
+        // then
+        assertThat(first.getLinks().size(), is(1));
+        assertThat(first.getLinks().get(0).href, is("/internal/jobs/" + jobInfo.getJobId()));
     }
 
     @Test
@@ -200,32 +214,6 @@ public class JobStatusCalculatorTest {
     }
 
     @Test
-    public void shouldHaveUri() {
-        // given
-        final List<JobInfo> jobInfos = singletonList(someStoppedJob(OK, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
-
-        // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
-
-        // then
-        assertThat(statusDetail.getDetails(), hasEntry("uri", "/some/job/url"));
-    }
-
-    @Test
-    public void shouldHaveUriWhenJobIsRunning() {
-        // given
-        final List<JobInfo> jobInfos = singletonList(someRunningJob(OK, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
-
-        // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
-
-        // then
-        assertThat(statusDetail.getDetails(), hasEntry("uri", "/some/job/url"));
-    }
-
-    @Test
     public void shouldNotHaveUriOrRunningIfNoJobPresent() {
         // given
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(emptyList());
@@ -234,21 +222,8 @@ public class JobStatusCalculatorTest {
         StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
-        assertThat(statusDetail.getDetails(), not(hasKey("uri")));
-        assertThat(statusDetail.getDetails(), not(hasKey("running")));
-    }
-
-    @Test
-    public void shouldIndicateThatJobIsRunning() {
-        // given
-        final List<JobInfo> jobInfos = singletonList(someRunningJob(OK, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
-
-        // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
-
-        // then
-        assertThat(statusDetail.getDetails(), hasEntry("running", "/some/job/url"));
+        assertThat(statusDetail.getLinks(), is(emptyList()));
+        assertThat(statusDetail.getDetails(), not(hasKey("Running")));
     }
 
     @Test
@@ -262,8 +237,8 @@ public class JobStatusCalculatorTest {
         StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
-        assertThat(statusDetail.getDetails(), not(hasKey("running")));
-        assertThat(statusDetail.getDetails(), hasKey("stopped"));
+        assertThat(statusDetail.getDetails(), not(hasKey("Running")));
+        assertThat(statusDetail.getDetails(), hasKey("Stopped"));
     }
 
     @Test
@@ -336,7 +311,7 @@ public class JobStatusCalculatorTest {
         OffsetDateTime now = now();
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobId()).thenReturn("/some/job/url");
+        when(someJob.getJobId()).thenReturn("someId");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(startedSecondsAgo));
         when(someJob.getStopped()).thenReturn(of(now.minusSeconds(startedSecondsAgo-1)));
         when(someJob.getStatus()).thenReturn(jobStatus);
@@ -347,7 +322,7 @@ public class JobStatusCalculatorTest {
         OffsetDateTime now = now();
         JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
-        when(someJob.getJobId()).thenReturn("/some/job/url");
+        when(someJob.getJobId()).thenReturn("someJobId");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(startedSecondsAgo));
         when(someJob.getStopped()).thenReturn(empty());
         when(someJob.getStatus()).thenReturn(jobStatus);

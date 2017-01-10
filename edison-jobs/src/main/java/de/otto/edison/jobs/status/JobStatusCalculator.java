@@ -14,12 +14,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static de.otto.edison.status.domain.Link.link;
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static java.lang.String.format;
 import static java.time.OffsetDateTime.now;
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
+import static java.util.Arrays.asList;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -76,6 +78,8 @@ public class JobStatusCalculator {
     private static final String TOO_MANY_JOBS_FAILED_MESSAGE = "%d out of %d job executions failed";
     private static final String JOB_TOO_OLD_MESSAGE = "Job didn't run in the past %s";
     private static final String LOAD_JOBS_EXCEPTION_MESSAGE = "Failed to load job status";
+
+    private static final String REL_JOB = "http://github.com/otto-de/edison/link-relations/job";
 
     private final String key;
     private final int numberOfJobs;
@@ -223,7 +227,15 @@ public class JobStatusCalculator {
                 status = WARNING;
                 message = DEAD_MESSAGE;
         }
-        return StatusDetail.statusDetail(jobDefinition.jobName(), status, message, runningDetailsFor(lastJob));
+        return StatusDetail.statusDetail(
+                jobDefinition.jobName(),
+                status,
+                message,
+                asList(
+                        link(REL_JOB, "/internal/jobs/" + lastJob.getJobId(), "Details")
+                ),
+                runningDetailsFor(lastJob)
+        );
     }
 
     /**
@@ -246,16 +258,11 @@ public class JobStatusCalculator {
      * @return map containing uri, starting, and running or stopped entries.
      */
     protected Map<String, String> runningDetailsFor(final JobInfo jobInfo) {
-        Map<String, String> details = new HashMap<>();
-        String uri = jobInfo.getJobId();
-        details.put("uri", uri);
-        if (!jobInfo.getStopped().isPresent()) {
-            details.put("running", uri);
-        } else {
-            details.put("stopped", ISO_DATE_TIME.format(jobInfo.getStopped().get()));
+        final Map<String, String> details = new HashMap<>();
+        details.put("Started", ISO_DATE_TIME.format(jobInfo.getStarted()));
+        if (jobInfo.getStopped().isPresent()) {
+            details.put("Stopped", ISO_DATE_TIME.format(jobInfo.getStopped().get()));
         }
-        details.put("started", ISO_DATE_TIME.format(jobInfo.getStarted()));
-
         return details;
     }
 

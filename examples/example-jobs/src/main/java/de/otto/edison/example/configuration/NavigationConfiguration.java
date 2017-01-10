@@ -12,7 +12,8 @@ public class NavigationConfiguration {
     @Autowired
     public NavigationConfiguration(final NavBar mainNavBar) {
         mainNavBar.register(navBarItem(0, "Home", "/"));
-        mainNavBar.register(navBarItem(1, "Job Overview", "/internal/jobs"));
-        mainNavBar.register(navBarItem(2, "Job Definitions", "/internal/jobdefinitions"));
+        mainNavBar.register(navBarItem(1, "Status", "/internal/status"));
+        mainNavBar.register(navBarItem(2, "Job Overview", "/internal/jobs"));
+        mainNavBar.register(navBarItem(3, "Job Definitions", "/internal/jobdefinitions"));
     }
 }

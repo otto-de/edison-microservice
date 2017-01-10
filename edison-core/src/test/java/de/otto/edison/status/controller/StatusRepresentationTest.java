@@ -2,6 +2,7 @@ package de.otto.edison.status.controller;
 
 import de.otto.edison.status.configuration.ApplicationInfoProperties;
 import de.otto.edison.status.domain.*;
+import de.otto.edison.testsupport.util.JsonMap;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -12,9 +13,11 @@ import static de.otto.edison.status.configuration.VersionInfoProperties.versionI
 import static de.otto.edison.status.controller.StatusRepresentation.statusRepresentationOf;
 import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
+import static de.otto.edison.status.domain.Link.link;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
+import static de.otto.edison.testsupport.util.JsonMap.jsonMapFrom;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -88,6 +91,31 @@ public class StatusRepresentationTest {
         final Map<String, String> someDetail = (Map) json.application.statusDetails.get("someDetail");
         assertThat(someDetail.get("status"), is("WARNING"));
         assertThat(someDetail.get("message"), is("detailed warning"));
+        assertThat(someDetail.get("link"), is(nullValue()));
+    }
+
+    @Test
+    public void shouldCreateStatusRepresentationWithDetailInclUrl() {
+        // given
+        final StatusRepresentation json = statusRepresentationOf(
+                applicationStatus(
+                        mock(ApplicationInfo.class),
+                        mock(ClusterInfo.class),
+                        mock(SystemInfo.class),
+                        mock(VersionInfo.class),
+                        mock(TeamInfo.class),
+                        singletonList(
+                                statusDetail("someDetail", OK, "some message", link("item", "http://example.org/some/url", "some title"))),
+                        emptyList()
+                )
+        );
+        // then
+        assertThat(json.application.status, is(OK));
+        final JsonMap jsonMap = jsonMapFrom(json.application.statusDetails.get("someDetail"));
+        final JsonMap link = jsonMap.get("links").asListOf(JsonMap.class).get(0);
+        assertThat(link.getString("href"), is("http://example.org/some/url"));
+        assertThat(link.getString("title"), is("some title"));
+        assertThat(link.getString("rel"), is("item"));
     }
 
     @Test

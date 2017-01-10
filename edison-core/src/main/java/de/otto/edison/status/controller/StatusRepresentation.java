@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.status.domain.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +41,11 @@ public class StatusRepresentation {
     private Map<String, ?> statusDetailsOf(final List<StatusDetail> statusDetails) {
         final Map<String, Object> map = new LinkedHashMap<>();
         for (StatusDetail entry : statusDetails) {
-            map.put(toCamelCase(entry.getName()), new LinkedHashMap<String, String>() {{
+            final List<Map<String, String>> links = toLinks(entry.getLinks());
+            map.put(toCamelCase(entry.getName()), new LinkedHashMap<String, Object>() {{
                 put("status", entry.getStatus().name());
                 put("message", entry.getMessage());
+                put("links", links);
                 putAll(entry.getDetails().entrySet().stream().collect(Collectors.toMap(entry -> toCamelCase(entry.getKey()), Map.Entry::getValue)));
             }});
         }
@@ -50,7 +53,17 @@ public class StatusRepresentation {
 
     }
 
-	private static String toCamelCase(final String name) {
+    private List<Map<String, String>> toLinks(final List<Link> links) {
+        final List<Map<String,String>> result = new ArrayList<>();
+        links.forEach(link -> result.add(new LinkedHashMap<String,String>() {{
+            put("rel", link.rel);
+            put("href", link.href);
+            put("title", link.title);
+        }}));
+        return result;
+    }
+
+    private static String toCamelCase(final String name) {
 	    Matcher matcher = STATUS_DETAIL_JSON_SEPARATOR_PATTERN.matcher(name);
 	    StringBuffer sb = new StringBuffer();
 	    while (matcher.find()) {

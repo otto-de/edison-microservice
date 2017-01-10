@@ -95,7 +95,7 @@ public class JobInfo {
     }
 
     /**
-     * @return the URI of the job
+     * @return the id of the job
      */
     public String getJobId() {
         return jobId;

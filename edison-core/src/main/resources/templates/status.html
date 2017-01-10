@@ -127,6 +127,12 @@
                                         <dt th:text="${key} + ':'">Message:</dt>
                                         <dd th:text="${statusDetail.details.get(key)}"></dd>
                                     </span>
+                                    <span th:each="link : ${statusDetail.links}">
+                                        <dt th:text="${link.title}"></dt>
+                                        <dd>
+                                            <a th:href="@{${link.href}}">Open</a>
+                                        </dd>
+                                    </span>
                                 </dl>
                             </div>
                         </div>
