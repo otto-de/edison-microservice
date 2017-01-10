@@ -61,7 +61,7 @@ public class JsonMap {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            final Object value = ((Map) jsonObject).get(key);
+            final Object value = get(key);
             if (value == null) {
                 return null;
             } else {
@@ -82,7 +82,7 @@ public class JsonMap {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            final Object value = ((Map) jsonObject).get(key);
+            final Object value = get(key);
             return value != null ? Boolean.valueOf(value.toString()) : null;
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
@@ -99,7 +99,7 @@ public class JsonMap {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            final Object value = ((Map) jsonObject).get(key);
+            final Object value = get(key);
             return value != null ? Integer.valueOf(value.toString()) : null;
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
@@ -116,7 +116,7 @@ public class JsonMap {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            final Object value = ((Map) jsonObject).get(key);
+            final Object value = get(key);
             return value != null ? Long.valueOf(value.toString()) : null;
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
@@ -133,7 +133,7 @@ public class JsonMap {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            final Object value = ((Map) jsonObject).get(key);
+            final Object value = get(key);
             return value != null ? Float.valueOf(value.toString()) : null;
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
@@ -150,7 +150,7 @@ public class JsonMap {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            final Object value = ((Map) jsonObject).get(key);
+            final Object value = get(key);
             return value != null ? Double.valueOf(value.toString()) : null;
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
@@ -167,7 +167,7 @@ public class JsonMap {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            return ((Map) jsonObject).get(key);
+            return get(key);
         } else {
             throw new IllegalArgumentException("not a map but a " + jsonObject.getClass().getSimpleName());
         }
@@ -178,13 +178,13 @@ public class JsonMap {
             throw new NullPointerException("json object is null");
         }
         if (is(Map.class)) {
-            final Object value = ((Map) jsonObject).get(key);
+            final JsonMap value = get(key);
             if (value == null) {
                 return null;
             } else {
-                if (Date.class.isAssignableFrom(value.getClass())) {
-                    return (Date) value;
-                } if (String.class.isAssignableFrom(value.getClass())) {
+                if (value.is(Date.class)) {
+                    return (Date) value.jsonObject;
+                } if (value.is(String.class)) {
                     return from(parse(value.toString()));
                 } else {
                     throw new ClassCastException("Value of " + key + " is not a date but a " + value.getClass().getSimpleName());
