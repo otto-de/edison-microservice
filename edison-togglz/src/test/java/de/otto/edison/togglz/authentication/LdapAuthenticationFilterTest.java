@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static de.otto.edison.togglz.configuration.TogglzProperties.Console.Ldap.ldapProperties;
+import static de.otto.edison.togglz.configuration.TogglzLdapProperties.ldapProperties;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

@@ -6,12 +6,14 @@ import de.otto.edison.togglz.authentication.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
+import org.togglz.servlet.TogglzFilter;
 import org.togglz.servlet.util.HttpServletRequestHolder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,15 @@ import java.util.Optional;
 @Configuration
 @EnableConfigurationProperties(TogglzProperties.class)
 public class TogglzConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(name = "togglzFilter")
+    public FilterRegistrationBean togglzFilter() {
+        final FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
+        filterRegistration.setFilter(new TogglzFilter());
+        filterRegistration.addUrlPatterns("/*");
+        return filterRegistration;
+    }
 
     @Bean
     @ConditionalOnMissingBean(FeatureClassProvider.class)
