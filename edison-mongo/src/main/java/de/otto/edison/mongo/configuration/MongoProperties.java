@@ -4,9 +4,12 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -27,10 +30,12 @@ public class MongoProperties {
     /**
      * The MongoDB servers. Comma-separated list of host:port pairs.
      */
+    @NotEmpty
     private String[] host = {"localhost"};
     /**
      * The MongoDB database.
      */
+    @NotEmpty
     private String db;
     /**
      * database user name
@@ -43,27 +48,33 @@ public class MongoProperties {
     /**
      * Represents preferred replica set members to which a query or command can be sent.
      */
+    @NotEmpty
     private String readPreference = "primaryPreferred";
     /**
      * Maximum time that a thread will block waiting for a connection.
      */
+    @Min(10)
     private int maxWaitTime = 5000;
     /**
      * Connection timeout in milliseconds. Must be &gt; 0
      */
+    @Min(10)
     private int connectTimeout = 5000;
     /**
      * Socket timeout.
      */
+    @Min(10)
     private int socketTimeout = 2000;
     /**
      * Sets the server selection timeout in milliseconds, which defines how long the driver will wait for server selection to
      * succeed before throwing an exception.
      */
+    @Min(1)
     private int serverSelectionTimeout = 30000;
     /**
      * Connection pool properties.
      */
+    @Valid
     private Connectionpool connectionpool = new Connectionpool();
 
     public List<ServerAddress> getServers() {
@@ -189,23 +200,28 @@ public class MongoProperties {
         /**
          * Maximum number of connections allowed per host.
          */
+        @Min(1)
         private int maxSize = 100;
         /**
          * The minimum number of connections per host.
          */
+        @Min(1)
         private int minSize = 2;
         /**
          * This multiplier, multiplied with the maxSize property, gives the maximum number of threads that may be waiting for a
          * connection to become available from the pool.
          */
+        @Min(1)
         private int blockedConnectionMultiplier = 2;
         /**
          * Maximum life time for a pooled connection.
          */
+        @Min(1)
         private int maxLifeTime = 100000;
         /**
          * Maximum idle time for a pooled connection.
          */
+        @Min(1)
         private int maxIdleTime = 10000;
 
         public int getMaxSize() {

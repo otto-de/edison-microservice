@@ -2,6 +2,8 @@ package de.otto.edison.health.indicator;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import javax.validation.constraints.Min;
+
 /**
  * Properties used to configure the graceful shutdown of Edison microservices.
  *
@@ -26,6 +28,7 @@ public class GracefulShutdownProperties {
      *     {@code edison.gracefulshutdown.indicateErrorAfter = 5000}
      * </p>
      */
+    @Min(0)
     private long indicateErrorAfter = 5000L;
 
     /**
@@ -34,6 +37,7 @@ public class GracefulShutdownProperties {
      *     edison.gracefulshutdown.phaseOutAfter = 20000
      * </p>
      */
+    @Min(100)
     private long phaseOutAfter = 20000L;
 
     public boolean isEnabled() {
