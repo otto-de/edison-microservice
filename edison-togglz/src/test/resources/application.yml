@@ -1,0 +1,10 @@
+spring:
+    application:
+        name: togglztest
+
+server:
+    context-path: /togglztest
+    port: 8085
+
+management:
+    context-path: /internal

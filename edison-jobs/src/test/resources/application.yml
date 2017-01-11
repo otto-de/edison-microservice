@@ -1,0 +1,10 @@
+spring:
+    application:
+        name: testjobs
+
+server:
+    context-path: /testjobs
+    port: 8086
+
+management:
+    context-path: /internal

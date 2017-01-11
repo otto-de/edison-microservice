@@ -1,0 +1,34 @@
+spring:
+    application:
+        name: example-togglz
+    jackson:
+        date-format: yyyy-MM-dd'T'hh:mm:ss.sssZ
+        serialization:
+            indent-output: true
+    thymeleaf:
+        cache: false
+
+server:
+    context-path: /example
+    port: 8080
+
+management:
+    context-path: /internal
+    health:
+        diskspace:
+            enabled: false
+
+edison:
+    gracefulshutdown:
+        enabled: false
+    metrics:
+        slf4j:
+            logger: de.otto.edison.example.metrics
+    status:
+        application:
+            description: Example service to show how to use edison-togglz in your microservices
+            title: Example Togglz
+    togglz:
+        cache-ttl: 100
+        console:
+            enabled: true

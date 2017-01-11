@@ -23,8 +23,8 @@ public class Slf4JReporterConfiguration extends MetricsConfigurerAdapter {
     private final MetricsProperties.Slf4j slf4jProperties;
 
     @Autowired
-    public Slf4JReporterConfiguration(final MetricsProperties slf4jProperties) {
-        this.slf4jProperties = slf4jProperties.getSlf4j();
+    public Slf4JReporterConfiguration(final MetricsProperties metricsProperties) {
+        this.slf4jProperties = metricsProperties.getSlf4j();
     }
 
     @Override

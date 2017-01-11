@@ -1,0 +1,27 @@
+# name of the application
+spring:
+    application:
+        name: testcore
+
+# context + port of the application
+server:
+    context-path: /testcore
+    port: 8084
+
+# context of the management endpoints like metrics, health, and so on
+management:
+    context-path: /internal
+
+# edison-specific configuration
+edison:
+    metrics:
+        # Enable metrics load:
+        load:
+            enabled: true
+            timer-name: test
+    status:
+        # Additional information on status page:
+        cluster:
+            color-header: X-Color
+            color-state-header: X-Staging
+            enabled: true
