@@ -11,8 +11,8 @@ import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.UserProvider;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -36,7 +36,7 @@ public class InMemoryFeatureStateRepositoryConfiguration {
 
             Logger LOG = getLogger(TogglzConfiguration.class);
 
-            private Map<String, FeatureState> featureStore = new HashMap<>();
+            private Map<String, FeatureState> featureStore = new ConcurrentHashMap<>();
 
             @Autowired
             UserProvider userProvider;

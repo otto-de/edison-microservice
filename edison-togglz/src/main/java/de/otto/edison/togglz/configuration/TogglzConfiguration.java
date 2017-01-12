@@ -10,11 +10,15 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.togglz.core.Feature;
+import org.togglz.core.context.StaticFeatureManagerProvider;
+import org.togglz.core.manager.FeatureManager;
+import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
 import org.togglz.servlet.TogglzFilter;
 import org.togglz.servlet.util.HttpServletRequestHolder;
+import org.togglz.spring.manager.FeatureManagerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -34,13 +38,13 @@ public class TogglzConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(FeatureClassProvider.class)
-    public FeatureClassProvider getFeatureClassProvider() {
+    public FeatureClassProvider featureClassProvider() {
         return () -> Features.class;
     }
 
     @Bean
     @ConditionalOnMissingBean(UserProvider.class)
-    public UserProvider getUserProvider() {
+    public UserProvider userProvider() {
         return () -> {
 
             HttpServletRequest request = HttpServletRequestHolder.get();
@@ -54,10 +58,19 @@ public class TogglzConfiguration {
 
     @Bean
     @Autowired
-    public DefaultTogglzConfig defaultTogglzConfig(final StateRepository stateRepository,
-                                                   final FeatureClassProvider featureClassProvider,
-                                                   final TogglzProperties togglzProperties) {
-        return new DefaultTogglzConfig(togglzProperties, stateRepository, getUserProvider(), featureClassProvider);
+    public TogglzConfig togglzConfig(final StateRepository stateRepository,
+                                     final FeatureClassProvider featureClassProvider,
+                                     final TogglzProperties togglzProperties) {
+        return new DefaultTogglzConfig(togglzProperties, stateRepository, userProvider(), featureClassProvider);
+    }
+
+    @Bean
+    public FeatureManager featureManager(final TogglzConfig togglzConfig) throws Exception {
+        FeatureManagerFactory featureManagerFactory = new FeatureManagerFactory();
+        featureManagerFactory.setTogglzConfig(togglzConfig);
+        FeatureManager featureManager = featureManagerFactory.getObject();
+        StaticFeatureManagerProvider.setFeatureManager(featureManager);  // this workaround should be fixed with togglz version 2.2
+        return featureManager;
     }
 
     private enum Features implements Feature {
