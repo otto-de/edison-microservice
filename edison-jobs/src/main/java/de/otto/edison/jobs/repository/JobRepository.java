@@ -84,4 +84,9 @@ public interface JobRepository {
 	 * @return all jobs without loading the job messages
 	 */
 	List<JobInfo> findAllJobInfoWithoutMessages();
+
+    /**
+     * Removes all jobInfos, runningJobs, and disabledJobTypes from the repository
+     */
+    void clearAll();
 }

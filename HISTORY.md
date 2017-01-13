@@ -2,7 +2,7 @@
 
 ## Release 1.0.0.RC2 (CURRENT SNAPSHOT)
 
-**New Features:**
+* **[edison-jobs]** Fixed issue add JobRepository.deleteAll() 
 * **[edison-core] Added @ConfigurationProperties MetricsConfiguration
 * **[edison-core] Added `StatusDetail.getLinks()` and rendering hyperlinks on status pages. Job details are now using
 links; this way you can directly jump from the status page to the job messages.

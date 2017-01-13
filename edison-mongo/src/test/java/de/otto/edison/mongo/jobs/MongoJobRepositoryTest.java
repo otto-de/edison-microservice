@@ -9,6 +9,7 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
+import org.assertj.core.util.Lists;
 import org.bson.Document;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -448,6 +449,45 @@ public class MongoJobRepositoryTest {
         // then
         assertThat(result, hasSize(1));
         assertThat(result.get(0), is(jobType));
+    }
+
+    @Test
+    public void shouldClearDisabledJobTypes() throws Exception {
+        // given
+        String jobType = "someJobType";
+        repo.disableJobType(jobType);
+
+        // when
+        repo.clearAll();
+
+        // then
+        assertThat(repo.findDisabledJobTypes(), is(Lists.emptyList()));
+        assertThat(runningJobsCollection.count(new Document("_id", "DISABLED_JOBS")), is(1l));
+    }
+
+    @Test
+    public void shouldClearRunningJobs() throws Exception {
+        // given
+        repo.markJobAsRunningIfPossible(someRunningJobInfo("id", "type", now()), new HashSet<>());
+
+        // when
+        repo.clearAll();
+
+        // then
+        assertThat(repo.runningJobsDocument(), is(new RunningJobs(Lists.emptyList())));
+        assertThat(runningJobsCollection.count(new Document("_id", "RUNNING_JOBS")), is(1l));
+    }
+
+    @Test
+    public void shouldClearJobInfos() throws Exception {
+        // given
+        repo.createOrUpdate(someJobInfo("http://localhost/foo"));
+
+        // when
+        repo.clearAll();
+
+        // then
+        assertThat(repo.findAll(), is(Lists.emptyList()));
     }
 
     private void addJobToRunningDocument(String jobType) {

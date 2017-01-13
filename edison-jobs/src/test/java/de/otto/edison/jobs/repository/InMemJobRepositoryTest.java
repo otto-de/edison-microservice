@@ -6,6 +6,7 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
+import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.Before;
@@ -30,6 +31,7 @@ import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
+import static org.assertj.core.util.Lists.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -306,6 +308,51 @@ public class InMemJobRepositoryTest {
 
         //Then
         assertThat(jobInfo.get().getLastUpdated(), is(myTestTime));
+    }
+
+    @Test
+    public void shouldClearJobInfos() throws Exception {
+        //Given
+        JobInfo stoppedJob = builder()
+                .setJobId("some/job/stopped")
+                .setJobType("test")
+                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                .setHostname("localhost")
+                .setStatus(JobStatus.OK)
+                .build();
+        repository.createOrUpdate(stoppedJob);
+
+        //When
+        repository.clearAll();
+
+        //Then
+        assertThat(repository.findAll(), is(emptyList()));
+    }
+
+    @Test
+    public void shouldClearRunningJobs() throws Exception {
+        //Given
+        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"), new HashSet<>());
+
+        //When
+        repository.clearAll();
+
+        //Then
+        assertThat(repository.runningJobsDocument(), is(new RunningJobs(emptyList())));
+    }
+
+    @Test
+    public void shouldClearDisabledJobTypes() throws Exception {
+        //Given
+        String jobType = "someJobType";
+        repository.disableJobType(jobType);
+
+        //When
+        repository.clearAll();
+
+        //Then
+        assertThat(repository.findDisabledJobTypes(), is(emptyList()));
     }
 
     private JobInfo jobInfo(final String jobId, final String type) {

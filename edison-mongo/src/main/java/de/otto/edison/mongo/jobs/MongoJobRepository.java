@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.result.DeleteResult;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
@@ -237,6 +238,13 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                         .append(JobStructure.LAST_UPDATED.key(), singletonMap("$lt", from(timeOffset.toInstant()))))
                 .map(this::decode)
                 .into(new ArrayList<>());
+    }
+
+    @Override
+    public void clearAll() {
+        super.deleteAll();
+        runningJobsCollection.deleteMany(new BasicDBObject());
+        initJobsMetaDataDocumentsOnStartup();
     }
 
     @Override

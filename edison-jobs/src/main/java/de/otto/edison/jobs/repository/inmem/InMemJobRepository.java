@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.synchronizedSet;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
@@ -26,8 +27,8 @@ public class InMemJobRepository implements JobRepository {
     private static final Comparator<JobInfo> STARTED_TIME_DESC_COMPARATOR = comparing(JobInfo::getStarted, reverseOrder());
 
     private final ConcurrentMap<String, JobInfo> jobs = new ConcurrentHashMap<>();
-    private final HashMap<String, String> runningJobs = new HashMap<>();
-    private final Set<String> disabledJobTypes = synchronizedSet(new HashSet<>());
+    private final ConcurrentHashMap<String, String> runningJobs = new ConcurrentHashMap<>();
+    private final Set<String> disabledJobTypes = ConcurrentHashMap.newKeySet();
 
     @Override
     public List<JobInfo> findLatest(int maxCount) {
@@ -149,9 +150,7 @@ public class InMemJobRepository implements JobRepository {
 
     @Override
     public void clearRunningMark(String jobType) {
-        synchronized (runningJobs) {
-            runningJobs.remove(jobType);
-        }
+        runningJobs.remove(jobType);
     }
 
     @Override
@@ -185,6 +184,13 @@ public class InMemJobRepository implements JobRepository {
 	                .map(job->job.copy().setMessages(emptyList()).build())
 	                .collect(toList());
 	}
+
+    @Override
+    public void clearAll() {
+        runningJobs.clear();
+        disabledJobTypes.clear();
+        jobs.clear();
+    }
 
 
 }
