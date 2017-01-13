@@ -2,12 +2,12 @@
 
 ## Release 1.0.0.RC2 (CURRENT SNAPSHOT)
 
-* **[edison-core]** Fixed issue Status page should always render vcs.url
-* **[edison-jobs]** Fixed issue add JobRepository.deleteAll() 
-* **[edison-core] Added @ConfigurationProperties MetricsConfiguration
-* **[edison-core] Added `StatusDetail.getLinks()` and rendering hyperlinks on status pages. Job details are now using
+* **[edison-core]** Fixed issue Status page should always render `vcs.url`
+* **[edison-core]** Added `@ConfigurationProperties MetricsProperties`
+* **[edison-core]** Added `StatusDetail.getLinks()` and rendering hyperlinks on status pages. Job details are now using
 links; this way you can directly jump from the status page to the job messages.
-* **[edison] Added annotations for Java Bean Validation to configuration properties.
+* **[edison-jobs]** Fixed issue add `JobRepository.deleteAll()`
+* **[edison-*]** Added annotations for Java Bean Validation to configuration properties.
 
 ## Release 1.0.0.RC1a
 
@@ -22,14 +22,14 @@ _**Beginning with 1.0.0, we will start using semantic versioning of releases.**_
 _Because a couple of modules have been removed in this release, you should probably delete your existing project and clone the current version from scratch_
 
 **Breaking Changes:**
-* **[edison]** Refactored module structure: 
+* **[edison-*]** Refactored module structure: 
   * moved `edison-status`, `edison-health`, `edison-metrics`, `edison-microservice` and `èdison-servicediscovery-client`
     into `edison-core`.
   * moved `edison-jobs-mongo` into `edison-mongo`
   * moved `edison-togglz-mongo` into `edison-mongo`
   * moved `edison-togglz-testsupport` into `edison-testsupport`
-* **[edison]** Removed remaining dependencies to guava library.
-* **[edison]** Graceful shutdown is now disabled by default. Enable it by setting `edison.gracefulshutdown.enabled=true`.
+* **[edison.*]** Removed remaining dependencies to guava library.
+* **[edison.*]** Graceful shutdown is now disabled by default. Enable it by setting `edison.gracefulshutdown.enabled=true`.
 * **[edison-core]** Renamed package `de.otto.edison.discovery` to `de.otto.edison.registry`. The `DiscoveryClient` 
 was renamed to `RegistryClient`.
 * **[edison-core]** Properties `edison.servicediscovery.*` renamed to `edison.serviceregistry.*`
@@ -123,15 +123,15 @@ case-insensitive, blanks are converted to `-`.
 * **[edison-mongo]** Bugfix: AbstractMongoRepository does not accept null as ID of objects anymore.
 
 ## Release 0.79.1
-* **[edison]** Upgrade thymeleaf to version 3.0.2.RELEASE
+* **[edison.*]** Upgrade thymeleaf to version 3.0.2.RELEASE
 * **[edison-jobs]** jobdetails page uses div tags instead of spans
 
 ## Release 0.79.0
-* **[edison]** Upgrade spring boot to 1.4.2.RELEASE
-* **[edison]** Upgrade spring version to 4.3.4.RELEASE
-* **[edison]** Upgrade guava version to 20.0
-* **[edison]** Upgrade caffeine version to 2.3.5
-* **[edison]** Upgrade async http client to 1.9.40
+* **[edison.*]** Upgrade spring boot to 1.4.2.RELEASE
+* **[edison.*]** Upgrade spring version to 4.3.4.RELEASE
+* **[edison.*]** Upgrade guava version to 20.0
+* **[edison.*]** Upgrade caffeine version to 2.3.5
+* **[edison.*]** Upgrade async http client to 1.9.40
 
 ## Release 0.78.0
 * **[edison-mongo]** Support streaming for findAll methods. The old methods are deprecated now, so please use the new ones.
