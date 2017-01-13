@@ -67,7 +67,10 @@
                             <dt>Git Commit:</dt>
                             <dd th:text="${vcs.commit}">Git commit</dd>
                             <dt>VCS:</dt>
-                            <dd><a th:if="${#strings.startsWith(vcs.url, 'http')}" th:href="${vcs.url}">Open VCS UI</a></dd>
+                            <dd th:with="isHttpUrl=${#strings.startsWith(vcs.url, 'http')}" >
+                                <a th:if="${isHttpUrl}" th:href="${vcs.url}">Open VCS UI</a>
+                                <span th:unless="${isHttpUrl}" th:text="${vcs.url}">Vcs Url</span>
+                            </dd>
                         </dl>
                     </div>
                 </div>
@@ -123,16 +126,16 @@
                                     <dd th:text="${statusDetail.status}"></dd>
                                     <dt>Message:</dt>
                                     <dd th:text="${statusDetail.message}"></dd>
-                                    <span th:each="key : ${statusDetail.details.keySet()}">
+                                    <th:block th:each="key : ${statusDetail.details.keySet()}">
                                         <dt th:text="${key} + ':'">Message:</dt>
                                         <dd th:text="${statusDetail.details.get(key)}"></dd>
-                                    </span>
-                                    <span th:each="link : ${statusDetail.links}">
+                                    </th:block>
+                                    <th:block th:each="link : ${statusDetail.links}">
                                         <dt th:text="${link.title}"></dt>
                                         <dd>
                                             <a th:href="@{${link.href}}">Open</a>
                                         </dd>
-                                    </span>
+                                    </th:block>
                                 </dl>
                             </div>
                         </div>
