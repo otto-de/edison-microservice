@@ -53,7 +53,8 @@ public interface JobRepository {
 
     /**
      * Clears the job running mark of the jobType. Does nothing if not mark exists.
-     * @param jobType
+     *
+     * @param jobType the job type
      */
     void clearRunningMark(String jobType);
 
@@ -64,14 +65,15 @@ public interface JobRepository {
 
     /**
      * Disables a job type, i.e. prevents it from being started
-     * @param jobType
+     *
+     * @param jobType the disabled job type
      */
     void disableJobType(String jobType);
 
     /**
      * Reenables a job type that was disabled
      *
-     * @param jobType
+     * @param jobType the enabled job type
      */
     void enableJobType(String jobType);
 

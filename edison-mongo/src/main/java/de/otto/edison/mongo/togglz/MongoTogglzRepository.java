@@ -48,11 +48,8 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
     @Override
     public FeatureState getFeatureState(final Feature feature) {
         Optional<FeatureState> featureState = findOne(feature.name());
-        if (!featureState.isPresent()) {
-            return null;
-        }
+        return featureState.orElse(null);
 
-        return featureState.get();
     }
 
     /**
@@ -114,6 +111,7 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
         // no indices
     }
 
+    @SuppressWarnings("unchecked")
     private Feature resolveEnumValue(String name) {
         final Class enumType = featureClassProvider.getFeatureClass();
         return (Feature) Enum.valueOf(enumType, name);

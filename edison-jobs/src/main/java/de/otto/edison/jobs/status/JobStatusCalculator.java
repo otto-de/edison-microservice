@@ -138,6 +138,7 @@ public class JobStatusCalculator {
      * Builds a JobStatusCalculator that is reporting {@link Status#ERROR} if the last {@code numJobs} job failed.
      *
      * @param key key of the calculator
+     * @param numJobs the number of last jobs used to calculate the job status
      * @param jobRepository the repository
      * @return JobStatusCalculator
      */

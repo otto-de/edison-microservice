@@ -14,6 +14,8 @@ public final class JobEvents {
 
     /**
      * Internal method. Should only be called inside edison-jobs.
+     *
+     * @param jobEventPublisher the JobEventPublisher to register
      */
     public static void register(final JobEventPublisher jobEventPublisher) {
         if (jobEventPublisherThreadLocal.get() != null) {
@@ -32,16 +34,31 @@ public final class JobEvents {
         jobEventPublisherThreadLocal.remove();
     }
 
+    /**
+     * Publish an error event.
+     *
+     * @param message error message
+     */
     public static void error(final String message) {
         checkInitialisation();
         jobEventPublisherThreadLocal.get().error(message);
     }
 
+    /**
+     * Publish a warning event.
+     *
+     * @param message warning message
+     */
     public static void warn(final String message) {
         checkInitialisation();
         jobEventPublisherThreadLocal.get().warn(message);
     }
 
+    /**
+     * Publish an info event.
+     *
+     * @param message info message
+     */
     public static void info(final String message) {
         checkInitialisation();
         jobEventPublisherThreadLocal.get().info(message);

@@ -36,13 +36,12 @@ import static org.hamcrest.Matchers.*;
 public class MongoJobRepositoryTest {
 
     private MongoJobRepository repo;
-    private MongoDatabase database;
     private MongoCollection<Document> runningJobsCollection;
 
     @Before
     public void setup() {
         final Fongo fongo = new Fongo("inmemory-mongodb");
-        database = fongo.getDatabase("jobsinfo");
+        final MongoDatabase database = fongo.getDatabase("jobsinfo");
         runningJobsCollection = database.getCollection("jobmetadata");
         repo = new MongoJobRepository(database);
         repo.initJobsMetaDataDocumentsOnStartup();
@@ -50,8 +49,8 @@ public class MongoJobRepositoryTest {
 
     @Test
     public void shouldInitMetaDataCollection() {
-        assertThat(runningJobsCollection.count(new Document("_id", "RUNNING_JOBS")), is(1l));
-        assertThat(runningJobsCollection.count(new Document("_id", "DISABLED_JOBS")), is(1l));
+        assertThat(runningJobsCollection.count(new Document("_id", "RUNNING_JOBS")), is(1L));
+        assertThat(runningJobsCollection.count(new Document("_id", "DISABLED_JOBS")), is(1L));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class MongoJobRepositoryTest {
         final Optional<JobInfo> jobInfo = repo.findOne("http://localhost/foo/A");
         // then
         assertThat(jobInfo.isPresent(), is(true));
-        assertThat(jobInfo.get(), is(writtenFoo));
+        assertThat(jobInfo.orElse(null), is(writtenFoo));
     }
 
     @Test
@@ -75,7 +74,7 @@ public class MongoJobRepositoryTest {
         // when
         final Optional<JobInfo> jobInfo = repo.findOne("http://localhost/foo/B");
         // then
-        assertThat(jobInfo.get(), is(writtenFoo));
+        assertThat(jobInfo.orElse(null), is(writtenFoo));
     }
 
     @Test
@@ -106,7 +105,7 @@ public class MongoJobRepositoryTest {
         final Optional<JobInfo> jobInfo = repo.findOne(foo.getJobId());
 
         //Then
-        assertThat(toDate(jobInfo.get().getLastUpdated()), is(toDate(myTestTime)));
+        assertThat(toDate(jobInfo.orElse(null).getLastUpdated()), is(toDate(myTestTime)));
     }
 
     @Test
@@ -117,7 +116,7 @@ public class MongoJobRepositoryTest {
         // when
         final Optional<JobInfo> jobInfo = repo.findOne("http://localhost/foo");
         // then
-        assertThat(jobInfo.get(), is(foo));
+        assertThat(jobInfo.orElse(null), is(foo));
     }
 
     @Test
@@ -323,7 +322,7 @@ public class MongoJobRepositoryTest {
         repo.appendMessage(jobId, jobMessage);
 
         // then
-        JobInfo jobInfoFromDB = repo.findOne(jobId).get();
+        JobInfo jobInfoFromDB = repo.findOne(jobId).orElse(null);
         assertThat(jobInfoFromDB.getMessages(), hasSize(3));
         assertThat(jobInfoFromDB.getMessages().get(2), is(jobMessage));
         assertThat(jobInfoFromDB.getStatus(), is(JobStatus.OK));
@@ -382,7 +381,6 @@ public class MongoJobRepositoryTest {
     @Test
     public void shouldRemoveStoppedJobFromRunningDocument() {
         String jobType = "myJobType";
-        String jobId = "jobID";
         addJobToRunningDocument("otherJobType");
         addJobToRunningDocument(jobType);
 
@@ -462,7 +460,7 @@ public class MongoJobRepositoryTest {
 
         // then
         assertThat(repo.findDisabledJobTypes(), is(Lists.emptyList()));
-        assertThat(runningJobsCollection.count(new Document("_id", "DISABLED_JOBS")), is(1l));
+        assertThat(runningJobsCollection.count(new Document("_id", "DISABLED_JOBS")), is(1L));
     }
 
     @Test
@@ -475,7 +473,7 @@ public class MongoJobRepositoryTest {
 
         // then
         assertThat(repo.runningJobsDocument(), is(new RunningJobs(Lists.emptyList())));
-        assertThat(runningJobsCollection.count(new Document("_id", "RUNNING_JOBS")), is(1l));
+        assertThat(runningJobsCollection.count(new Document("_id", "RUNNING_JOBS")), is(1L));
     }
 
     @Test
@@ -501,7 +499,7 @@ public class MongoJobRepositoryTest {
 
     private void assertRunningDocumentContainsJob(String jobType, String jobId) {
         Document runningJobsDocument = runningJobsCollection.find(new Document("_id", "RUNNING_JOBS")).iterator().next();
-        assertThat(runningJobsDocument.entrySet(), is(new HashMap() {{
+        assertThat(runningJobsDocument.entrySet(), is(new HashMap<String, Object>() {{
             put("_id", "RUNNING_JOBS");
             put(jobType, jobId);
         }}.entrySet()));
@@ -543,7 +541,7 @@ public class MongoJobRepositoryTest {
                 jobId,
                 type,
                 started, started.plus(1, SECONDS), Optional.empty(), OK,
-                Collections.<JobMessage>emptyList(),
+                Collections.emptyList(),
                 systemDefaultZone(),
                 "localhost"
         );

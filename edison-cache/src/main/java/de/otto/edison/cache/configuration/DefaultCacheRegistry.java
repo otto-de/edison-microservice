@@ -27,6 +27,7 @@ public class DefaultCacheRegistry implements CacheManager, CacheRegistry {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void registerCache(CaffeineCacheConfig config, com.github.benmanes.caffeine.cache.Cache cache) {
         caches.put(config.cacheName, new CaffeineCache(config.cacheName, cache));
     }

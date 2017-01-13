@@ -72,7 +72,8 @@ public class ApplicationStatusAggregatorConfiguration {
      *
      * This is used if edison.status.scheduler.cron is configured.
      *
-     * @return CronScheduler
+     * @param applicationStatusAggregator the ApplicationStatusAggregator scheduled for updates
+     * @return CronScheduler a cron scheduler
      */
     @Bean
     @ConditionalOnProperty(name = "edison.status.scheduler.cron")
@@ -87,7 +88,8 @@ public class ApplicationStatusAggregatorConfiguration {
      *
      * This is used by default, if no other scheduler is configured.
      *
-     * @return Scheduler
+     * @param applicationStatusAggregator the ApplicationStatusAggregator scheduled for updates
+     * @return Scheduler fixed delay scheduler
      */
     @Bean
     @ConditionalOnMissingBean(Scheduler.class)

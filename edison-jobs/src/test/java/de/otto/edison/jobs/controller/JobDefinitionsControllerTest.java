@@ -105,6 +105,7 @@ public class JobDefinitionsControllerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldReturnAllJobDefinitionsAsHtml() throws Exception {
         // given
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
@@ -131,6 +132,7 @@ public class JobDefinitionsControllerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldConvertToSecondsIfSecondsIsLessThan60() throws Exception {
         // Given
         final JobDefinition jobDef = jobDefinition("TheJob", "Job", ofSeconds(59));
@@ -151,6 +153,7 @@ public class JobDefinitionsControllerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldConvertToMinutesIfSecondsIsNotLessThan60() throws Exception {
         // Given
         final JobDefinition jobDef = jobDefinition("TheJob", "Job", ofSeconds(60));

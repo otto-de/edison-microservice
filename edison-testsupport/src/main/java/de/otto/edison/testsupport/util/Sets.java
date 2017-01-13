@@ -2,11 +2,13 @@ package de.otto.edison.testsupport.util;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 public final class Sets {
 
-    public static <T> HashSet<T> hashSet(T... values) {
-        HashSet<T> result = new HashSet<>();
+    @SafeVarargs
+    public static <T> Set<T> hashSet(T... values) {
+        Set<T> result = new HashSet<>();
         if(values==null) {
             return result;
         }
