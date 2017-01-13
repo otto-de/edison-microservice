@@ -1,6 +1,6 @@
 # Release History
 
-## Release 1.0.0.RC2 (CURRENT SNAPSHOT)
+## Release 1.0.0.RC2
 
 * **[edison-core]** Fixed issue Status page should always render `vcs.url`
 * **[edison-core]** Added `@ConfigurationProperties MetricsProperties`
