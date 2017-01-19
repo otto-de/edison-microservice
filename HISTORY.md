@@ -1,6 +1,6 @@
 # Release History
 
-## Release 1.0.0.RC3 (CURRENT SNAPSHOT)
+## Release 1.0.0.RC3
 
 **Bugfixes:**
 * **[edison-mongo]** Fixed issue Unable to use MongoJobRepository
