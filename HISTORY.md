@@ -1,5 +1,7 @@
 # Release History
 
+## Release 1.0.0.RC4-SNAPSHOT
+
 ## Release 1.0.0.RC3
 
 **Bugfixes:**
