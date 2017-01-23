@@ -1,6 +1,8 @@
 # Release History
 
 ## Release 1.0.0.RC4-SNAPSHOT
+* **[edison-jobs]** Fix property name numberOfToKeep => numberOfJobsToKeep
+
 
 ## Release 1.0.0.RC3
 

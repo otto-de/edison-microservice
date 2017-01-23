@@ -64,19 +64,19 @@ public class JobsProperties {
          * The number of jobs to keep by strategies like KeepLastJobs to clean up old jobs.
          */
         @Min(1)
-        private int numberOfToKeep = 100;
+        private int numberOfJobsToKeep = 100;
         /**
          * Number of seconds without update after which a job is considered to be dead.
          */
         @Min(1)
         private int markDeadAfter = 30;
 
-        public int getNumberOfToKeep() {
-            return numberOfToKeep;
+        public int getNumberOfJobsToKeep() {
+            return numberOfJobsToKeep;
         }
 
-        public void setNumberOfToKeep(int numberOfToKeep) {
-            this.numberOfToKeep = numberOfToKeep;
+        public void setNumberOfJobsToKeep(int numberOfJobsToKeep) {
+            this.numberOfJobsToKeep = numberOfJobsToKeep;
         }
 
         public int getMarkDeadAfter() {
