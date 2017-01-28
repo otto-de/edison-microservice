@@ -4,9 +4,6 @@ apply plugin: 'eclipse'
 apply from: 'dependencies.gradle'
 
 buildscript {
-    ext.springBootVersion = "1.4.2.RELEASE"
-    ext.springVersion = "4.3.4.RELEASE"
-
     repositories {
         maven { url "http://repo.spring.io/libs-snapshot" }
         maven { url 'http://repo.spring.io/plugins-release' }

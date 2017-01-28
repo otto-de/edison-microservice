@@ -29,7 +29,7 @@ ext.libs = [
         thymeleaf3: [
                 'org.thymeleaf:thymeleaf:3.0.2.RELEASE',
                 'org.thymeleaf:thymeleaf-spring4:3.0.2.RELEASE',
-                'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.1.0' ],
+                'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.1.1' ],
         testUnit: [
                 "junit:junit:4.12",
                 "org.hamcrest:hamcrest-core:1.3",
