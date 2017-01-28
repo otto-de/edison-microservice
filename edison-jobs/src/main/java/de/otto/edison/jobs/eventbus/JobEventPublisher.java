@@ -1,6 +1,6 @@
 package de.otto.edison.jobs.eventbus;
 
-import de.otto.edison.jobs.eventbus.events.MessageEvent.Level;
+import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent.State;
 import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
@@ -10,7 +10,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.Objects;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.eventbus.events.MessageEvent.Level.*;
+import static de.otto.edison.jobs.domain.Level.ERROR;
+import static de.otto.edison.jobs.domain.Level.INFO;
+import static de.otto.edison.jobs.domain.Level.WARNING;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 
@@ -46,7 +48,7 @@ public class JobEventPublisher {
     }
 
     public void warn(final String message) {
-        message(WARN, message);
+        message(WARNING, message);
     }
 
     public void error(final String message) {
@@ -58,7 +60,7 @@ public class JobEventPublisher {
     }
 
     public void warn(final Marker marker, final String message) {
-        message(marker, WARN, message);
+        message(marker, WARNING, message);
     }
 
     public void error(final Marker marker, final String message) {

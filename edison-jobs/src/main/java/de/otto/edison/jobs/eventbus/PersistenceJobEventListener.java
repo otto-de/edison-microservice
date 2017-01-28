@@ -12,6 +12,8 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
+
 public class PersistenceJobEventListener implements JobEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceJobEventListener.class);
@@ -64,23 +66,8 @@ public class PersistenceJobEventListener implements JobEventListener {
     }
 
     private JobMessage convertMessage(MessageEvent messageEvent) {
-        return JobMessage.jobMessage(convertLevel(messageEvent), messageEvent.getMessage(),
+        return jobMessage(messageEvent.getLevel(), messageEvent.getMessage(),
                 OffsetDateTime.ofInstant(Instant.ofEpochMilli(messageEvent.getTimestamp()), ZoneId.systemDefault()));
     }
 
-    private Level convertLevel(MessageEvent messageEvent) {
-        Level level = Level.INFO;
-        switch (messageEvent.getLevel()) {
-            case INFO:
-                level = Level.INFO;
-                break;
-            case WARN:
-                level = Level.WARNING;
-                break;
-            case ERROR:
-                level = Level.ERROR;
-                break;
-        }
-        return level;
-    }
 }

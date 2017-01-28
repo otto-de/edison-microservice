@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.eventbus.events;
 
+import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.service.JobRunnable;
 import net.jcip.annotations.Immutable;
 import org.slf4j.Marker;
@@ -81,9 +82,4 @@ public class MessageEvent extends ApplicationEvent {
         return new MessageEvent(jobRunnable, jobId, level, message, marker);
     }
 
-    public enum Level {
-        INFO,
-        WARN,
-        ERROR;
-    }
 }

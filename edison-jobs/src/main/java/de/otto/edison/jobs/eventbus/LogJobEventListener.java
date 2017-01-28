@@ -26,7 +26,7 @@ public class LogJobEventListener implements JobEventListener {
                     LOG.info(msg);
                 }
                 break;
-            case WARN:
+            case WARNING:
                 if (messageEvent.getMarker().isPresent()) {
                     LOG.warn(messageEvent.getMarker().get(), msg);
                 } else {

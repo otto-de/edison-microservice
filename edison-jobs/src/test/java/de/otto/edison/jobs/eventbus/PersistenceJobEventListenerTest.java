@@ -16,6 +16,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
+import static de.otto.edison.jobs.domain.Level.*;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
@@ -74,19 +75,19 @@ public class PersistenceJobEventListenerTest {
 
     @Test
     public void shouldPersistMessage() throws Exception {
-        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, MessageEvent.Level.INFO, "some message", Optional.empty());
+        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, INFO, "some message", Optional.empty());
         OffsetDateTime timestamp = OffsetDateTime.ofInstant(Instant.ofEpochMilli(messageEvent.getTimestamp()), ZoneId.systemDefault());
 
         subject.consumeMessage(messageEvent);
 
-        verify(jobServiceMock).appendMessage(JOB_ID, JobMessage.jobMessage(Level.INFO, "some message", timestamp));
+        verify(jobServiceMock).appendMessage(JOB_ID, JobMessage.jobMessage(INFO, "some message", timestamp));
     }
 
     @Test
     public void shouldNotThrowIfSomethingFailsInDatabase() {
-        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, MessageEvent.Level.INFO, "some message", Optional.empty());
+        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, INFO, "some message", Optional.empty());
         OffsetDateTime timestamp = OffsetDateTime.ofInstant(Instant.ofEpochMilli(messageEvent.getTimestamp()), ZoneId.systemDefault());
-        final JobMessage expectedJobMessage = JobMessage.jobMessage(Level.INFO, "some message", timestamp);
+        final JobMessage expectedJobMessage = JobMessage.jobMessage(INFO, "some message", timestamp);
         doThrow(new RuntimeException("Miserable failure")).when(jobServiceMock).appendMessage(JOB_ID, expectedJobMessage);
 
         subject.consumeMessage(messageEvent);
