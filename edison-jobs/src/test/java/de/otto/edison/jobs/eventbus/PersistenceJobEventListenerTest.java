@@ -74,6 +74,13 @@ public class PersistenceJobEventListenerTest {
     }
 
     @Test
+    public void shouldPersistSkippedEvent() throws Exception {
+        subject.consumeStateChange(stateChangedEvent(SKIPPED));
+
+        verify(jobServiceMock).markSkipped(JOB_ID);
+    }
+
+    @Test
     public void shouldPersistMessage() throws Exception {
         MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, INFO, "some message", Optional.empty());
         OffsetDateTime timestamp = OffsetDateTime.ofInstant(Instant.ofEpochMilli(messageEvent.getTimestamp()), ZoneId.systemDefault());

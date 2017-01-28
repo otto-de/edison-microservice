@@ -15,6 +15,7 @@ import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobD
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.SKIPPED;
 import static de.otto.edison.jobs.status.JobStatusCalculator.errorOnLastJobFailed;
 import static de.otto.edison.jobs.status.JobStatusCalculator.errorOnLastNumJobsFailed;
 import static de.otto.edison.jobs.status.JobStatusCalculator.warningOnLastJobFailed;
@@ -61,6 +62,22 @@ public class JobStatusCalculatorTest {
     public void shouldIndicateOkIfLastJobOk() {
         // given
         final List<JobInfo> jobs = singletonList(someStoppedJob(OK, 1));
+        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobs);
+
+        // when
+        StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
+        StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
+
+        // then
+        assertThat(first.getStatus(), is(Status.OK));
+        assertThat(first.getMessage(), is("Last job was successful"));
+        assertThat(second.getStatus(), is(Status.OK));
+    }
+
+    @Test
+    public void shouldIndicateOkIfLastJobSkipped() {
+        // given
+        final List<JobInfo> jobs = singletonList(someStoppedJob(SKIPPED, 1));
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobs);
 
         // when

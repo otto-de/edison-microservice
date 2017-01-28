@@ -71,6 +71,7 @@ public class StateChangeEvent extends ApplicationEvent {
     public enum State {
         START,
         STOP,
+        SKIPPED,
         RESTART,
         KEEP_ALIVE,
         DEAD

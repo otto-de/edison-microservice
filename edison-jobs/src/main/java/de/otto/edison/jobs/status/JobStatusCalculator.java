@@ -199,6 +199,7 @@ public class JobStatusCalculator {
         long numFailedJobs = getNumFailedJobs(jobInfos);
         switch(lastJob.getStatus()) {
             case OK:
+            case SKIPPED:
                 if(jobTooOld(lastJob, jobDefinition)) {
                     status = WARNING;
                     message = jobAgeMessage(jobDefinition);

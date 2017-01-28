@@ -208,6 +208,19 @@ public class JobServiceTest {
     }
 
     @Test
+    public void shouldMarkSkipped() {
+        //when
+        jobService.markSkipped(JOB_ID);
+
+        // then
+        OffsetDateTime now = OffsetDateTime.now(clock);
+
+        verify(jobRepository).appendMessage(JOB_ID, jobMessage(Level.INFO, "Skipped job ..", now));
+        verify(jobRepository).setLastUpdate(JOB_ID, now);
+        verify(jobRepository).setJobStatus(JOB_ID, JobInfo.JobStatus.SKIPPED);
+    }
+
+    @Test
     public void shouldMarkRestarted() {
         //when
         jobService.markRestarted(JOB_ID);

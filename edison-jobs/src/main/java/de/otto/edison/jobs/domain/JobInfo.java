@@ -37,7 +37,7 @@ public class JobInfo {
         return clock;
     }
 
-    public enum JobStatus {OK, ERROR, DEAD}
+    public enum JobStatus {OK, SKIPPED, ERROR, DEAD}
 
     public static JobInfo newJobInfo(final String jobId, final String jobType,
                                      final Clock clock, final String hostname) {

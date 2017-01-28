@@ -2,6 +2,7 @@ package de.otto.edison.example.jobs;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
+import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.service.JobRunnable;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.retryableFixedDelayJobDefinition;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.SKIPPED;
 import static java.lang.Thread.sleep;
 import static java.time.Duration.ofMinutes;
 
@@ -31,11 +33,15 @@ public class BarJob implements JobRunnable {
 
     @Override
     public void execute(final JobEventPublisher jobEventPublisher) {
-        if (new Random().nextBoolean()) {
-            jobEventPublisher.error("Some random error occured");
-        }
-        for (int i = 0; i < 10; ++i) {
-            doSomeHardWork(jobEventPublisher);
+        if (hasNothingToDo()) {
+            jobEventPublisher.skipped();
+        } else {
+            if (hasSomeErrorCondition()) {
+                jobEventPublisher.error("Some random error occured");
+            }
+            for (int i = 0; i < 10; ++i) {
+                doSomeHardWork(jobEventPublisher);
+            }
         }
     }
 
@@ -46,6 +52,14 @@ public class BarJob implements JobRunnable {
         } catch (final InterruptedException e) {
             jobEventPublisher.error(e.getMessage());
         }
+    }
+
+    private boolean hasSomeErrorCondition() {
+        return new Random().nextBoolean();
+    }
+
+    private boolean hasNothingToDo() {
+        return new Random().nextBoolean();
     }
 
 }

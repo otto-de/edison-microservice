@@ -43,6 +43,10 @@ public class JobEventPublisher {
         applicationEventPublisher.publishEvent(newMessageEvent(jobRunnable, jobId, level, message, Optional.of(marker)));
     }
 
+    public void skipped() {
+        stateChanged(State.SKIPPED);
+    }
+
     public void info(final String message) {
         message(INFO, message);
     }

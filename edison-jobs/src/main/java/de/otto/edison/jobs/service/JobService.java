@@ -194,6 +194,13 @@ public class JobService {
         repository.setLastUpdate(jobId, now(clock));
     }
 
+    public void markSkipped(String jobId) {
+        OffsetDateTime currentTimestamp = now(clock);
+        repository.appendMessage(jobId, jobMessage(Level.INFO, "Skipped job ..", currentTimestamp));
+        repository.setLastUpdate(jobId, currentTimestamp);
+        repository.setJobStatus(jobId, JobInfo.JobStatus.SKIPPED);
+    }
+
     public void markRestarted(String jobId) {
         OffsetDateTime currentTimestamp = now(clock);
         repository.appendMessage(jobId, jobMessage(Level.WARNING, "Restarting job ..", currentTimestamp));

@@ -72,7 +72,6 @@ public final class JobRunner {
         jobEventPublisher.stateChanged(START);
         pingJob = executorService.scheduleAtFixedRate(this::ping, PING_PERIOD, PING_PERIOD, SECONDS);
 
-        final String jobId = this.jobId.toString();
         MDC.put("job_id", jobId.substring(jobId.lastIndexOf('/') + 1));
         MDC.put("job_type", jobType);
         LOG.info("job started '{}'", jobId);

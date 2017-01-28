@@ -27,11 +27,11 @@ public class PersistenceJobEventListener implements JobEventListener {
     @Override
     public void consumeStateChange(final StateChangeEvent event) {
         try {
-            if (event.getState() == StateChangeEvent.State.START) {
-                return;
-            }
-
             switch (event.getState()) {
+                case START:
+                    // nothing to do
+                    break;
+
                 case KEEP_ALIVE:
                     jobService.keepAlive(event.getJobId());
                     break;
@@ -44,6 +44,8 @@ public class PersistenceJobEventListener implements JobEventListener {
                     jobService.killJob(event.getJobId());
                     break;
 
+                case SKIPPED:
+                    jobService.markSkipped(event.getJobId());
                 case STOP:
                     jobService.stopJob(event.getJobId());
                     break;
