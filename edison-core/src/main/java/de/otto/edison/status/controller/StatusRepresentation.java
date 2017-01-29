@@ -3,6 +3,9 @@ package de.otto.edison.status.controller;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.status.domain.*;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,6 +16,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentContextPath;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(NON_NULL)
@@ -57,7 +61,9 @@ public class StatusRepresentation {
         final List<Map<String,String>> result = new ArrayList<>();
         links.forEach(link -> result.add(new LinkedHashMap<String,String>() {{
             put("rel", link.rel);
-            put("href", link.href);
+            put("href", link.href.startsWith("http")
+                    ? link.href
+                    : fromCurrentContextPath().path(link.href).build().toString());
             put("title", link.title);
         }}));
         return result;

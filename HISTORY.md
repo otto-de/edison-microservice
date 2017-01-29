@@ -3,9 +3,10 @@
 ## Release 1.0.0.RC4-SNAPSHOT
 
 **Bugfixes:**
-* **[edison-core]** Fixed version conflict for Thymeleaf; Updated dependencies to Thymeleaf 3
+* **[edison-core]** Fixed version conflict for Thymeleaf; Updated dependencies to Thymeleaf 3.
+* **[edison-core]** Fixed broken links to jobs in status details JSON.
 * **[edison-jobs]** Fix property name numberOfToKeep => numberOfJobsToKeep
-* **[edison-jobs]** Removed MessageEvent.Level and replaced it by de.otto.edison.jobs.domain.Level
+* **[edison-jobs]** Removed MessageEvent.Level and replaced it by de.otto.edison.jobs.domain.Level.
 
 **New Features:**
 * **[edison-jobs]** Added new JobStatus SKIPPED for jobs that have been skipped because there was nothing to do.
