@@ -2,6 +2,7 @@ package de.otto.edison.jobs.repository.cleanup;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.RunningJobs;
+import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +16,9 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ClearDeadLocksTest {
@@ -24,6 +27,8 @@ public class ClearDeadLocksTest {
     public static final String JOB_ID = "someId";
     @Mock
     private JobRepository jobRepository;
+    @Mock
+    private JobLockRepository jobLockRepository;
 
     private ClearDeadLocks subject;
 
@@ -34,10 +39,10 @@ public class ClearDeadLocksTest {
     public void setUp() throws Exception {
         initMocks(this);
         fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-        subject = new ClearDeadLocks(jobRepository);
+        subject = new ClearDeadLocks(jobLockRepository, jobRepository);
 
         RunningJobs jobs = new RunningJobs(asList(new RunningJobs.RunningJob(JOB_ID, JOB_TYPE)));
-        when(jobRepository.runningJobsDocument()).thenReturn(jobs);
+        when(jobLockRepository.runningJobs()).thenReturn(jobs);
         now = OffsetDateTime.now(fixedClock);
     }
 
@@ -48,7 +53,7 @@ public class ClearDeadLocksTest {
 
         subject.clearLocks();
 
-        verify(jobRepository).clearRunningMark(JOB_TYPE);
+        verify(jobLockRepository).clearRunningMark(JOB_TYPE);
     }
 
     @Test
@@ -58,7 +63,7 @@ public class ClearDeadLocksTest {
 
         subject.clearLocks();
 
-        verify(jobRepository, never()).clearRunningMark(JOB_TYPE);
+        verify(jobLockRepository, never()).clearRunningMark(JOB_TYPE);
     }
 
     @Test
@@ -67,7 +72,7 @@ public class ClearDeadLocksTest {
 
         subject.clearLocks();
 
-        verify(jobRepository).clearRunningMark(JOB_TYPE);
+        verify(jobLockRepository).clearRunningMark(JOB_TYPE);
     }
 
     private JobInfo jobInfo(Optional<OffsetDateTime> stopped) {

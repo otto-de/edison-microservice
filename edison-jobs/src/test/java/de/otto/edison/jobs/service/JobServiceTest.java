@@ -7,6 +7,7 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
+import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
 import org.junit.Before;
@@ -58,6 +59,8 @@ public class JobServiceTest {
     @Mock
     private JobRepository jobRepository;
     @Mock
+    private JobLockRepository lockRepository;
+    @Mock
     private GaugeService gaugeServiceMock;
     @Mock
     private JobMutexGroup jobMutexGroup;
@@ -83,7 +86,7 @@ public class JobServiceTest {
         when(jobRunnable.getJobDefinition()).thenReturn(DefaultJobDefinition.manuallyTriggerableJobDefinition("someType", "bla", "bla", 0, Optional.empty()));
         when(uuidProviderMock.getUuid()).thenReturn(JOB_ID);
 
-        jobService = new JobService(jobRepository, asList(jobRunnable), gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, hashSet(jobMutexGroup), uuidProviderMock);
+        jobService = new JobService(jobRepository, lockRepository, asList(jobRunnable), gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, hashSet(jobMutexGroup), uuidProviderMock);
         jobService.postConstruct();
     }
 
@@ -115,12 +118,12 @@ public class JobServiceTest {
         verify(executorService).execute(any(Runnable.class));
         verify(jobRepository).createOrUpdate(expectedJobInfo);
         verify(jobRunnable).execute(any(JobEventPublisher.class));
-        verify(jobRepository).markJobAsRunningIfPossible(expectedJobInfo, hashSet(jobType));
+        verify(lockRepository).markJobAsRunningIfPossible(expectedJobInfo, hashSet(jobType));
     }
 
     @Test
     public void shouldNotStartJobOnBlockedException() {
-        doThrow(new JobBlockedException("bla")).when(jobRepository).markJobAsRunningIfPossible(any(), any());
+        doThrow(new JobBlockedException("bla")).when(lockRepository).markJobAsRunningIfPossible(any(), any());
 
         Optional<String> jobUri = jobService.startAsyncJob("someType");
 
@@ -146,13 +149,13 @@ public class JobServiceTest {
         JobMutexGroup one = new JobMutexGroup("group1", jobType, "type2", "type3");
         JobMutexGroup two = new JobMutexGroup("group2", jobType, "type2", "type4");
         JobMutexGroup three = new JobMutexGroup("otherGroup", "käse", "wurst", "wurstkäse");
-        jobService = new JobService(jobRepository, asList(jobRunnable), gaugeServiceMock, executorService,
+        jobService = new JobService(jobRepository, lockRepository, asList(jobRunnable), gaugeServiceMock, executorService,
                 applicationEventPublisher, clock, systemInfo, hashSet(one, two, three), uuidProviderMock);
 
         // when
         jobService.startAsyncJob(jobType);
 
-        verify(jobRepository).markJobAsRunningIfPossible(jobInfo(jobType), hashSet(jobType, "type2", "type3", "type4"));
+        verify(lockRepository).markJobAsRunningIfPossible(jobInfo(jobType), hashSet(jobType, "type2", "type3", "type4"));
     }
 
     private JobInfo jobInfo(String jobType) {
@@ -169,7 +172,7 @@ public class JobServiceTest {
         jobService.stopJob("superId");
 
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.OK).setStopped(now).setLastUpdated(now).build();
-        verify(jobRepository).clearRunningMark("superType");
+        verify(lockRepository).clearRunningMark("superType");
         verify(jobRepository).createOrUpdate(expected);
     }
 
@@ -182,7 +185,7 @@ public class JobServiceTest {
         jobService.killJob("superId");
 
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.DEAD).setStopped(now).setLastUpdated(now).build();
-        verify(jobRepository).clearRunningMark("superType");
+        verify(lockRepository).clearRunningMark("superType");
         verify(jobRepository).createOrUpdate(expected);
     }
 
@@ -194,7 +197,7 @@ public class JobServiceTest {
 
         jobService.killJobsDeadSince(60);
 
-        verify(jobRepository).clearRunningMark(someJobInfo.getJobType());
+        verify(lockRepository).clearRunningMark(someJobInfo.getJobType());
     }
 
     @Test
@@ -270,7 +273,7 @@ public class JobServiceTest {
     public void shouldDisableJobType() {
         jobService.disableJobType("myJobType");
 
-        verify(jobRepository).disableJobType("myJobType");
+        verify(lockRepository).disableJobType("myJobType");
     }
 
     private JobInfo.Builder defaultJobInfo() {

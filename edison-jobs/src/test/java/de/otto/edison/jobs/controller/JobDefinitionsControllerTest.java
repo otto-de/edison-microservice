@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.navigation.NavBar;
@@ -42,12 +43,15 @@ public class JobDefinitionsControllerTest {
     @Mock
     JobRepository jobRepository;
 
+    @Mock
+    JobLockRepository jobLockRepository;
+
     private MockMvc mockMvc;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        controller = new JobDefinitionsController(jobDefinitionService, jobRepository, mock(NavBar.class));
+        controller = new JobDefinitionsController(jobDefinitionService, jobLockRepository, mock(NavBar.class));
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -111,7 +115,7 @@ public class JobDefinitionsControllerTest {
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
         final JobDefinition barJobDef = notTriggerableDefinition("BarJob", "Bar");
         when(jobDefinitionService.getJobDefinitions()).thenReturn(asList(fooJobDef, barJobDef));
-        when(jobRepository.findDisabledJobTypes()).thenReturn(asList("BarJob"));
+        when(jobLockRepository.findDisabledJobTypes()).thenReturn(asList("BarJob"));
 
         // when
         mockMvc.perform(

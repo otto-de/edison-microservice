@@ -4,9 +4,7 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
-import org.assertj.core.util.Lists;
 import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.Before;
@@ -16,8 +14,6 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -238,48 +234,6 @@ public class InMemJobRepositoryTest {
     }
 
     @Test
-    public void shouldReturnRunningJobsDocument() {
-        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"), new HashSet<>());
-
-        RunningJobs expected = new RunningJobs(Collections.singletonList(new RunningJobs.RunningJob("id", "type")));
-
-        assertThat(repository.runningJobsDocument(), is(expected));
-    }
-
-    @Test(expected = JobBlockedException.class)
-    public void shouldDisableJob() {
-        // given
-        String jobType = "irgendeinJobType";
-        repository.disableJobType(jobType);
-        JobInfo jobInfo = JobInfo.newJobInfo("someId", jobType, systemDefaultZone(), "lokalhorst");
-
-        // when
-        try {
-            repository.markJobAsRunningIfPossible(jobInfo, new HashSet<>());
-        }
-
-        // then
-        catch(JobBlockedException e) {
-            assertThat(e.getMessage(), is("Disabled"));
-            throw e;
-        }
-    }
-
-    @Test
-    public void shouldFindDisabledJobTypes() {
-        // given
-        String jobType = "irgendeinJobType";
-        repository.disableJobType(jobType);
-
-        // when
-        List<String> result = repository.findDisabledJobTypes();
-
-        // then
-        assertThat(result, hasSize(1));
-        assertThat(result.get(0), is(jobType));
-    }
-
-    @Test
     public void shouldUpdateJobStatus() {
         //Given
         final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO"); //default jobStatus is 'OK'
@@ -324,35 +278,10 @@ public class InMemJobRepositoryTest {
         repository.createOrUpdate(stoppedJob);
 
         //When
-        repository.clearAll();
+        repository.deleteAll();
 
         //Then
         assertThat(repository.findAll(), is(emptyList()));
-    }
-
-    @Test
-    public void shouldClearRunningJobs() throws Exception {
-        //Given
-        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"), new HashSet<>());
-
-        //When
-        repository.clearAll();
-
-        //Then
-        assertThat(repository.runningJobsDocument(), is(new RunningJobs(emptyList())));
-    }
-
-    @Test
-    public void shouldClearDisabledJobTypes() throws Exception {
-        //Given
-        String jobType = "someJobType";
-        repository.disableJobType(jobType);
-
-        //When
-        repository.clearAll();
-
-        //Then
-        assertThat(repository.findDisabledJobTypes(), is(emptyList()));
     }
 
     private JobInfo jobInfo(final String jobId, final String type) {

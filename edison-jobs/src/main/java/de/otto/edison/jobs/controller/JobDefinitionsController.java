@@ -1,7 +1,7 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.navigation.NavBar;
 import de.otto.edison.status.domain.Link;
@@ -35,14 +35,14 @@ public class JobDefinitionsController {
     public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";
 
     private final JobDefinitionService jobDefinitions;
-    private final JobRepository jobRepository;
+    private final JobLockRepository jobLockRepository;
 
     @Autowired
     public JobDefinitionsController(final JobDefinitionService service,
-                                    final JobRepository jobRepository,
+                                    final JobLockRepository jobLockRepository,
                                     final NavBar rightNavBar) {
         this.jobDefinitions = service;
-        this.jobRepository = jobRepository;
+        this.jobLockRepository = jobLockRepository;
         rightNavBar.register(navBarItem(10, "Job Definitions", INTERNAL_JOBDEFINITIONS));
     }
 
@@ -66,7 +66,7 @@ public class JobDefinitionsController {
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
-            put("disabledJobs", jobRepository.findDisabledJobTypes());
+            put("disabledJobs", jobLockRepository.findDisabledJobTypes());
             put("jobdefinitions", jobDefinitions.getJobDefinitions()
                     .stream()
                     .map((def) -> new HashMap<String, Object>() {{
