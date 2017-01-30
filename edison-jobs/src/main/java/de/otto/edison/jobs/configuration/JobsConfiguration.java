@@ -9,6 +9,7 @@ import de.otto.edison.jobs.repository.inmem.InMemJobLockRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobMutexGroup;
+import de.otto.edison.jobs.service.JobMutexGroups;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.jobs.status.JobStatusCalculator;
 import de.otto.edison.jobs.status.JobStatusDetailIndicator;
@@ -44,12 +45,12 @@ public class JobsConfiguration {
 
     public static final Logger LOG = LoggerFactory.getLogger(JobsConfiguration.class);
 
-    @Autowired(required = false)
-    private Set<JobMutexGroup> mutexGroups;
+    private final JobMutexGroups mutexGroups;
     private final JobsProperties jobsProperties;
 
     @Autowired
-    public JobsConfiguration(final JobsProperties jobsProperties) {
+    public JobsConfiguration(final JobsProperties jobsProperties, final JobMutexGroups jobMutexGroups) {
+        this.mutexGroups = jobMutexGroups;
         this.jobsProperties = jobsProperties;
         final Map<String, String> calculator = this.jobsProperties.getStatus().getCalculator();
         if (!calculator.containsKey("default")) {

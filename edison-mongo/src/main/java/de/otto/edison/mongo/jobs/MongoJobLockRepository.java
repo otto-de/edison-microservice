@@ -9,17 +9,14 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobLockRepository;
-import de.otto.edison.jobs.service.JobMutexGroup;
+import de.otto.edison.jobs.service.JobMutexGroups;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.mongodb.ReadPreference.primaryPreferred;
@@ -36,19 +33,15 @@ public class MongoJobLockRepository implements JobLockRepository {
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobLockRepository.class);
 
     private static final String JOBS_META_DATA_COLLECTION_NAME = "jobmetadata";
-
     private static final String RUNNING_JOBS_DOCUMENT = "RUNNING_JOBS";
     private static final String DISABLED_JOBS_DOCUMENT = "DISABLED_JOBS";
+    private static final String ID = "_id";
 
-    public static final String ID = "_id";
 
-
-    private final Set<JobMutexGroup> mutexGroups;
+    private final JobMutexGroups mutexGroups;
     private final MongoCollection<Document> collection;
 
-
-
-    public MongoJobLockRepository(final MongoDatabase database, final Set<JobMutexGroup> mutexGroups) {
+    public MongoJobLockRepository(final MongoDatabase database, final JobMutexGroups mutexGroups) {
         this.collection = database.getCollection(JOBS_META_DATA_COLLECTION_NAME).withReadPreference(primaryPreferred());
         this.mutexGroups = mutexGroups;
     }
@@ -75,7 +68,7 @@ public class MongoJobLockRepository implements JobLockRepository {
                 eq(ID,
                         RUNNING_JOBS_DOCUMENT),
                 and(
-                        mutexJobTypesFor(jobInfo.getJobType()).stream()
+                        mutexGroups.mutexJobTypesFor(jobInfo.getJobType()).stream()
                                 .map(type -> Filters.not(Filters.exists(type)))
                                 .collect(toList())
                 )
@@ -149,14 +142,4 @@ public class MongoJobLockRepository implements JobLockRepository {
         return collection.count();
     }
 
-    private Set<String> mutexJobTypesFor(final String jobType) {
-        final Set<String> result = new HashSet<>();
-        result.add(jobType);
-        this.mutexGroups
-                .stream()
-                .map(JobMutexGroup::getJobTypes)
-                .filter(g -> g.contains(jobType))
-                .forEach(result::addAll);
-        return result;
-    }
 }

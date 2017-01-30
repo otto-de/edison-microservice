@@ -8,6 +8,7 @@ import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.service.JobMutexGroup;
+import de.otto.edison.jobs.service.JobMutexGroups;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -29,9 +30,9 @@ public class InMemJobLockRepository implements JobLockRepository {
     private final ConcurrentMap<String, JobInfo> jobs = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> runningJobs = new ConcurrentHashMap<>();
     private final Set<String> disabledJobTypes = ConcurrentHashMap.newKeySet();
-    private final Set<JobMutexGroup> mutexGroups;
+    private final JobMutexGroups mutexGroups;
 
-    public InMemJobLockRepository(final Set<JobMutexGroup> mutexGroups) {
+    public InMemJobLockRepository(final JobMutexGroups mutexGroups) {
         this.mutexGroups = mutexGroups;
     }
 
@@ -47,7 +48,7 @@ public class InMemJobLockRepository implements JobLockRepository {
         }
 
         synchronized (runningJobs) {
-            for (final String mutexJobType : mutexJobTypesFor(job.getJobType())) {
+            for (final String mutexJobType : mutexGroups.mutexJobTypesFor(job.getJobType())) {
                 if (runningJobs.containsKey(mutexJobType)) {
                     throw new JobBlockedException("Blocked");
                 }
@@ -82,7 +83,7 @@ public class InMemJobLockRepository implements JobLockRepository {
 
     @Override
     public List<String> findDisabledJobTypes() {
-        return new ArrayList(disabledJobTypes);
+        return new ArrayList<>(disabledJobTypes);
     }
 
     @Override
@@ -91,17 +92,5 @@ public class InMemJobLockRepository implements JobLockRepository {
         disabledJobTypes.clear();
         jobs.clear();
     }
-
-    private Set<String> mutexJobTypesFor(final String jobType) {
-        final Set<String> result = new HashSet<>();
-        result.add(jobType);
-        this.mutexGroups
-                .stream()
-                .map(JobMutexGroup::getJobTypes)
-                .filter(g -> g.contains(jobType))
-                .forEach(result::addAll);
-        return result;
-    }
-
 
 }

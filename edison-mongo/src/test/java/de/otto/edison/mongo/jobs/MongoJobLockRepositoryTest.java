@@ -8,6 +8,7 @@ import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.service.JobMutexGroup;
+import de.otto.edison.jobs.service.JobMutexGroups;
 import org.assertj.core.util.Lists;
 import org.bson.Document;
 import org.junit.Before;
@@ -40,7 +41,9 @@ public class MongoJobLockRepositoryTest {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         final MongoDatabase database = fongo.getDatabase("jobsinfo");
         runningJobsCollection = database.getCollection("jobmetadata");
-        repo = new MongoJobLockRepository(database, singleton(new JobMutexGroup("testgroup", "FirstMutexJob", "OtherMutexJob")));
+        repo = new MongoJobLockRepository(database, new JobMutexGroups(singleton(
+                new JobMutexGroup("testgroup", "FirstMutexJob", "OtherMutexJob")))
+        );
         repo.init();
     }
 

@@ -3,11 +3,11 @@ package de.otto.edison.jobs.repository;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobLockRepository;
+import de.otto.edison.jobs.service.JobMutexGroups;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
@@ -20,11 +20,12 @@ import static org.hamcrest.Matchers.is;
 
 public class InMemJobLockRepositoryTest {
 
-    InMemJobLockRepository repository;
+    private InMemJobLockRepository repository;
 
     @Before
     public void setUp() throws Exception {
-        repository = new InMemJobLockRepository(emptySet());
+        final JobMutexGroups mutexGroups = new JobMutexGroups(emptySet());
+        repository = new InMemJobLockRepository(mutexGroups);
     }
 
     @Test
