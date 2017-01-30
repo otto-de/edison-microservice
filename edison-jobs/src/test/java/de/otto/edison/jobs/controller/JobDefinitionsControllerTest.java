@@ -115,7 +115,7 @@ public class JobDefinitionsControllerTest {
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
         final JobDefinition barJobDef = notTriggerableDefinition("BarJob", "Bar");
         when(jobDefinitionService.getJobDefinitions()).thenReturn(asList(fooJobDef, barJobDef));
-        when(jobLockRepository.findDisabledJobTypes()).thenReturn(asList("BarJob"));
+        when(jobLockRepository.disabledJobTypes()).thenReturn(asList("BarJob"));
 
         // when
         mockMvc.perform(

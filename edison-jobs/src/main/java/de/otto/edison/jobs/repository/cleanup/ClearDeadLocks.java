@@ -1,7 +1,7 @@
 package de.otto.edison.jobs.repository.cleanup;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.RunningJobs;
+import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.slf4j.Logger;
@@ -32,16 +32,15 @@ public class ClearDeadLocks {
 
     @Scheduled(fixedRate = FIVE_MINUTES)
     public void clearLocks() {
-        List<RunningJobs.RunningJob> runningJobs = jobLockRepository.runningJobs()
-                .getRunningJobs();
+        List<RunningJob> runningJobs = jobLockRepository.runningJobs();
 
-        for (RunningJobs.RunningJob runningJob : runningJobs) {
+        for (RunningJob runningJob : runningJobs) {
             Optional<JobInfo> jobInfoOptional = jobRepository.findOne(runningJob.jobId);
             if (jobInfoOptional.isPresent() && jobInfoOptional.get().isStopped()) {
-                jobLockRepository.clearRunningMark(runningJob.jobType);
+                jobLockRepository.releaseRunLock(runningJob.jobType);
                 LOG.info("Clear Lock of Job {}. Job stopped already.", runningJob.jobType);
             } else if (!jobInfoOptional.isPresent()){
-                jobLockRepository.clearRunningMark(runningJob.jobType);
+                jobLockRepository.releaseRunLock(runningJob.jobType);
                 LOG.info("Clear Lock of Job {}. JobID does not exist", runningJob.jobType);
             }
         }

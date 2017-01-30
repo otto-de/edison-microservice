@@ -5,8 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.RunningJobs;
+import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.service.JobMutexGroups;
@@ -57,8 +56,8 @@ public class MongoJobLockRepository implements JobLockRepository {
     }
 
     @Override
-    public void markJobAsRunningIfPossible(final JobInfo jobInfo) throws JobBlockedException {
-        Bson disabledJobsFilter = and(eq(ID, DISABLED_JOBS_DOCUMENT), exists(jobInfo.getJobType()));
+    public void aquireRunLock(String jobId, String jobType) throws JobBlockedException {
+        Bson disabledJobsFilter = and(eq(ID, DISABLED_JOBS_DOCUMENT), exists(jobType));
 
         if (collection.find(disabledJobsFilter).first() != null) {
             throw new JobBlockedException("Disabled");
@@ -68,20 +67,20 @@ public class MongoJobLockRepository implements JobLockRepository {
                 eq(ID,
                         RUNNING_JOBS_DOCUMENT),
                 and(
-                        mutexGroups.mutexJobTypesFor(jobInfo.getJobType()).stream()
+                        mutexGroups.mutexJobTypesFor(jobType).stream()
                                 .map(type -> Filters.not(Filters.exists(type)))
                                 .collect(toList())
                 )
         );
 
-        Document updatedRunningJobsDocument = collection.findOneAndUpdate(query, set(jobInfo.getJobType(), jobInfo.getJobId()));
+        Document updatedRunningJobsDocument = collection.findOneAndUpdate(query, set(jobType, jobId));
         if (updatedRunningJobsDocument == null) {
-            throw new JobBlockedException("job blocked by other '" + jobInfo.getJobType() + "' job");
+            throw new JobBlockedException("job blocked by other '" + jobType + "' job");
         }
     }
 
     @Override
-    public void clearRunningMark(final String jobType) {
+    public void releaseRunLock(final String jobType) {
         final Bson query = eq(ID, RUNNING_JOBS_DOCUMENT);
         final Document updateResult = collection.findOneAndUpdate(query, unset(jobType));
         if (updateResult == null) {
@@ -90,19 +89,16 @@ public class MongoJobLockRepository implements JobLockRepository {
     }
 
     @Override
-    public RunningJobs runningJobs() {
-        final Document runningJobsDocument = collection.find(eq(ID, RUNNING_JOBS_DOCUMENT))
-                .first();
+    public List<RunningJob> runningJobs() {
+        final Document runningJobsDocument = collection.find(eq(ID, RUNNING_JOBS_DOCUMENT)).first();
         if (runningJobsDocument == null) {
-            return new RunningJobs(emptyList());
+            return emptyList();
         }
 
-        final List<RunningJobs.RunningJob> runningJobs = runningJobsDocument.entrySet().stream()
+        return runningJobsDocument.entrySet().stream()
                 .filter(entry -> !entry.getKey().equals(ID))
-                .map(entry -> new RunningJobs.RunningJob(entry.getValue().toString(), entry.getKey()))
+                .map(entry -> new RunningJob(entry.getValue().toString(), entry.getKey()))
                 .collect(Collectors.toList());
-
-        return new RunningJobs(runningJobs);
     }
 
     @Override
@@ -124,7 +120,7 @@ public class MongoJobLockRepository implements JobLockRepository {
     }
 
     @Override
-    public List<String> findDisabledJobTypes() {
+    public List<String> disabledJobTypes() {
         Document disabledJobsDocument = collection.find(eq(ID, DISABLED_JOBS_DOCUMENT)).first();
         return disabledJobsDocument.keySet().stream()
                 .filter(k -> !k.equals(ID))

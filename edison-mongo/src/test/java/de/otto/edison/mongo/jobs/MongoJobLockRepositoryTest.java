@@ -3,9 +3,7 @@ package de.otto.edison.mongo.jobs;
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.jobs.domain.RunningJobs;
+import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.service.JobMutexGroup;
 import de.otto.edison.jobs.service.JobMutexGroups;
@@ -14,18 +12,10 @@ import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
-import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-import static java.time.Clock.systemDefaultZone;
-import static java.time.OffsetDateTime.now;
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -57,9 +47,8 @@ public class MongoJobLockRepositoryTest {
     public void shouldMarkJobAsRunning() throws Exception {
         final String jobType = "myJobType";
         String jobId = "jobId";
-        JobInfo jobInfo = jobInfo(jobId, jobType);
 
-        repo.markJobAsRunningIfPossible(jobInfo);
+        repo.aquireRunLock(jobId, jobType);
 
         assertRunningDocumentContainsJob(jobType, jobId);
     }
@@ -69,16 +58,16 @@ public class MongoJobLockRepositoryTest {
         // given
         final String jobType = "myJobType";
         final String jobId = "jobId";
-        addJobToRunningDocument(jobType);
+        addJobToRunningDocument(jobType, jobId);
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobInfo(jobId, jobType));
+            repo.aquireRunLock(jobId, jobType);
         }
 
         // then
         catch (JobBlockedException e) {
-            assertRunningDocumentContainsJob(jobType, jobType);
+            assertRunningDocumentContainsJob(jobType, jobId);
             throw e;
         }
     }
@@ -88,16 +77,16 @@ public class MongoJobLockRepositoryTest {
         // given
         final String jobType = "FirstMutexJob";
         final String otherJobType = "OtherMutexJob";
-        addJobToRunningDocument(otherJobType);
+        addJobToRunningDocument(otherJobType, "first");
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobInfo("", jobType));
+            repo.aquireRunLock("first", jobType);
         }
 
         // then
         catch (JobBlockedException e) {
-            assertRunningDocumentContainsJob(otherJobType, otherJobType);
+            assertRunningDocumentContainsJob(otherJobType, "first");
             throw e;
         }
     }
@@ -105,20 +94,20 @@ public class MongoJobLockRepositoryTest {
     @Test
     public void shouldRemoveStoppedJobFromRunningDocument() {
         String jobType = "myJobType";
-        addJobToRunningDocument("otherJobType");
-        addJobToRunningDocument(jobType);
+        addJobToRunningDocument("otherJobType", "other");
+        addJobToRunningDocument(jobType, "this");
 
-        repo.clearRunningMark(jobType);
+        repo.releaseRunLock(jobType);
 
         assertRunningDocumentNotContainsJob(jobType);
-        assertRunningDocumentContainsJob("otherJobType", "otherJobType");
+        assertRunningDocumentContainsJob("otherJobType", "other");
     }
 
     @Test
     public void shouldReturnRunningJobsDocument() {
-        repo.markJobAsRunningIfPossible(someRunningJobInfo("id", "type", now()));
+        repo.aquireRunLock("id", "type");
 
-        RunningJobs expected = new RunningJobs(Collections.singletonList(new RunningJobs.RunningJob("id", "type")));
+        List<RunningJob> expected = Collections.singletonList(new RunningJob("id", "type"));
 
         assertThat(repo.runningJobs(), is(expected));
     }
@@ -128,11 +117,10 @@ public class MongoJobLockRepositoryTest {
         // given
         String jobType = "irgendeinJobType";
         repo.disableJobType(jobType);
-        JobInfo jobInfo = JobInfo.newJobInfo("someId", jobType, systemDefaultZone(), "lokalhorst");
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobInfo);
+            repo.aquireRunLock("someId", jobType);
         }
 
         // then
@@ -148,15 +136,15 @@ public class MongoJobLockRepositoryTest {
         String jobType = "irgendeinJobType";
         repo.disableJobType(jobType);
         repo.enableJobType(jobType);
-        JobInfo jobInfo = JobInfo.newJobInfo("someId", jobType, systemDefaultZone(), "lokalhorst");
 
         // when
-        repo.markJobAsRunningIfPossible(jobInfo);
+        repo.aquireRunLock("someId", "jobType");
 
         // then
-        List<RunningJobs.RunningJob> runningJobs = repo.runningJobs().getRunningJobs();
+        List<RunningJob> runningJobs = repo.runningJobs();
         assertThat(runningJobs, hasSize(1));
-        assertThat(runningJobs.get(0).jobType, is(jobType));
+        assertThat(runningJobs.get(0).jobType, is("jobType"));
+        assertThat(runningJobs.get(0).jobId, is("someId"));
     }
 
     @Test
@@ -166,7 +154,7 @@ public class MongoJobLockRepositoryTest {
         repo.disableJobType(jobType);
 
         // when
-        List<String> result = repo.findDisabledJobTypes();
+        List<String> result = repo.disabledJobTypes();
 
         // then
         assertThat(result, hasSize(1));
@@ -183,28 +171,28 @@ public class MongoJobLockRepositoryTest {
         repo.deleteAll();
 
         // then
-        assertThat(repo.findDisabledJobTypes(), is(Lists.emptyList()));
+        assertThat(repo.disabledJobTypes(), is(Lists.emptyList()));
         assertThat(runningJobsCollection.count(new Document("_id", "DISABLED_JOBS")), is(1L));
     }
 
     @Test
     public void shouldClearRunningJobs() throws Exception {
         // given
-        repo.markJobAsRunningIfPossible(someRunningJobInfo("id", "type", now()));
+        repo.aquireRunLock("id", "type");
 
         // when
         repo.deleteAll();
 
         // then
-        assertThat(repo.runningJobs(), is(new RunningJobs(Lists.emptyList())));
+        assertThat(repo.runningJobs(), is(Lists.emptyList()));
         assertThat(runningJobsCollection.count(new Document("_id", "RUNNING_JOBS")), is(1L));
     }
 
-    private void addJobToRunningDocument(String jobType) {
+    private void addJobToRunningDocument(String jobType, String jobId) {
         runningJobsCollection.updateOne(
                 new Document("_id", "RUNNING_JOBS"),
                 new Document("$set",
-                        new Document(jobType, jobType))
+                        new Document(jobType, jobId))
         );
     }
 
@@ -222,27 +210,4 @@ public class MongoJobLockRepositoryTest {
         assertThat(runningJobsDocument.containsKey(jobType), is(false));
     }
 
-    private JobInfo jobInfo(final String jobId, final String type) {
-        return JobInfo.newJobInfo(
-                jobId,
-                type,
-                now(), now(), Optional.of(now()), OK,
-                asList(
-                        jobMessage(Level.INFO, "foo", now()),
-                        jobMessage(Level.WARNING, "bar", now())),
-                systemDefaultZone(),
-                "localhost"
-        );
-    }
-
-    private JobInfo someRunningJobInfo(final String jobId, final String type, final OffsetDateTime started) {
-        return JobInfo.newJobInfo(
-                jobId,
-                type,
-                started, started.plus(1, SECONDS), Optional.empty(), OK,
-                Collections.emptyList(),
-                systemDefaultZone(),
-                "localhost"
-        );
-    }
 }

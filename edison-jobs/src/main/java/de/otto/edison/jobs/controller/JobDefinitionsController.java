@@ -66,7 +66,7 @@ public class JobDefinitionsController {
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
-            put("disabledJobs", jobLockRepository.findDisabledJobTypes());
+            put("disabledJobs", jobLockRepository.disabledJobTypes());
             put("jobdefinitions", jobDefinitions.getJobDefinitions()
                     .stream()
                     .map((def) -> new HashMap<String, Object>() {{

@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.status.domain.SystemInfo.systemInfo;
-import static de.otto.edison.testsupport.util.Sets.hashSet;
 import static java.time.Clock.fixed;
 import static java.time.Clock.offset;
 import static java.time.Instant.now;
@@ -38,7 +37,9 @@ import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -112,16 +113,16 @@ public class JobServiceTest {
         Optional<String> optionalJobId = jobService.startAsyncJob(jobType);
 
         // then:
-        JobInfo expectedJobInfo = JobInfo.newJobInfo(optionalJobId.get(), jobType, clock, systemInfo.hostname);
+        final JobInfo expectedJobInfo = JobInfo.newJobInfo(optionalJobId.get(), jobType, clock, systemInfo.hostname);
         verify(executorService).execute(any(Runnable.class));
         verify(jobRepository).createOrUpdate(expectedJobInfo);
         verify(jobRunnable).execute(any(JobEventPublisher.class));
-        verify(lockRepository).markJobAsRunningIfPossible(expectedJobInfo);
+        verify(lockRepository).aquireRunLock(expectedJobInfo.getJobId(), expectedJobInfo.getJobType());
     }
 
     @Test
     public void shouldNotStartJobOnBlockedException() {
-        doThrow(new JobBlockedException("bla")).when(lockRepository).markJobAsRunningIfPossible(any());
+        doThrow(new JobBlockedException("bla")).when(lockRepository).aquireRunLock(anyString(), anyString());
 
         Optional<String> jobUri = jobService.startAsyncJob("someType");
 
@@ -150,7 +151,7 @@ public class JobServiceTest {
         jobService.stopJob("superId");
 
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.OK).setStopped(now).setLastUpdated(now).build();
-        verify(lockRepository).clearRunningMark("superType");
+        verify(lockRepository).releaseRunLock("superType");
         verify(jobRepository).createOrUpdate(expected);
     }
 
@@ -163,7 +164,7 @@ public class JobServiceTest {
         jobService.killJob("superId");
 
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.DEAD).setStopped(now).setLastUpdated(now).build();
-        verify(lockRepository).clearRunningMark("superType");
+        verify(lockRepository).releaseRunLock("superType");
         verify(jobRepository).createOrUpdate(expected);
     }
 
@@ -175,7 +176,7 @@ public class JobServiceTest {
 
         jobService.killJobsDeadSince(60);
 
-        verify(lockRepository).clearRunningMark(someJobInfo.getJobType());
+        verify(lockRepository).releaseRunLock(someJobInfo.getJobType());
     }
 
     @Test

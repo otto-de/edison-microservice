@@ -12,6 +12,9 @@
 * **[edison-jobs]** Added new JobStatus SKIPPED for jobs that have been skipped because there was nothing to do.
 JobRunnables can not call `jobEventPublisher.skipped()` to announce skipped jobs.
 
+**Breaking Changes:**
+* **[edison-jobs]** Refactored JobRepository, introduced JobLockRepository.
+
 ## Release 1.0.0.RC3
 
 **Bugfixes:**

@@ -1,18 +1,15 @@
 package de.otto.edison.jobs.repository;
 
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.RunningJobs;
+import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.inmem.InMemJobLockRepository;
 import de.otto.edison.jobs.service.JobMutexGroups;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.List;
 
-import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
-import static java.time.Clock.systemDefaultZone;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -30,30 +27,29 @@ public class InMemJobLockRepositoryTest {
 
     @Test
     public void shouldReturnRunningJobsDocument() {
-        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"));
+        repository.aquireRunLock("id", "type");
 
-        RunningJobs expected = new RunningJobs(Collections.singletonList(new RunningJobs.RunningJob("id", "type")));
+        final List<RunningJob> expected = singletonList(new RunningJob("id", "type"));
 
         assertThat(repository.runningJobs(), is(expected));
     }
 
     @Test(expected = JobBlockedException.class)
     public void shouldFailToAquireLockTwice() {
-        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"));
+        repository.aquireRunLock("id", "type");
 
-        repository.markJobAsRunningIfPossible(newJobInfo("other-id", "type", systemDefaultZone(), "host"));
+        repository.aquireRunLock("other-id", "type");
     }
 
     @Test(expected = JobBlockedException.class)
     public void shouldDisableJob() {
         // given
-        String jobType = "irgendeinJobType";
+        final String jobType = "irgendeinJobType";
         repository.disableJobType(jobType);
-        JobInfo jobInfo = JobInfo.newJobInfo("someId", jobType, systemDefaultZone(), "lokalhorst");
 
         // when
         try {
-            repository.markJobAsRunningIfPossible(jobInfo);
+            repository.aquireRunLock("someId", jobType);
         }
 
         // then
@@ -70,7 +66,7 @@ public class InMemJobLockRepositoryTest {
         repository.disableJobType(jobType);
 
         // when
-        List<String> result = repository.findDisabledJobTypes();
+        List<String> result = repository.disabledJobTypes();
 
         // then
         assertThat(result, hasSize(1));
@@ -80,13 +76,13 @@ public class InMemJobLockRepositoryTest {
     @Test
     public void shouldClearRunningJobs() throws Exception {
         //Given
-        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"));
+        repository.aquireRunLock("someId", "type");
 
         //When
         repository.deleteAll();
 
         //Then
-        assertThat(repository.runningJobs(), is(new RunningJobs(emptyList())));
+        assertThat(repository.runningJobs(), is(emptyList()));
     }
 
     @Test
@@ -99,7 +95,7 @@ public class InMemJobLockRepositoryTest {
         repository.deleteAll();
 
         //Then
-        assertThat(repository.findDisabledJobTypes(), is(emptyList()));
+        assertThat(repository.disabledJobTypes(), is(emptyList()));
     }
 
 }

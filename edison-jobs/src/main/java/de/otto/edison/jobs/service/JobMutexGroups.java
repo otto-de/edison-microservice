@@ -10,6 +10,8 @@ import static java.util.Collections.emptySet;
 
 /**
  * Component used to determine the mutually exclusive job types for a given type.
+ *
+ * @since 1.0.0
  */
 @Component
 public class JobMutexGroups {

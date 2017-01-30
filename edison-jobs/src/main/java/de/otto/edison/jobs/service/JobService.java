@@ -19,10 +19,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
@@ -35,7 +33,6 @@ import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.time.OffsetDateTime.now;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
 
 @Service
 public class JobService {
@@ -100,8 +97,8 @@ public class JobService {
     public Optional<String> startAsyncJob(String jobType) {
         try {
             final JobRunnable jobRunnable = findJobRunnable(jobType);
-            JobInfo jobInfo = createJobInfo(jobType);
-            lockRepository.markJobAsRunningIfPossible(jobInfo);
+            final JobInfo jobInfo = createJobInfo(jobType);
+            lockRepository.aquireRunLock(jobInfo.getJobId(), jobInfo.getJobType());
             jobRepository.createOrUpdate(jobInfo);
             return Optional.of(startAsync(metered(jobRunnable), jobInfo.getJobId()));
         } catch (JobBlockedException e) {
@@ -163,7 +160,7 @@ public class JobService {
             return;
         }
         JobInfo jobInfo = optionalJobInfo.get();
-        lockRepository.clearRunningMark(jobInfo.getJobType());
+        lockRepository.releaseRunLock(jobInfo.getJobType());
         OffsetDateTime now = OffsetDateTime.now(clock);
         JobInfo.Builder builder = jobInfo.copy()
                 .setStopped(now)

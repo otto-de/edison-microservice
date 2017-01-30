@@ -1,27 +1,21 @@
 package de.otto.edison.jobs.repository.inmem;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobInfo.JobStatus;
-import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.RunningJobs;
+import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobLockRepository;
-import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.jobs.service.JobMutexGroup;
 import de.otto.edison.jobs.service.JobMutexGroups;
 
-import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 
 public class InMemJobLockRepository implements JobLockRepository {
 
@@ -42,33 +36,31 @@ public class InMemJobLockRepository implements JobLockRepository {
     }
 
     @Override
-    public void markJobAsRunningIfPossible(JobInfo job) throws JobBlockedException {
-        if (disabledJobTypes.contains(job.getJobType())) {
+    public void aquireRunLock(String jobId, String jobType) throws JobBlockedException {
+        if (disabledJobTypes.contains(jobType)) {
             throw new JobBlockedException("Disabled");
         }
 
         synchronized (runningJobs) {
-            for (final String mutexJobType : mutexGroups.mutexJobTypesFor(job.getJobType())) {
+            for (final String mutexJobType : mutexGroups.mutexJobTypesFor(jobType)) {
                 if (runningJobs.containsKey(mutexJobType)) {
                     throw new JobBlockedException("Blocked");
                 }
             }
-            runningJobs.put(job.getJobType(), job.getJobId());
+            runningJobs.put(jobType, jobId);
         }
     }
 
     @Override
-    public void clearRunningMark(String jobType) {
+    public void releaseRunLock(String jobType) {
         runningJobs.remove(jobType);
     }
 
     @Override
-    public RunningJobs runningJobs() {
-        List<RunningJobs.RunningJob> runningJobs = this.runningJobs.entrySet().stream()
-                .map(entry -> new RunningJobs.RunningJob(entry.getValue(), entry.getKey()))
+    public List<RunningJob> runningJobs() {
+        return this.runningJobs.entrySet().stream()
+                .map(entry -> new RunningJob(entry.getValue(), entry.getKey()))
                 .collect(Collectors.toList());
-
-        return new RunningJobs(runningJobs);
     }
 
     @Override
@@ -82,7 +74,7 @@ public class InMemJobLockRepository implements JobLockRepository {
     }
 
     @Override
-    public List<String> findDisabledJobTypes() {
+    public List<String> disabledJobTypes() {
         return new ArrayList<>(disabledJobTypes);
     }
 

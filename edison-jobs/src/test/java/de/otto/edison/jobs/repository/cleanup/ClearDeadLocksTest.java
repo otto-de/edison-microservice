@@ -1,7 +1,7 @@
 package de.otto.edison.jobs.repository.cleanup;
 
 import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.RunningJobs;
+import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import org.junit.Before;
@@ -41,8 +41,7 @@ public class ClearDeadLocksTest {
         fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
         subject = new ClearDeadLocks(jobLockRepository, jobRepository);
 
-        RunningJobs jobs = new RunningJobs(asList(new RunningJobs.RunningJob(JOB_ID, JOB_TYPE)));
-        when(jobLockRepository.runningJobs()).thenReturn(jobs);
+        when(jobLockRepository.runningJobs()).thenReturn(asList(new RunningJob(JOB_ID, JOB_TYPE)));
         now = OffsetDateTime.now(fixedClock);
     }
 
@@ -53,7 +52,7 @@ public class ClearDeadLocksTest {
 
         subject.clearLocks();
 
-        verify(jobLockRepository).clearRunningMark(JOB_TYPE);
+        verify(jobLockRepository).releaseRunLock(JOB_TYPE);
     }
 
     @Test
@@ -63,7 +62,7 @@ public class ClearDeadLocksTest {
 
         subject.clearLocks();
 
-        verify(jobLockRepository, never()).clearRunningMark(JOB_TYPE);
+        verify(jobLockRepository, never()).releaseRunLock(JOB_TYPE);
     }
 
     @Test
@@ -72,7 +71,7 @@ public class ClearDeadLocksTest {
 
         subject.clearLocks();
 
-        verify(jobLockRepository).clearRunningMark(JOB_TYPE);
+        verify(jobLockRepository).releaseRunLock(JOB_TYPE);
     }
 
     private JobInfo jobInfo(Optional<OffsetDateTime> stopped) {
