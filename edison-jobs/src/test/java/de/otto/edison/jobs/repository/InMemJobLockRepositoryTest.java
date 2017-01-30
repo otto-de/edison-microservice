@@ -12,6 +12,7 @@ import java.util.List;
 
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static java.time.Clock.systemDefaultZone;
+import static java.util.Collections.emptySet;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -23,16 +24,23 @@ public class InMemJobLockRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        repository = new InMemJobLockRepository();
+        repository = new InMemJobLockRepository(emptySet());
     }
 
     @Test
     public void shouldReturnRunningJobsDocument() {
-        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"), new HashSet<>());
+        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"));
 
         RunningJobs expected = new RunningJobs(Collections.singletonList(new RunningJobs.RunningJob("id", "type")));
 
         assertThat(repository.runningJobs(), is(expected));
+    }
+
+    @Test(expected = JobBlockedException.class)
+    public void shouldFailToAquireLockTwice() {
+        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"));
+
+        repository.markJobAsRunningIfPossible(newJobInfo("other-id", "type", systemDefaultZone(), "host"));
     }
 
     @Test(expected = JobBlockedException.class)
@@ -44,7 +52,7 @@ public class InMemJobLockRepositoryTest {
 
         // when
         try {
-            repository.markJobAsRunningIfPossible(jobInfo, new HashSet<>());
+            repository.markJobAsRunningIfPossible(jobInfo);
         }
 
         // then
@@ -71,7 +79,7 @@ public class InMemJobLockRepositoryTest {
     @Test
     public void shouldClearRunningJobs() throws Exception {
         //Given
-        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"), new HashSet<>());
+        repository.markJobAsRunningIfPossible(newJobInfo("id", "type", systemDefaultZone(), "host"));
 
         //When
         repository.deleteAll();

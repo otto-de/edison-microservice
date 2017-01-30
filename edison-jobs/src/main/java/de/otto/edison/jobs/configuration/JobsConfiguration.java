@@ -8,6 +8,7 @@ import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobLockRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
+import de.otto.edison.jobs.service.JobMutexGroup;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.jobs.status.JobStatusCalculator;
 import de.otto.edison.jobs.status.JobStatusDetailIndicator;
@@ -28,6 +29,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
@@ -42,6 +44,8 @@ public class JobsConfiguration {
 
     public static final Logger LOG = LoggerFactory.getLogger(JobsConfiguration.class);
 
+    @Autowired(required = false)
+    private Set<JobMutexGroup> mutexGroups;
     private final JobsProperties jobsProperties;
 
     @Autowired
@@ -79,7 +83,7 @@ public class JobsConfiguration {
         LOG.warn("===============================");
         LOG.warn("Using in-memory JobLockRepository");
         LOG.warn("===============================");
-        return new InMemJobLockRepository();
+        return new InMemJobLockRepository(mutexGroups);
     }
 
     @Bean

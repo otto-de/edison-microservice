@@ -58,9 +58,6 @@ public class JobService {
     private UuidProvider uuidProvider;
 
 
-    @Autowired(required = false)
-    private Set<JobMutexGroup> mutexGroups;
-
     @Autowired
     private SystemInfo systemInfo;
 
@@ -77,7 +74,6 @@ public class JobService {
                final ApplicationEventPublisher applicationEventPublisher,
                final Clock clock,
                final SystemInfo systemInfo,
-               final Set<JobMutexGroup> mutexGroups,
                final UuidProvider uuidProvider) {
         this.jobRepository = jobRepository;
         this.lockRepository = lockRepository;
@@ -87,16 +83,12 @@ public class JobService {
         this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
         this.systemInfo = systemInfo;
-        this.mutexGroups = mutexGroups;
         this.uuidProvider = uuidProvider;
     }
 
     @PostConstruct
     public void postConstruct() {
         LOG.info("Found {} JobRunnables: {}", +jobRunnables.size(), jobRunnables.stream().map(j -> j.getJobDefinition().jobType()).collect(Collectors.toList()));
-        if (mutexGroups == null) {
-            this.mutexGroups = emptySet();
-        }
     }
 
     /**
@@ -109,7 +101,7 @@ public class JobService {
         try {
             final JobRunnable jobRunnable = findJobRunnable(jobType);
             JobInfo jobInfo = createJobInfo(jobType);
-            lockRepository.markJobAsRunningIfPossible(jobInfo, mutexJobTypesFor(jobType));
+            lockRepository.markJobAsRunningIfPossible(jobInfo);
             jobRepository.createOrUpdate(jobInfo);
             return Optional.of(startAsync(metered(jobRunnable), jobInfo.getJobId()));
         } catch (JobBlockedException e) {
@@ -236,17 +228,6 @@ public class JobService {
                 executor,
                 newJobEventPublisher(applicationEventPublisher, jobRunnable, jobId)
         );
-    }
-
-    private Set<String> mutexJobTypesFor(final String jobType) {
-        final Set<String> result = new HashSet<>();
-        result.add(jobType);
-        this.mutexGroups
-                .stream()
-                .map(JobMutexGroup::getJobTypes)
-                .filter(g -> g.contains(jobType))
-                .forEach(result::addAll);
-        return result;
     }
 
     private JobRunnable metered(final JobRunnable delegate) {

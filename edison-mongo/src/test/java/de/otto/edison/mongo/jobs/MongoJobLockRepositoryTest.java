@@ -7,21 +7,25 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.domain.RunningJobs;
 import de.otto.edison.jobs.repository.JobBlockedException;
+import de.otto.edison.jobs.service.JobMutexGroup;
 import org.assertj.core.util.Lists;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-import static de.otto.edison.testsupport.util.Sets.hashSet;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -36,8 +40,8 @@ public class MongoJobLockRepositoryTest {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         final MongoDatabase database = fongo.getDatabase("jobsinfo");
         runningJobsCollection = database.getCollection("jobmetadata");
-        repo = new MongoJobLockRepository(database);
-        repo.initJobsMetaDataDocumentsOnStartup();
+        repo = new MongoJobLockRepository(database, singleton(new JobMutexGroup("testgroup", "FirstMutexJob", "OtherMutexJob")));
+        repo.init();
     }
 
     @Test
@@ -52,7 +56,7 @@ public class MongoJobLockRepositoryTest {
         String jobId = "jobId";
         JobInfo jobInfo = jobInfo(jobId, jobType);
 
-        repo.markJobAsRunningIfPossible(jobInfo, hashSet(jobType));
+        repo.markJobAsRunningIfPossible(jobInfo);
 
         assertRunningDocumentContainsJob(jobType, jobId);
     }
@@ -66,7 +70,7 @@ public class MongoJobLockRepositoryTest {
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobInfo(jobId, jobType), hashSet(jobType));
+            repo.markJobAsRunningIfPossible(jobInfo(jobId, jobType));
         }
 
         // then
@@ -79,13 +83,13 @@ public class MongoJobLockRepositoryTest {
     @Test(expected = JobBlockedException.class)
     public void shouldNotStartJobIfBlockedByAnotherJob() throws Exception {
         // given
-        final String jobType = "myJobType";
-        final String otherJobType = "myOtherJobType";
+        final String jobType = "FirstMutexJob";
+        final String otherJobType = "OtherMutexJob";
         addJobToRunningDocument(otherJobType);
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobInfo("", jobType), hashSet(jobType, otherJobType));
+            repo.markJobAsRunningIfPossible(jobInfo("", jobType));
         }
 
         // then
@@ -109,7 +113,7 @@ public class MongoJobLockRepositoryTest {
 
     @Test
     public void shouldReturnRunningJobsDocument() {
-        repo.markJobAsRunningIfPossible(someRunningJobInfo("id", "type", now()), new HashSet<>());
+        repo.markJobAsRunningIfPossible(someRunningJobInfo("id", "type", now()));
 
         RunningJobs expected = new RunningJobs(Collections.singletonList(new RunningJobs.RunningJob("id", "type")));
 
@@ -125,7 +129,7 @@ public class MongoJobLockRepositoryTest {
 
         // when
         try {
-            repo.markJobAsRunningIfPossible(jobInfo, new HashSet<>());
+            repo.markJobAsRunningIfPossible(jobInfo);
         }
 
         // then
@@ -144,7 +148,7 @@ public class MongoJobLockRepositoryTest {
         JobInfo jobInfo = JobInfo.newJobInfo("someId", jobType, systemDefaultZone(), "lokalhorst");
 
         // when
-        repo.markJobAsRunningIfPossible(jobInfo, new HashSet<>());
+        repo.markJobAsRunningIfPossible(jobInfo);
 
         // then
         List<RunningJobs.RunningJob> runningJobs = repo.runningJobs().getRunningJobs();
@@ -183,7 +187,7 @@ public class MongoJobLockRepositoryTest {
     @Test
     public void shouldClearRunningJobs() throws Exception {
         // given
-        repo.markJobAsRunningIfPossible(someRunningJobInfo("id", "type", now()), new HashSet<>());
+        repo.markJobAsRunningIfPossible(someRunningJobInfo("id", "type", now()));
 
         // when
         repo.deleteAll();

@@ -25,7 +25,7 @@ public interface JobLockRepository {
      *                      The jobType to be marked will be contained in this set.
      * @throws JobBlockedException if at least one of the jobTypes in the jobTypesMutex set is already marked running.
      */
-    void markJobAsRunningIfPossible(JobInfo job, Set<String> jobTypesMutex) throws JobBlockedException;
+    void markJobAsRunningIfPossible(JobInfo job) throws JobBlockedException;
 
     /**
      * Clears the job running mark of the jobType. Does nothing if not mark exists.

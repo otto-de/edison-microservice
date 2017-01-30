@@ -63,8 +63,6 @@ public class JobServiceTest {
     @Mock
     private GaugeService gaugeServiceMock;
     @Mock
-    private JobMutexGroup jobMutexGroup;
-    @Mock
     private UuidProvider uuidProviderMock;
 
     JobService jobService;
@@ -86,7 +84,7 @@ public class JobServiceTest {
         when(jobRunnable.getJobDefinition()).thenReturn(DefaultJobDefinition.manuallyTriggerableJobDefinition("someType", "bla", "bla", 0, Optional.empty()));
         when(uuidProviderMock.getUuid()).thenReturn(JOB_ID);
 
-        jobService = new JobService(jobRepository, lockRepository, asList(jobRunnable), gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, hashSet(jobMutexGroup), uuidProviderMock);
+        jobService = new JobService(jobRepository, lockRepository, asList(jobRunnable), gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, uuidProviderMock);
         jobService.postConstruct();
     }
 
@@ -118,12 +116,12 @@ public class JobServiceTest {
         verify(executorService).execute(any(Runnable.class));
         verify(jobRepository).createOrUpdate(expectedJobInfo);
         verify(jobRunnable).execute(any(JobEventPublisher.class));
-        verify(lockRepository).markJobAsRunningIfPossible(expectedJobInfo, hashSet(jobType));
+        verify(lockRepository).markJobAsRunningIfPossible(expectedJobInfo);
     }
 
     @Test
     public void shouldNotStartJobOnBlockedException() {
-        doThrow(new JobBlockedException("bla")).when(lockRepository).markJobAsRunningIfPossible(any(), any());
+        doThrow(new JobBlockedException("bla")).when(lockRepository).markJobAsRunningIfPossible(any());
 
         Optional<String> jobUri = jobService.startAsyncJob("someType");
 
@@ -140,26 +138,6 @@ public class JobServiceTest {
         jobService.startAsyncJob("BAR");
         // then:
         verify(gaugeServiceMock).submit(eq("gauge.jobs.runtime.bar"), anyLong());
-    }
-
-    @Test
-    public void shouldMergeMutexGroups() {
-        // given
-        String jobType = "someType";
-        JobMutexGroup one = new JobMutexGroup("group1", jobType, "type2", "type3");
-        JobMutexGroup two = new JobMutexGroup("group2", jobType, "type2", "type4");
-        JobMutexGroup three = new JobMutexGroup("otherGroup", "käse", "wurst", "wurstkäse");
-        jobService = new JobService(jobRepository, lockRepository, asList(jobRunnable), gaugeServiceMock, executorService,
-                applicationEventPublisher, clock, systemInfo, hashSet(one, two, three), uuidProviderMock);
-
-        // when
-        jobService.startAsyncJob(jobType);
-
-        verify(lockRepository).markJobAsRunningIfPossible(jobInfo(jobType), hashSet(jobType, "type2", "type3", "type4"));
-    }
-
-    private JobInfo jobInfo(String jobType) {
-        return JobInfo.newJobInfo(JOB_ID, jobType, clock, HOSTNAME);
     }
 
     @Test
