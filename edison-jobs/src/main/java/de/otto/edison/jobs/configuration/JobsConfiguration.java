@@ -3,10 +3,12 @@ package de.otto.edison.jobs.configuration;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.repository.JobStateRepository;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobLockRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
+import de.otto.edison.jobs.repository.inmem.InMemJobStateRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobMutexGroup;
 import de.otto.edison.jobs.service.JobMutexGroups;
@@ -67,6 +69,12 @@ public class JobsConfiguration {
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
     public ScheduledExecutorService scheduledExecutorService() {
         return newScheduledThreadPool(jobsProperties.getThreadCount());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JobStateRepository.class)
+    public JobStateRepository jobStateRepository() {
+        return new InMemJobStateRepository();
     }
 
     @Bean
