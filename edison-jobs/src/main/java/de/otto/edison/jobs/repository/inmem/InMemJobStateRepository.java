@@ -21,4 +21,9 @@ public class InMemJobStateRepository implements JobStateRepository {
         return map.getOrDefault(jobType, Collections.emptyMap()).get(key);
     }
 
+    @Override
+    public String toString() {
+        return "InMemJobStateRepository";
+    }
+
 }

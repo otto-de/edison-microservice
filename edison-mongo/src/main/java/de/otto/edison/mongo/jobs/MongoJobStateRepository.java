@@ -31,4 +31,9 @@ public class MongoJobStateRepository implements JobStateRepository {
         Document first = collection.find(eq(ID, jobType)).first();
         return first != null ? first.getString(key) : null;
     }
+
+    @Override
+    public String toString() {
+        return "MongoJobStateRepository";
+    }
 }

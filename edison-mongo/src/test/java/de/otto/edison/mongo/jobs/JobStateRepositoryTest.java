@@ -1,22 +1,33 @@
 package de.otto.edison.mongo.jobs;
 
 import com.github.fakemongo.Fongo;
-import com.mongodb.client.MongoDatabase;
-import org.junit.Before;
+import de.otto.edison.jobs.repository.JobStateRepository;
+import de.otto.edison.jobs.repository.inmem.InMemJobStateRepository;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class MongoJobStateRepositoryTest {
+@RunWith(Parameterized.class)
+public class JobStateRepositoryTest {
 
-    MongoJobStateRepository testee;
+    @Parameters(name = "{0}")
+    public static Collection<JobStateRepository> data() {
+        return Arrays.asList(new MongoJobStateRepository(new Fongo("inMemoryDb").getDatabase("jobstate")),
+                new InMemJobStateRepository());
+    }
 
-    @Before
-    public void setup() {
-        final MongoDatabase database = new Fongo("inMemoryDb").getDatabase("jobstate");
-        testee = new MongoJobStateRepository(database);
+    private JobStateRepository testee;
+
+    public JobStateRepositoryTest(JobStateRepository testee) {
+        this.testee = testee;
     }
 
     @Test
