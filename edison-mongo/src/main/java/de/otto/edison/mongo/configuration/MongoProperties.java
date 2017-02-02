@@ -203,9 +203,9 @@ public class MongoProperties {
         @Min(1)
         private int maxSize = 100;
         /**
-         * The minimum number of connections per host.
+         * The minimum number of connections per host. A value of <code>0</code> will create connections lazily.
          */
-        @Min(1)
+        @Min(0)
         private int minSize = 2;
         /**
          * This multiplier, multiplied with the maxSize property, gives the maximum number of threads that may be waiting for a
