@@ -33,6 +33,14 @@
                 <dd th:text="${job.stopped}">&nbsp;</dd>
                 <dt>Definition</dt>
                 <dd><a th:href="@{|/internal/jobdefinitions/${job.jobType}|}" class="btn btn-xs btn-primary">Open Definition &raquo;</a></dd>
+                <dt>Retrigger</dt>
+                <dd><button type="button"
+                            class="triggerButton btn btn-xs btn-primary"
+                            autocomplete="off"
+                            th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${job.jobType}"
+                            data-loading-text="Triggering...">
+                    Trigger &raquo;
+                </button></dd>
                 <dt>Last Updated</dt>
                 <dd th:text="${job.lastUpdated}">&nbsp;</dd>
                 <dt>Messages</dt>
@@ -46,6 +54,6 @@
 </div> <!-- /container -->
 
 <span th:replace="fragments/footer :: footer" />
-
+<script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
 </body>
 </html>

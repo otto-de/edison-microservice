@@ -135,7 +135,9 @@ public class JobsController {
         final Optional<JobInfo> optionalJob = jobService.findJob(jobId);
         if (optionalJob.isPresent()) {
             final ModelAndView modelAndView = new ModelAndView("job");
-            modelAndView.addObject("job", representationOf(optionalJob.get(), true, baseUriOf(request)));
+            modelAndView
+                    .addObject("job", representationOf(optionalJob.get(), true, baseUriOf(request)))
+                    .addObject("baseUri", baseUriOf(request));
             return modelAndView;
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
