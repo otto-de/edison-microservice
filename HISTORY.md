@@ -7,6 +7,7 @@
 * **[edison-core]** Fixed broken links to jobs in status details JSON.
 * **[edison-jobs]** Fix property name numberOfToKeep => numberOfJobsToKeep
 * **[edison-jobs]** Removed MessageEvent.Level and replaced it by de.otto.edison.jobs.domain.Level.
+* **[edison-jobs]** Sleep with retry delay before retry job execution.
 
 **New Features:**
 * **[edison-jobs]** Added new JobStatus SKIPPED for jobs that have been skipped because there was nothing to do.
