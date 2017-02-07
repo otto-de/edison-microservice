@@ -7,6 +7,8 @@ import org.slf4j.MDC;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
@@ -47,7 +49,8 @@ public final class JobRunner {
         try {
             JobEvents.register(jobEventPublisher);
             final int restarts = runnable.getJobDefinition().restarts();
-            executeAndRetry(runnable, restarts);
+            final Optional<Duration> retryDelay = runnable.getJobDefinition().retryDelay();
+            executeAndRetry(runnable, restarts, retryDelay);
         } catch (final RuntimeException e) {
             error(e);
         } finally {
@@ -56,16 +59,25 @@ public final class JobRunner {
         }
     }
 
-    private synchronized void executeAndRetry(final JobRunnable runnable, final int restarts) {
+    private synchronized void executeAndRetry(final JobRunnable runnable, final int restarts, final Optional<Duration> retryDelay) {
         try {
             runnable.execute(jobEventPublisher);
         } catch (final RuntimeException e) {
             error(e);
             if (restarts > 0) {
                 jobEventPublisher.stateChanged(RESTART);
-                executeAndRetry(runnable, restarts - 1);
+                retryDelay.ifPresent(delay -> sleep(delay));
+                executeAndRetry(runnable, restarts - 1, retryDelay);
             }
         }
+	}
+
+    private void sleep(final Duration duration) {
+    	try {
+			Thread.sleep(duration.toMillis());
+		} catch (InterruptedException e) {
+	        LOG.error("InterruptedException", e);
+		}
     }
 
     private synchronized void start() {
