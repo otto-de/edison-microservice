@@ -22,6 +22,21 @@ public class InMemJobStateRepository implements JobStateRepository {
     }
 
     @Override
+    public void deleteAll() {
+        map.clear();
+    }
+
+    @Override
+    public boolean createValue(String jobType, String key, String value) {
+        if (getValue(jobType, key) == null) {
+            setValue(jobType, key, value);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString() {
         return "InMemJobStateRepository";
     }

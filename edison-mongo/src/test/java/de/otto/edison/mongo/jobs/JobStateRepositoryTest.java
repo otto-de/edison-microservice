@@ -3,6 +3,7 @@ package de.otto.edison.mongo.jobs;
 import com.github.fakemongo.Fongo;
 import de.otto.edison.jobs.repository.JobStateRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobStateRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,6 +23,12 @@ public class JobStateRepositoryTest {
     public static Collection<JobStateRepository> data() {
         return Arrays.asList(new MongoJobStateRepository(new Fongo("inMemoryDb").getDatabase("jobstate")),
                 new InMemJobStateRepository());
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        testee.deleteAll();
+
     }
 
     private JobStateRepository testee;
@@ -50,5 +57,67 @@ public class JobStateRepositoryTest {
         assertThat(testee.getValue("someMissingJob", "someMissingKey"), is(nullValue()));
     }
 
+    @Test
+    public void shouldNotCreateIfExists() throws Exception {
+        // given
+        testee.setValue("someJob","someKey", "initialValue");
 
+        // when
+        boolean value = testee.createValue("someJob", "someKey", "newValue");
+
+        //then
+        assertThat(value, is(false));
+        assertThat(testee.getValue("someJob", "someKey"), is("initialValue"));
+    }
+
+    @Test
+    public void shouldCreateIfNotExists() throws Exception {
+        // when
+        boolean value = testee.createValue("someJob", "someKey", "someValue");
+
+        //then
+        assertThat(value, is(true));
+        assertThat(testee.getValue("someJob", "someKey"), is("someValue"));
+    }
+
+    @Test
+    public void shouldCreateTwoValuesWithoutException() throws Exception {
+        // given
+        testee.createValue("someJob", "someKey", "someValue");
+
+        // when
+        boolean value = testee.createValue("someJob", "someOtherKey", "someOtherValue");
+
+        //then
+        assertThat(value, is(true));
+        assertThat(this.testee.getValue("someJob", "someKey"), is("someValue"));
+        assertThat(this.testee.getValue("someJob", "someOtherKey"), is("someOtherValue"));
+    }
+
+    @Test
+    public void shouldReturnFalseIfCreateWasCalledTwice() throws Exception {
+        // given
+        testee.createValue("someJob", "someKey", "someInitialValue");
+
+        // when
+        boolean value = testee.createValue("someJob", "someKey", "someValue");
+
+        //then
+        assertThat(value, is(false));
+        assertThat(testee.getValue("someJob", "someKey"), is("someInitialValue"));
+    }
+
+    @Test
+    public void shouldNotKillOldFieldsOnCreate() throws Exception {
+        // given
+        testee.setValue("someJob", "someKey", "someInitialValue");
+
+        // when
+        boolean value = testee.createValue("someJob", "someAtomicKey", "someValue");
+
+        //then
+        assertThat(value, is(true));
+        assertThat(testee.getValue("someJob", "someKey"), is("someInitialValue"));
+        assertThat(testee.getValue("someJob", "someAtomicKey"), is("someValue"));
+    }
 }
