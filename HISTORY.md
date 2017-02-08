@@ -1,6 +1,8 @@
 # Release History
 
-## Release 1.0.0.RC4-SNAPSHOT
+## Release 1.0.0.RC5-SNAPSHOT
+
+## Release 1.0.0.RC4
 
 **Bugfixes:**
 * **[edison-core]** Fixed version conflict for Thymeleaf; Updated dependencies to Thymeleaf 3.
