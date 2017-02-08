@@ -7,7 +7,7 @@ spring:
             indent-output: true
 
 server:
-    context-path: /example
+    context-path: /
     port: 8080
 
 management:

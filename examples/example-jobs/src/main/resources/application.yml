@@ -14,7 +14,7 @@ spring:
 
 # context + port of the application
 server:
-    context-path: /example
+    context-path: /
     port: 8080
 
 management:
