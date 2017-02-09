@@ -25,6 +25,7 @@ for example, import jobs that are keeping track of their last read position.
 **New Features:**
 * **[edison-jobs]** Added new JobStatus SKIPPED for jobs that have been skipped because there was nothing to do.
 JobRunnables can not call `jobEventPublisher.skipped()` to announce skipped jobs.
+* **[edison-jobs]** Added buttons to retrigger jobs in the job UI
 
 **Breaking Changes:**
 * **[edison-jobs]** Refactored JobRepository.
