@@ -6,10 +6,10 @@ import com.ning.http.client.Response;
 import de.otto.edison.annotations.Beta;
 import de.otto.edison.registry.configuration.ServiceRegistryProperties;
 import de.otto.edison.status.configuration.ApplicationInfoProperties;
+import de.otto.edison.status.domain.ApplicationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,15 +40,21 @@ public class AsyncHttpRegistryClient implements RegistryClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncHttpRegistryClient.class);
 
-    @Value("${spring.application.name}")
-    private String applicationName;
+    private final ApplicationInfo applicationInfo;
+    private final AsyncHttpClient httpClient;
+    private final ServiceRegistryProperties serviceRegistryProperties;
+    private final ApplicationInfoProperties applicationInfoProperties;
 
     @Autowired
-    private AsyncHttpClient httpClient;
-    @Autowired
-    private ServiceRegistryProperties serviceRegistryProperties;
-    @Autowired
-    private ApplicationInfoProperties applicationInfoProperties;
+    public AsyncHttpRegistryClient(final ApplicationInfo applicationInfo,
+                                   final AsyncHttpClient httpClient,
+                                   final ServiceRegistryProperties serviceRegistryProperties,
+                                   final ApplicationInfoProperties applicationInfoProperties) {
+        this.applicationInfo = applicationInfo;
+        this.httpClient = httpClient;
+        this.serviceRegistryProperties = serviceRegistryProperties;
+        this.applicationInfoProperties = applicationInfoProperties;
+    }
 
     @PostConstruct
     public void postConstruct() {
@@ -64,7 +70,7 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                     try {
                         LOG.debug("Updating registration of service at '{}'", discoveryServer);
                         httpClient
-                                .preparePut(discoveryServer + "/environments/" + applicationInfoProperties.getEnvironment() + "/" + applicationName)
+                                .preparePut(discoveryServer + "/environments/" + applicationInfoProperties.getEnvironment() + "/" + applicationInfo.name)
                                 .setHeader("Content-Type", "application/vnd.otto.edison.links+json")
                                 .setHeader("Accept", "application/vnd.otto.edison.links+json")
                                 .setBody(
@@ -74,7 +80,7 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                                                 "   \"links\":[{\n" +
                                                 "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +
                                                 "      \"href\" : \"" + serviceRegistryProperties.getService() + "\",\n" +
-                                                "      \"title\":\"" + applicationName + "\"\n" +
+                                                "      \"title\":\"" + applicationInfo.name + "\"\n" +
                                                 "   }]  \n" +
                                                 "}"
                                 )
