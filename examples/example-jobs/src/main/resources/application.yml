@@ -35,7 +35,6 @@ edison:
                 Bar: errorOnLastThreeJobsFailed
                 Foo: warningOnLastJobFailed
                 default: errorOnLastJobFailed
-            enabled: true
     metrics:
         slf4j:
             logger: de.otto.edison.example.metrics
