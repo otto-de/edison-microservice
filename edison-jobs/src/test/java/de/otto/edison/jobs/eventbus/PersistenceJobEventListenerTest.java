@@ -2,7 +2,6 @@ package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.service.JobRunnable;
@@ -16,16 +15,20 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.domain.Level.*;
+import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PersistenceJobEventListenerTest {
 
     public static final String JOB_ID = "some/job/id";
+    public static final String JOB_TYPE = "jobType";
 
     @Mock
     private JobService jobServiceMock;
@@ -61,9 +64,12 @@ public class PersistenceJobEventListenerTest {
 
     @Test
     public void shouldPersistDeadEvent() throws Exception {
+        JobDefinition mockDefinition = mock(JobDefinition.class);
+        when(mockDefinition.jobType()).thenReturn(JOB_TYPE);
+        when(jobRunnableMock.getJobDefinition()).thenReturn(mockDefinition);
         subject.consumeStateChange(stateChangedEvent(DEAD));
 
-        verify(jobServiceMock).killJob(JOB_ID);
+        verify(jobServiceMock).killJob(JOB_ID, JOB_TYPE);
     }
 
     @Test

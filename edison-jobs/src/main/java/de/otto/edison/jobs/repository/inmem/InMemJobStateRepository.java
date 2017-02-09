@@ -4,6 +4,7 @@ import de.otto.edison.jobs.repository.JobStateRepository;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemJobStateRepository implements JobStateRepository {
@@ -11,9 +12,13 @@ public class InMemJobStateRepository implements JobStateRepository {
     private final Map<String, Map<String, String>> map = new ConcurrentHashMap<>();
 
     @Override
-    public void setValue(String jobType, String key, String value) {
+    public String setValue(String jobType, String key, String value) {
         map.putIfAbsent(jobType, new ConcurrentHashMap<>());
-        map.get(jobType).put(key, value);
+        if (value != null) {
+            return map.get(jobType).put(key, value);
+        } else {
+            return map.get(jobType).remove(key);
+        }
     }
 
     @Override
@@ -21,6 +26,19 @@ public class InMemJobStateRepository implements JobStateRepository {
         return map.getOrDefault(jobType, Collections.emptyMap()).get(key);
     }
 
+    /**
+     * Returns all job types matching the specified predicate.
+     *
+     * @return set containing matching job types.
+     */
+    @Override
+    public Set<String> findAllJobTypes() {
+        return map.keySet();
+    }
+
+    /**
+     * Deletes all information from the repository.
+     */
     @Override
     public void deleteAll() {
         map.clear();

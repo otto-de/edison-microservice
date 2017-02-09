@@ -1,10 +1,10 @@
 package de.otto.edison.jobs.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Service
+@Component
 public class UuidProvider {
 
     public String getUuid() {

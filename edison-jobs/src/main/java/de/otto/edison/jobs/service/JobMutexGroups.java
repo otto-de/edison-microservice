@@ -38,12 +38,12 @@ public class JobMutexGroups {
      */
     public Set<String> mutexJobTypesFor(final String jobType) {
         final Set<String> result = new HashSet<>();
-        result.add(jobType);
         this.mutexGroups
                 .stream()
                 .map(JobMutexGroup::getJobTypes)
                 .filter(g -> g.contains(jobType))
                 .forEach(result::addAll);
+        result.remove(jobType);
         return result;
     }
 

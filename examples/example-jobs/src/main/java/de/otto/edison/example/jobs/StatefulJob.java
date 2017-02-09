@@ -1,8 +1,10 @@
 package de.otto.edison.example.jobs;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.domain.StatefulJob;
+import de.otto.edison.jobs.domain.StatefulJobRunnable;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
+import de.otto.edison.jobs.repository.JobStateRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -10,8 +12,12 @@ import java.util.Optional;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.manuallyTriggerableJobDefinition;
 
 @Component
-public class ExtraValueJob extends StatefulJob {
+public class StatefulJob extends StatefulJobRunnable {
 
+    @Autowired
+    public StatefulJob(final JobStateRepository jobStateRepository) {
+        super(jobStateRepository);
+    }
 
     @Override
     public JobDefinition getJobDefinition() {
@@ -26,11 +32,11 @@ public class ExtraValueJob extends StatefulJob {
     @Override
     public void execute(JobEventPublisher jobEventPublisher) {
 
-        int lastEntry = getMetaAsInt("lastEntry", 0);
+        int lastEntry = meta().getAsInt("lastEntry", 0);
 
         for (int i = lastEntry+1; i <= lastEntry + 10; i++) {
             jobEventPublisher.info("Processing Item " + i);
-            setMeta("lastEntry", i);
+            meta().set("lastEntry", i);
         }
     }
 }

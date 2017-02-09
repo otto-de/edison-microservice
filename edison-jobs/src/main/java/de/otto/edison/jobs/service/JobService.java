@@ -4,9 +4,9 @@ import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
-import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.JobStateRepository;
 import de.otto.edison.status.domain.SystemInfo;
@@ -22,9 +22,12 @@ import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
+import static de.otto.edison.jobs.domain.JobInfo.Builder;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
@@ -45,9 +48,7 @@ public class JobService {
     @Autowired
     private JobRepository jobRepository;
     @Autowired
-    private JobLockRepository lockRepository;
-    @Autowired
-    private JobStateRepository jobStateRepository;
+    private JobLockService jobLockService;
     @Autowired
     private ScheduledExecutorService executor;
     @Autowired
@@ -67,7 +68,7 @@ public class JobService {
     }
 
     JobService(final JobRepository jobRepository,
-               final JobLockRepository lockRepository,
+               final JobLockService jobLockService,
                final List<JobRunnable> jobRunnables,
                final GaugeService gaugeService,
                final ScheduledExecutorService executor,
@@ -76,7 +77,7 @@ public class JobService {
                final SystemInfo systemInfo,
                final UuidProvider uuidProvider) {
         this.jobRepository = jobRepository;
-        this.lockRepository = lockRepository;
+        this.jobLockService = jobLockService;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
         this.executor = executor;
@@ -101,9 +102,7 @@ public class JobService {
         try {
             final JobRunnable jobRunnable = findJobRunnable(jobType);
             final JobInfo jobInfo = createJobInfo(jobType);
-
-            lockRepository.aquireRunLock(jobInfo.getJobId(), jobInfo.getJobType());
-
+            jobLockService.aquireRunLock(jobInfo.getJobId(), jobInfo.getJobType());
             jobRepository.createOrUpdate(jobInfo);
             return Optional.of(startAsync(metered(jobRunnable), jobInfo.getJobId()));
         } catch (JobBlockedException e) {
@@ -151,31 +150,49 @@ public class JobService {
         final OffsetDateTime timeToMarkJobAsStopped = now(clock).minusSeconds(seconds);
         LOG.info(format("JobCleanup: Looking for jobs older than %s ", timeToMarkJobAsStopped));
         final List<JobInfo> deadJobs = jobRepository.findRunningWithoutUpdateSince(timeToMarkJobAsStopped);
-        deadJobs.forEach(deadJob -> killJob(deadJob.getJobId()));
+        deadJobs.forEach(deadJob -> killJob(deadJob.getJobId(), deadJob.getJobType()));
+        clearRunLocks();
     }
 
-    public void killJob(String jobId) {
-        this.stopJob(jobId, Optional.of(JobInfo.JobStatus.DEAD));
-        jobRepository.appendMessage(jobId, jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", OffsetDateTime.now(clock)));
+    /**
+     * Checks all run locks and releases the lock, if the job is stopped.
+     *
+     * TODO: This method should never do something, otherwise the is a bug in the lock handling.
+     * TODO: Check Log files + Remove
+     */
+    private void clearRunLocks() {
+        jobLockService.runningJobs().forEach((RunningJob runningJob) -> {
+            final Optional<JobInfo> jobInfoOptional = jobRepository.findOne(runningJob.jobId);
+            if (jobInfoOptional.isPresent() && jobInfoOptional.get().isStopped()) {
+                jobLockService.releaseRunLock(runningJob.jobType);
+                LOG.error("Clear Lock of Job {}. Job stopped already.", runningJob.jobType);
+            } else if (!jobInfoOptional.isPresent()){
+                jobLockService.releaseRunLock(runningJob.jobType);
+                LOG.error("Clear Lock of Job {}. JobID does not exist", runningJob.jobType);
+            }
+        });
     }
 
-    private void stopJob(final String jobId, Optional<JobInfo.JobStatus> status) {
-        Optional<JobInfo> optionalJobInfo = jobRepository.findOne(jobId);
-        if (!optionalJobInfo.isPresent()) {
-            return;
-        }
-        JobInfo jobInfo = optionalJobInfo.get();
-        lockRepository.releaseRunLock(jobInfo.getJobType());
-        OffsetDateTime now = OffsetDateTime.now(clock);
-        JobInfo.Builder builder = jobInfo.copy()
-                .setStopped(now)
-                .setLastUpdated(now);
-        status.ifPresent(builder::setStatus);
-        jobRepository.createOrUpdate(builder.build());
+    public void killJob(final String jobId, final String jobType) {
+        stopJob(jobId, Optional.of(JobStatus.DEAD));
+        jobRepository.appendMessage(jobId, jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", now(clock)));
+    }
+
+    private void stopJob(final String jobId, final Optional<JobStatus> status) {
+        jobRepository.findOne(jobId).ifPresent((JobInfo jobInfo) -> {
+            jobLockService.releaseRunLock(jobInfo.getJobType());
+            final OffsetDateTime now = now(clock);
+            final Builder builder = jobInfo.copy()
+                    .setStopped(now)
+                    .setLastUpdated(now);
+            status.ifPresent(builder::setStatus);
+            jobRepository.createOrUpdate(builder.build());
+        });
     }
 
 
     public void appendMessage(String jobId, JobMessage jobMessage) {
+        // TODO: Refactor JobRepository so only a single update is required
         jobRepository.appendMessage(jobId, jobMessage);
         if (jobMessage.getLevel() == Level.ERROR) {
             jobRepository.findOne(jobId).ifPresent(jobInfo -> {
@@ -193,17 +210,31 @@ public class JobService {
     }
 
     public void markSkipped(String jobId) {
+        // TODO: Refactor JobRepository so only a single update is required
         OffsetDateTime currentTimestamp = now(clock);
         jobRepository.appendMessage(jobId, jobMessage(Level.INFO, "Skipped job ..", currentTimestamp));
         jobRepository.setLastUpdate(jobId, currentTimestamp);
-        jobRepository.setJobStatus(jobId, JobInfo.JobStatus.SKIPPED);
+        jobRepository.setJobStatus(jobId, JobStatus.SKIPPED);
     }
 
     public void markRestarted(String jobId) {
+        // TODO: Refactor JobRepository so only a single update is required
         OffsetDateTime currentTimestamp = now(clock);
         jobRepository.appendMessage(jobId, jobMessage(Level.WARNING, "Restarting job ..", currentTimestamp));
         jobRepository.setLastUpdate(jobId, currentTimestamp);
-        jobRepository.setJobStatus(jobId, JobInfo.JobStatus.OK);
+        jobRepository.setJobStatus(jobId, JobStatus.OK);
+    }
+
+    public Set<String> disabledJobTypes() {
+        return jobLockService.disabledJobTypes();
+    }
+
+    public void disableJobType(final String jobType) {
+        jobLockService.disableJobType(jobType);
+    }
+
+    public void enableJobType(final String jobType) {
+        jobLockService.enableJobType(jobType);
     }
 
     private JobInfo createJobInfo(String jobType) {
@@ -253,11 +284,4 @@ public class JobService {
         };
     }
 
-    public void disableJobType(String jobType) {
-        lockRepository.disableJobType(jobType);
-    }
-
-    public void enableJobType(String jobType) {
-        lockRepository.enableJobType(jobType);
-    }
 }

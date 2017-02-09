@@ -1,9 +1,8 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.repository.JobLockRepository;
-import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
+import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,15 +11,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.manuallyTriggerableJobDefinition;
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofSeconds;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -35,23 +33,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class JobDefinitionsControllerTest {
 
-    JobDefinitionsController controller;
+    private JobDefinitionsController controller;
 
     @Mock
-    JobDefinitionService jobDefinitionService;
+    private JobDefinitionService jobDefinitionService;
 
     @Mock
-    JobRepository jobRepository;
-
-    @Mock
-    JobLockRepository jobLockRepository;
+    private JobService jobService;
 
     private MockMvc mockMvc;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        controller = new JobDefinitionsController(jobDefinitionService, jobLockRepository, mock(NavBar.class));
+        controller = new JobDefinitionsController(jobDefinitionService, jobService, mock(NavBar.class));
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -115,7 +110,7 @@ public class JobDefinitionsControllerTest {
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
         final JobDefinition barJobDef = notTriggerableDefinition("BarJob", "Bar");
         when(jobDefinitionService.getJobDefinitions()).thenReturn(asList(fooJobDef, barJobDef));
-        when(jobLockRepository.disabledJobTypes()).thenReturn(asList("BarJob"));
+        when(jobService.disabledJobTypes()).thenReturn(new HashSet(singletonList("BarJob")));
 
         // when
         mockMvc.perform(
@@ -129,7 +124,7 @@ public class JobDefinitionsControllerTest {
                     assertThat(jobDefinitions.size(), is(2));
                     assertThat(jobDefinitions.get(0).get("frequency"), is("Every 60 Minutes"));
                     assertThat(jobDefinitions.get(1).get("frequency"), is("Never"));
-                    List<String> disabledJobs = (List<String>) model.get("disabledJobs");
+                    Set<String> disabledJobs = (Set<String>) model.get("disabledJobs");
                     assertThat(disabledJobs, hasSize(1));
                     assertThat(disabledJobs, contains("BarJob"));
                 });
@@ -140,7 +135,7 @@ public class JobDefinitionsControllerTest {
     public void shouldConvertToSecondsIfSecondsIsLessThan60() throws Exception {
         // Given
         final JobDefinition jobDef = jobDefinition("TheJob", "Job", ofSeconds(59));
-        when(jobDefinitionService.getJobDefinitions()).thenReturn(asList(jobDef));
+        when(jobDefinitionService.getJobDefinitions()).thenReturn(singletonList(jobDef));
 
         // when
         // when
@@ -161,7 +156,7 @@ public class JobDefinitionsControllerTest {
     public void shouldConvertToMinutesIfSecondsIsNotLessThan60() throws Exception {
         // Given
         final JobDefinition jobDef = jobDefinition("TheJob", "Job", ofSeconds(60));
-        when(jobDefinitionService.getJobDefinitions()).thenReturn(asList(jobDef));
+        when(jobDefinitionService.getJobDefinitions()).thenReturn(singletonList(jobDef));
 
         // when
         // when

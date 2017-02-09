@@ -1,16 +1,13 @@
 package de.otto.edison.jobs.configuration;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.JobStateRepository;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
-import de.otto.edison.jobs.repository.inmem.InMemJobLockRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobStateRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
-import de.otto.edison.jobs.service.JobMutexGroup;
 import de.otto.edison.jobs.service.JobMutexGroups;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.jobs.status.JobStatusCalculator;
@@ -32,7 +29,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
@@ -84,15 +80,6 @@ public class JobsConfiguration {
         LOG.warn("Using in-memory JobRepository");
         LOG.warn("===============================");
         return new InMemJobRepository();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(JobLockRepository.class)
-    public JobLockRepository jobLockRepository() {
-        LOG.warn("===============================");
-        LOG.warn("Using in-memory JobLockRepository");
-        LOG.warn("===============================");
-        return new InMemJobLockRepository(mutexGroups);
     }
 
     @Bean

@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.service.JobService;
@@ -41,7 +40,7 @@ public class PersistenceJobEventListener implements JobEventListener {
                     break;
 
                 case DEAD:
-                    jobService.killJob(event.getJobId());
+                    jobService.killJob(event.getJobId(), event.getJobType());
                     break;
 
                 case SKIPPED:

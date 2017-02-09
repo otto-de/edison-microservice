@@ -9,10 +9,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.util.Arrays;
 import java.util.Collection;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -21,7 +23,8 @@ public class JobStateRepositoryTest {
 
     @Parameters(name = "{0}")
     public static Collection<JobStateRepository> data() {
-        return Arrays.asList(new MongoJobStateRepository(new Fongo("inMemoryDb").getDatabase("jobstate")),
+        return asList(
+                new MongoJobStateRepository(new Fongo("inMemoryDb").getDatabase("jobstate")),
                 new InMemJobStateRepository());
     }
 
@@ -55,6 +58,14 @@ public class JobStateRepositoryTest {
 
         assertThat(testee.getValue("someJob", "someMissingKey"), is(nullValue()));
         assertThat(testee.getValue("someMissingJob", "someMissingKey"), is(nullValue()));
+    }
+
+    @Test
+    public void shouldFindJobTypes() {
+        testee.setValue("someJob", "someKey", "someValue");
+        testee.setValue("someOtherJob", "someKey", "someOtherValue");
+
+        assertThat(testee.findAllJobTypes(), containsInAnyOrder("someJob", "someOtherJob"));
     }
 
     @Test
@@ -119,5 +130,18 @@ public class JobStateRepositoryTest {
         assertThat(value, is(true));
         assertThat(testee.getValue("someJob", "someKey"), is("someInitialValue"));
         assertThat(testee.getValue("someJob", "someAtomicKey"), is("someValue"));
+    }
+
+    @Test
+    public void shouldUnsetKeyOnSetNullValue() {
+        // given
+        testee.setValue("someJob", "someKey", "someValue");
+
+        // when
+        testee.setValue("someJob", "someKey", null);
+
+        // then
+        assertThat(testee.findAllJobTypes(), contains("someJob"));
+        assertThat(testee.getValue("someJob", "someKey"), is(nullValue()));
     }
 }

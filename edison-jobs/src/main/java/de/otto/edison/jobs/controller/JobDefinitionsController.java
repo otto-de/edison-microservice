@@ -1,8 +1,8 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
+import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
 import de.otto.edison.status.domain.Link;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +34,15 @@ public class JobDefinitionsController {
 
     public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";
 
-    private final JobDefinitionService jobDefinitions;
-    private final JobLockRepository jobLockRepository;
+    private final JobDefinitionService jobDefinitionService;
+    private final JobService jobService;
 
     @Autowired
-    public JobDefinitionsController(final JobDefinitionService service,
-                                    final JobLockRepository jobLockRepository,
+    public JobDefinitionsController(final JobDefinitionService definitionService,
+                                    final JobService jobService,
                                     final NavBar rightNavBar) {
-        this.jobDefinitions = service;
-        this.jobLockRepository = jobLockRepository;
+        this.jobDefinitionService = definitionService;
+        this.jobService = jobService;
         rightNavBar.register(navBarItem(10, "Job Definitions", INTERNAL_JOBDEFINITIONS));
     }
 
@@ -51,7 +51,7 @@ public class JobDefinitionsController {
     public Map<String, List<Link>> getJobDefinitionsAsJson(final HttpServletRequest request) {
         final String baseUri = baseUriOf(request);
         return singletonMap("links", new ArrayList<Link>() {{
-            addAll(jobDefinitions.getJobDefinitions()
+            addAll(jobDefinitionService.getJobDefinitions()
                     .stream()
                     .map((def) -> link(
                             "http://github.com/otto-de/edison/link-relations/job/definition",
@@ -66,8 +66,8 @@ public class JobDefinitionsController {
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
-            put("disabledJobs", jobLockRepository.disabledJobTypes());
-            put("jobdefinitions", jobDefinitions.getJobDefinitions()
+            put("disabledJobs", jobService.disabledJobTypes());
+            put("jobdefinitions", jobDefinitionService.getJobDefinitions()
                     .stream()
                     .map((def) -> new HashMap<String, Object>() {{
                         put("jobType", def.jobType());
@@ -87,7 +87,7 @@ public class JobDefinitionsController {
                                                         final HttpServletRequest request,
                                                         final HttpServletResponse response) throws IOException {
 
-        Optional<JobDefinition> jobDefinition = jobDefinitions.getJobDefinition(jobType);
+        Optional<JobDefinition> jobDefinition = jobDefinitionService.getJobDefinition(jobType);
         if (jobDefinition.isPresent()) {
             return representationOf(jobDefinition.get(), baseUriOf(request));
         } else {
@@ -100,7 +100,7 @@ public class JobDefinitionsController {
     public ModelAndView getJobDefinitionAsHtml(final @PathVariable String jobType,
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) throws IOException {
-        final Optional<HashMap<String, Object>> optionalResult = jobDefinitions.getJobDefinition(jobType)
+        final Optional<HashMap<String, Object>> optionalResult = jobDefinitionService.getJobDefinition(jobType)
                 .map((def) -> new HashMap<String, Object>() {{
                     put("jobType", def.jobType());
                     put("name", def.jobName());

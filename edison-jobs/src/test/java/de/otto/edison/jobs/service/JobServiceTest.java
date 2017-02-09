@@ -1,13 +1,11 @@
 package de.otto.edison.jobs.service;
 
-import de.otto.edison.jobs.definition.DefaultJobDefinition;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
-import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
 import org.junit.Before;
@@ -21,12 +19,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static de.otto.edison.jobs.definition.DefaultJobDefinition.manuallyTriggerableJobDefinition;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.status.domain.SystemInfo.systemInfo;
@@ -35,7 +33,7 @@ import static java.time.Clock.offset;
 import static java.time.Instant.now;
 import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MINUTES;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -60,11 +58,11 @@ public class JobServiceTest {
     @Mock
     private JobRepository jobRepository;
     @Mock
-    private JobLockRepository lockRepository;
-    @Mock
     private GaugeService gaugeServiceMock;
     @Mock
     private UuidProvider uuidProviderMock;
+    @Mock
+    private JobLockService jobLockService;
 
     JobService jobService;
 
@@ -80,12 +78,18 @@ public class JobServiceTest {
 
         this.clock = fixed(now(), systemDefault());
 
-        doAnswer(new RunImmediately()).when(executorService).execute(any(Runnable.class));
-        when(executorService.scheduleAtFixedRate(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(mock(ScheduledFuture.class));
-        when(jobRunnable.getJobDefinition()).thenReturn(DefaultJobDefinition.manuallyTriggerableJobDefinition("someType", "bla", "bla", 0, Optional.empty()));
-        when(uuidProviderMock.getUuid()).thenReturn(JOB_ID);
-
-        jobService = new JobService(jobRepository, lockRepository, asList(jobRunnable), gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, uuidProviderMock);
+        doAnswer(new RunImmediately())
+                .when(executorService)
+                .execute(any(Runnable.class));
+        when(executorService.scheduleAtFixedRate(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class)))
+                .thenReturn(mock(ScheduledFuture.class));
+        when(jobRunnable.getJobDefinition())
+                .thenReturn(manuallyTriggerableJobDefinition("someType", "bla", "bla", 0, Optional.empty()));
+        when(uuidProviderMock.getUuid())
+                .thenReturn(JOB_ID);
+        jobService = new JobService(
+                jobRepository, jobLockService, singletonList(jobRunnable),
+                gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, uuidProviderMock);
         jobService.postConstruct();
     }
 
@@ -108,7 +112,6 @@ public class JobServiceTest {
         String jobType = "bar";
         when(jobRunnable.getJobDefinition()).thenReturn(someJobDefinition(jobType));
 
-
         // when:
         Optional<String> optionalJobId = jobService.startAsyncJob(jobType);
 
@@ -117,12 +120,13 @@ public class JobServiceTest {
         verify(executorService).execute(any(Runnable.class));
         verify(jobRepository).createOrUpdate(expectedJobInfo);
         verify(jobRunnable).execute(any(JobEventPublisher.class));
-        verify(lockRepository).aquireRunLock(expectedJobInfo.getJobId(), expectedJobInfo.getJobType());
+        verify(jobLockService).aquireRunLock(expectedJobInfo.getJobId(), expectedJobInfo.getJobType());
     }
 
     @Test
     public void shouldNotStartJobOnBlockedException() {
-        doThrow(new JobBlockedException("bla")).when(lockRepository).aquireRunLock(anyString(), anyString());
+        doAnswer((x) -> {throw new JobBlockedException("");})
+                .when(jobLockService).aquireRunLock(anyString(), anyString());
 
         Optional<String> jobUri = jobService.startAsyncJob("someType");
 
@@ -151,7 +155,7 @@ public class JobServiceTest {
         jobService.stopJob("superId");
 
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.OK).setStopped(now).setLastUpdated(now).build();
-        verify(lockRepository).releaseRunLock("superType");
+        verify(jobLockService).releaseRunLock("superType");
         verify(jobRepository).createOrUpdate(expected);
     }
 
@@ -161,22 +165,22 @@ public class JobServiceTest {
         JobInfo jobInfo = JobInfo.newJobInfo("superId", "superType", clock, HOSTNAME);
         when(jobRepository.findOne("superId")).thenReturn(Optional.of(jobInfo));
 
-        jobService.killJob("superId");
+        jobService.killJob("superId", "superType");
 
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.DEAD).setStopped(now).setLastUpdated(now).build();
-        verify(lockRepository).releaseRunLock("superType");
+        verify(jobLockService).releaseRunLock("superType");
         verify(jobRepository).createOrUpdate(expected);
     }
 
     @Test
     public void shouldKillDeadJobsSince() {
-        JobInfo someJobInfo = defaultJobInfo().build();
-        when(jobRepository.findRunningWithoutUpdateSince(any())).thenReturn(Collections.singletonList(someJobInfo));
+        JobInfo someJobInfo = defaultJobInfo().setJobType("jobType").build();
+        when(jobRepository.findRunningWithoutUpdateSince(any())).thenReturn(singletonList(someJobInfo));
         when(jobRepository.findOne(someJobInfo.getJobId())).thenReturn(Optional.of(someJobInfo));
 
         jobService.killJobsDeadSince(60);
 
-        verify(lockRepository).releaseRunLock(someJobInfo.getJobType());
+        verify(jobLockService).releaseRunLock("jobType");
     }
 
     @Test
@@ -246,13 +250,6 @@ public class JobServiceTest {
                 .setLastUpdated(now).build();
         verify(jobRepository).appendMessage(JOB_ID, message);
         verify(jobRepository).createOrUpdate(expected);
-    }
-
-    @Test
-    public void shouldDisableJobType() {
-        jobService.disableJobType("myJobType");
-
-        verify(lockRepository).disableJobType("myJobType");
     }
 
     private JobInfo.Builder defaultJobInfo() {

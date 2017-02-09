@@ -2,6 +2,17 @@
 
 ## Release 1.0.0.RC5-SNAPSHOT
 
+**Bugfixes:**
+* **[edison-jobs]** Fixed bug in configuration of JobMutexGroups.
+
+**Breaking Changes:**
+* **[edison-jobs]** Refactored JobRepository.
+
+**New Features:**
+* **[edison-jobs]** Introduced JobStateRepository to store meta data about jobs.
+* **[edison-jobs]** Introduced StatefulJobRunnable to make it easy to implement stateful jobs like,
+for example, import jobs that are keeping track of their last read position.
+
 ## Release 1.0.0.RC4
 
 **Bugfixes:**
@@ -16,7 +27,7 @@
 JobRunnables can not call `jobEventPublisher.skipped()` to announce skipped jobs.
 
 **Breaking Changes:**
-* **[edison-jobs]** Refactored JobRepository, introduced JobLockRepository.
+* **[edison-jobs]** Refactored JobRepository.
 
 ## Release 1.0.0.RC3
 
