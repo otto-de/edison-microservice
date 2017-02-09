@@ -31,9 +31,9 @@ public class MongoJobLockRepositoryTest {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         final MongoDatabase database = fongo.getDatabase("jobsinfo");
         runningJobsCollection = database.getCollection("jobmetadata");
-        repo = new MongoJobLockRepository(database, new JobMutexGroups(singleton(
-                new JobMutexGroup("testgroup", "FirstMutexJob", "OtherMutexJob")))
-        );
+        JobMutexGroups jobMutexGroups = new JobMutexGroups();
+        jobMutexGroups.setMutexGroups(singleton(new JobMutexGroup("testgroup", "FirstMutexJob", "OtherMutexJob")));
+        repo = new MongoJobLockRepository(database, jobMutexGroups);
         repo.init();
     }
 

@@ -8,6 +8,7 @@ import de.otto.edison.jobs.status.JobStatusCalculator;
 import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.when;
 
 public class JobsConfigurationTest {
 
-    private JobMutexGroups jobMutexGroups = new JobMutexGroups(emptySet());;
+    private JobMutexGroups jobMutexGroups = new JobMutexGroups();;
     private JobsProperties jobsProperties = new JobsProperties();;
 
     @Test

@@ -43,13 +43,14 @@ public class JobMutexGroupsTest {
 
     @Test
     public void shouldMutuallyExcludeSameType() {
-        final JobMutexGroups mutexGroups = new JobMutexGroups(null);
+        final JobMutexGroups mutexGroups = new JobMutexGroups();
         assertThat(mutexGroups.mutexJobTypesFor("foo"), contains("foo"));
     }
 
     @Test
     public void shouldMutuallyExcludeOthers() {
-        final JobMutexGroups mutexGroups = new JobMutexGroups(hashSet(
+        final JobMutexGroups mutexGroups = new JobMutexGroups();
+        mutexGroups.setMutexGroups(hashSet(
                 new JobMutexGroup("first", "foo", "foo1", "foo2"),
                 new JobMutexGroup("second", "bar", "bar1", "foo1")
         ));

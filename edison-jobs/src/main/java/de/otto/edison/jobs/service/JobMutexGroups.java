@@ -16,17 +16,7 @@ import static java.util.Collections.emptySet;
 @Component
 public class JobMutexGroups {
 
-    private final Set<JobMutexGroup> mutexGroups;
-
-    /**
-     * Creates a {@code JobMutexGroups} component from autowired {@link JobMutexGroup}s.
-     *
-     * @param mutexGroups zero or more JobMutexGroup configurations
-     */
-    @Autowired(required = false)
-    public JobMutexGroups(final Set<JobMutexGroup> mutexGroups) {
-        this.mutexGroups = mutexGroups != null ? mutexGroups : emptySet();
-    }
+    private Set<JobMutexGroup> mutexGroups = emptySet();
 
     /**
      * Returns the set of configured JobMutextGroups.
@@ -55,6 +45,12 @@ public class JobMutexGroups {
                 .filter(g -> g.contains(jobType))
                 .forEach(result::addAll);
         return result;
+    }
+
+    @Autowired(required = false)
+    public JobMutexGroups setMutexGroups(Set<JobMutexGroup> mutexGroups) {
+        this.mutexGroups = mutexGroups;
+        return this;
     }
 
 

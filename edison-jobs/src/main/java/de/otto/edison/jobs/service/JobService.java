@@ -8,6 +8,7 @@ import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobLockRepository;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.repository.JobStateRepository;
 import de.otto.edison.status.domain.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,8 @@ public class JobService {
     private JobRepository jobRepository;
     @Autowired
     private JobLockRepository lockRepository;
+    @Autowired
+    private JobStateRepository jobStateRepository;
     @Autowired
     private ScheduledExecutorService executor;
     @Autowired
@@ -98,7 +101,9 @@ public class JobService {
         try {
             final JobRunnable jobRunnable = findJobRunnable(jobType);
             final JobInfo jobInfo = createJobInfo(jobType);
+
             lockRepository.aquireRunLock(jobInfo.getJobId(), jobInfo.getJobType());
+
             jobRepository.createOrUpdate(jobInfo);
             return Optional.of(startAsync(metered(jobRunnable), jobInfo.getJobId()));
         } catch (JobBlockedException e) {

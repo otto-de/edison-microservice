@@ -21,7 +21,7 @@ public class InMemJobLockRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        final JobMutexGroups mutexGroups = new JobMutexGroups(emptySet());
+        final JobMutexGroups mutexGroups = new JobMutexGroups();
         repository = new InMemJobLockRepository(mutexGroups);
     }
 
