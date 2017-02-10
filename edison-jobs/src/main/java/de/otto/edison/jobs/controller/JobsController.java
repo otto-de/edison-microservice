@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.controller;
 
+import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
@@ -111,8 +112,9 @@ public class JobsController {
             value = "/internal/jobs/{jobType}/disable",
             method = POST
     )
-    public String disableJobType(final @PathVariable String jobType) {
-        jobService.disableJobType(jobType);
+    public String disableJobType(final @PathVariable String jobType,
+                                 final @RequestParam(required = false) String disabledComment) {
+        jobService.disableJobType(new DisabledJob(jobType, disabledComment));
         return "redirect:/internal/jobdefinitions";
     }
 

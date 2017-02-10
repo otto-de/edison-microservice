@@ -8,57 +8,55 @@
 <div th:replace="fragments/navigation  :: navigation" />
 
 <div class="container">
-    <div class="panel panel-default">
+    <div class="panel panel-default" th:each="def : ${jobdefinitions}">
         <div class="panel-heading">
-            <h3 class="panel-title">Job Definitions</h3>
+            <h3 class="panel-title" th:text="${def.name}"></h3>
         </div>
         <div class="panel-body">
-            <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>JobType</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Max Age</th>
-                    <th>Frequency</th>
-                    <th>Retry</th>
-                    <th>Last Runs</th>
-                    <th>Trigger</th>
-                    <th>Disabled</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="def : ${jobdefinitions}">
-                    <td th:text="${def.jobType}">&nbsp;</td>
-                    <td th:text="${def.name}">&nbsp;</td>
-                    <td th:text="${def.description}">&nbsp;</td>
-                    <td th:text="${def.maxAge}">&nbsp;</td>
-                    <td th:text="${def.frequency}">&nbsp;</td>
-                    <td th:text="${def.retry}">&nbsp;</td>
-                    <td><a th:href="@{|/internal/jobs?type=${def.jobType}|}" class="btn btn-xs btn-primary">Open &raquo;</a></td>
-                    <td>
+            <div class="row>">
+                <div class="col-md-4" th:text="${def.description}">Description</div>
+                <div class="col-md-4">
+                    <label for="jobType">Job Type: </label>
+                    <span id="jobType" th:text="${def.jobType}"></span>
+                    <br/>
+                    <label for="maxAge">Max Age: </label>
+                    <span id="maxAge" th:text="${def.maxAge}"></span>
+                    <br/>
+                    <label for="frequency">Frequency: </label>
+                    <span id="frequency" th:text="${def.frequency}"></span>
+                    <br/>
+                    <label for="retries">Retries: </label>
+                    <span id="retries" th:text="${def.retry}"></span>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <a id="openButton" th:href="@{|/internal/jobs?type=${def.jobType}|}" class="btn btn-sm btn-primary">Open Messages <span class="glyphicon glyphicon-list-alt"></span></a>
+                    </div>
+                    <div class="form-group">
                         <button type="button"
-                                class="triggerButton btn btn-xs btn-success"
-                                autocomplete="off"
-                                th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${def.jobType}, disabled=${disabledJobs.contains(def.jobType) ? 'disabled' : null}"
+                                class="triggerButton btn btn-sm btn-success"
+                                th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${def.jobType}, disabled=${def.isDisabled ? 'disabled' : null}"
                                 title="Click to start job now"
                                 data-loading-text="Triggering...">
-                            <span class="glyphicon glyphicon-play"></span>
+                            <span>Trigger Execution </span><span class="glyphicon glyphicon-play"></span>
                         </button>
-                    </td>
-                    <td>
-                        <form th:action="${baseUri} + '/internal/jobs/' + ${def.jobType} + '/' + ${disabledJobs.contains(def.jobType)?'enable':'disable'}" method="POST">
-                            <button type="submit" class="btn btn-xs"
-                                    th:classappend="${disabledJobs.contains(def.jobType)} ? btn-danger : btn-success"
-                                    th:title="${disabledJobs.contains(def.jobType)} ? 'Job is disabled. Click to enable' : 'Job is enabled. Click to disable'">
-                                <span class="glyphicon glyphicon-lock"></span>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                    </div>
+
+                    <form th:action="${baseUri} + '/internal/jobs/' + ${def.jobType} + '/' + ${def.isDisabled?'enable':'disable'}" method="POST">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn"
+                                        th:classappend="${def.isDisabled} ? btn-danger : btn-success"
+                                        th:title="${def.isDisabled} ? 'Job is disabled. Click to enable' : 'Job is enabled. Click to disable'">
+                                    <span th:text="${def.isDisabled} ? 'Enable' : 'Disable'"></span> <span class="glyphicon glyphicon-lock"></span>
+                                </button>
+                            </span>
+                            <textarea th:if="${def.isDisabled}" name="disabledComment" class="form-control" rows="3" disabled th:text="${def.comment}"></textarea>
+                            <textarea th:if="${!def.isDisabled}" name="disabledComment" class="form-control" rows="3" placeholder="Why disabled?"></textarea>
+                        </div><!-- /input-group -->
+                    </form>
+
+                </div>
             </div>
         </div>
     </div>

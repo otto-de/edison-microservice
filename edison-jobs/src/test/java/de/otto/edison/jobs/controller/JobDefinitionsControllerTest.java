@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
@@ -110,7 +111,9 @@ public class JobDefinitionsControllerTest {
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
         final JobDefinition barJobDef = notTriggerableDefinition("BarJob", "Bar");
         when(jobDefinitionService.getJobDefinitions()).thenReturn(asList(fooJobDef, barJobDef));
-        when(jobService.disabledJobTypes()).thenReturn(new HashSet(singletonList("BarJob")));
+        when(jobService.disabledJobTypes()).thenReturn(new HashSet(singletonList(
+                new DisabledJob("BarJob", "some comment")))
+        );
 
         // when
         mockMvc.perform(
@@ -123,10 +126,11 @@ public class JobDefinitionsControllerTest {
                     List<Map<String, Object>> jobDefinitions = (List<Map<String, Object>>) model.get("jobdefinitions");
                     assertThat(jobDefinitions.size(), is(2));
                     assertThat(jobDefinitions.get(0).get("frequency"), is("Every 60 Minutes"));
+                    assertThat(jobDefinitions.get(0).get("isDisabled"), is(false));
+                    assertThat(jobDefinitions.get(0).get("comment"), is(""));
                     assertThat(jobDefinitions.get(1).get("frequency"), is("Never"));
-                    Set<String> disabledJobs = (Set<String>) model.get("disabledJobs");
-                    assertThat(disabledJobs, hasSize(1));
-                    assertThat(disabledJobs, contains("BarJob"));
+                    assertThat(jobDefinitions.get(1).get("isDisabled"), is(true));
+                    assertThat(jobDefinitions.get(1).get("comment"), is("some comment"));
                 });
     }
 

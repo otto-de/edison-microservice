@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.service;
 
+import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobStateRepository;
@@ -128,21 +129,29 @@ public class JobLockServiceTest {
     public void shouldReturnDisabledJobTypes() {
         // given
         when(jobStateRepository.findAllJobTypes()).thenReturn(new HashSet<String>(asList("jobType", "otherJobType", "enabledJobType")));
-        when(jobStateRepository.getValue("jobType", "_e_disabled")).thenReturn("true");
-        when(jobStateRepository.getValue("otherJobType", "_e_disabled")).thenReturn("true");
+        when(jobStateRepository.getValue("jobType", "_e_disabled")).thenReturn("some comment");
+        when(jobStateRepository.getValue("otherJobType", "_e_disabled")).thenReturn("");
         when(jobStateRepository.getValue("enabledJobType", "_e_disabled")).thenReturn(null);
 
         // when
-        final Set<String> disabledJobTypes = jobLockService.disabledJobTypes();
+        final Set<DisabledJob> disabledJobTypes = jobLockService.disabledJobTypes();
 
         // then
-        assertThat(disabledJobTypes, containsInAnyOrder("jobType", "otherJobType"));
+        assertThat(disabledJobTypes, containsInAnyOrder(
+                new DisabledJob("jobType", "some comment"),
+                new DisabledJob("otherJobType", "")));
     }
 
     @Test
     public void shouldDisableJobType() throws Exception {
-        jobLockService.disableJobType("jobType");
-        verify(jobStateRepository).setValue("jobType", "_e_disabled", "true");
+        jobLockService.disableJobType(new DisabledJob("jobType", null));
+        verify(jobStateRepository).setValue("jobType", "_e_disabled", "");
+    }
+
+    @Test
+    public void shouldDisableJobTypeWithComment() throws Exception {
+        jobLockService.disableJobType(new DisabledJob("jobType", "some comment"));
+        verify(jobStateRepository).setValue("jobType", "_e_disabled", "some comment");
     }
 
     @Test

@@ -1,10 +1,7 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.jobs.domain.RunningJob;
+import de.otto.edison.jobs.domain.*;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
@@ -225,12 +222,12 @@ public class JobService {
         jobRepository.setJobStatus(jobId, JobStatus.OK);
     }
 
-    public Set<String> disabledJobTypes() {
+    public Set<DisabledJob> disabledJobTypes() {
         return jobLockService.disabledJobTypes();
     }
 
-    public void disableJobType(final String jobType) {
-        jobLockService.disableJobType(jobType);
+    public void disableJobType(final DisabledJob disabledJob) {
+        jobLockService.disableJobType(disabledJob);
     }
 
     public void enableJobType(final String jobType) {

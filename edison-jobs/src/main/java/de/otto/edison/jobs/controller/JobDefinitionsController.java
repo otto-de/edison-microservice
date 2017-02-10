@@ -1,7 +1,10 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.domain.DisabledJob;
+import de.otto.edison.jobs.repository.JobStateRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
+import de.otto.edison.jobs.service.JobLockService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
 import de.otto.edison.status.domain.Link;
@@ -64,19 +67,24 @@ public class JobDefinitionsController {
 
     @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "*/*")
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
+        final Set<DisabledJob> disabledJobs = jobService.disabledJobTypes();
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
-            put("disabledJobs", jobService.disabledJobTypes());
             put("jobdefinitions", jobDefinitionService.getJobDefinitions()
                     .stream()
-                    .map((def) -> new HashMap<String, Object>() {{
-                        put("jobType", def.jobType());
-                        put("name", def.jobName());
-                        put("description", def.description());
-                        put("maxAge", def.maxAge().isPresent() ? def.maxAge().get().toMinutes() + " Minutes" : "unlimited");
-                        put("frequency", frequencyOf(def));
-                        put("retry", retryOf(def));
-                    }})
+                    .map((def) -> {
+                        final Optional<DisabledJob> disabled = disabledJobs.stream().filter(disabledJob -> disabledJob.jobType.equals(def.jobType())).findAny();
+                        return new HashMap<String, Object>() {{
+                            put("isDisabled", disabled.isPresent());
+                            put("comment", disabled.map(d->d.comment).orElse(""));
+                            put("jobType", def.jobType());
+                            put("name", def.jobName());
+                            put("description", def.description());
+                            put("maxAge", def.maxAge().isPresent() ? def.maxAge().get().toMinutes() + " Minutes" : "unlimited");
+                            put("frequency", frequencyOf(def));
+                            put("retry", retryOf(def));
+                        }};
+                    })
                     .collect(toList()));
         }});
     }

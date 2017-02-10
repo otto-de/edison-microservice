@@ -3,7 +3,9 @@ package de.otto.edison.jobs.domain;
 import java.util.Objects;
 
 /**
- * Created by guido on 30.01.17.
+ * A currently running job.
+ *
+ * @since 1.0.0
  */
 public class RunningJob {
     public final String jobId;

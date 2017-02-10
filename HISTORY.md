@@ -12,6 +12,7 @@
 * **[edison-jobs]** Introduced JobStateRepository to store meta data about jobs.
 * **[edison-jobs]** Introduced StatefulJobRunnable to make it easy to implement stateful jobs like,
 for example, import jobs that are keeping track of their last read position.
+* **[edison-jobs]** Added the possibility to provide a comment and show it in the UI when disabling jobs.
 
 ## Release 1.0.0.RC4
 

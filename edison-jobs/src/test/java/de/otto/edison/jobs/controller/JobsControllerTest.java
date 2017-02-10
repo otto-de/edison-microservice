@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.controller;
 
+import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
@@ -177,6 +178,6 @@ public class JobsControllerTest {
                 .andExpect(status().is(SC_MOVED_TEMPORARILY))
                 .andExpect(header().string("Location", "/some-microservice/internal/jobdefinitions"));
 
-        verify(jobService).disableJobType("someJobType");
+        verify(jobService).disableJobType(new DisabledJob("someJobType", null));
     }
 }

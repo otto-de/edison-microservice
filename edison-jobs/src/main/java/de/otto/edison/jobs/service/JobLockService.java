@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.service;
 
+import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobStateRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -48,7 +50,7 @@ public class JobLockService {
     public void aquireRunLock(final String jobId, final String jobType) throws JobBlockedException {
 
         // check for disabled lock:
-        if (disabledJobTypes().contains(jobType)) { // TODO nur beim triggern prüfen??
+        if (disabledJobTypes().stream().anyMatch(disabled->jobType.equals(disabled.jobType))) { // TODO nur beim triggern prüfen??
             throw new JobBlockedException(format("Job '%s' is currently disabled", jobType));
         }
 
@@ -96,10 +98,10 @@ public class JobLockService {
     /**
      * Disables a job type, i.e. prevents it from being started
      *
-     * @param jobType the disabled job type
+     * @param disabledJob the disabled job type with an optional comment
      */
-    public void disableJobType(final String jobType) {
-        stateRepository.setValue(jobType, KEY_DISABLED, "true");
+    public void disableJobType(final DisabledJob disabledJob) {
+        stateRepository.setValue(disabledJob.jobType, KEY_DISABLED, disabledJob.comment);
     }
 
     /**
@@ -114,10 +116,18 @@ public class JobLockService {
     /**
      * @return a list of all job types that are currently disabled
      */
-    public Set<String> disabledJobTypes() {
+    public Set<DisabledJob> disabledJobTypes() {
         return stateRepository.findAllJobTypes()
                 .stream()
-                .filter((jobType) -> stateRepository.getValue(jobType, KEY_DISABLED) != null)
+                .map((jobType) -> {
+                    final String comment = stateRepository.getValue(jobType, KEY_DISABLED);
+                    if (comment != null) {
+                        return new DisabledJob(jobType, comment);
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
                 .collect(toSet());
     }
 
