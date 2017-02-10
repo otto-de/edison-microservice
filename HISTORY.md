@@ -4,6 +4,7 @@
 
 **Bugfixes:**
 * **[edison-jobs]** Fixed bug in configuration of JobMutexGroups.
+* **[edison-jobs]** Fixed missing `deleteAll()` in JobRepository.
 
 **Breaking Changes:**
 * **[edison-jobs]** Refactored JobRepository.

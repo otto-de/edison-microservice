@@ -320,7 +320,7 @@ public class MongoJobRepositoryTest {
     }
 
     @Test
-    public void shouldClearJobInfos() throws Exception {
+    public void shouldDeleteJobInfos() throws Exception {
         // given
         repo.createOrUpdate(someJobInfo("http://localhost/foo"));
 

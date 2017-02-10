@@ -152,19 +152,16 @@ public abstract class AbstractMongoRepository<K, V> {
      * Deletes the document identified by key.
      *
      * @param key the identifier of the deleted document
-     * @return DeleteResult
      */
-    public DeleteResult delete(final K key) {
-        return collection().deleteOne(byId(key));
+    public void delete(final K key) {
+        collection().deleteOne(byId(key));
     }
 
     /**
      * Deletes all documents from this repository.
-     *
-     * @return DeleteResult
      */
-    public DeleteResult deleteAll() {
-        return collection().deleteMany(matchAll());
+    public void deleteAll() {
+        collection().deleteMany(matchAll());
     }
 
     /**

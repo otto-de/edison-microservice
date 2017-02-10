@@ -42,4 +42,5 @@ public interface JobRepository {
 
     long size();
 
+    void deleteAll();
 }
