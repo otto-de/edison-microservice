@@ -14,7 +14,6 @@ dependencies {
     testCompile libs.asyncHttp
     testCompile project(":edison-testsupport")
 
-
 }
 
 artifacts {

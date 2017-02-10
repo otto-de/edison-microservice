@@ -1,21 +1,28 @@
 package de.otto.edison.registry.configuration;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @ConfigurationProperties(prefix = "edison.serviceregistry")
 public class ServiceRegistryProperties {
 
-    @NotEmpty
+    /**
+     * serviceregistry client enabled or disabled
+     */
+    private boolean enabled = true;
+
+    /**
+     * URL of jobtrigger
+     */
     private String servers;
+
     /**
      * URL of the registered service
      */
-    @NotNull @URL
+    @URL
     private String service;
     /**
      * Expire the registration after N minutes
@@ -58,5 +65,25 @@ public class ServiceRegistryProperties {
 
     public void setRefreshAfter(long refreshAfter) {
         this.refreshAfter = refreshAfter;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public ServiceRegistryProperties setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceRegistryProperties{" +
+                "enabled=" + enabled +
+                ", servers='" + servers + '\'' +
+                ", service='" + service + '\'' +
+                ", expireAfter=" + expireAfter +
+                ", refreshAfter=" + refreshAfter +
+                '}';
     }
 }

@@ -8,7 +8,6 @@ import de.otto.edison.annotations.Beta;
  * @author Guido Steinacker
  * @since 16.09.15
  */
-@Beta
 public interface RegistryClient {
 
     /**
@@ -16,4 +15,5 @@ public interface RegistryClient {
      */
     void registerService();
 
+    boolean isRunning();
 }

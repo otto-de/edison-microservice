@@ -14,8 +14,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+
+import java.util.concurrent.ScheduledExecutorService;
 
 import static java.util.Arrays.stream;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
@@ -32,7 +35,6 @@ import static org.springframework.util.StringUtils.isEmpty;
  * @since 1.0.0
  */
 @Component
-@ConditionalOnProperty("edison.serviceregistry.servers")
 @ConditionalOnClass(AsyncHttpClient.class)
 @EnableConfigurationProperties(ServiceRegistryProperties.class)
 @Beta
@@ -44,6 +46,8 @@ public class AsyncHttpRegistryClient implements RegistryClient {
     private final AsyncHttpClient httpClient;
     private final ServiceRegistryProperties serviceRegistryProperties;
     private final ApplicationInfoProperties applicationInfoProperties;
+    private final ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor();
+    private boolean isRunning = false;
 
     @Autowired
     public AsyncHttpRegistryClient(final ApplicationInfo applicationInfo,
@@ -58,8 +62,21 @@ public class AsyncHttpRegistryClient implements RegistryClient {
 
     @PostConstruct
     public void postConstruct() {
-        LOG.info("Scheduling registration at Edison JobTrigger every '{}' minutes.", serviceRegistryProperties.getRefreshAfter());
-        newSingleThreadScheduledExecutor().scheduleWithFixedDelay(this::registerService, 0, serviceRegistryProperties.getRefreshAfter(), MINUTES);
+        if (serviceRegistryProperties.isEnabled()) {
+            if (validateConfig()) {
+                LOG.info("Scheduling registration at Edison JobTrigger every '{}' minutes.", serviceRegistryProperties.getRefreshAfter());
+                scheduledExecutorService
+                        .scheduleWithFixedDelay(this::registerService, 0, serviceRegistryProperties.getRefreshAfter(), MINUTES);
+                isRunning = true;
+            } else {
+                LOG.warn("===================================================================================");
+                LOG.warn("ServiceRegistryProperties is enabled, but no service and/or servers are configured");
+                LOG.warn(serviceRegistryProperties.toString());
+                LOG.warn("===================================================================================");
+            }
+        } else {
+            LOG.info("Scheduling registration at Edison JobTrigger disabled!");
+        }
     }
 
     @Override
@@ -106,4 +123,24 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                 });
     }
 
+    private boolean validateConfig() {
+        if (!serviceRegistryProperties.isEnabled()) {
+            return true;
+        }
+
+        if (isEmpty(serviceRegistryProperties.getServers())) {
+            return false;
+        }
+
+        if (isEmpty(serviceRegistryProperties.getService())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return isRunning;
+    }
 }
