@@ -123,6 +123,7 @@ public class JobsControllerTest {
         assertThat(job, is(asList(representationOf(secondJob, null, false, ""), representationOf(fourthJob, null, false, ""))));
 
         verify(jobService, times(1)).findJobs(Optional.of("jobType2"), 100);
+        verify(jobService, times(2)).disabledJobTypes();
         verifyNoMoreInteractions(jobService);
     }
 
@@ -144,6 +145,7 @@ public class JobsControllerTest {
                 representationOf(thirdJob, null, false, ""))));
 
         verify(jobService, times(1)).findJobsDistinct();
+        verify(jobService, times(3)).disabledJobTypes();
         verifyNoMoreInteractions(jobService);
     }
 
