@@ -5,6 +5,7 @@ dependencies {
 //  compile project(":edison-mongo")  // Enable to get persistent job information
 //  compile libs.fakeMongo            // In-Memory impl of MongoDB; not intended for production
 
+    compile libs.asyncHttp
     testCompile project(":edison-testsupport")
 }
 
