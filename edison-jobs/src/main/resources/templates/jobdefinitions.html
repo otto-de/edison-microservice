@@ -14,7 +14,6 @@
         </div>
         <div class="panel-body">
             <div class="row>">
-                <div class="col-md-4" th:text="${def.description}">Description</div>
                 <div class="col-md-4">
                     <label for="jobType">Job Type: </label>
                     <span id="jobType" th:text="${def.jobType}"></span>
@@ -28,6 +27,7 @@
                     <label for="retries">Retries: </label>
                     <span id="retries" th:text="${def.retry}"></span>
                 </div>
+                <div class="col-md-4" th:text="${def.description}">Description</div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <a id="openButton" th:href="@{|/internal/jobs?type=${def.jobType}|}" class="btn btn-sm btn-primary">Open Messages <span class="glyphicon glyphicon-list-alt"></span></a>

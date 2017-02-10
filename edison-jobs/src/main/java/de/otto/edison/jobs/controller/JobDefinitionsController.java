@@ -2,9 +2,7 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.DisabledJob;
-import de.otto.edison.jobs.repository.JobStateRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
-import de.otto.edison.jobs.service.JobLockService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
 import de.otto.edison.status.domain.Link;
@@ -26,6 +24,7 @@ import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.represe
 import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static de.otto.edison.status.domain.Link.link;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -108,8 +107,13 @@ public class JobDefinitionsController {
     public ModelAndView getJobDefinitionAsHtml(final @PathVariable String jobType,
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) throws IOException {
+
+        final Set<DisabledJob> disabledJobs = jobService.disabledJobTypes();
+        final Optional<DisabledJob> disabled = disabledJobs.stream().filter(disabledJob -> disabledJob.jobType.equals(jobType)).findAny();
         final Optional<HashMap<String, Object>> optionalResult = jobDefinitionService.getJobDefinition(jobType)
                 .map((def) -> new HashMap<String, Object>() {{
+                    put("isDisabled", disabled.isPresent());
+                    put("comment", disabled.map(d->d.comment).orElse(""));
                     put("jobType", def.jobType());
                     put("name", def.jobName());
                     put("description", def.description());
@@ -118,9 +122,9 @@ public class JobDefinitionsController {
                     put("retry", retryOf(def));
                 }});
         if (optionalResult.isPresent()) {
-            return new ModelAndView("jobdefinition", new HashMap<String, Object>() {{
+            return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
                 put("baseUri", baseUriOf(request));
-                put("def", optionalResult.get());
+                put("jobdefinitions", singletonList(optionalResult.get()));
             }});
         } else {
             response.sendError(SC_NOT_FOUND, "JobDefinition " + jobType + " not found.");
