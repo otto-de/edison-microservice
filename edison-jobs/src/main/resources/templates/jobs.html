@@ -22,6 +22,7 @@
                     <th>Started</th>
                     <th>Stopped</th>
                     <th>Runtime</th>
+                    <th>Trigger</th>
                     <th>Definition</th>
                     <th>Details</th>
                 </tr>
@@ -31,18 +32,27 @@
                     <td th:text="${job.jobType}">&nbsp;</td>
                     <td>
                         <th:block th:if="${job.state} != 'Running'">
-                            <span th:if="${job.status} == 'OK'"  class="label progress-bar progress-bar-success" style="width:80%; height:2em;"><span th:text="${job.status}"></span></span>
-                            <span th:if="${job.status} == 'SKIPPED'"  class="label progress-bar progress-bar-success" style="width:80%; height:2em;"><span th:text="${job.status}"></span></span>
-                            <span th:if="${job.status} == 'ERROR'"  class="label progress-bar progress-bar-danger" style="width:80%; height:2em;"><span th:text="${job.status}"></span></span>
-                            <span th:if="${job.status} == 'DEAD'"  class="label progress-bar" style="width:80%; height:2em; background: rgba(230, 110, 30, 1);"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'OK'"  class="label label-success"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'SKIPPED'"  class="label label-default"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'ERROR'"  class="label label-danger" ><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'DEAD'"  class="label label-warning" ><span th:text="${job.status}"></span></span>
                         </th:block>
                         <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:80%; height:2em;">RUNNING</span></th:block>
                     </td>
                     <td th:text="${job.started}">&nbsp;</td>
                     <td th:text="${job.stopped}">&nbsp;</td>
                     <td th:text="${job.runtime}">&nbsp;</td>
-                    <td><a th:href="@{|/internal/jobdefinitions/${job.jobType}|}" class="btn btn-xs btn-primary">Open Definition &raquo;</a></td>
-                    <td><a th:href="${job.jobUri}" class="btn btn-xs btn-primary">Open Details &raquo;</a></td>
+                    <td>
+                        <button type="button"
+                                class="triggerButton btn btn-sm btn-default btn-block"
+                                th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
+                                title="Click to start job now"
+                                data-loading-text="Triggering...">
+                            <span>Trigger </span><span class="glyphicon glyphicon-play"></span>
+                        </button>
+                    </td>
+                    <td><a th:href="@{|/internal/jobdefinitions/${job.jobType}|}" class="btn btn-sm btn-default">Open Definition</a></td>
+                    <td><a th:href="${job.jobUri}" class="btn btn-sm btn-default">Open Details</a></td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(jobs)}"><td colspan="7">No Jobs</td></tr>
                 </tbody>
@@ -50,11 +60,12 @@
             </div>
         </div>
     </div>
-    <a th:href="@{/internal/jobdefinitions}" class="btn btn-sm btn-primary">Open Job Definitions &raquo;</a>
 </div> <!-- /container -->
 
 
 <span th:replace="fragments/footer :: footer" />
+
+<script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
 
 </body>
 </html>

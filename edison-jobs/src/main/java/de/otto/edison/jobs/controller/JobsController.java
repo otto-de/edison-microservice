@@ -54,11 +54,15 @@ public class JobsController {
                                       @RequestParam(value = "distinct", defaultValue = "true", required = false) boolean distinct,
                                       HttpServletRequest request) {
         final List<JobRepresentation> jobRepresentations = getJobInfos(type, count, distinct).stream()
-                .map((j) -> representationOf(j, true, baseUriOf(request)))
+                .map((j) -> {
+                    final DisabledJob disabled = getDisabledJob(j.getJobType());
+                    return representationOf(j, disabled, true, baseUriOf(request));
+                })
                 .collect(toList());
 
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
+        modelAndView.addObject("baseUri", baseUriOf(request));
         return modelAndView;
     }
 
@@ -70,7 +74,10 @@ public class JobsController {
                                                  HttpServletRequest request) {
         return getJobInfos(type, count, distinct)
                 .stream()
-                .map((j) -> representationOf(j, false, baseUriOf(request)))
+                .map((j) -> {
+                    final DisabledJob disabled = getDisabledJob(j.getJobType());
+                    return representationOf(j, disabled, false, baseUriOf(request));
+                })
                 .collect(toList());
     }
 
@@ -136,9 +143,11 @@ public class JobsController {
 
         final Optional<JobInfo> optionalJob = jobService.findJob(jobId);
         if (optionalJob.isPresent()) {
+            final JobInfo jobInfo = optionalJob.get();
             final ModelAndView modelAndView = new ModelAndView("job");
+            final DisabledJob disabled = getDisabledJob(jobInfo.getJobType());
             modelAndView
-                    .addObject("job", representationOf(optionalJob.get(), true, baseUriOf(request)))
+                    .addObject("job", representationOf(jobInfo, disabled, true, baseUriOf(request)))
                     .addObject("baseUri", baseUriOf(request));
             return modelAndView;
         } else {
@@ -157,11 +166,17 @@ public class JobsController {
 
         final Optional<JobInfo> optionalJob = jobService.findJob(jobId);
         if (optionalJob.isPresent()) {
-            return representationOf(optionalJob.get(), false, baseUriOf(request));
+            final JobInfo jobInfo = optionalJob.get();
+            final DisabledJob disabled = getDisabledJob(jobInfo.getJobType());
+            return representationOf(optionalJob.get(), disabled, false, baseUriOf(request));
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
             return null;
         }
+    }
+
+    private DisabledJob getDisabledJob(final String jobType) {
+        return jobService.disabledJobTypes().stream().filter(dj ->jobType.equals(dj.jobType)).findFirst().orElse(null);
     }
 
     private void setCorsHeaders(final HttpServletResponse response) {

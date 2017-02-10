@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.controller;
 
+import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.status.domain.Link;
 
@@ -21,17 +22,24 @@ import static java.util.Arrays.asList;
 public class JobRepresentation {
 
     private final JobInfo job;
-    private final boolean humanReadable;
     private final String baseUri;
+    private final boolean humanReadable;
+    private final DisabledJob disabledJobInfo;
 
-    private JobRepresentation(final JobInfo job, final boolean humanReadable, final String baseUri) {
+    private JobRepresentation(final JobInfo job,
+                              final DisabledJob disabledJobInfo,
+                              final boolean humanReadable,
+                              final String baseUri) {
         this.job = job;
         this.humanReadable=humanReadable;
         this.baseUri = baseUri;
+        this.disabledJobInfo = disabledJobInfo;
     }
 
-    public static JobRepresentation representationOf(final JobInfo job, final boolean humanReadable, final String baseUri) {
-        return new JobRepresentation(job, humanReadable, baseUri);
+    public static JobRepresentation representationOf(final JobInfo job,
+                                                     final DisabledJob disabledJobInfo,
+                                                     final boolean humanReadable, final String baseUri) {
+        return new JobRepresentation(job, disabledJobInfo, humanReadable, baseUri);
     }
 
     public String getJobUri() {
@@ -73,6 +81,14 @@ public class JobRepresentation {
 
     public String getHostname() {
         return job.getHostname();
+    }
+
+    public boolean getIsDisabled() {
+        return disabledJobInfo != null;
+    }
+
+    public String getComment() {
+        return disabledJobInfo == null ? "" : disabledJobInfo.comment;
     }
 
     public List<String> getMessages() {

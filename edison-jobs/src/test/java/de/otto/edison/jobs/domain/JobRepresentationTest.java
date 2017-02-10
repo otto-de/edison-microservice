@@ -25,7 +25,7 @@ public class JobRepresentationTest {
     public void shouldCalculateRuntime() throws InterruptedException {
         final JobInfo job = jobInfoWithRuntime(90, ChronoUnit.SECONDS);
 
-        final JobRepresentation jobRepresentation = representationOf(job, true, "");
+        final JobRepresentation jobRepresentation = representationOf(job, null, true, "");
 
         assertThat(jobRepresentation.getStatus(), is("OK"));
         assertThat(jobRepresentation.getRuntime(), is("00:01:30"));
@@ -36,7 +36,7 @@ public class JobRepresentationTest {
     public void shouldFormatRuntimeBiggerThan24Hours() throws Exception {
         final JobInfo job = jobInfoWithRuntime(25, ChronoUnit.HOURS);
 
-        JobRepresentation jobRepresentation = representationOf(job, true, "");
+        JobRepresentation jobRepresentation = representationOf(job, null, true, "");
 
         assertThat(jobRepresentation.getRuntime(), is("> 24h"));
     }
@@ -45,7 +45,7 @@ public class JobRepresentationTest {
     public void shouldFormatRuntimeLessThan24Hours() throws Exception {
         final JobInfo job = jobInfoWithRuntime(23, ChronoUnit.HOURS);
 
-        JobRepresentation jobRepresentation = representationOf(job, true, "");
+        JobRepresentation jobRepresentation = representationOf(job, null, true, "");
 
         assertThat(jobRepresentation.getRuntime(), is("23:00:00"));
     }

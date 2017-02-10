@@ -8,52 +8,55 @@
 <div th:replace="fragments/navigation  :: navigation" />
 
 <div class="container">
-
     <div id="job-messages" class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title" th:text="${job.jobType}">title</h3>
+            <h3 class="panel-title" th:text="${job.jobType}"></h3>
         </div>
         <div class="panel-body">
-            <dl class="dl-horizontal">
-                <dt>Status</dt>
-                <dd>
-                    <th:block th:if="${job.state} != 'Running'">
-                        <span th:if="${job.status} == 'OK'"  class="label progress-bar progress-bar-success" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
-                        <span th:if="${job.status} == 'SKIPPED'"  class="label progress-bar progress-bar-success" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
-                        <span th:if="${job.status} == 'ERROR'"  class="label progress-bar progress-bar-danger" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
-                        <span th:if="${job.status} == 'DEAD'"  class="label progress-bar" style="width:10em; height:2em; background: rgba(230, 110, 30, 1);"><span th:text="${job.status}"></span></span>
-                    </th:block>
-                    <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:10em; height:2em;">RUNNING</span></th:block>
-                </dd>
-                <dt>Executed by</dt>
-                <dd th:text="${job.hostname}">&nbsp;</dd>
-                <dt>Started</dt>
-                <dd th:text="${job.started}">&nbsp;</dd>
-                <dt>Stopped</dt>
-                <dd th:text="${job.stopped}">&nbsp;</dd>
-                <dt>Definition</dt>
-                <dd><a th:href="@{|/internal/jobdefinitions/${job.jobType}|}" class="btn btn-xs btn-primary">Open Definition &raquo;</a></dd>
-                <dt>Retrigger</dt>
-                <dd><button type="button"
-                            class="triggerButton btn btn-xs btn-primary"
-                            autocomplete="off"
-                            th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${job.jobType}"
-                            data-loading-text="Triggering...">
-                    Trigger &raquo;
-                </button></dd>
-                <dt>Last Updated</dt>
-                <dd th:text="${job.lastUpdated}">&nbsp;</dd>
-                <dt>Messages</dt>
-                <dd>
-                <pre class="pre-scrollable"><div th:each="message : ${job.messages}" th:text="${message}" ></div></pre>
-                </dd>
-            </dl>
+            <div class="row>">
+                <div class="col-md-2">
+                    <dl>
+                        <dt>Status:</dt>
+                        <dd>
+                            <th:block th:if="${job.state} != 'Running'">
+                                <span th:if="${job.status} == 'OK'"  class="label label-success" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'SKIPPED'"  class="label label-default" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'ERROR'"  class="label label-danger" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'DEAD'"  class="label label-warning" style="width:10em; height:2em; background: rgba(230, 110, 30, 1);"><span th:text="${job.status}"></span></span>
+                            </th:block>
+                            <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:10em; height:2em;">RUNNING</span></th:block>
+                        </dd>
+                        <dt><br/>Executed by:</dt>
+                        <dd th:text="${job.hostname}">&nbsp;</dd>
+                        <dt>Started:</dt>
+                        <dd th:text="${job.started}">&nbsp;</dd>
+                        <dt>Stopped:</dt>
+                        <dd th:text="${job.stopped}">&nbsp;</dd>
+                        <dt>Last Update:</dt>
+                        <dd th:text="${job.lastUpdated}">&nbsp;</dd>
+                    </dl>
+                    <div class="form-group">
+                        <a th:href="@{|/internal/jobdefinitions/${job.jobType}|}" class="btn btn-sm btn-default btn-block">Open Definition</a>
+                        <button type="button"
+                                class="triggerButton btn btn-sm btn-default btn-block"
+                                th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
+                                title="Click to start job now"
+                                data-loading-text="Triggering...">
+                            <span>Trigger </span><span class="glyphicon glyphicon-play"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <pre class="pre-scrollable"><div th:each="message : ${job.messages}" th:text="${message}" ></div></pre>
+                </div>
+            </div>
         </div>
     </div>
-    <a th:href="@{/internal/jobdefinitions}" class="btn btn-sm btn-primary">Open Job Definitions &raquo;</a>
 </div> <!-- /container -->
 
 <span th:replace="fragments/footer :: footer" />
+
 <script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
+
 </body>
 </html>

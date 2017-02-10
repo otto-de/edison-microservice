@@ -102,7 +102,7 @@ public class JobsControllerTest {
         Object job = jobsController.getJobsAsJson(null, 100, false, mock(HttpServletRequest.class));
 
         // then
-        assertThat(job, is(asList(representationOf(firstJob, false, ""), representationOf(secondJob, false, ""))));
+        assertThat(job, is(asList(representationOf(firstJob, null, false, ""), representationOf(secondJob, null, false, ""))));
     }
 
 
@@ -120,7 +120,7 @@ public class JobsControllerTest {
         Object job = jobsController.getJobsAsJson("jobType2", 100, true, mock(HttpServletRequest.class));
 
         // then
-        assertThat(job, is(asList(representationOf(secondJob, false, ""), representationOf(fourthJob, false, ""))));
+        assertThat(job, is(asList(representationOf(secondJob, null, false, ""), representationOf(fourthJob, null, false, ""))));
 
         verify(jobService, times(1)).findJobs(Optional.of("jobType2"), 100);
         verifyNoMoreInteractions(jobService);
@@ -139,9 +139,9 @@ public class JobsControllerTest {
         Object job = jobsController.getJobsAsJson(null, 100, true, mock(HttpServletRequest.class));
 
         // then
-        assertThat(job, is(asList(representationOf(firstJob, false, ""),
-                representationOf(secondJob, false, ""),
-                representationOf(thirdJob, false, ""))));
+        assertThat(job, is(asList(representationOf(firstJob, null, false, ""),
+                representationOf(secondJob, null, false, ""),
+                representationOf(thirdJob, null, false, ""))));
 
         verify(jobService, times(1)).findJobsDistinct();
         verifyNoMoreInteractions(jobService);
@@ -155,7 +155,7 @@ public class JobsControllerTest {
 
         ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE", 100, false, mock(HttpServletRequest.class));
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
-        assertThat(jobs, is(asList(representationOf(firstJob, false, ""))));
+        assertThat(jobs, is(asList(representationOf(firstJob, null, false, ""))));
     }
 
     @Test
