@@ -2,8 +2,9 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.DisabledJob;
+import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.service.JobDefinitionService;
-import de.otto.edison.jobs.service.JobService;
+import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.navigation.NavBar;
 import de.otto.edison.status.domain.Link;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +38,14 @@ public class JobDefinitionsController {
     public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";
 
     private final JobDefinitionService jobDefinitionService;
-    private final JobService jobService;
+    private final JobMetaService jobMetaService;
 
     @Autowired
     public JobDefinitionsController(final JobDefinitionService definitionService,
-                                    final JobService jobService,
+                                    final JobMetaService jobMetaService,
                                     final NavBar rightNavBar) {
         this.jobDefinitionService = definitionService;
-        this.jobService = jobService;
+        this.jobMetaService = jobMetaService;
         rightNavBar.register(navBarItem(10, "Job Definitions", INTERNAL_JOBDEFINITIONS));
     }
 
@@ -66,7 +67,7 @@ public class JobDefinitionsController {
 
     @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "*/*")
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
-        final Set<DisabledJob> disabledJobs = jobService.disabledJobTypes();
+        final Set<DisabledJob> disabledJobs = jobMetaService.disabledJobTypes();
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
             put("jobdefinitions", jobDefinitionService.getJobDefinitions()
@@ -107,13 +108,11 @@ public class JobDefinitionsController {
     public ModelAndView getJobDefinitionAsHtml(final @PathVariable String jobType,
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) throws IOException {
-
-        final Set<DisabledJob> disabledJobs = jobService.disabledJobTypes();
-        final Optional<DisabledJob> disabled = disabledJobs.stream().filter(disabledJob -> disabledJob.jobType.equals(jobType)).findAny();
+        final JobMeta jobMeta = jobMetaService.getJobMeta(jobType);
         final Optional<HashMap<String, Object>> optionalResult = jobDefinitionService.getJobDefinition(jobType)
                 .map((def) -> new HashMap<String, Object>() {{
-                    put("isDisabled", disabled.isPresent());
-                    put("comment", disabled.map(d->d.comment).orElse(""));
+                    put("isDisabled", jobMeta.isDisabled());
+                    put("comment", jobMeta.getDisabledComment());
                     put("jobType", def.jobType());
                     put("name", def.jobName());
                     put("description", def.description());

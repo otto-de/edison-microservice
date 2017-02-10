@@ -5,7 +5,6 @@ import de.otto.edison.jobs.domain.*;
 import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.jobs.repository.JobStateRepository;
 import de.otto.edison.status.domain.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,7 @@ public class JobService {
     @Autowired
     private JobRepository jobRepository;
     @Autowired
-    private JobLockService jobLockService;
+    private JobMetaService jobMetaService;
     @Autowired
     private ScheduledExecutorService executor;
     @Autowired
@@ -65,7 +64,7 @@ public class JobService {
     }
 
     JobService(final JobRepository jobRepository,
-               final JobLockService jobLockService,
+               final JobMetaService jobMetaService,
                final List<JobRunnable> jobRunnables,
                final GaugeService gaugeService,
                final ScheduledExecutorService executor,
@@ -74,7 +73,7 @@ public class JobService {
                final SystemInfo systemInfo,
                final UuidProvider uuidProvider) {
         this.jobRepository = jobRepository;
-        this.jobLockService = jobLockService;
+        this.jobMetaService = jobMetaService;
         this.jobRunnables = jobRunnables;
         this.gaugeService = gaugeService;
         this.executor = executor;
@@ -99,7 +98,7 @@ public class JobService {
         try {
             final JobRunnable jobRunnable = findJobRunnable(jobType);
             final JobInfo jobInfo = createJobInfo(jobType);
-            jobLockService.aquireRunLock(jobInfo.getJobId(), jobInfo.getJobType());
+            jobMetaService.aquireRunLock(jobInfo.getJobId(), jobInfo.getJobType());
             jobRepository.createOrUpdate(jobInfo);
             return Optional.of(startAsync(metered(jobRunnable), jobInfo.getJobId()));
         } catch (JobBlockedException e) {
@@ -158,13 +157,13 @@ public class JobService {
      * TODO: Check Log files + Remove
      */
     private void clearRunLocks() {
-        jobLockService.runningJobs().forEach((RunningJob runningJob) -> {
+        jobMetaService.runningJobs().forEach((RunningJob runningJob) -> {
             final Optional<JobInfo> jobInfoOptional = jobRepository.findOne(runningJob.jobId);
             if (jobInfoOptional.isPresent() && jobInfoOptional.get().isStopped()) {
-                jobLockService.releaseRunLock(runningJob.jobType);
+                jobMetaService.releaseRunLock(runningJob.jobType);
                 LOG.error("Clear Lock of Job {}. Job stopped already.", runningJob.jobType);
             } else if (!jobInfoOptional.isPresent()){
-                jobLockService.releaseRunLock(runningJob.jobType);
+                jobMetaService.releaseRunLock(runningJob.jobType);
                 LOG.error("Clear Lock of Job {}. JobID does not exist", runningJob.jobType);
             }
         });
@@ -177,7 +176,7 @@ public class JobService {
 
     private void stopJob(final String jobId, final Optional<JobStatus> status) {
         jobRepository.findOne(jobId).ifPresent((JobInfo jobInfo) -> {
-            jobLockService.releaseRunLock(jobInfo.getJobType());
+            jobMetaService.releaseRunLock(jobInfo.getJobType());
             final OffsetDateTime now = now(clock);
             final Builder builder = jobInfo.copy()
                     .setStopped(now)
@@ -186,7 +185,6 @@ public class JobService {
             jobRepository.createOrUpdate(builder.build());
         });
     }
-
 
     public void appendMessage(String jobId, JobMessage jobMessage) {
         // TODO: Refactor JobRepository so only a single update is required
@@ -220,18 +218,6 @@ public class JobService {
         jobRepository.appendMessage(jobId, jobMessage(Level.WARNING, "Restarting job ..", currentTimestamp));
         jobRepository.setLastUpdate(jobId, currentTimestamp);
         jobRepository.setJobStatus(jobId, JobStatus.OK);
-    }
-
-    public Set<DisabledJob> disabledJobTypes() {
-        return jobLockService.disabledJobTypes();
-    }
-
-    public void disableJobType(final DisabledJob disabledJob) {
-        jobLockService.disableJobType(disabledJob);
-    }
-
-    public void enableJobType(final String jobType) {
-        jobLockService.enableJobType(jobType);
     }
 
     private JobInfo createJobInfo(String jobType) {

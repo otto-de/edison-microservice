@@ -2,11 +2,11 @@ package de.otto.edison.jobs.configuration;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.jobs.repository.JobStateRepository;
+import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
-import de.otto.edison.jobs.repository.inmem.InMemJobStateRepository;
+import de.otto.edison.jobs.repository.inmem.InMemJobMetaRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobMutexGroups;
 import de.otto.edison.jobs.service.JobService;
@@ -68,9 +68,9 @@ public class JobsConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(JobStateRepository.class)
-    public JobStateRepository jobStateRepository() {
-        return new InMemJobStateRepository();
+    @ConditionalOnMissingBean(JobMetaRepository.class)
+    public JobMetaRepository jobMetaRepository() {
+        return new InMemJobMetaRepository();
     }
 
     @Bean

@@ -5,7 +5,8 @@ import com.mongodb.DuplicateKeyException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
-import de.otto.edison.jobs.repository.JobStateRepository;
+import de.otto.edison.jobs.domain.JobMeta;
+import de.otto.edison.jobs.repository.JobMetaRepository;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -19,16 +20,23 @@ import static com.mongodb.client.model.Updates.unset;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 
-public class MongoJobStateRepository implements JobStateRepository {
+/**
+ * {@inheritDoc}
+ * <p>
+ *     MongoDB implementation of the JobMetaRepository.
+ *
+ * </p>
+ */
+public class MongoJobMetaRepository implements JobMetaRepository {
 
     private static final FindOneAndUpdateOptions UPSERT = new FindOneAndUpdateOptions().upsert(true);
-    private static final String JOBSTATE_COLLECTION_NAME = "jobstate";
+    private static final String JOBMETA_COLLECTION_NAME = "jobmeta";
     private static final String ID = "_id";
 
     private final MongoCollection<Document> collection;
 
-    public MongoJobStateRepository(final MongoDatabase database) {
-        this.collection = database.getCollection(JOBSTATE_COLLECTION_NAME);
+    public MongoJobMetaRepository(final MongoDatabase database) {
+        this.collection = database.getCollection(JOBMETA_COLLECTION_NAME);
     }
 
     @Override
@@ -51,6 +59,11 @@ public class MongoJobStateRepository implements JobStateRepository {
                            final String key) {
         final Document first = collection.find(eq(ID, jobType)).first();
         return first != null ? first.getString(key) : null;
+    }
+
+    @Override
+    public JobMeta getJobMeta(final String jobType) {
+        return new JobMeta(jobType, this);
     }
 
     @Override
@@ -88,6 +101,6 @@ public class MongoJobStateRepository implements JobStateRepository {
 
     @Override
     public String toString() {
-        return "MongoJobStateRepository";
+        return "MongoJobMetaRepository";
     }
 }

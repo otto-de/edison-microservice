@@ -1,8 +1,8 @@
 package de.otto.edison.mongo.jobs;
 
 import com.github.fakemongo.Fongo;
-import de.otto.edison.jobs.repository.JobStateRepository;
-import de.otto.edison.jobs.repository.inmem.InMemJobStateRepository;
+import de.otto.edison.jobs.repository.JobMetaRepository;
+import de.otto.edison.jobs.repository.inmem.InMemJobMetaRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,13 +19,13 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)
-public class JobStateRepositoryTest {
+public class JobMetaRepositoryTest {
 
     @Parameters(name = "{0}")
-    public static Collection<JobStateRepository> data() {
+    public static Collection<JobMetaRepository> data() {
         return asList(
-                new MongoJobStateRepository(new Fongo("inMemoryDb").getDatabase("jobstate")),
-                new InMemJobStateRepository());
+                new MongoJobMetaRepository(new Fongo("inMemoryDb").getDatabase("jobmeta")),
+                new InMemJobMetaRepository());
     }
 
     @Before
@@ -34,9 +34,9 @@ public class JobStateRepositoryTest {
 
     }
 
-    private JobStateRepository testee;
+    private JobMetaRepository testee;
 
-    public JobStateRepositoryTest(JobStateRepository testee) {
+    public JobMetaRepositoryTest(JobMetaRepository testee) {
         this.testee = testee;
     }
 

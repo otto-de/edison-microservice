@@ -2,6 +2,7 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
 import org.slf4j.Logger;
@@ -39,12 +40,15 @@ public class JobsController {
     private static final Logger LOG = LoggerFactory.getLogger(JobsController.class);
 
     private final JobService jobService;
+    private final JobMetaService jobMetaService;
 
 
     @Autowired
     JobsController(final JobService jobService,
+                   final JobMetaService jobMetaService,
                    final NavBar rightNavBar) {
         this.jobService = jobService;
+        this.jobMetaService = jobMetaService;
         rightNavBar.register(navBarItem(10, "Job Overview", "/internal/jobs"));
     }
 
@@ -121,7 +125,7 @@ public class JobsController {
     )
     public String disableJobType(final @PathVariable String jobType,
                                  final @RequestParam(required = false) String disabledComment) {
-        jobService.disableJobType(new DisabledJob(jobType, disabledComment));
+        jobMetaService.disableJobType(new DisabledJob(jobType, disabledComment));
         return "redirect:/internal/jobdefinitions";
     }
 
@@ -130,7 +134,7 @@ public class JobsController {
             method = POST
     )
     public String enableJobType(final @PathVariable String jobType) {
-        jobService.enableJobType(jobType);
+        jobMetaService.enableJobType(jobType);
         return "redirect:/internal/jobdefinitions";
     }
 
@@ -176,7 +180,7 @@ public class JobsController {
     }
 
     private DisabledJob getDisabledJob(final String jobType) {
-        return jobService.disabledJobTypes().stream().filter(dj ->jobType.equals(dj.jobType)).findFirst().orElse(null);
+        return jobMetaService.disabledJobTypes().stream().filter(dj ->jobType.equals(dj.jobType)).findFirst().orElse(null);
     }
 
     private void setCorsHeaders(final HttpServletResponse response) {

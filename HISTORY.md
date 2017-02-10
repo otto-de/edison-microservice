@@ -10,8 +10,8 @@
 * **[edison-jobs]** Refactored JobRepository.
 
 **New Features:**
-* **[edison-jobs]** Introduced JobStateRepository to store meta data about jobs.
-* **[edison-jobs]** Introduced StatefulJobRunnable to make it easy to implement stateful jobs like,
+* **[edison-jobs]** Introduced JobMetaService and JobMetaRepository to store meta data about jobs.
+* **[edison-jobs]** Introduced MetaJobRunnable to make it easy to implement jobs having metadata like,
 for example, import jobs that are keeping track of their last read position.
 * **[edison-jobs]** Added the possibility to provide a comment and show it in the UI when disabling jobs.
 

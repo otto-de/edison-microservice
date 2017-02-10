@@ -62,7 +62,7 @@ public class JobServiceTest {
     @Mock
     private UuidProvider uuidProviderMock;
     @Mock
-    private JobLockService jobLockService;
+    private JobMetaService jobMetaService;
 
     JobService jobService;
 
@@ -88,7 +88,7 @@ public class JobServiceTest {
         when(uuidProviderMock.getUuid())
                 .thenReturn(JOB_ID);
         jobService = new JobService(
-                jobRepository, jobLockService, singletonList(jobRunnable),
+                jobRepository, jobMetaService, singletonList(jobRunnable),
                 gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, uuidProviderMock);
         jobService.postConstruct();
     }
@@ -120,13 +120,13 @@ public class JobServiceTest {
         verify(executorService).execute(any(Runnable.class));
         verify(jobRepository).createOrUpdate(expectedJobInfo);
         verify(jobRunnable).execute(any(JobEventPublisher.class));
-        verify(jobLockService).aquireRunLock(expectedJobInfo.getJobId(), expectedJobInfo.getJobType());
+        verify(jobMetaService).aquireRunLock(expectedJobInfo.getJobId(), expectedJobInfo.getJobType());
     }
 
     @Test
     public void shouldNotStartJobOnBlockedException() {
         doAnswer((x) -> {throw new JobBlockedException("");})
-                .when(jobLockService).aquireRunLock(anyString(), anyString());
+                .when(jobMetaService).aquireRunLock(anyString(), anyString());
 
         Optional<String> jobUri = jobService.startAsyncJob("someType");
 
@@ -155,7 +155,7 @@ public class JobServiceTest {
         jobService.stopJob("superId");
 
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.OK).setStopped(now).setLastUpdated(now).build();
-        verify(jobLockService).releaseRunLock("superType");
+        verify(jobMetaService).releaseRunLock("superType");
         verify(jobRepository).createOrUpdate(expected);
     }
 
@@ -168,7 +168,7 @@ public class JobServiceTest {
         jobService.killJob("superId", "superType");
 
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.DEAD).setStopped(now).setLastUpdated(now).build();
-        verify(jobLockService).releaseRunLock("superType");
+        verify(jobMetaService).releaseRunLock("superType");
         verify(jobRepository).createOrUpdate(expected);
     }
 
@@ -180,7 +180,7 @@ public class JobServiceTest {
 
         jobService.killJobsDeadSince(60);
 
-        verify(jobLockService).releaseRunLock("jobType");
+        verify(jobMetaService).releaseRunLock("jobType");
     }
 
     @Test

@@ -1,13 +1,14 @@
 package de.otto.edison.jobs.repository.inmem;
 
-import de.otto.edison.jobs.repository.JobStateRepository;
+import de.otto.edison.jobs.domain.JobMeta;
+import de.otto.edison.jobs.repository.JobMetaRepository;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class InMemJobStateRepository implements JobStateRepository {
+public class InMemJobMetaRepository implements JobMetaRepository {
 
     private final Map<String, Map<String, String>> map = new ConcurrentHashMap<>();
 
@@ -44,6 +45,17 @@ public class InMemJobStateRepository implements JobStateRepository {
         map.clear();
     }
 
+    /**
+     * Returns the current state of the specified job type.
+     *
+     * @param jobType the job type
+     * @return current state of the job type
+     */
+    @Override
+    public JobMeta getJobMeta(String jobType) {
+        return new JobMeta(jobType, this);
+    }
+
     @Override
     public boolean createValue(String jobType, String key, String value) {
         if (getValue(jobType, key) == null) {
@@ -56,7 +68,7 @@ public class InMemJobStateRepository implements JobStateRepository {
 
     @Override
     public String toString() {
-        return "InMemJobStateRepository";
+        return "InMemJobMetaRepository";
     }
 
 }

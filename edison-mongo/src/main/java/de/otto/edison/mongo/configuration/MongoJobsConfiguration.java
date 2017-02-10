@@ -2,9 +2,9 @@ package de.otto.edison.mongo.configuration;
 
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.jobs.repository.JobStateRepository;
+import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.mongo.jobs.MongoJobRepository;
-import de.otto.edison.mongo.jobs.MongoJobStateRepository;
+import de.otto.edison.mongo.jobs.MongoJobMetaRepository;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
@@ -27,11 +27,11 @@ public class MongoJobsConfiguration {
     }
 
     @Bean
-    public JobStateRepository jobStateRepository(final MongoDatabase mongoDatabase) {
+    public JobMetaRepository jobMetaRepository(final MongoDatabase mongoDatabase) {
         LOG.info("===============================");
-        LOG.info("Using MongoJobLockRepository with %s MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
+        LOG.info("Using MongoJobMetaRepository with %s MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
         LOG.info("===============================");
-        return new MongoJobStateRepository(mongoDatabase);
+        return new MongoJobMetaRepository(mongoDatabase);
     }
 
 }

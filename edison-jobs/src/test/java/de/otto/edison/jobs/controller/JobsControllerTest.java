@@ -2,6 +2,7 @@ package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
 import org.junit.Before;
@@ -36,13 +37,15 @@ public class JobsControllerTest {
 
 
     private JobService jobService;
+    private JobMetaService jobMetaService;
     private MockMvc mockMvc;
     private JobsController jobsController;
 
     @Before
     public void setUp() throws Exception {
         jobService = mock(JobService.class);
-        jobsController = new JobsController(jobService, mock(NavBar.class));
+        jobMetaService = mock(JobMetaService.class);
+        jobsController = new JobsController(jobService, jobMetaService, mock(NavBar.class));
         mockMvc = MockMvcBuilders
                 .standaloneSetup(jobsController)
                 .defaultRequest(MockMvcRequestBuilders.get("/").contextPath("/some-microservice"))
@@ -123,7 +126,7 @@ public class JobsControllerTest {
         assertThat(job, is(asList(representationOf(secondJob, null, false, ""), representationOf(fourthJob, null, false, ""))));
 
         verify(jobService, times(1)).findJobs(Optional.of("jobType2"), 100);
-        verify(jobService, times(2)).disabledJobTypes();
+        verify(jobMetaService, times(2)).disabledJobTypes();
         verifyNoMoreInteractions(jobService);
     }
 
@@ -145,7 +148,7 @@ public class JobsControllerTest {
                 representationOf(thirdJob, null, false, ""))));
 
         verify(jobService, times(1)).findJobsDistinct();
-        verify(jobService, times(3)).disabledJobTypes();
+        verify(jobMetaService, times(3)).disabledJobTypes();
         verifyNoMoreInteractions(jobService);
     }
 
@@ -180,6 +183,6 @@ public class JobsControllerTest {
                 .andExpect(status().is(SC_MOVED_TEMPORARILY))
                 .andExpect(header().string("Location", "/some-microservice/internal/jobdefinitions"));
 
-        verify(jobService).disableJobType(new DisabledJob("someJobType", null));
+        verify(jobMetaService).disableJobType(new DisabledJob("someJobType", null));
     }
 }

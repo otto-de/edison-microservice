@@ -1,9 +1,10 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.domain.DisabledJob;
+import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
-import de.otto.edison.jobs.repository.JobStateRepository;
+import de.otto.edison.jobs.repository.JobMetaRepository;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,20 +21,20 @@ import static org.slf4j.LoggerFactory.getLogger;
  * A service used to manage locking of jobs.
  */
 @Service
-public class JobLockService {
+public class JobMetaService {
 
-    private static final Logger LOG = getLogger(JobLockService.class);
+    private static final Logger LOG = getLogger(JobMetaService.class);
 
     private static final String KEY_DISABLED = "_e_disabled";
     private static final String KEY_RUNNING = "_e_running";
 
-    private final JobStateRepository stateRepository;
+    private final JobMetaRepository jobMetaRepository;
     private final JobMutexGroups mutexGroups;
 
     @Autowired
-    public JobLockService(final JobStateRepository stateRepository,
+    public JobMetaService(final JobMetaRepository jobMetaRepository,
                           final JobMutexGroups mutexGroups) {
-        this.stateRepository = stateRepository;
+        this.jobMetaRepository = jobMetaRepository;
         this.mutexGroups = mutexGroups;
     }
 
@@ -55,12 +56,12 @@ public class JobLockService {
         }
 
         // aquire lock:
-        if (stateRepository.createValue(jobType, KEY_RUNNING, jobId)) {
+        if (jobMetaRepository.createValue(jobType, KEY_RUNNING, jobId)) {
 
             // check for mutually exclusive running jobs:
             mutexGroups.mutexJobTypesFor(jobType)
                     .stream()
-                    .filter(mutexJobType -> stateRepository.getValue(mutexJobType, KEY_RUNNING) != null)
+                    .filter(mutexJobType -> jobMetaRepository.getValue(mutexJobType, KEY_RUNNING) != null)
                     .findAny()
                     .ifPresent(running -> {
                         releaseRunLock(jobType);
@@ -77,7 +78,7 @@ public class JobLockService {
      * @param jobType the job type
      */
     public void releaseRunLock(final String jobType) {
-        stateRepository.setValue(jobType, KEY_RUNNING, null);
+        jobMetaRepository.setValue(jobType, KEY_RUNNING, null);
     }
 
     /**
@@ -85,9 +86,9 @@ public class JobLockService {
      */
     public Set<RunningJob> runningJobs() {
         final Set<RunningJob> runningJobs = new HashSet<>();
-        stateRepository.findAllJobTypes()
+        jobMetaRepository.findAllJobTypes()
                 .forEach(jobType -> {
-                    final String jobId = stateRepository.getValue(jobType, KEY_RUNNING);
+                    final String jobId = jobMetaRepository.getValue(jobType, KEY_RUNNING);
                     if (jobId != null) {
                         runningJobs.add(new RunningJob(jobId, jobType));
                     }
@@ -101,7 +102,7 @@ public class JobLockService {
      * @param disabledJob the disabled job type with an optional comment
      */
     public void disableJobType(final DisabledJob disabledJob) {
-        stateRepository.setValue(disabledJob.jobType, KEY_DISABLED, disabledJob.comment);
+        jobMetaRepository.setValue(disabledJob.jobType, KEY_DISABLED, disabledJob.comment);
     }
 
     /**
@@ -110,17 +111,17 @@ public class JobLockService {
      * @param jobType the enabled job type
      */
     public void enableJobType(final String jobType) {
-        stateRepository.setValue(jobType, KEY_DISABLED, null);
+        jobMetaRepository.setValue(jobType, KEY_DISABLED, null);
     }
 
     /**
      * @return a list of all job types that are currently disabled
      */
     public Set<DisabledJob> disabledJobTypes() {
-        return stateRepository.findAllJobTypes()
+        return jobMetaRepository.findAllJobTypes()
                 .stream()
                 .map((jobType) -> {
-                    final String comment = stateRepository.getValue(jobType, KEY_DISABLED);
+                    final String comment = jobMetaRepository.getValue(jobType, KEY_DISABLED);
                     if (comment != null) {
                         return new DisabledJob(jobType, comment);
                     } else {
@@ -129,6 +130,10 @@ public class JobLockService {
                 })
                 .filter(Objects::nonNull)
                 .collect(toSet());
+    }
+
+    public JobMeta getJobMeta(final String jobType) {
+        return new JobMeta(jobType, jobMetaRepository);
     }
 
 }

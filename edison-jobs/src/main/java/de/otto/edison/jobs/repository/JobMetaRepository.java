@@ -1,5 +1,7 @@
 package de.otto.edison.jobs.repository;
 
+import de.otto.edison.jobs.domain.JobMeta;
+
 import java.util.Set;
 
 /**
@@ -9,11 +11,25 @@ import java.util.Set;
  *     the position of the last successful data import, so follow-up executions of a job is able to start from
  *     where the last execution has finished.
  * </p>
+ *
+ * @since 1.0.0
  */
-public interface JobStateRepository {
+public interface JobMetaRepository {
+
+    /**
+     * Returns the current state of the specified job type.
+     *
+     * @param jobType the job type
+     * @return current state of the job type
+     */
+    JobMeta getJobMeta(String jobType);
 
     /**
      * Create property if the document or key does not exists.
+     * <p>
+     *     Creating a value is an atomic operation that either succeeds, or fails by returning {@code false}. If
+     *     creation fails, the job's state does not change.
+     * </p>
      *
      * @param jobType the job type
      * @param key the key of the created property
@@ -33,7 +49,7 @@ public interface JobStateRepository {
     String setValue(String jobType, String key, String value);
 
     /**
-     * Retruns the value of the specified property for a job type, or null if the property does not exist.
+     * Returns the value of the specified property for a job type, or null if the property does not exist.
      *
      * @param jobType the job type
      * @param key the key of the property

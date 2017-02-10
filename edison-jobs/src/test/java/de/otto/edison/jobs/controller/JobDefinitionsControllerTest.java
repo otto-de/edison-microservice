@@ -3,7 +3,7 @@ package de.otto.edison.jobs.controller;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.service.JobDefinitionService;
-import de.otto.edison.jobs.service.JobService;
+import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.navigation.NavBar;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,14 +40,14 @@ public class JobDefinitionsControllerTest {
     private JobDefinitionService jobDefinitionService;
 
     @Mock
-    private JobService jobService;
+    private JobMetaService jobMetaService;
 
     private MockMvc mockMvc;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        controller = new JobDefinitionsController(jobDefinitionService, jobService, mock(NavBar.class));
+        controller = new JobDefinitionsController(jobDefinitionService, jobMetaService, mock(NavBar.class));
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -111,7 +111,7 @@ public class JobDefinitionsControllerTest {
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
         final JobDefinition barJobDef = notTriggerableDefinition("BarJob", "Bar");
         when(jobDefinitionService.getJobDefinitions()).thenReturn(asList(fooJobDef, barJobDef));
-        when(jobService.disabledJobTypes()).thenReturn(new HashSet(singletonList(
+        when(jobMetaService.disabledJobTypes()).thenReturn(new HashSet(singletonList(
                 new DisabledJob("BarJob", "some comment")))
         );
 
