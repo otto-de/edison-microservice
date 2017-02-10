@@ -200,9 +200,7 @@ public class JobInfo {
         return new Builder();
     }
     public Builder copy() {
-        ArrayList messagesCopy = new ArrayList();
-        messagesCopy.addAll(messages);
-        return new Builder(jobId, jobType, started, messagesCopy, stopped, status, lastUpdated, hostname, clock); 
+        return new Builder(jobId, jobType, started, new ArrayList<>(messages), stopped, status, lastUpdated, hostname, clock);
     }
 
     public static final class Builder {
@@ -218,7 +216,7 @@ public class JobInfo {
         public Builder() {
             
         }
-        public Builder(String jobId, String jobType, OffsetDateTime started, ArrayList messages, 
+        public Builder(String jobId, String jobType, OffsetDateTime started, List<JobMessage> messages,
                        Optional<OffsetDateTime> stopped, JobStatus status, OffsetDateTime lastUpdated, 
                        String hostname, Clock clock) {
             this.jobId = jobId;
