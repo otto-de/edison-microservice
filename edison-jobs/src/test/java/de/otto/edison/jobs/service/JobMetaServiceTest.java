@@ -1,6 +1,5 @@
 package de.otto.edison.jobs.service;
 
-import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobMetaRepository;
@@ -9,7 +8,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
@@ -126,37 +124,20 @@ public class JobMetaServiceTest {
     }
 
     @Test
-    public void shouldReturnDisabledJobTypes() {
-        // given
-        when(jobMetaRepository.findAllJobTypes()).thenReturn(new HashSet<String>(asList("jobType", "otherJobType", "enabledJobType")));
-        when(jobMetaRepository.getValue("jobType", "_e_disabled")).thenReturn("some comment");
-        when(jobMetaRepository.getValue("otherJobType", "_e_disabled")).thenReturn("");
-        when(jobMetaRepository.getValue("enabledJobType", "_e_disabled")).thenReturn(null);
-
-        // when
-        final Set<DisabledJob> disabledJobTypes = jobMetaService.disabledJobTypes();
-
-        // then
-        assertThat(disabledJobTypes, containsInAnyOrder(
-                new DisabledJob("jobType", "some comment"),
-                new DisabledJob("otherJobType", "")));
-    }
-
-    @Test
     public void shouldDisableJobType() throws Exception {
-        jobMetaService.disableJobType(new DisabledJob("jobType", null));
+        jobMetaService.disable("jobType", null);
         verify(jobMetaRepository).setValue("jobType", "_e_disabled", "");
     }
 
     @Test
     public void shouldDisableJobTypeWithComment() throws Exception {
-        jobMetaService.disableJobType(new DisabledJob("jobType", "some comment"));
+        jobMetaService.disable("jobType", "some comment");
         verify(jobMetaRepository).setValue("jobType", "_e_disabled", "some comment");
     }
 
     @Test
     public void shouldEnableJobType() throws Exception {
-        jobMetaService.enableJobType("jobType");
+        jobMetaService.enable("jobType");
         verify(jobMetaRepository).setValue("jobType", "_e_disabled", null);
     }
 

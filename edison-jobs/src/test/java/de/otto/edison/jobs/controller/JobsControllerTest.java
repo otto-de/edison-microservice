@@ -1,6 +1,5 @@
 package de.otto.edison.jobs.controller;
 
-import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.jobs.service.JobService;
@@ -108,7 +107,6 @@ public class JobsControllerTest {
         assertThat(job, is(asList(representationOf(firstJob, null, false, ""), representationOf(secondJob, null, false, ""))));
     }
 
-
     @Test
     public void shouldNotReturnAllJobsDistinctIfTypeIsGiven() throws IOException {
         // given
@@ -126,7 +124,6 @@ public class JobsControllerTest {
         assertThat(job, is(asList(representationOf(secondJob, null, false, ""), representationOf(fourthJob, null, false, ""))));
 
         verify(jobService, times(1)).findJobs(Optional.of("jobType2"), 100);
-        verify(jobMetaService, times(2)).disabledJobTypes();
         verifyNoMoreInteractions(jobService);
     }
 
@@ -148,7 +145,6 @@ public class JobsControllerTest {
                 representationOf(thirdJob, null, false, ""))));
 
         verify(jobService, times(1)).findJobsDistinct();
-        verify(jobMetaService, times(3)).disabledJobTypes();
         verifyNoMoreInteractions(jobService);
     }
 
@@ -183,6 +179,6 @@ public class JobsControllerTest {
                 .andExpect(status().is(SC_MOVED_TEMPORARILY))
                 .andExpect(header().string("Location", "/some-microservice/internal/jobdefinitions"));
 
-        verify(jobMetaService).disableJobType(new DisabledJob("someJobType", null));
+        verify(jobMetaService).disable("someJobType", null);
     }
 }

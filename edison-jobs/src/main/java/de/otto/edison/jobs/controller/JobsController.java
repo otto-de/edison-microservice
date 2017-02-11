@@ -1,7 +1,7 @@
 package de.otto.edison.jobs.controller;
 
-import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
@@ -58,10 +58,7 @@ public class JobsController {
                                       @RequestParam(value = "distinct", defaultValue = "true", required = false) boolean distinct,
                                       HttpServletRequest request) {
         final List<JobRepresentation> jobRepresentations = getJobInfos(type, count, distinct).stream()
-                .map((j) -> {
-                    final DisabledJob disabled = getDisabledJob(j.getJobType());
-                    return representationOf(j, disabled, true, baseUriOf(request));
-                })
+                .map((j) -> representationOf(j, getJobMeta(type), true, baseUriOf(request)))
                 .collect(toList());
 
         final ModelAndView modelAndView = new ModelAndView("jobs");
@@ -72,15 +69,14 @@ public class JobsController {
 
     @RequestMapping(value = "/internal/jobs", method = GET, produces = "application/json")
     @ResponseBody
-    public List<JobRepresentation> getJobsAsJson(@RequestParam(value = "type", required = false) String type,
-                                                 @RequestParam(value = "count", defaultValue = "10") int count,
-                                                 @RequestParam(value = "distinct", defaultValue = "true", required = false) boolean distinct,
+    public List<JobRepresentation> getJobsAsJson(@RequestParam(name = "type", required = false) String type,
+                                                 @RequestParam(name = "count", defaultValue = "10") int count,
+                                                 @RequestParam(name = "distinct", defaultValue = "true", required = false) boolean distinct,
                                                  HttpServletRequest request) {
         return getJobInfos(type, count, distinct)
                 .stream()
                 .map((j) -> {
-                    final DisabledJob disabled = getDisabledJob(j.getJobType());
-                    return representationOf(j, disabled, false, baseUriOf(request));
+                    return representationOf(j, getJobMeta(type), false, baseUriOf(request));
                 })
                 .collect(toList());
     }
@@ -125,7 +121,7 @@ public class JobsController {
     )
     public String disableJobType(final @PathVariable String jobType,
                                  final @RequestParam(required = false) String disabledComment) {
-        jobMetaService.disableJobType(new DisabledJob(jobType, disabledComment));
+        jobMetaService.disable(jobType, disabledComment);
         return "redirect:/internal/jobdefinitions";
     }
 
@@ -134,7 +130,7 @@ public class JobsController {
             method = POST
     )
     public String enableJobType(final @PathVariable String jobType) {
-        jobMetaService.enableJobType(jobType);
+        jobMetaService.enable(jobType);
         return "redirect:/internal/jobdefinitions";
     }
 
@@ -148,10 +144,10 @@ public class JobsController {
         final Optional<JobInfo> optionalJob = jobService.findJob(jobId);
         if (optionalJob.isPresent()) {
             final JobInfo jobInfo = optionalJob.get();
+            final JobMeta jobMeta = getJobMeta(jobInfo.getJobType());
             final ModelAndView modelAndView = new ModelAndView("job");
-            final DisabledJob disabled = getDisabledJob(jobInfo.getJobType());
             modelAndView
-                    .addObject("job", representationOf(jobInfo, disabled, true, baseUriOf(request)))
+                    .addObject("job", representationOf(jobInfo, jobMeta, true, baseUriOf(request)))
                     .addObject("baseUri", baseUriOf(request));
             return modelAndView;
         } else {
@@ -171,21 +167,24 @@ public class JobsController {
         final Optional<JobInfo> optionalJob = jobService.findJob(jobId);
         if (optionalJob.isPresent()) {
             final JobInfo jobInfo = optionalJob.get();
-            final DisabledJob disabled = getDisabledJob(jobInfo.getJobType());
-            return representationOf(optionalJob.get(), disabled, false, baseUriOf(request));
+            return representationOf(optionalJob.get(), getJobMeta(jobInfo.getJobType()), false, baseUriOf(request));
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
             return null;
         }
     }
 
-    private DisabledJob getDisabledJob(final String jobType) {
-        return jobMetaService.disabledJobTypes().stream().filter(dj ->jobType.equals(dj.jobType)).findFirst().orElse(null);
-    }
-
     private void setCorsHeaders(final HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Methods", "GET");
         response.setHeader("Access-Control-Allow-Origin", "*");
+    }
+
+    private JobMeta getJobMeta(final String jobType) {
+        if (jobMetaService != null) {
+            return jobMetaService.getJobMeta(jobType);
+        } else {
+            return null;
+        }
     }
 
     private List<JobInfo> getJobInfos(String type, int count, boolean distinct) {

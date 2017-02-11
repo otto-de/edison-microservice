@@ -1,6 +1,5 @@
 package de.otto.edison.jobs.service;
 
-import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
@@ -51,7 +50,7 @@ public class JobMetaService {
     public void aquireRunLock(final String jobId, final String jobType) throws JobBlockedException {
 
         // check for disabled lock:
-        if (disabledJobTypes().stream().anyMatch(disabled->jobType.equals(disabled.jobType))) { // TODO nur beim triggern prüfen??
+        if (getJobMeta(jobType).isDisabled()) {
             throw new JobBlockedException(format("Job '%s' is currently disabled", jobType));
         }
 
@@ -99,10 +98,11 @@ public class JobMetaService {
     /**
      * Disables a job type, i.e. prevents it from being started
      *
-     * @param disabledJob the disabled job type with an optional comment
+     * @param jobType the disabled job type
+     * @param comment an optional comment
      */
-    public void disableJobType(final DisabledJob disabledJob) {
-        jobMetaRepository.setValue(disabledJob.jobType, KEY_DISABLED, disabledJob.comment);
+    public void disable(final String jobType, final String comment) {
+        jobMetaRepository.setValue(jobType, KEY_DISABLED, comment != null ? comment : "");
     }
 
     /**
@@ -110,26 +110,8 @@ public class JobMetaService {
      *
      * @param jobType the enabled job type
      */
-    public void enableJobType(final String jobType) {
+    public void enable(final String jobType) {
         jobMetaRepository.setValue(jobType, KEY_DISABLED, null);
-    }
-
-    /**
-     * @return a list of all job types that are currently disabled
-     */
-    public Set<DisabledJob> disabledJobTypes() {
-        return jobMetaRepository.findAllJobTypes()
-                .stream()
-                .map((jobType) -> {
-                    final String comment = jobMetaRepository.getValue(jobType, KEY_DISABLED);
-                    if (comment != null) {
-                        return new DisabledJob(jobType, comment);
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(toSet());
     }
 
     public JobMeta getJobMeta(final String jobType) {

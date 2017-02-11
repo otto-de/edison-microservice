@@ -1,7 +1,7 @@
 package de.otto.edison.jobs.controller;
 
-import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.status.domain.Link;
 
 import java.time.Duration;
@@ -24,22 +24,22 @@ public class JobRepresentation {
     private final JobInfo job;
     private final String baseUri;
     private final boolean humanReadable;
-    private final DisabledJob disabledJobInfo;
+    private final JobMeta jobMeta;
 
     private JobRepresentation(final JobInfo job,
-                              final DisabledJob disabledJobInfo,
+                              final JobMeta jobMeta,
                               final boolean humanReadable,
                               final String baseUri) {
         this.job = job;
         this.humanReadable=humanReadable;
         this.baseUri = baseUri;
-        this.disabledJobInfo = disabledJobInfo;
+        this.jobMeta = jobMeta;
     }
 
     public static JobRepresentation representationOf(final JobInfo job,
-                                                     final DisabledJob disabledJobInfo,
+                                                     final JobMeta jobMeta,
                                                      final boolean humanReadable, final String baseUri) {
-        return new JobRepresentation(job, disabledJobInfo, humanReadable, baseUri);
+        return new JobRepresentation(job, jobMeta, humanReadable, baseUri);
     }
 
     public String getJobUri() {
@@ -84,11 +84,11 @@ public class JobRepresentation {
     }
 
     public boolean getIsDisabled() {
-        return disabledJobInfo != null;
+        return jobMeta != null && jobMeta.isDisabled();
     }
 
     public String getComment() {
-        return disabledJobInfo == null ? "" : disabledJobInfo.comment;
+        return jobMeta != null ? jobMeta.getDisabledComment() : "";
     }
 
     public List<String> getMessages() {

@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.domain.DisabledJob;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobMetaService;
@@ -67,16 +66,15 @@ public class JobDefinitionsController {
 
     @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "*/*")
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
-        final Set<DisabledJob> disabledJobs = jobMetaService.disabledJobTypes();
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
             put("jobdefinitions", jobDefinitionService.getJobDefinitions()
                     .stream()
                     .map((def) -> {
-                        final Optional<DisabledJob> disabled = disabledJobs.stream().filter(disabledJob -> disabledJob.jobType.equals(def.jobType())).findAny();
+                        final JobMeta jobMeta = jobMetaService.getJobMeta(def.jobType());
                         return new HashMap<String, Object>() {{
-                            put("isDisabled", disabled.isPresent());
-                            put("comment", disabled.map(d->d.comment).orElse(""));
+                            put("isDisabled", jobMeta != null && jobMeta.isDisabled());
+                            put("comment", jobMeta != null ? jobMeta.getDisabledComment() : "");
                             put("jobType", def.jobType());
                             put("name", def.jobName());
                             put("description", def.description());

@@ -1,7 +1,7 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.domain.DisabledJob;
+import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.navigation.NavBar;
@@ -12,7 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.manuallyTriggerableJobDefinition;
@@ -22,9 +24,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -111,9 +112,6 @@ public class JobDefinitionsControllerTest {
         final JobDefinition fooJobDef = jobDefinition("FooJob", "Foo");
         final JobDefinition barJobDef = notTriggerableDefinition("BarJob", "Bar");
         when(jobDefinitionService.getJobDefinitions()).thenReturn(asList(fooJobDef, barJobDef));
-        when(jobMetaService.disabledJobTypes()).thenReturn(new HashSet(singletonList(
-                new DisabledJob("BarJob", "some comment")))
-        );
 
         // when
         mockMvc.perform(
@@ -129,8 +127,8 @@ public class JobDefinitionsControllerTest {
                     assertThat(jobDefinitions.get(0).get("isDisabled"), is(false));
                     assertThat(jobDefinitions.get(0).get("comment"), is(""));
                     assertThat(jobDefinitions.get(1).get("frequency"), is("Never"));
-                    assertThat(jobDefinitions.get(1).get("isDisabled"), is(true));
-                    assertThat(jobDefinitions.get(1).get("comment"), is("some comment"));
+                    assertThat(jobDefinitions.get(1).get("isDisabled"), is(false));
+                    assertThat(jobDefinitions.get(1).get("comment"), is(""));
                 });
     }
 
@@ -141,7 +139,6 @@ public class JobDefinitionsControllerTest {
         final JobDefinition jobDef = jobDefinition("TheJob", "Job", ofSeconds(59));
         when(jobDefinitionService.getJobDefinitions()).thenReturn(singletonList(jobDef));
 
-        // when
         // when
         mockMvc.perform(
                 get("/internal/jobdefinitions/")
@@ -162,7 +159,6 @@ public class JobDefinitionsControllerTest {
         final JobDefinition jobDef = jobDefinition("TheJob", "Job", ofSeconds(60));
         when(jobDefinitionService.getJobDefinitions()).thenReturn(singletonList(jobDef));
 
-        // when
         // when
         mockMvc.perform(
                 get("/internal/jobdefinitions/")
