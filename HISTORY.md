@@ -1,6 +1,6 @@
 # Release History
 
-## Release 1.0.0.RC5-SNAPSHOT
+## Release 1.0.0.RC5
 
 **Bugfixes:**
 * **[edison-jobs]** Fixed bug in configuration of JobMutexGroups.
