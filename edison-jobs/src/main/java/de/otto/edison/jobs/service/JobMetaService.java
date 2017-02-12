@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -23,9 +21,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class JobMetaService {
 
     private static final Logger LOG = getLogger(JobMetaService.class);
-
-    private static final String KEY_DISABLED = "_e_disabled";
-    private static final String KEY_RUNNING = "_e_running";
 
     private final JobMetaRepository jobMetaRepository;
     private final JobMutexGroups mutexGroups;
@@ -50,17 +45,19 @@ public class JobMetaService {
     public void aquireRunLock(final String jobId, final String jobType) throws JobBlockedException {
 
         // check for disabled lock:
-        if (getJobMeta(jobType).isDisabled()) {
+        final JobMeta jobMeta = getJobMeta(jobType);
+
+        if (jobMeta.isDisabled()) {
             throw new JobBlockedException(format("Job '%s' is currently disabled", jobType));
         }
 
         // aquire lock:
-        if (jobMetaRepository.createValue(jobType, KEY_RUNNING, jobId)) {
+        if (jobMetaRepository.setRunningJob(jobType, jobId)) {
 
             // check for mutually exclusive running jobs:
             mutexGroups.mutexJobTypesFor(jobType)
                     .stream()
-                    .filter(mutexJobType -> jobMetaRepository.getValue(mutexJobType, KEY_RUNNING) != null)
+                    .filter(mutexJobType -> jobMetaRepository.getRunningJob(mutexJobType) != null)
                     .findAny()
                     .ifPresent(running -> {
                         releaseRunLock(jobType);
@@ -77,7 +74,7 @@ public class JobMetaService {
      * @param jobType the job type
      */
     public void releaseRunLock(final String jobType) {
-        jobMetaRepository.setValue(jobType, KEY_RUNNING, null);
+        jobMetaRepository.clearRunningJob(jobType);
     }
 
     /**
@@ -87,7 +84,7 @@ public class JobMetaService {
         final Set<RunningJob> runningJobs = new HashSet<>();
         jobMetaRepository.findAllJobTypes()
                 .forEach(jobType -> {
-                    final String jobId = jobMetaRepository.getValue(jobType, KEY_RUNNING);
+                    final String jobId = jobMetaRepository.getRunningJob(jobType);
                     if (jobId != null) {
                         runningJobs.add(new RunningJob(jobId, jobType));
                     }
@@ -102,7 +99,7 @@ public class JobMetaService {
      * @param comment an optional comment
      */
     public void disable(final String jobType, final String comment) {
-        jobMetaRepository.setValue(jobType, KEY_DISABLED, comment != null ? comment : "");
+        jobMetaRepository.disable(jobType, comment);
     }
 
     /**
@@ -111,11 +108,11 @@ public class JobMetaService {
      * @param jobType the enabled job type
      */
     public void enable(final String jobType) {
-        jobMetaRepository.setValue(jobType, KEY_DISABLED, null);
+        jobMetaRepository.enable(jobType);
     }
 
     public JobMeta getJobMeta(final String jobType) {
-        return new JobMeta(jobType, jobMetaRepository);
+        return jobMetaRepository.getJobMeta(jobType);
     }
 
 }

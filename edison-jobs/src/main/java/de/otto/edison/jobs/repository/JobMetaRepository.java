@@ -38,6 +38,27 @@ public interface JobMetaRepository {
      */
     boolean createValue(String jobType, String key, String value);
 
+    boolean setRunningJob(String jobType, String jobId);
+
+    String getRunningJob(String jobType);
+
+    void clearRunningJob(String jobType);
+
+    /**
+     * Disables a job type, i.e. prevents it from being started
+     *
+     * @param jobType the disabled job type
+     * @param comment an optional comment
+     */
+    void disable(String jobType, String comment);
+
+    /**
+     * Reenables a job type that was disabled
+     *
+     * @param jobType the enabled job type
+     */
+    void enable(String jobType);
+
     /**
      * Atomically sets or updates a property for a job type.
      *

@@ -1,109 +1,58 @@
 package de.otto.edison.jobs.domain;
 
-import de.otto.edison.jobs.repository.JobMetaRepository;
-
 import java.time.Instant;
+import java.util.Collections;
+import java.util.Map;
 
 import static java.time.Instant.ofEpochMilli;
+import static java.util.Collections.unmodifiableMap;
 
 /**
- * State information about a job.
- * <p>
- *     Every change to the job state is immediately persisted using atomic operations.
- * </p>
+ * Meta information about a job.
  *
  * @since 1.0.0
  */
 public final class JobMeta {
-    
+
     private final String jobType;
-    private final JobMetaRepository jobMetaRepository;
+    private final boolean running;
+    private final boolean disabled;
+    private final String disableComment;
+    private final Map<String,String> meta;
 
     public JobMeta(final String jobType,
-                   final JobMetaRepository jobMetaRepository) {
+                   final boolean running,
+                   final boolean disabled,
+                   final String disableComment,
+                   final Map<String,String> meta) {
         this.jobType = jobType;
-        this.jobMetaRepository = jobMetaRepository;
+        this.running = running;
+        this.disabled = disabled;
+        this.disableComment = disableComment != null ? disableComment : "";
+        this.meta = unmodifiableMap(meta);
     }
 
     public String getJobType() {
         return jobType;
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
     public boolean isDisabled() {
-        return jobMetaRepository.getValue(jobType, "_e_disabled") != null;
+        return disabled;
     }
 
     public String getDisabledComment() {
-        final String disabled = jobMetaRepository.getValue(jobType, "_e_disabled");
-        return disabled != null ? disabled : "";
+        return disableComment;
     }
 
-    public void delete(final String key) {
-        checkKey(key);
-        jobMetaRepository.setValue(jobType, key, null);
+    public String get(final String key) {
+        return meta.get(key);
     }
 
-    public void set(final String key, final String value) {
-        checkKey(key);
-        jobMetaRepository.setValue(jobType, key, value);
-    }
-
-    public void set(final String key, final int value) {
-        checkKey(key);
-        jobMetaRepository.setValue(jobType, key, String.valueOf(value));
-    }
-
-    public void set(final String key, final long value) {
-        checkKey(key);
-        jobMetaRepository.setValue(jobType, key, String.valueOf(value));
-    }
-
-    public void set(final String key, final Instant value) {
-        checkKey(key);
-        set(key, value.toEpochMilli());
-    }
-
-    public String getAsString(final String key) {
-        checkKey(key);
-        return getAsString(key, null);
-    }
-
-    public String getAsString(final String key, final String defaultValue) {
-        checkKey(key);
-        final String value = jobMetaRepository.getValue(jobType, key);
-        return value != null ? value : defaultValue;
-    }
-
-    public int getAsInt(final String key, final int defaultValue) {
-        checkKey(key);
-        final String value = getAsString(key);
-        return value != null ? Integer.valueOf(value) : defaultValue;
-    }
-
-    public long getPropertyAsLong(final String key, final long defaultValue) {
-        checkKey(key);
-        final String value = getAsString(key);
-        return value != null ? Long.valueOf(value) : defaultValue;
-    }
-
-    public Instant getAsInstant(final String key) {
-        checkKey(key);
-        return getAsInstant(key, null);
-    }
-
-    public Instant getAsInstant(final String key, final Instant defaultValue) {
-        checkKey(key);
-        final long epochMilli = getPropertyAsLong(key, -1);
-        if (epochMilli != -1) {
-            return ofEpochMilli(epochMilli);
-        } else {
-            return defaultValue;
-        }
-    }
-
-    private void checkKey(final String key) {
-        if (key == null || key.startsWith("_e_")) {
-            throw new IllegalArgumentException("Keys must never be null and must not start with prefix _e_");
-        }
+    public Map<String,String> getAll() {
+        return meta;
     }
 }

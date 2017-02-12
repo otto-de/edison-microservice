@@ -58,7 +58,7 @@ public class JobsController {
                                       @RequestParam(value = "distinct", defaultValue = "true", required = false) boolean distinct,
                                       HttpServletRequest request) {
         final List<JobRepresentation> jobRepresentations = getJobInfos(type, count, distinct).stream()
-                .map((j) -> representationOf(j, getJobMeta(type), true, baseUriOf(request)))
+                .map((j) -> representationOf(j, getJobMeta(j.getJobType()), true, baseUriOf(request)))
                 .collect(toList());
 
         final ModelAndView modelAndView = new ModelAndView("jobs");

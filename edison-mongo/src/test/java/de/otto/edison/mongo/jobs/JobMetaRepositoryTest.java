@@ -1,6 +1,7 @@
 package de.otto.edison.mongo.jobs;
 
 import com.github.fakemongo.Fongo;
+import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobMetaRepository;
 import org.junit.Before;
@@ -12,9 +13,12 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -31,7 +35,6 @@ public class JobMetaRepositoryTest {
     @Before
     public void setUp() throws Exception {
         testee.deleteAll();
-
     }
 
     private JobMetaRepository testee;
@@ -50,6 +53,97 @@ public class JobMetaRepositoryTest {
         assertThat(testee.getValue("someJob", "someKey"), is("someValue"));
         assertThat(testee.getValue("someJob", "someOtherKey"), is("someDifferentValue"));
         assertThat(testee.getValue("someOtherJob", "someKey"), is("someOtherValue"));
+    }
+
+    @Test
+    public void shouldGetEmptyJobMeta() {
+        JobMeta jobMeta = testee.getJobMeta("someJob");
+
+        assertThat(jobMeta.getAll(), is(emptyMap()));
+        assertThat(jobMeta.isDisabled(), is(false));
+        assertThat(jobMeta.getDisabledComment(), is(""));
+        assertThat(jobMeta.isRunning(), is(false));
+        assertThat(jobMeta.getJobType(), is("someJob"));
+    }
+
+    @Test
+    public void shouldGetJobMetaForRunningJob() {
+        testee.setRunningJob("someJob", "someId");
+        JobMeta jobMeta = testee.getJobMeta("someJob");
+
+        assertThat(jobMeta.getAll(), is(emptyMap()));
+        assertThat(jobMeta.isDisabled(), is(false));
+        assertThat(jobMeta.getDisabledComment(), is(""));
+        assertThat(jobMeta.isRunning(), is(true));
+        assertThat(jobMeta.getJobType(), is("someJob"));
+    }
+
+    @Test
+    public void shouldGetJobMetaForDisabledJob() {
+        testee.disable("someJob", "some comment");
+        JobMeta jobMeta = testee.getJobMeta("someJob");
+
+        assertThat(jobMeta.getAll(), is(emptyMap()));
+        assertThat(jobMeta.isDisabled(), is(true));
+        assertThat(jobMeta.getDisabledComment(), is("some comment"));
+        assertThat(jobMeta.isRunning(), is(false));
+        assertThat(jobMeta.getJobType(), is("someJob"));
+    }
+
+    @Test
+    public void shouldGetJobMetaForDisabledJobWithProperties() {
+        testee.disable("someJob", "some comment");
+        testee.setValue("someJob", "someKey", "some value");
+        JobMeta jobMeta = testee.getJobMeta("someJob");
+
+        assertThat(jobMeta.getAll(), is(singletonMap("someKey", "some value")));
+        assertThat(jobMeta.isDisabled(), is(true));
+        assertThat(jobMeta.getDisabledComment(), is("some comment"));
+        assertThat(jobMeta.isRunning(), is(false));
+        assertThat(jobMeta.getJobType(), is("someJob"));
+    }
+
+    @Test
+    public void shouldEnableJob() {
+        testee.setValue("someJob", "_e_disabled", "foo");
+
+        testee.enable("someJob");
+
+        assertThat(testee.getValue("someJob", "_e_disabled"), is(nullValue()));
+    }
+
+    @Test
+    public void shouldDisableJob() {
+        testee.disable("someJob", "some comment");
+
+        assertThat(testee.getValue("someJob", "_e_disabled"), is("some comment"));
+    }
+
+    @Test
+    public void shouldSetRunningJob() {
+        testee.setRunningJob("someJob", "someId");
+
+        assertThat(testee.getRunningJob("someJob"), is("someId"));
+        assertThat(testee.getValue("someJob", "_e_running"), is("someId"));
+    }
+
+    public void shouldDeleteAll() {
+        testee.enable("foo");
+        testee.enable("bar");
+
+        testee.deleteAll();
+
+        assertThat(testee.findAllJobTypes(), is(empty()));
+    }
+
+    @Test
+    public void shouldClearRunningJob() {
+        testee.setValue("someJob", "_e_running", "someId");
+
+        testee.clearRunningJob("someJob");
+
+        assertThat(testee.getRunningJob("someJob"), is(nullValue()));
+        assertThat(testee.getValue("someJob", "_e_runnin"), is(nullValue()));
     }
 
     @Test
