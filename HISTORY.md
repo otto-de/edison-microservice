@@ -1,5 +1,10 @@
 # Release History
 
+## Release 1.0.0.RC6
+
+**Bugfixes:**
+* **[edison-jobs]** Fixed: JobDefinitions-Page throws error with RC5
+
 ## Release 1.0.0.RC5
 
 **Bugfixes:**
