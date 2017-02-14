@@ -50,7 +50,7 @@
                                     <span th:if="${!def.isDisabled}">Enabled <span class="glyphicon glyphicon-ok"></span></span>
                                 </button>
                             </span>
-                            <textarea th:if="${def.isDisabled}" name="disabledComment" class="form-control" rows="3" disabled th:text="${def.comment}"></textarea>
+                            <textarea th:if="${def.isDisabled}" name="disabledComment" class="form-control" rows="3" disabled="true" th:text="${def.comment}"></textarea>
                             <textarea th:if="${!def.isDisabled}" name="disabledComment" class="form-control" rows="3" placeholder="Why disabled?"></textarea>
                         </div><!-- /input-group -->
                     </form>
