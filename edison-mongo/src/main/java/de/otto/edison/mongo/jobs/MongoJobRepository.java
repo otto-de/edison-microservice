@@ -35,7 +35,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
 
-    private static final String JOB_INFO_COLLECTION_NAME = "jobinfo";
+    public static final String JOB_INFO_COLLECTION_NAME = "jobinfo";
 
     private static final int DESCENDING = -1;
     private static final String NO_LOG_MESSAGE_FOUND = "No log message found";
@@ -45,8 +45,8 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     private final MongoCollection<Document> jobInfoCollection;
     private final Clock clock;
 
-    public MongoJobRepository(final MongoDatabase database) {
-        this.jobInfoCollection = database.getCollection(JOB_INFO_COLLECTION_NAME).withReadPreference(primaryPreferred());
+    public MongoJobRepository(final MongoDatabase database, final String jobInfoCollectionName) {
+        this.jobInfoCollection = database.getCollection(jobInfoCollectionName).withReadPreference(primaryPreferred());
         this.clock = systemDefaultZone();
     }
 

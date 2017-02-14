@@ -28,7 +28,7 @@ public class JobMetaRepositoryTest {
     @Parameters(name = "{0}")
     public static Collection<JobMetaRepository> data() {
         return asList(
-                new MongoJobMetaRepository(new Fongo("inMemoryDb").getDatabase("jobmeta")),
+                new MongoJobMetaRepository(new Fongo("inMemoryDb").getDatabase("jobmeta"), "jobmeta"),
                 new InMemJobMetaRepository());
     }
 

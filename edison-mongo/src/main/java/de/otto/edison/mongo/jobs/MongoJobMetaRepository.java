@@ -33,16 +33,16 @@ import static java.util.stream.StreamSupport.stream;
  */
 public class MongoJobMetaRepository implements JobMetaRepository {
 
+    public static final String JOBMETA_COLLECTION_NAME = "jobmeta";
     private static final FindOneAndUpdateOptions UPSERT = new FindOneAndUpdateOptions().upsert(true);
-    private static final String JOBMETA_COLLECTION_NAME = "jobmeta";
     private static final String ID = "_id";
     private static final String KEY_DISABLED = "_e_disabled";
     private static final String KEY_RUNNING = "_e_running";
 
     private final MongoCollection<Document> collection;
 
-    public MongoJobMetaRepository(final MongoDatabase database) {
-        this.collection = database.getCollection(JOBMETA_COLLECTION_NAME);
+    public MongoJobMetaRepository(final MongoDatabase database, final String jobMetaCollectionName) {
+        this.collection = database.getCollection(jobMetaCollectionName);
     }
 
     @Override

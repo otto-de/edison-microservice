@@ -40,7 +40,7 @@ public class MongoJobRepositoryTest {
     public void setup() {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         final MongoDatabase database = fongo.getDatabase("jobsinfo");
-        repo = new MongoJobRepository(database);
+        repo = new MongoJobRepository(database, "jobsinfo");
     }
 
     @Test
