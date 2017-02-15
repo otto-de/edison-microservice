@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.annotation.Order;
 
 import static de.otto.edison.mongo.jobs.MongoJobMetaRepository.JOBMETA_COLLECTION_NAME;
 import static de.otto.edison.mongo.jobs.MongoJobRepository.JOB_INFO_COLLECTION_NAME;

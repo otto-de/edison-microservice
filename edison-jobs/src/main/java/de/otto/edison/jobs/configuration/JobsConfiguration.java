@@ -23,6 +23,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -34,6 +36,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
 @EnableAsync
@@ -68,12 +71,14 @@ public class JobsConfiguration {
     }
 
     @Bean
+    @Order(LOWEST_PRECEDENCE)
     @ConditionalOnMissingBean(JobMetaRepository.class)
     public JobMetaRepository jobMetaRepository() {
         return new InMemJobMetaRepository();
     }
 
     @Bean
+    @Order(LOWEST_PRECEDENCE)
     @ConditionalOnMissingBean(JobRepository.class)
     public JobRepository jobRepository() {
         LOG.warn("===============================");
