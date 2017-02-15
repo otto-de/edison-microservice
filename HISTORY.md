@@ -1,5 +1,12 @@
 # Release History
 
+## Release 1.0.0.RC7
+
+**New Features:**
+* **[edison-jobs]** Introduced possibility to change the collection names used in MongoJob*Repositories using properties:
+  * `edison.jobs.collection.jobinfo`: name of the collection used to store job information. Default value is `jobinfo`.
+  * `edison.jobs.collection.jobmeta`: name of the collection used to store job meta information. Default value is `jobmeta`.
+
 ## Release 1.0.0.RC6
 
 **Bugfixes:**
