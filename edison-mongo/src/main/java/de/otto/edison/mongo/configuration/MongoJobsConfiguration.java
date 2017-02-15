@@ -24,6 +24,7 @@ public class MongoJobsConfiguration {
     private static final Logger LOG = getLogger(MongoJobsConfiguration.class);
 
     @Bean
+    @Order(1)
     @ConditionalOnMissingBean(name = "jobRepository")
     public JobRepository jobRepository(final MongoDatabase mongoDatabase) {
         LOG.info("===============================");
@@ -33,6 +34,7 @@ public class MongoJobsConfiguration {
     }
 
     @Bean
+    @Order(1)
     @ConditionalOnMissingBean(name = "jobMetaRepository")
     public JobMetaRepository jobMetaRepository(final MongoDatabase mongoDatabase) {
         LOG.info("===============================");
