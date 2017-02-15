@@ -33,7 +33,6 @@ import static java.util.stream.StreamSupport.stream;
  */
 public class MongoJobMetaRepository implements JobMetaRepository {
 
-    public static final String JOBMETA_COLLECTION_NAME = "jobmeta";
     private static final FindOneAndUpdateOptions UPSERT = new FindOneAndUpdateOptions().upsert(true);
     private static final String ID = "_id";
     private static final String KEY_DISABLED = "_e_disabled";

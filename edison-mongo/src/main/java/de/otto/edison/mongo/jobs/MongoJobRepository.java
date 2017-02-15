@@ -35,8 +35,6 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
 
-    public static final String JOB_INFO_COLLECTION_NAME = "jobinfo";
-
     private static final int DESCENDING = -1;
     private static final String NO_LOG_MESSAGE_FOUND = "No log message found";
     public static final String ID = "_id";

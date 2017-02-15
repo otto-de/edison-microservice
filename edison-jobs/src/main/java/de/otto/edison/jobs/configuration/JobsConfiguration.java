@@ -36,6 +36,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
@@ -71,14 +72,12 @@ public class JobsConfiguration {
     }
 
     @Bean
-    @Order(LOWEST_PRECEDENCE)
     @ConditionalOnMissingBean(JobMetaRepository.class)
     public JobMetaRepository jobMetaRepository() {
         return new InMemJobMetaRepository();
     }
 
     @Bean
-    @Order(LOWEST_PRECEDENCE)
     @ConditionalOnMissingBean(JobRepository.class)
     public JobRepository jobRepository() {
         LOG.warn("===============================");

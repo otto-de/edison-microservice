@@ -1,20 +1,16 @@
 package de.otto.edison.mongo.configuration;
 
 import com.mongodb.client.MongoDatabase;
-import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.JobMetaRepository;
-import de.otto.edison.mongo.jobs.MongoJobRepository;
+import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.mongo.jobs.MongoJobMetaRepository;
+import de.otto.edison.mongo.jobs.MongoJobRepository;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.annotation.Order;
 
-import static de.otto.edison.mongo.jobs.MongoJobMetaRepository.JOBMETA_COLLECTION_NAME;
-import static de.otto.edison.mongo.jobs.MongoJobRepository.JOB_INFO_COLLECTION_NAME;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
@@ -24,23 +20,19 @@ public class MongoJobsConfiguration {
     private static final Logger LOG = getLogger(MongoJobsConfiguration.class);
 
     @Bean
-    @Order(1)
-    @ConditionalOnMissingBean(name = "jobRepository")
-    public JobRepository jobRepository(final MongoDatabase mongoDatabase) {
+    public JobRepository jobRepository(final MongoDatabase mongoDatabase, final @Value("edison.jobs.collection.jobinfo:jobinfo") String collectionName) {
         LOG.info("===============================");
         LOG.info("Using MongoJobRepository with %s MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
         LOG.info("===============================");
-        return new MongoJobRepository(mongoDatabase, JOB_INFO_COLLECTION_NAME);
+        return new MongoJobRepository(mongoDatabase, collectionName);
     }
 
     @Bean
-    @Order(1)
-    @ConditionalOnMissingBean(name = "jobMetaRepository")
-    public JobMetaRepository jobMetaRepository(final MongoDatabase mongoDatabase) {
+    public JobMetaRepository jobMetaRepository(final MongoDatabase mongoDatabase, final @Value("edison.jobs.collection.jobmeta:jobmeta") String collectionName) {
         LOG.info("===============================");
         LOG.info("Using MongoJobMetaRepository with %s MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
         LOG.info("===============================");
-        return new MongoJobMetaRepository(mongoDatabase, JOBMETA_COLLECTION_NAME);
+        return new MongoJobMetaRepository(mongoDatabase, collectionName);
     }
 
 }
