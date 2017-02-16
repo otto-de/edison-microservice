@@ -20,7 +20,7 @@ public class MongoJobsConfiguration {
     private static final Logger LOG = getLogger(MongoJobsConfiguration.class);
 
     @Bean
-    public JobRepository jobRepository(final MongoDatabase mongoDatabase, final @Value("edison.jobs.collection.jobinfo:jobinfo") String collectionName) {
+    public JobRepository jobRepository(final MongoDatabase mongoDatabase, final @Value("${edison.jobs.collection.jobinfo:jobinfo}") String collectionName) {
         LOG.info("===============================");
         LOG.info("Using MongoJobRepository with %s MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
         LOG.info("===============================");
@@ -28,7 +28,7 @@ public class MongoJobsConfiguration {
     }
 
     @Bean
-    public JobMetaRepository jobMetaRepository(final MongoDatabase mongoDatabase, final @Value("edison.jobs.collection.jobmeta:jobmeta") String collectionName) {
+    public JobMetaRepository jobMetaRepository(final MongoDatabase mongoDatabase, final @Value("${edison.jobs.collection.jobmeta:jobmeta}") String collectionName) {
         LOG.info("===============================");
         LOG.info("Using MongoJobMetaRepository with %s MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
         LOG.info("===============================");
