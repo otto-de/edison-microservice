@@ -1,7 +1,6 @@
 package de.otto.edison.mongo.jobs;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DuplicateKeyException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
@@ -10,7 +9,6 @@ import de.otto.edison.jobs.repository.JobMetaRepository;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -139,7 +137,7 @@ public class MongoJobMetaRepository implements JobMetaRepository {
         try {
             final Document previous = collection.findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().upsert(true));
             return previous == null || previous.getString(key) == null;
-        } catch (final DuplicateKeyException e) {
+        } catch (final Exception e) {
             return false;
         }
     }
