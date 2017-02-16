@@ -1,5 +1,14 @@
 # Release History
 
+## Release 1.0.0.RC8
+
+**Bugfixes:**
+* **[edison-jobs]** Catching duplicate key exceptions in `JobMetaRepository.createValue`
+* **[edison-jobs]** Fixed `@Value` annotation to configure the Mongo collections in `MongoJobsConfiguration`
+
+**New Features:**
+* **[edison-jobs]** Add a button to show the last runs of a job type
+
 ## Release 1.0.0.RC7
 
 **New Features:**

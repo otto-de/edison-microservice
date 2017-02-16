@@ -63,7 +63,7 @@ subprojects {
     // DO NOT FORGET TO DOCUMENT CHANGES IN HISTORY.MD
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-    version = '1.0.0.RC7'
+    version = '1.0.0.RC8'
     group = 'de.otto.edison'
 
     repositories {
