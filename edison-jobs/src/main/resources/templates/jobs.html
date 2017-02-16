@@ -13,7 +13,6 @@
             <h3 class="panel-title">Job Overview</h3>
         </div>
         <div class="panel-body">
-            <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -22,8 +21,6 @@
                     <th>Started</th>
                     <th>Stopped</th>
                     <th>Runtime</th>
-                    <th>Trigger</th>
-                    <th>Definition</th>
                     <th>Details</th>
                 </tr>
                 </thead>
@@ -43,21 +40,31 @@
                     <td th:text="${job.stopped}">&nbsp;</td>
                     <td th:text="${job.runtime}">&nbsp;</td>
                     <td>
-                        <button type="button"
-                                class="triggerButton btn btn-sm btn-default btn-block"
-                                th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
-                                title="Click to start job now"
-                                data-loading-text="Triggering...">
-                            <span>Trigger </span><span class="glyphicon glyphicon-play"></span>
-                        </button>
+                        <div class="btn-group">
+                            <button type="button"
+                                    class="triggerButton btn btn-sm btn-default"
+                                    th:attr="data-trigger-url=${baseUri} + '/internal/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
+                                    title="Click to start job now"
+                                    data-loading-text="Triggering...">
+                                <span>Trigger </span><span class="glyphicon glyphicon-play"></span>
+                            </button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+                                    Details <span class="caret"></span></button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a th:href="${job.jobUri}">Messages</a></li>
+                                    <li th:if="${typeFilter == null}"><a id="openButton" th:href="@{|/internal/jobs?type=${job.jobType}|}">Job Overview</a></li>
+                                    <li th:if="${typeFilter != null}"><a id="openButton" th:href="@{|/internal/jobs|}">Job Overview</a></li>
+                                    <li><a th:href="@{|/internal/jobdefinitions/${job.jobType}|}">Job Definition</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
                     </td>
-                    <td><a th:href="@{|/internal/jobdefinitions/${job.jobType}|}" class="btn btn-sm btn-default">Open Definition</a></td>
-                    <td><a th:href="${job.jobUri}" class="btn btn-sm btn-default">Open Details</a></td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(jobs)}"><td colspan="7">No Jobs</td></tr>
                 </tbody>
             </table>
-            </div>
         </div>
     </div>
 </div> <!-- /container -->

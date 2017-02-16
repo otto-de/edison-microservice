@@ -63,6 +63,9 @@ public class JobsController {
 
         final ModelAndView modelAndView = new ModelAndView("jobs");
         modelAndView.addObject("jobs", jobRepresentations);
+        if (type != null) {
+            modelAndView.addObject("typeFilter", type);
+        }
         modelAndView.addObject("baseUri", baseUriOf(request));
         return modelAndView;
     }
