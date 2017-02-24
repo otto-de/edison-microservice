@@ -99,4 +99,14 @@ public class ExampleJobsSmokeTest {
                 "}");
     }
 
+    @Test
+    public void shouldTriggerJob() {
+        final ResponseEntity<String> postResponse = restTemplate.postForEntity("/internal/jobs/Foo", "", String.class);
+        assertThat(postResponse.getStatusCodeValue()).isEqualTo(204);
+        final ResponseEntity<String> jobResponse = restTemplate.getForEntity(postResponse.getHeaders().getLocation(), String.class);
+        assertThat(jobResponse.getStatusCodeValue()).isEqualTo(200);
+        assertThat(jobResponse.getBody()).contains("\"state\" : \"Running\"");
+        assertThat(jobResponse.getBody()).contains("\"jobType\" : \"Foo\"");
+    }
+
 }
