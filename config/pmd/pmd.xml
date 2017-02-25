@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<ruleset name="pmd"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+  <rule ref="rulesets/java/basic.xml"/>
+  <rule ref="rulesets/java/braces.xml"/>
+  <rule ref="rulesets/java/clone.xml"/>
+  <rule ref="rulesets/java/codesize.xml"/>
+  <rule ref="rulesets/java/codesize.xml/TooManyMethods">
+    <properties>
+      <property name="maxmethods" value="35"/>
+    </properties>
+  </rule>
+  <rule ref="rulesets/java/comments.xml">
+    <exclude name="CommentDefaultAccessModifier"/>
+    <exclude name="CommentRequired"/>
+    <exclude name="CommentSize"/>
+  </rule>
+  <rule ref="rulesets/java/controversial.xml">
+    <exclude name="AtLeastOneConstructor"/>
+    <exclude name="AvoidFinalLocalVariable"/>
+    <exclude name="AvoidLiteralsInIfCondition"/>
+    <exclude name="CallSuperInConstructor"/>
+    <exclude name="DataflowAnomalyAnalysis"/>
+    <exclude name="DefaultPackage"/>
+    <exclude name="OnlyOneReturn"/>
+  </rule>
+  <rule ref="rulesets/java/design.xml">
+    <exclude name="AbstractClassWithoutAbstractMethod"/>
+    <exclude name="AbstractClassWithoutAnyMethod"/>
+    <exclude name="ConfusingTernary"/>
+    <exclude name="UncommentedEmptyMethodBody"/>
+    <exclude name="UseUtilityClass"/>
+  </rule>
+  <rule ref="rulesets/java/empty.xml"/>
+  <rule ref="rulesets/java/finalizers.xml"/>
+  <rule ref="rulesets/java/imports.xml">
+    <exclude name="TooManyStaticImports"/>
+  </rule>
+  <rule ref="rulesets/java/imports.xml/UnnecessaryFullyQualifiedName">
+    <properties>
+      <property name="violationSuppressRegex" value=".*Matchers\.any.*"/>
+    </properties>
+  </rule>
+  <rule ref="rulesets/java/j2ee.xml"/>
+  <rule ref="rulesets/java/javabeans.xml">
+    <exclude name="BeanMembersShouldSerialize"/>
+  </rule>
+  <rule ref="rulesets/java/junit.xml"/>
+  <rule ref="rulesets/java/junit.xml/JUnitTestContainsTooManyAsserts">
+    <properties>
+      <property name="maximumAsserts" value="8"/>
+    </properties>
+  </rule>
+  <rule ref="rulesets/java/logging-jakarta-commons.xml">
+    <exclude name="GuardLogStatement"/>
+    <exclude name="GuardDebugLogging"/>
+  </rule>
+  <rule ref="rulesets/java/logging-java.xml">
+    <exclude name="GuardLogStatementJavaUtil"/>
+  </rule>
+  <rule ref="rulesets/java/migrating.xml"/>
+  <rule ref="rulesets/java/migrating_to_junit4.xml"/>
+  <rule ref="rulesets/java/naming.xml">
+    <exclude name="AvoidFieldNameMatchingMethodName"/>
+    <exclude name="LongVariable"/>
+    <exclude name="ShortClassName"/>
+    <exclude name="ShortMethodName"/>
+    <exclude name="ShortVariable"/>
+  </rule>
+  <rule ref="rulesets/java/optimizations.xml"/>
+  <rule ref="rulesets/java/strictexception.xml">
+    <exclude name="AvoidThrowingRawExceptionTypes"/>
+    <exclude name="SignatureDeclareThrowsException"/>
+  </rule>
+  <rule ref="rulesets/java/strings.xml"/>
+  <rule ref="rulesets/java/sunsecure.xml"/>
+  <rule ref="rulesets/java/typeresolution.xml">
+    <exclude name="SignatureDeclareThrowsException"/>
+  </rule>
+  <rule ref="rulesets/java/unnecessary.xml"/>
+  <rule ref="rulesets/java/unusedcode.xml"/>
+</ruleset>
