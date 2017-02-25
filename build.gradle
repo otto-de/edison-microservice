@@ -1,19 +1,22 @@
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
 apply from: 'dependencies.gradle'
 
 buildscript {
     repositories {
-        maven { url "http://repo.spring.io/libs-snapshot" }
+        maven { url 'http://repo.spring.io/libs-snapshot' }
         maven { url 'http://repo.spring.io/plugins-release' }
         mavenLocal()
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:" + springBootVersion)
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:' + springBootVersion)
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
     }
 }
 
@@ -33,7 +36,7 @@ dependencyUpdates.resolutionStrategy = {
             if (rejected) {
                 selection.reject("Ignore due to beta/alpha pattern: ${selection.candidate}")
             }
-            if (selection.candidate.group == 'org.mockito' && selection.candidate.module == 'mockito-core' && selection.candidate.version != "1.10.19") {
+            if (selection.candidate.group == 'org.mockito' && selection.candidate.module == 'mockito-core' && selection.candidate.version != '1.10.19') {
                 selection.reject('Can not update mockito to current release because of spring is still depending on 1.x version.')
             }
         }
@@ -42,7 +45,7 @@ dependencyUpdates.resolutionStrategy = {
 
 repositories {
     mavenCentral()
-    maven { url "http://repo.spring.io/libs-snapshot" }
+    maven { url 'http://repo.spring.io/libs-snapshot' }
 }
 
 idea {
@@ -70,7 +73,6 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     apply plugin: 'maven'
-    apply plugin: 'jacoco'
     apply plugin: 'project-report'
     apply plugin: 'signing'
 
@@ -87,12 +89,12 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     dependencies {
-        optional "org.springframework.boot:spring-boot-configuration-processor:" + springBootVersion
+        optional 'org.springframework.boot:spring-boot-configuration-processor:' + springBootVersion
     }
 
     compileJava.dependsOn(processResources)
@@ -103,6 +105,13 @@ subprojects {
 
     jacoco {
         toolVersion = '0.7.9'
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled = true // coveralls plugin depends on xml format report
+            html.enabled = true
+        }
     }
 
     test {
