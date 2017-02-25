@@ -13,5 +13,5 @@ install: /bin/true # skip gradle assemble
 script: bin/go check
 
 after_success:
-  - bin/go coveralls
+  - bin/go jacocoRootReport
   - ~/jpm/bin/codacy-coverage-reporter -l Java -r build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml

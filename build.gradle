@@ -2,7 +2,6 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
 
 buildscript {
     apply from: 'dependencies.gradle'
@@ -17,7 +16,6 @@ buildscript {
         classpath('org.springframework.boot:spring-boot-gradle-plugin:' + springBootVersion)
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
     }
 }
 
@@ -111,7 +109,7 @@ subprojects {
 
     jacocoTestReport {
         reports {
-            xml.enabled = true // coveralls plugin depends on xml format report
+            xml.enabled = true
             html.enabled = true
         }
     }
@@ -180,20 +178,11 @@ task jacocoRootReport(type: JacocoReport) {
     executionData jacocoMerge.destinationFile
 
     reports {
-        html.enabled = true // human readable
-        xml.enabled = true // required by coveralls
+        html.enabled = true
+        xml.enabled = true
     }
 
     doFirst {
         executionData = files(executionData.findAll { it.exists() })
     }
-}
-
-coveralls {
-    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-}
-
-tasks.coveralls {
-    dependsOn jacocoRootReport
 }

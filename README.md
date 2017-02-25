@@ -11,7 +11,7 @@ Collection of independent libraries on top of Spring Boot to provide a faster se
 [![Active Stories](https://badge.waffle.io/otto-de/edison-microservice.svg?label=In%20Progress&title=Doing)](http://waffle.io/otto-de/edison-microservice)
 
 [![build](https://travis-ci.org/otto-de/edison-microservice.svg)](https://travis-ci.org/otto-de/edison-microservice) 
-[![coverage](https://coveralls.io/repos/github/otto-de/edison-microservice/badge.svg?branch=master)](https://coveralls.io/github/otto-de/edison-microservice?branch=master)
+[![coverage](https://api.codacy.com/project/badge/Coverage/3b4933ec0be8485d830b38430c9f1d9f)](https://www.codacy.com/app/BeneStem/edison-microservice?utm_source=github.com&utm_medium=referral&utm_content=otto-de/edison-microservice&utm_campaign=Badge_Coverage)
 [![codacy](https://api.codacy.com/project/badge/Grade/3b4933ec0be8485d830b38430c9f1d9f)](https://www.codacy.com/app/BeneStem/edison-microservice?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=otto-de/edison-microservice&amp;utm_campaign=Badge_Grade)
 [![dependencies](https://www.versioneye.com/user/projects/58b16b4a7b9e15004a98c400/badge.svg?style=flat)](https://www.versioneye.com/user/projects/58b16b4a7b9e15004a98c400)
 [![release](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-core)
