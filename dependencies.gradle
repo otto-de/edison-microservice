@@ -16,20 +16,20 @@ ext.libs = [
         jcip: [
                 "net.jcip:jcip-annotations:1.0"],
         logging: [
-                "ch.qos.logback:logback-classic:1.1.7"],
+                "ch.qos.logback:logback-classic:1.2.1"],
         metrics: [
-                "io.dropwizard.metrics:metrics-annotation:3.1.2",
-                "io.dropwizard.metrics:metrics-core:3.1.2",
-                "io.dropwizard.metrics:metrics-graphite:3.1.2",
-                "io.dropwizard.metrics:metrics-healthchecks:3.1.2",
-                "io.dropwizard.metrics:metrics-jvm:3.1.2"],
+                "io.dropwizard.metrics:metrics-annotation:3.2.0",
+                "io.dropwizard.metrics:metrics-core:3.2.0",
+                "io.dropwizard.metrics:metrics-graphite:3.2.0",
+                "io.dropwizard.metrics:metrics-healthchecks:3.2.0",
+                "io.dropwizard.metrics:metrics-jvm:3.2.0"],
         metricsSpring: [
                 "com.ryantenney.metrics:metrics-spring:3.1.3",
                 "org.springframework:spring-context-support:" + springVersion],
         thymeleaf3: [
-                'org.thymeleaf:thymeleaf:3.0.2.RELEASE',
-                'org.thymeleaf:thymeleaf-spring4:3.0.2.RELEASE',
-                'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.1.1' ],
+                "org.thymeleaf:thymeleaf:3.0.3.RELEASE",
+                'org.thymeleaf:thymeleaf-spring4:3.0.3.RELEASE',
+                'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.2.0' ],
         testUnit: [
                 "junit:junit:4.12",
                 "org.hamcrest:hamcrest-core:1.3",
@@ -44,17 +44,17 @@ ext.libs = [
         servlet:
                 "javax.servlet:javax.servlet-api:3.1.0",
         togglz     : [
-                "org.togglz:togglz-servlet:2.3.0.Final",
-                "org.togglz:togglz-console:2.3.0.Final",
-                "org.togglz:togglz-spring-web:2.3.0.Final"],
+                "org.togglz:togglz-servlet:2.4.0.Final",
+                "org.togglz:togglz-console:2.4.0.Final",
+                "org.togglz:togglz-spring-web:2.4.0.Final"],
         testTogglz:
-                "org.togglz:togglz-testing:2.3.0.Final",
+                "org.togglz:togglz-testing:2.4.0.Final",
         mongoDb: [
-                "org.mongodb:mongodb-driver:3.4.1"],
+                "org.mongodb:mongodb-driver:3.4.2"],
         fakeMongo:
-                "com.github.fakemongo:fongo:2.0.11",
+                "com.github.fakemongo:fongo:2.0.12",
         caffeine:
-                "com.github.ben-manes.caffeine:caffeine:2.3.5",
+                "com.github.ben-manes.caffeine:caffeine:2.4.0",
         jaywayJsonPath:
                 "com.jayway.jsonpath:json-path:2.2.0"
 ]

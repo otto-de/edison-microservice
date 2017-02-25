@@ -16,4 +16,3 @@ artifacts {
 signing {
     sign configurations.archives
 }
-

@@ -1,8 +1,4 @@
 dependencies {
-
-    compile libs.springBootWeb
-    compile libs.logging
-    compile libs.jcip
     compileOnly libs.asyncHttp
 
     compile project(":edison-core")

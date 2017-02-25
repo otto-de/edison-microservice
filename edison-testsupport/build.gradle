@@ -1,9 +1,9 @@
-
 dependencies {
-    compile libs.springBoot
-    compile libs.testUnit
     compileOnly libs.togglz
     compileOnly libs.testTogglz
+
+    compile libs.springBoot
+    compile libs.testUnit
 }
 
 artifacts {

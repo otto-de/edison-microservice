@@ -33,5 +33,3 @@ elif [ "$1" == "release" ]; then
 else
     ${SCRIPT_DIR}/gradlew $*
 fi
-
-

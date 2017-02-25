@@ -1,7 +1,5 @@
-
 dependencies {
     compile project(":edison-core")
-
     compile libs.caffeine
 
     testCompile project(":edison-testsupport")

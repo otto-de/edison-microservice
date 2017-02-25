@@ -3,7 +3,6 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     compile project(":edison-togglz")
     compile project(":edison-mongo")
-
     compile libs.fakeMongo            // In-Memory impl of MongoDB; not intended for production
 
     testCompile project(":edison-testsupport")
@@ -18,4 +17,3 @@ artifacts {
 signing {
     sign configurations.archives
 }
-

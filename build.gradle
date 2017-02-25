@@ -1,5 +1,6 @@
 apply plugin: 'idea'
 apply plugin: 'eclipse'
+apply plugin: 'com.github.ben-manes.versions'
 
 apply from: 'dependencies.gradle'
 
@@ -10,7 +11,8 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:"+springBootVersion)
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:" + springBootVersion)
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
     }
 }
@@ -20,6 +22,22 @@ configure(allprojects) {
     apply plugin: 'propdeps-maven'
     apply plugin: 'propdeps-idea'
     apply plugin: 'propdeps-eclipse'
+}
+
+dependencyUpdates.resolutionStrategy = {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = ['alpha', 'beta', 'b', 'rc', 'cr', 'm', 'ea', 'incubating', 'atlassian', 'snap'].any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\w\d-]*/
+            }
+            if (rejected) {
+                selection.reject("Ignore due to beta/alpha pattern: ${selection.candidate}")
+            }
+            if (selection.candidate.group == 'org.mockito' && selection.candidate.module == 'mockito-core' && selection.candidate.version != "1.10.19") {
+                selection.reject('Can not update mockito to current release because of spring is still depending on 1.x version.')
+            }
+        }
+    }
 }
 
 repositories {
@@ -37,14 +55,14 @@ idea {
 }
 
 eclipse {
-  classpath {
-    //customizing the classes output directory:
-    defaultOutputDir = file('build/bin')
+    classpath {
+        //customizing the classes output directory:
+        defaultOutputDir = file('build/bin')
 
-    //default settings for downloading sources and Javadoc:
-    downloadSources = true
-    downloadJavadoc = false
-  }
+        //default settings for downloading sources and Javadoc:
+        downloadSources = true
+        downloadJavadoc = false
+    }
 }
 
 subprojects {
@@ -52,15 +70,15 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     apply plugin: 'maven'
+    apply plugin: 'jacoco'
     apply plugin: 'project-report'
     apply plugin: 'signing'
-
 
     // Major Release: X.0.0: Breaking Changes. Should be avoided if possible, or planned for future release.
     // Minor Release: 0.X.0: Additional Features, updates from minor releases in Spring
     // Micro Release: 0.0.X: Bugfixes, non-breaking changes, updates from micro releases in Spring
     //
-    // DO NOT FORGET TO DOCUMENT CHANGES IN HISTORY.MD
+    // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
     version = '1.0.0.RC8'
@@ -83,9 +101,15 @@ subprojects {
         manifest.attributes provider: 'gradle'
     }
 
+    jacoco {
+        toolVersion = '0.7.9'
+    }
+
     test {
         // pass -Dspring.profiles.active=local and other system properties to the test task
         systemProperties = System.properties
+        // jacoco needs this property when using it with subprojects
+        systemProperties['user.dir'] = workingDir
 
         afterSuite { desc, result ->
             if (!desc.parent) { // will match the outermost suite
@@ -93,6 +117,7 @@ subprojects {
             }
         }
     }
+    test.finalizedBy jacocoTestReport
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
@@ -111,7 +136,7 @@ subprojects {
             iml {
                 withXml {
                     def moduleRoot = it.asNode()
-                    def facetManager = moduleRoot.component.find { component -> component.'@name' == 'FacetManager'}
+                    def facetManager = moduleRoot.component.find { component -> component.'@name' == 'FacetManager' }
                     if (!facetManager) {
                         facetManager = moduleRoot.appendNode('component', [name: 'FacetManager'])
                     }
@@ -126,4 +151,3 @@ subprojects {
         }
     }
 }
-
