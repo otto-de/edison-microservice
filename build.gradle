@@ -4,14 +4,15 @@ apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
-apply from: 'dependencies.gradle'
-
 buildscript {
+    apply from: 'dependencies.gradle'
+
     repositories {
         maven { url 'http://repo.spring.io/libs-snapshot' }
         maven { url 'http://repo.spring.io/plugins-release' }
         mavenLocal()
     }
+
     dependencies {
         classpath('org.springframework.boot:spring-boot-gradle-plugin:' + springBootVersion)
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
@@ -73,6 +74,7 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     apply plugin: 'maven'
+    apply plugin: 'jacoco'
     apply plugin: 'project-report'
     apply plugin: 'signing'
 
@@ -159,4 +161,39 @@ subprojects {
             }
         }
     }
+}
+
+def publishedProjects = subprojects.findAll { (!it.projectDir.name.contains('example')) }
+
+task jacocoMerge(type: JacocoMerge) {
+    publishedProjects.each { subproject ->
+        executionData subproject.tasks.withType(Test)
+    }
+}
+
+task jacocoRootReport(type: JacocoReport) {
+    dependsOn jacocoMerge
+
+    additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(publishedProjects.sourceSets.main.output)
+    executionData jacocoMerge.destinationFile
+
+    reports {
+        html.enabled = true // human readable
+        xml.enabled = true // required by coveralls
+    }
+
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
+    }
+}
+
+coveralls {
+    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+}
+
+tasks.coveralls {
+    dependsOn jacocoRootReport
 }
