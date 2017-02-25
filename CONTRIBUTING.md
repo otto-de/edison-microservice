@@ -3,6 +3,11 @@
 So, you want to contribute to this project! That's awesome. However, before doing so, 
 please read the following simple steps how to contribute.
 
+## CHANGELOG
+
+Add all noticable changes to the [CHANGELOG.md](CHANGELOG.md).
+To provide a unified view to the changes please format the [CHANGELOG.md](CHANGELOG.md) as done [in this example](https://github.com/skywinder/github-changelog-generator/blob/master/CHANGELOG.md). 
+
 ## Discuss the changes before doing them
 
 There is a [edison-microservice Google Group](https://groups.google.com/forum/#!forum/edison-microservice) where you 
