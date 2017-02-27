@@ -106,7 +106,7 @@ The examples can be started with gradle:
     gradle examples:example-togglz:bootRun
     gradle examples:example-togglz-mongo:bootRun
 
-Open in your browser [http://localhost:8080/example/](http://localhost:8080/example/)
+Open in your browser [http://localhost:8080/](http://localhost:8080/)
 
 *Note:* Every example is configured to use port 8080, so make sure to run only one example at a time or to reconfigure
 the ports.
