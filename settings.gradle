@@ -1,3 +1,5 @@
+rootProject.name = 'edison'
+
 include "edison-testsupport"
 include "edison-mongo"
 include "edison-jobs"

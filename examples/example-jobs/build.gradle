@@ -3,8 +3,8 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     compile project(":edison-jobs")
 //  compile project(":edison-mongo")  // Enable to get persistent job information
-//  compile libs.fakeMongo            // In-Memory impl of MongoDB; not intended for production
-    compile libs.asyncHttp
+//  compile test_libraries.fongo      // In-Memory impl of MongoDB; not intended for production
+    compile libraries.async_http_client
 
     testCompile project(":edison-testsupport")
 }

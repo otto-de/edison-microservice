@@ -1,0 +1,82 @@
+/**
+ * For an example
+ * @see https://raw.githubusercontent.com/ben-manes/caffeine/master/gradle/dependencies.gradle
+ */
+ext {
+    versions = [
+        spring_boot: '1.4.2.RELEASE',
+        spring: '4.3.4.RELEASE',
+        async_http_client: '1.9.40',
+        jcip_annotations: '1.0',
+        logback_classic: '1.2.1',
+        metrics: '3.2.0',
+        metrics_spring: '3.1.3',
+        thymeleaf: '3.0.3.RELEASE',
+        thymeleaf_layout_dialect: '2.2.0',
+        javax_servlet_api: '3.1.0',
+        togglz: '2.4.0.Final',
+        mongodb_driver: '3.4.2',
+        caffeine: '2.4.0',
+        json_path: '2.2.0',
+        unboundid_ldapsdk_minimal_edition: '3.2.1'
+    ]
+    test_versions = [
+        junit: '4.12',
+        hamcrest: '1.3',
+        mockito_core: '1.10.19',
+        jsonassert: '1.4.0',
+        fongo: '2.0.12'
+    ]
+    plugin_versions = [
+        versions: '0.14.0',
+        jacoco: '0.7.9',
+        propdeps: '0.0.7'
+    ]
+
+    libraries = [
+        spring_boot: "org.springframework.boot:spring-boot:${versions.spring_boot}",
+        spring_boot_configuration_processor: "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}",
+        spring_boot_autoconfigure: "org.springframework.boot:spring-boot-autoconfigure:${versions.spring_boot}",
+        spring_boot_devtools: "org.springframework.boot:spring-boot-devtools:${versions.spring_boot}",
+        spring_boot_starter_web: "org.springframework.boot:spring-boot-starter-web:${versions.spring_boot}",
+        spring_boot_starter_actuator: "org.springframework.boot:spring-boot-starter-actuator:${versions.spring_boot}",
+        spring_boot_starter_thymeleaf: "org.springframework.boot:spring-boot-starter-thymeleaf:${versions.spring_boot}",
+        async_http_client: "com.ning:async-http-client:${versions.async_http_client}",
+        jcip_annotations: "net.jcip:jcip-annotations:${versions.jcip_annotations}",
+        logback_classic: "ch.qos.logback:logback-classic:${versions.logback_classic}",
+        metrics_annotation: "io.dropwizard.metrics:metrics-annotation:${versions.metrics}",
+        metrics_core: "io.dropwizard.metrics:metrics-core:${versions.metrics}",
+        metrics_graphite: "io.dropwizard.metrics:metrics-graphite:${versions.metrics}",
+        metrics_healthchecks: "io.dropwizard.metrics:metrics-healthchecks:${versions.metrics}",
+        metrics_jvm: "io.dropwizard.metrics:metrics-jvm:${versions.metrics}",
+        metrics_spring: "com.ryantenney.metrics:metrics-spring:${versions.metrics_spring}",
+        spring_context_support: "org.springframework:spring-context-support:${versions.spring}",
+        thymeleaf: "org.thymeleaf:thymeleaf:${versions.thymeleaf}",
+        thymeleaf_spring4: "org.thymeleaf:thymeleaf-spring4:${versions.thymeleaf}",
+        thymeleaf_layout_dialect: "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${versions.thymeleaf_layout_dialect}",
+        javax_servlet_api: "javax.servlet:javax.servlet-api:${versions.javax_servlet_api}",
+        togglz_servlet: "org.togglz:togglz-servlet:${versions.togglz}",
+        togglz_console: "org.togglz:togglz-console:${versions.togglz}",
+        togglz_spring_web: "org.togglz:togglz-spring-web:${versions.togglz}",
+        mongodb_driver: "org.mongodb:mongodb-driver:${versions.mongodb_driver}",
+        caffeine: "com.github.ben-manes.caffeine:caffeine:${versions.caffeine}",
+        unboundid_ldapsdk_minimal_edition: "com.unboundid:unboundid-ldapsdk-minimal-edition:${versions.unboundid_ldapsdk_minimal_edition}"
+    ]
+    test_libraries = [
+        junit: "junit:junit:${test_versions.junit}",
+        hamcrest_core: "org.hamcrest:hamcrest-core:${test_versions.hamcrest}",
+        hamcrest_library: "org.hamcrest:hamcrest-library:${test_versions.hamcrest}",
+        mockito_core: "org.mockito:mockito-core:${test_versions.mockito_core}", /* Can not update to current 2.2.28 release because of Spring is still depending on this version... */
+        spring_test: "org.springframework:spring-test:${versions.spring}",
+        spring_boot_starter_test: "org.springframework.boot:spring-boot-starter-test:${versions.spring_boot}",
+        jsonassert: "org.skyscreamer:jsonassert:${test_versions.jsonassert}",
+        togglz_testing: "org.togglz:togglz-testing:${versions.togglz}",
+        fongo: "com.github.fakemongo:fongo:${test_versions.fongo}",
+        json_path: "com.jayway.jsonpath:json-path:${versions.json_path}",
+    ]
+    gradle_plugins = [
+        versions: "com.github.ben-manes:gradle-versions-plugin:${plugin_versions.versions}",
+        propdeps: "org.springframework.build.gradle:propdeps-plugin:${plugin_versions.propdeps}",
+        spring_boot: "org.springframework.boot:spring-boot-gradle-plugin:${versions.spring_boot}"
+    ]
+}

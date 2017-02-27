@@ -1,18 +1,24 @@
 dependencies {
-    compileOnly libs.asyncHttp
+    compileOnly libraries.async_http_client
 
-    compile libs.springBootWeb
-    compile libs.springBootThymeleaf
-    compile libs.thymeleaf3
-    compile libs.jcip
-    compile libs.logging
-    compile libs.metrics
-    compile libs.metricsSpring
+    compile libraries.spring_boot_starter_web
+    compile libraries.spring_boot_starter_actuator
+    compile libraries.spring_boot_starter_thymeleaf
+    compile libraries.thymeleaf
+    compile libraries.thymeleaf_spring4
+    compile libraries.thymeleaf_layout_dialect
+    compile libraries.jcip_annotations
+    compile libraries.logback_classic
+    compile libraries.metrics_annotation
+    compile libraries.metrics_core
+    compile libraries.metrics_graphite
+    compile libraries.metrics_healthchecks
+    compile libraries.metrics_jvm
+    compile libraries.metrics_spring
+    compile libraries.spring_context_support
 
     testCompile project(":edison-testsupport")
-    testCompile libs.testUnit
-    testCompile libs.asyncHttp
-
+    testCompile libraries.async_http_client
 }
 
 artifacts {

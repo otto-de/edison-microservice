@@ -1,10 +1,5 @@
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'jacoco'
-
 buildscript {
-    apply from: 'dependencies.gradle'
+    apply from: "${rootDir}/gradle/dependencies.gradle"
 
     repositories {
         maven { url 'http://repo.spring.io/libs-snapshot' }
@@ -13,9 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath('org.springframework.boot:spring-boot-gradle-plugin:' + springBootVersion)
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
+        classpath gradle_plugins.values()
     }
 }
 
@@ -26,53 +19,20 @@ configure(allprojects) {
     apply plugin: 'propdeps-eclipse'
 }
 
-dependencyUpdates.resolutionStrategy = {
-    componentSelection { rules ->
-        rules.all { ComponentSelection selection ->
-            boolean rejected = ['alpha', 'beta', 'b', 'rc', 'cr', 'm', 'ea', 'incubating', 'atlassian', 'snap'].any { qualifier ->
-                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\w\d-]*/
-            }
-            if (rejected) {
-                selection.reject("Ignore due to beta/alpha pattern: ${selection.candidate}")
-            }
-            if (selection.candidate.group == 'org.mockito' && selection.candidate.module == 'mockito-core' && selection.candidate.version != '1.10.19') {
-                selection.reject('Can not update mockito to current release because of spring is still depending on 1.x version.')
-            }
-        }
-    }
-}
-
 repositories {
     mavenCentral()
     maven { url 'http://repo.spring.io/libs-snapshot' }
 }
 
-idea {
-    project {
-        languageLevel = '1.8'
-        ipr.withXml { provider ->
-            provider.node.component.find { it.@name == 'VcsDirectoryMappings' }.mapping.@vcs = 'Git'
-        }
-    }
-}
-
-eclipse {
-    classpath {
-        //customizing the classes output directory:
-        defaultOutputDir = file('build/bin')
-
-        //default settings for downloading sources and Javadoc:
-        downloadSources = true
-        downloadJavadoc = false
-    }
-}
+apply from: "${rootDir}/gradle/root/versions.gradle"
+apply from: "${rootDir}/gradle/root/idea.gradle"
+apply from: "${rootDir}/gradle/root/eclipse.gradle"
+apply from: "${rootDir}/gradle/root/jacoco.gradle"
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
-    apply plugin: 'idea'
     apply plugin: 'maven'
-    apply plugin: 'jacoco'
     apply plugin: 'project-report'
     apply plugin: 'signing'
 
@@ -93,40 +53,16 @@ subprojects {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
-    dependencies {
-        optional 'org.springframework.boot:spring-boot-configuration-processor:' + springBootVersion
-    }
+    ext['thymeleaf.version'] = versions.thymeleaf
+    ext['thymeleaf-layout-dialect.version'] = versions.thymeleaf_layout_dialect
 
-    compileJava.dependsOn(processResources)
+    dependencies {
+        optional libraries.spring_boot_configuration_processor
+    }
 
     jar {
         manifest.attributes provider: 'gradle'
     }
-
-    jacoco {
-        toolVersion = '0.7.9'
-    }
-
-    jacocoTestReport {
-        reports {
-            xml.enabled = true
-            html.enabled = true
-        }
-    }
-
-    test {
-        // pass -Dspring.profiles.active=local and other system properties to the test task
-        systemProperties = System.properties
-        // jacoco needs this property when using it with subprojects
-        systemProperties['user.dir'] = workingDir
-
-        afterSuite { desc, result ->
-            if (!desc.parent) { // will match the outermost suite
-                println "Test Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
-            }
-        }
-    }
-    test.finalizedBy jacocoTestReport
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
@@ -140,49 +76,8 @@ subprojects {
 
     task allDeps(type: DependencyReportTask) {}
 
-    idea {
-        module {
-            iml {
-                withXml {
-                    def moduleRoot = it.asNode()
-                    def facetManager = moduleRoot.component.find { component -> component.'@name' == 'FacetManager' }
-                    if (!facetManager) {
-                        facetManager = moduleRoot.appendNode('component', [name: 'FacetManager'])
-                    }
-
-                    def springFacet = facetManager.facet.find { facet -> facet.'@type' == 'Spring' && facet.'@name' == 'Spring' }
-                    if (!springFacet) {
-                        springFacet = facetManager.appendNode('facet', [type: 'Spring', name: 'Spring'])
-                        springFacet.appendNode('configuration')
-                    }
-                }
-            }
-        }
-    }
-}
-
-def publishedProjects = subprojects.findAll { (!it.projectDir.name.contains('example')) }
-
-task jacocoMerge(type: JacocoMerge) {
-    publishedProjects.each { subproject ->
-        executionData subproject.tasks.withType(Test)
-    }
-}
-
-task jacocoRootReport(type: JacocoReport) {
-    dependsOn jacocoMerge
-
-    additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(publishedProjects.sourceSets.main.output)
-    executionData jacocoMerge.destinationFile
-
-    reports {
-        html.enabled = true
-        xml.enabled = true
-    }
-
-    doFirst {
-        executionData = files(executionData.findAll { it.exists() })
-    }
+    apply from: "${rootDir}/gradle/idea.gradle"
+    apply from: "${rootDir}/gradle/compile.gradle"
+    apply from: "${rootDir}/gradle/test.gradle"
+    apply from: "${rootDir}/gradle/jacoco.gradle"
 }

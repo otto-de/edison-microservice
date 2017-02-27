@@ -7,7 +7,6 @@ out
 *.iws
 *.iml
 *.ipr
-gradle*
 
 testsupport/testsupport.iml
 status/status.iml

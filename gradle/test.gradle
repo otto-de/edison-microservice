@@ -1,0 +1,22 @@
+tasks.withType(Test) {
+    // pass -Dspring.profiles.active=local and other system properties to the test task
+    systemProperties = System.properties
+    // jacoco needs this property when using it with subprojects
+    systemProperties['user.dir'] = workingDir
+
+    afterSuite { desc, result ->
+        if (!desc.parent) { // will match the outermost suite
+            println "Test Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+        }
+    }
+    options {
+        jvmArgs '-XX:SoftRefLRUPolicyMSPerMB=0', '-XX:+UseParallelGC', '-noverify'
+    }
+    testLogging {
+        events 'skipped', 'failed'
+        exceptionFormat 'full'
+        showCauses = true
+        showExceptions = true
+        showStackTraces = true
+    }
+}

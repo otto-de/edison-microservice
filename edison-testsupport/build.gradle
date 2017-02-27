@@ -1,9 +1,17 @@
 dependencies {
-    compileOnly libs.togglz
-    compileOnly libs.testTogglz
+    compileOnly libraries.togglz_servlet
+    compileOnly libraries.togglz_console
+    compileOnly libraries.togglz_spring_web
+    compileOnly test_libraries.togglz_testing
 
-    compile libs.springBoot
-    compile libs.testUnit
+    compile libraries.spring_boot
+    compile libraries.spring_boot_autoconfigure
+    compile test_libraries.junit
+    compile test_libraries.hamcrest_core
+    compile test_libraries.hamcrest_library
+    compile test_libraries.mockito_core
+    compile test_libraries.spring_test
+    compile test_libraries.spring_boot_starter_test
 }
 
 artifacts {

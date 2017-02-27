@@ -2,7 +2,7 @@ apply plugin: 'org.springframework.boot'
 
 dependencies {
     compile project(":edison-core")
-    compile libs.springBootDev
+    compile libraries.spring_boot_devtools
 
     testCompile project(":edison-testsupport")
 }

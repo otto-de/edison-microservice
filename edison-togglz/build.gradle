@@ -1,12 +1,10 @@
 dependencies {
     compile project(":edison-core")
-    compile libs.springBootWeb
-    compile libs.logging
-    compile libs.togglz
-    compile libs.jcip
-    compile 'com.unboundid:unboundid-ldapsdk-minimal-edition:3.2.1'
+    compile libraries.togglz_servlet
+    compile libraries.togglz_console
+    compile libraries.togglz_spring_web
+    compile libraries.unboundid_ldapsdk_minimal_edition
 
-    testCompile libs.testUnit
     testCompile project(":edison-testsupport")
 }
 

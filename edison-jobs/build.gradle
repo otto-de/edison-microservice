@@ -1,12 +1,11 @@
 dependencies {
-    compileOnly libs.asyncHttp
+    compileOnly libraries.async_http_client
 
     compile project(":edison-core")
 
     testCompile project(":edison-testsupport")
-    testCompile libs.jaywayJsonPath
-    testCompile libs.testUnit
-    testCompile libs.skyscreamer
+    testCompile test_libraries.json_path
+    testCompile test_libraries.jsonassert
 }
 
 artifacts {

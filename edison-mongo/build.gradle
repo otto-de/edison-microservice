@@ -3,15 +3,14 @@ dependencies {
     compileOnly project(":edison-togglz")
 
     compile project(":edison-core")
-    compile libs.springBoot
-    compile libs.logging
-    compile libs.jcip
-    compile libs.mongoDb
+    compile libraries.spring_boot
+    compile libraries.spring_boot_autoconfigure
+    compile libraries.mongodb_driver
 
     testCompile project(":edison-testsupport")
     testCompile project(":edison-jobs")
     testCompile project(":edison-togglz")
-    testCompile libs.fakeMongo
+    testCompile test_libraries.fongo
 }
 
 artifacts {
