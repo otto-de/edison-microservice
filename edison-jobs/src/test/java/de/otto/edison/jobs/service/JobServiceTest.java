@@ -45,9 +45,9 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class JobServiceTest {
 
-    public static final String HOSTNAME = "HOST";
-    public static final String JOB_ID = "JOB/ID";
-    public static final String JOB_TYPE = "JOB_TYPE";
+    private static final String HOSTNAME = "HOST";
+    private static final String JOB_ID = "JOB/ID";
+    private static final String JOB_TYPE = "JOB_TYPE";
 
     @Mock
     private ScheduledExecutorService executorService;
@@ -63,9 +63,7 @@ public class JobServiceTest {
     private UuidProvider uuidProviderMock;
     @Mock
     private JobMetaService jobMetaService;
-
-    JobService jobService;
-
+    private JobService jobService;
     private SystemInfo systemInfo;
     private Clock clock;
 
@@ -275,7 +273,7 @@ public class JobServiceTest {
         };
     }
 
-    private static class RunImmediately implements Answer {
+    private static class RunImmediately implements Answer<Object> {
         @Override
         public Object answer(InvocationOnMock invocation) throws Throwable {
             Runnable runnable = (Runnable) invocation.getArguments()[0];

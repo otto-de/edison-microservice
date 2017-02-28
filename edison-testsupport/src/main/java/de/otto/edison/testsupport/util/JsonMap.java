@@ -16,7 +16,7 @@ public class JsonMap {
         this.jsonObject = jsonObject;
     }
 
-    public static JsonMap jsonMapFrom(final Map map) {
+    public static JsonMap jsonMapFrom(final Map<?,?> map) {
         return new JsonMap(map);
     }
 

@@ -31,7 +31,7 @@ public class JobRunnerTest {
     @Mock
     private ScheduledExecutorService executor;
     @Mock
-    private ScheduledFuture scheduledJob;
+    private ScheduledFuture<?> scheduledJob;
     @Mock
     private JobEventPublisher jobEventPublisher;
     private JobRunner jobRunner;

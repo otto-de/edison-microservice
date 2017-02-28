@@ -45,6 +45,9 @@ public class PersistenceJobEventListener implements JobEventListener {
 
                 case SKIPPED:
                     jobService.markSkipped(event.getJobId());
+                    jobService.stopJob(event.getJobId());
+                    break;
+
                 case STOP:
                     jobService.stopJob(event.getJobId());
                     break;

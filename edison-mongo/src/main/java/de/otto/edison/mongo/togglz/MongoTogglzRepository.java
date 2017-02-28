@@ -111,7 +111,7 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
         // no indices
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Feature resolveEnumValue(String name) {
         final Class enumType = featureClassProvider.getFeatureClass();
         return (Feature) Enum.valueOf(enumType, name);

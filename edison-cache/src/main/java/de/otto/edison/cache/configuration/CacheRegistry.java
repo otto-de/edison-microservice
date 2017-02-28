@@ -7,5 +7,6 @@ import com.github.benmanes.caffeine.cache.Cache;
  */
 public interface CacheRegistry {
 
+    @SuppressWarnings("rawtypes")
     void registerCache(CaffeineCacheConfig config, Cache cache);
 }
