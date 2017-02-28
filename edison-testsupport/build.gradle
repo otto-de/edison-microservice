@@ -20,10 +20,6 @@ artifacts {
     archives sourcesJar
 }
 
-signing {
-    sign configurations.archives
-}
-
 uploadArchives {
     repositories {
         mavenDeployer {

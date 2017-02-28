@@ -12,29 +12,20 @@ buildscript {
     }
 }
 
-configure(allprojects) {
-    apply plugin: 'propdeps'
-    apply plugin: 'propdeps-maven'
-    apply plugin: 'propdeps-idea'
-    apply plugin: 'propdeps-eclipse'
-}
-
 repositories {
     mavenCentral()
     maven { url 'http://repo.spring.io/libs-snapshot' }
 }
 
+apply from: "${rootDir}/gradle/root/propdeps.gradle"
 apply from: "${rootDir}/gradle/root/versions.gradle"
 apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
 apply from: "${rootDir}/gradle/root/jacoco.gradle"
 
 subprojects {
-    apply plugin: 'java'
     apply plugin: 'eclipse'
-    apply plugin: 'maven'
     apply plugin: 'project-report'
-    apply plugin: 'signing'
 
     // Major Release: X.0.0: Breaking Changes. Should be avoided if possible, or planned for future release.
     // Minor Release: 0.X.0: Additional Features, updates from minor releases in Spring
@@ -60,24 +51,12 @@ subprojects {
         optional libraries.spring_boot_configuration_processor
     }
 
-    jar {
-        manifest.attributes provider: 'gradle'
-    }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from 'build/docs/javadoc'
-    }
-
-    task sourcesJar(type: Jar) {
-        from sourceSets.main.allSource
-        classifier = 'sources'
-    }
-
     task allDeps(type: DependencyReportTask) {}
 
     apply from: "${rootDir}/gradle/idea.gradle"
     apply from: "${rootDir}/gradle/compile.gradle"
     apply from: "${rootDir}/gradle/test.gradle"
     apply from: "${rootDir}/gradle/jacoco.gradle"
+    apply from: "${rootDir}/gradle/maven.gradle"
+    apply from: "${rootDir}/gradle/signing.gradle"
 }

@@ -1,4 +1,4 @@
-rootProject.name = 'edison'
+rootProject.name = 'edison-microservice'
 
 include "edison-testsupport"
 include "edison-mongo"

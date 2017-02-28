@@ -1,0 +1,15 @@
+apply plugin: 'maven'
+
+jar {
+    manifest.attributes provider: 'gradle'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
