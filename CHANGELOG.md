@@ -2,6 +2,9 @@
 
 ## 1.0.0.RC9
 
+**New Features:**
+* **[edison-mongo]** Extend @ConditionalOnMissingBean for mongoClient & mongoDatabase by name matcher
+
 **Maintenance:**
 * **[edison-*]** Add gradle task to determine possible dependency updates (see [README.md](README.md##dependency-update))
 * **[edison-*]** Gradle test tasks now will generate a coverage report 

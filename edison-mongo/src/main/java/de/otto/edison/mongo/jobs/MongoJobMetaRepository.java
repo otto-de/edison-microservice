@@ -1,26 +1,29 @@
 package de.otto.edison.mongo.jobs;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
-import de.otto.edison.jobs.domain.JobMeta;
-import de.otto.edison.jobs.repository.JobMetaRepository;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-
-import java.util.Map;
-import java.util.Set;
+import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
 import static com.mongodb.client.model.Updates.set;
 import static com.mongodb.client.model.Updates.unset;
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
+
+import java.util.Map;
+import java.util.Set;
+
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+
+import de.otto.edison.jobs.domain.JobMeta;
+import de.otto.edison.jobs.repository.JobMetaRepository;
 
 /**
  * {@inheritDoc}
@@ -38,8 +41,8 @@ public class MongoJobMetaRepository implements JobMetaRepository {
 
     private final MongoCollection<Document> collection;
 
-    public MongoJobMetaRepository(final MongoDatabase database, final String jobMetaCollectionName) {
-        this.collection = database.getCollection(jobMetaCollectionName);
+    public MongoJobMetaRepository(final MongoDatabase mongoDatabase, final String jobMetaCollectionName) {
+        this.collection = mongoDatabase.getCollection(jobMetaCollectionName);
     }
 
     @Override
@@ -127,7 +130,7 @@ public class MongoJobMetaRepository implements JobMetaRepository {
     }
 
     @Override
-    public boolean createValue(String jobType, String key, String value) {
+    public boolean createValue(final String jobType, final String key, final String value) {
 
         final Bson filter = and(
                 eq(ID, jobType),

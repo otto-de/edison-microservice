@@ -1,20 +1,24 @@
 package de.otto.edison.mongo;
 
-import com.github.fakemongo.Fongo;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
-import org.junit.Before;
-import org.junit.Test;
+import static java.util.stream.Collectors.toList;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.IsNot.not;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.IsNot.not;
+import org.bson.Document;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.github.fakemongo.Fongo;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 public class AbstractMongoRepositoryTest {
 
@@ -22,19 +26,19 @@ public class AbstractMongoRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        Fongo fongo = new Fongo("inmemory-mongodb");
-        MongoDatabase database = fongo.getDatabase("db");
+        final Fongo fongo = new Fongo("inmemory-mongodb");
+        final MongoDatabase mongoDatabase = fongo.getDatabase("db");
 
-        testee = new TestRepository(database);
+        testee = new TestRepository(mongoDatabase);
     }
 
     @Test
     public void shouldUpdateExistingDocument() throws Exception {
         // given
-        TestObject testObject = new TestObject("someId", "someValue");
+        final TestObject testObject = new TestObject("someId", "someValue");
         testee.create(testObject);
 
-        TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue");
+        final TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue");
 
         // when
         final boolean updated = testee.update(testObjectToUpdate);
@@ -52,7 +56,7 @@ public class AbstractMongoRepositoryTest {
     public void shouldNotUpdateMissingDocument() throws Exception {
         // given
 
-        TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue");
+        final TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue");
 
         // when
         final boolean updated = testee.update(testObjectToUpdate);
@@ -65,15 +69,15 @@ public class AbstractMongoRepositoryTest {
     @Test
     public void shouldUpdateIfETagMatch() throws Exception {
         // given
-        TestObject testObject = new TestObject("someId", "someValue");
+        final TestObject testObject = new TestObject("someId", "someValue");
         testee.create(testObject);
 
-        String etagFromCreated = testee.findOne("someId").get().eTag;
-        TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue", etagFromCreated);
+        final String etagFromCreated = testee.findOne("someId").get().eTag;
+        final TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue", etagFromCreated);
 
         // when
         final UpdateIfMatchResult updateIfMatchResult = testee.updateIfMatch(testObjectToUpdate, etagFromCreated);
-        TestObject updatedTestObject = testee.findOne("someId").get();
+        final TestObject updatedTestObject = testee.findOne("someId").get();
 
         // then
         assertThat(updateIfMatchResult, is(UpdateIfMatchResult.OK));
@@ -86,7 +90,7 @@ public class AbstractMongoRepositoryTest {
     @Test
     public void shouldNotUpdateIfEtagNotMatch() throws Exception {
         // given
-        TestObject testObject = new TestObject("someId", "someValue", "someEtagWhichIsNotInTheDb");
+        final TestObject testObject = new TestObject("someId", "someValue", "someEtagWhichIsNotInTheDb");
         testee.create(testObject);
 
         // when
@@ -99,7 +103,7 @@ public class AbstractMongoRepositoryTest {
     @Test
     public void shouldNotUpdateIfEtagNotExists() throws Exception {
         // given
-        TestObject testObject = new TestObject("someId", "someValue");
+        final TestObject testObject = new TestObject("someId", "someValue");
 
         // when
         final UpdateIfMatchResult updated = testee.updateIfMatch(testObject, "someETag");
@@ -111,10 +115,10 @@ public class AbstractMongoRepositoryTest {
     @Test(expected = NullPointerException.class)
     public void shouldNotCreateOrUpdateWithMissingId() throws Exception {
         // given
-        TestObject testObject = new TestObject(null, "someValue");
+        final TestObject testObject = new TestObject(null, "someValue");
 
         // when
-        TestObject resultingObject = testee.createOrUpdate(testObject);
+        final TestObject resultingObject = testee.createOrUpdate(testObject);
 
         // then
         // NullPointerException is thrown
@@ -123,10 +127,10 @@ public class AbstractMongoRepositoryTest {
     @Test(expected = NullPointerException.class)
     public void shouldNotCreateWithMissingId() throws Exception {
         // given
-        TestObject testObject = new TestObject(null, "someValue");
+        final TestObject testObject = new TestObject(null, "someValue");
 
         // when
-        TestObject resultingObject = testee.create(testObject);
+        final TestObject resultingObject = testee.create(testObject);
 
         // then
         // NullPointerException is thrown
@@ -140,7 +144,7 @@ public class AbstractMongoRepositoryTest {
         // NullPointerException is thrown
     }
 
-    private void createTestObjects(String... values) {
+    private void createTestObjects(final String... values) {
         Arrays.stream(values)
                 .map(value -> new TestObject(value, value))
                 .forEach(testee::create);
@@ -151,7 +155,7 @@ public class AbstractMongoRepositoryTest {
         createTestObjects("testObject01", "testObject02", "testObject03", "testObject04", "testObject05", "testObject06");
 
         // when
-        List<TestObject> foundObjects = testee.findAll();
+        final List<TestObject> foundObjects = testee.findAll();
 
         // then
         assertThat(foundObjects, hasSize(6));
@@ -168,7 +172,7 @@ public class AbstractMongoRepositoryTest {
         createTestObjects("testObject01", "testObject02", "testObject03", "testObject04", "testObject05", "testObject06");
 
         // when
-        List<TestObject> foundObjects = testee.findAllAsStream().collect(toList());
+        final List<TestObject> foundObjects = testee.findAllAsStream().collect(toList());
 
         // then
         assertThat(foundObjects, hasSize(6));
@@ -185,7 +189,7 @@ public class AbstractMongoRepositoryTest {
         createTestObjects("testObject01", "testObject02", "testObject03", "testObject04", "testObject05", "testObject06");
 
         // when
-        List<TestObject> foundObjects = testee.findAll(2, 3);
+        final List<TestObject> foundObjects = testee.findAll(2, 3);
 
         // then
         assertThat(foundObjects, hasSize(3));
@@ -199,7 +203,7 @@ public class AbstractMongoRepositoryTest {
         createTestObjects("testObject01", "testObject02", "testObject03", "testObject04", "testObject05", "testObject06");
 
         // when
-        List<TestObject> foundObjects = testee.findAllAsStream(2, 3).collect(toList());
+        final List<TestObject> foundObjects = testee.findAllAsStream(2, 3).collect(toList());
 
         // then
         assertThat(foundObjects, hasSize(3));
@@ -214,8 +218,8 @@ public class AbstractMongoRepositoryTest {
 
         private final MongoCollection<Document> collection;
 
-        public TestRepository(MongoDatabase database) {
-            this.collection = database.getCollection("test");
+        public TestRepository(final MongoDatabase mongoDatabase) {
+            this.collection = mongoDatabase.getCollection("test");
         }
 
         @Override
@@ -224,13 +228,13 @@ public class AbstractMongoRepositoryTest {
         }
 
         @Override
-        protected String keyOf(TestObject value) {
+        protected String keyOf(final TestObject value) {
             return value.id;
         }
 
         @Override
-        protected Document encode(TestObject value) {
-            Document document = new Document();
+        protected Document encode(final TestObject value) {
+            final Document document = new Document();
 
             if (value.id != null) {
                 document.append("_id", value.id);
@@ -242,7 +246,7 @@ public class AbstractMongoRepositoryTest {
         }
 
         @Override
-        protected TestObject decode(Document document) {
+        protected TestObject decode(final Document document) {
             return new TestObject(
                     document.containsKey("_id") ? document.get("_id").toString() : null,
                     document.getString("value"),
@@ -257,18 +261,18 @@ public class AbstractMongoRepositoryTest {
 
     public class TestObject {
 
-        private String id;
-        private String value;
+        private final String id;
+        private final String value;
 
-        private String eTag;
+        private final String eTag;
 
-        protected TestObject(String id, String value, String eTag) {
+        protected TestObject(final String id, final String value, final String eTag) {
             this.eTag = eTag;
             this.id = id;
             this.value = value;
         }
 
-        protected TestObject(String id, String value) {
+        protected TestObject(final String id, final String value) {
             this(id, value, null);
         }
 

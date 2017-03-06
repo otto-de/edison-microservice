@@ -1,9 +1,10 @@
 package de.otto.edison.mongo.togglz;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import de.otto.edison.mongo.AbstractMongoRepository;
-import de.otto.edison.togglz.FeatureClassProvider;
+import static org.springframework.util.StringUtils.isEmpty;
+
+import java.util.Map;
+import java.util.Optional;
+
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +13,11 @@ import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.UserProvider;
 
-import java.util.Map;
-import java.util.Optional;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
-import static org.springframework.util.StringUtils.isEmpty;
+import de.otto.edison.mongo.AbstractMongoRepository;
+import de.otto.edison.togglz.FeatureClassProvider;
 
 public class MongoTogglzRepository extends AbstractMongoRepository<String, FeatureState> implements StateRepository {
 
@@ -30,11 +32,11 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
     private final FeatureClassProvider featureClassProvider;
     private final UserProvider userProvider;
 
-    public MongoTogglzRepository(final MongoDatabase database,
+    public MongoTogglzRepository(final MongoDatabase mongoDatabase,
                                  final FeatureClassProvider featureClassProvider,
                                  final UserProvider userProvider) {
         this.featureClassProvider = featureClassProvider;
-        this.collection = database.getCollection("togglz");
+        this.collection = mongoDatabase.getCollection("togglz");
         this.userProvider = userProvider;
     }
 
@@ -47,7 +49,7 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
      */
     @Override
     public FeatureState getFeatureState(final Feature feature) {
-        Optional<FeatureState> featureState = findOne(feature.name());
+        final Optional<FeatureState> featureState = findOne(feature.name());
         return featureState.orElse(null);
 
     }
@@ -78,7 +80,7 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
 
     @Override
     protected Document encode(final FeatureState value) {
-        Document document = new Document();
+        final Document document = new Document();
 
         document.append(NAME, value.getFeature().name());
         document.append(ENABLED, value.isEnabled());
@@ -93,13 +95,12 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
         final String name = document.getString(NAME);
         final Boolean enabled = document.getBoolean(ENABLED);
         final String strategy = document.getString(STRATEGY);
-        @SuppressWarnings("unchecked")
         final Map<String, String> parameters = document.get(PARAMETERS, Map.class);
 
         final FeatureState featureState = new FeatureState(resolveEnumValue(name));
         featureState.setEnabled(enabled);
         featureState.setStrategyId(strategy);
-        for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+        for (final Map.Entry<String, String> parameter : parameters.entrySet()) {
             featureState.setParameter(parameter.getKey(), parameter.getValue());
         }
 
@@ -111,8 +112,7 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
         // no indices
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private Feature resolveEnumValue(String name) {
+    private Feature resolveEnumValue(final String name) {
         final Class enumType = featureClassProvider.getFeatureClass();
         return (Feature) Enum.valueOf(enumType, name);
     }
