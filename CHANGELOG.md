@@ -7,6 +7,9 @@
 * **[edison-*]** Gradle test tasks now will generate a coverage report 
 * **[edison-*]** Minor dependency updates
 
+**New Features:**
+* **[edison-jobs]** Add the cleanup strategy `DeleteSkippedJobs` to remove skipped jobs first. Configure with property `edison.jobs.cleanup.number-of-skipped-jobs-to-keep`
+
 ## 1.0.0.RC8
 
 **Bugfixes:**

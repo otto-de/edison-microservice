@@ -31,8 +31,6 @@ public class KeepLastJobsTest {
     @Test
     public void shouldRemoveOldestJobs() {
         // given
-        KeepLastJobs strategy = new KeepLastJobs(2);
-
         JobInfo job = builder()
                 .setJobId("foo")
                 .setJobType("TYPE")
@@ -47,8 +45,8 @@ public class KeepLastJobsTest {
             createOrUpdate(job.copy().setJobId("foobar").setStarted(now(earlier)).build());
             createOrUpdate(job.copy().setJobId("bar").setStarted(now(muchEarlier)).build());
         }};
+        KeepLastJobs strategy = new KeepLastJobs(repository, 2);
 
-        strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
@@ -59,8 +57,6 @@ public class KeepLastJobsTest {
     @Test
     public void shouldOnlyRemoveStoppedJobs() {
         // given
-        KeepLastJobs strategy = new KeepLastJobs(1);
-
         JobInfo job = builder()
                 .setJobId("foo")
                 .setJobType("TYPE")
@@ -73,8 +69,8 @@ public class KeepLastJobsTest {
             createOrUpdate(job.copy().setStarted(now(earlier)).setJobId("foobar").setStarted(now(earlier)).build());
             createOrUpdate(job.copy().setStarted(now(muchEarlier)).setJobId("bar").setStopped(now(now)).build());
         }};
+        KeepLastJobs strategy = new KeepLastJobs(repository, 1);
 
-        strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
@@ -88,8 +84,6 @@ public class KeepLastJobsTest {
     @Test
     public void shouldKeepAtLeastOneSuccessfulJob() {
         // given
-        KeepLastJobs strategy = new KeepLastJobs(2);
-
         JobInfo job = builder()
                 .setJobId("foobar")
                 .setJobType("TYPE")
@@ -106,8 +100,8 @@ public class KeepLastJobsTest {
             createOrUpdate(job.copy().setJobId("barzig").setStarted(now(evenEarlier)).build());
             createOrUpdate(job.copy().setJobId("foozification").setStarted(now(evenEarlier)).build());
         }};
+        KeepLastJobs strategy = new KeepLastJobs(repository, 2);
 
-        strategy.setJobRepository(repository);
         // when
         strategy.doCleanUp();
         // then
@@ -122,8 +116,6 @@ public class KeepLastJobsTest {
     @Test
     public void shouldKeepNJobsOfEachTypePresentAndNotRemoveRunningJobs() {
         // given
-        KeepLastJobs strategy = new KeepLastJobs(2);
-
         JobInfo stoppedJob = builder()
                 .setJobId("foo1")
                 .setJobType("TYPE1")
@@ -141,7 +133,8 @@ public class KeepLastJobsTest {
             createOrUpdate(stoppedJob.copy().setJobId("bar2").setJobType("TYPE2").setStopped(now(muchEarlier)).setStarted(now(muchEarlier)).build());
             createOrUpdate(stoppedJob.copy().setJobId("bar3").setJobType("TYPE2").setStopped(now(evenEarlier)).setStarted(now(evenEarlier)).build());
         }};
-        strategy.setJobRepository(repository);
+        KeepLastJobs strategy = new KeepLastJobs(repository, 2);
+
         // when
         strategy.doCleanUp();
         // then
@@ -153,7 +146,6 @@ public class KeepLastJobsTest {
     @Test
     public void shouldBeOkToKeepAllJobs() {
         // given
-        KeepLastJobs strategy = new KeepLastJobs(2);
         JobRepository repository = new InMemJobRepository() {{
             createOrUpdate(builder()
                     .setJobId("foo1")
@@ -164,7 +156,8 @@ public class KeepLastJobsTest {
                     .setStatus(OK)
                     .build());
         }};
-        strategy.setJobRepository(repository);
+        KeepLastJobs strategy = new KeepLastJobs(repository, 2);
+
         // when
         strategy.doCleanUp();
         // then

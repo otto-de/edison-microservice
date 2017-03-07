@@ -36,14 +36,10 @@ public class KeepLastJobs implements JobCleanupStrategy {
     /**
      * @param numberOfJobsToKeep the number of jobs that are kept
      */
-    public KeepLastJobs(final int numberOfJobsToKeep) {
+    public KeepLastJobs(final JobRepository jobRepository, final int numberOfJobsToKeep) {
+        this.jobRepository = jobRepository;
         this.numberOfJobsToKeep = numberOfJobsToKeep;
         LOG.info("KeepLastJobs strategy configured with numberOfJobsToKeep='{}'", numberOfJobsToKeep);
-    }
-
-    @Autowired
-    public void setJobRepository(final JobRepository jobRepository) {
-        this.jobRepository = jobRepository;
     }
 
     /**

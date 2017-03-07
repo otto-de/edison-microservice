@@ -66,6 +66,11 @@ public class JobsProperties {
         @Min(1)
         private int numberOfJobsToKeep = 100;
         /**
+         * The number of skipped jobs to keep by strategies like DeleteSkippedJobs to clean up old jobs.
+         */
+        @Min(1)
+        private int numberOfSkippedJobsToKeep = 10;
+         /**
          * Number of seconds without update after which a job is considered to be dead.
          */
         @Min(1)
@@ -77,6 +82,14 @@ public class JobsProperties {
 
         public void setNumberOfJobsToKeep(int numberOfJobsToKeep) {
             this.numberOfJobsToKeep = numberOfJobsToKeep;
+        }
+
+        public int getNumberOfSkippedJobsToKeep() {
+            return numberOfSkippedJobsToKeep;
+        }
+
+        public void setNumberOfSkippedJobsToKeep(int numberOfSkippedJobsToKeep) {
+            this.numberOfSkippedJobsToKeep = numberOfSkippedJobsToKeep;
         }
 
         public int getMarkDeadAfter() {

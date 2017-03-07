@@ -3,6 +3,7 @@ package de.otto.edison.jobs.configuration;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.JobMetaRepository;
+import de.otto.edison.jobs.repository.cleanup.DeleteSkippedJobs;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
@@ -88,14 +89,20 @@ public class JobsConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(KeepLastJobs.class)
-    public KeepLastJobs keepLastJobsStrategy() {
-        return new KeepLastJobs(jobsProperties.getCleanup().getNumberOfJobsToKeep());
+    public KeepLastJobs keepLastJobsStrategy(final JobRepository jobRepository) {
+        return new KeepLastJobs(jobRepository, jobsProperties.getCleanup().getNumberOfJobsToKeep());
     }
 
     @Bean
     @ConditionalOnMissingBean(StopDeadJobs.class)
     public StopDeadJobs deadJobStrategy(final JobService jobService) {
         return new StopDeadJobs(jobService, jobsProperties.getCleanup().getMarkDeadAfter());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(DeleteSkippedJobs.class)
+    public DeleteSkippedJobs deleteSkippedJobsStrategy(final JobRepository jobRepository) {
+        return new DeleteSkippedJobs(jobRepository, jobsProperties.getCleanup().getNumberOfSkippedJobsToKeep());
     }
 
     @Bean
