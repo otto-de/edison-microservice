@@ -49,7 +49,7 @@ public class BarJob implements JobRunnable {
         try {
             jobEventPublisher.info("Still doing some hard work...");
             jobEventPublisher.skipped();
-        } catch (final InterruptedException e) {
+        } catch (final Exception e) {
             jobEventPublisher.error(e.getMessage());
         }
     }
