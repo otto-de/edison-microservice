@@ -22,7 +22,7 @@ public class BarJob implements JobRunnable {
         return retryableFixedDelayJobDefinition(
                 "Bar",
                 "Bar Job",
-                "An example job that is running for a while and has a long long long long long long long long long long long long long long long long long long long long description.",
+                "An example job that is running for a while and skip and has a long long long long long long long long long long long long long long long long long long long long description.",
                 ofMinutes(2),
                 1,
                 3,
@@ -48,7 +48,7 @@ public class BarJob implements JobRunnable {
     private void doSomeHardWork(final JobEventPublisher jobEventPublisher) {
         try {
             jobEventPublisher.info("Still doing some hard work...");
-            sleep(new Random(42).nextInt(2000));
+            jobEventPublisher.skipped();
         } catch (final InterruptedException e) {
             jobEventPublisher.error(e.getMessage());
         }

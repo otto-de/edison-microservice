@@ -2,6 +2,8 @@ package de.otto.edison.example.configuration;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
+
+import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.service.JobMutexGroup;
@@ -27,8 +29,8 @@ public class ExampleJobsConfiguration {
     }
 
     @Bean
-    public KeepLastJobs keepLast10FooJobsCleanupStrategy() {
-        return new KeepLastJobs(10);
+    public KeepLastJobs keepLast10FooJobsCleanupStrategy(final JobRepository jobRepository) {
+        return new KeepLastJobs(jobRepository, 10);
     }
 
     @Bean
