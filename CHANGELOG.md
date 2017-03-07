@@ -2,6 +2,9 @@
 
 ## 1.0.0.RC9
 
+**Breaking Changes:**
+* **[edison-jobs]** Add the cleanup strategy `DeleteSkippedJobs` to remove skipped jobs first. Configure with property `edison.jobs.cleanup.number-of-skipped-jobs-to-keep`
+
 **New Features:**
 * **[edison-mongo]** Extend @ConditionalOnMissingBean for mongoClient & mongoDatabase by name matcher
 
@@ -9,9 +12,6 @@
 * **[edison-*]** Add gradle task to determine possible dependency updates (see [README.md](README.md##dependency-update))
 * **[edison-*]** Gradle test tasks now will generate a coverage report 
 * **[edison-*]** Minor dependency updates
-
-**New Features:**
-* **[edison-jobs]** Add the cleanup strategy `DeleteSkippedJobs` to remove skipped jobs first. Configure with property `edison.jobs.cleanup.number-of-skipped-jobs-to-keep`
 
 ## 1.0.0.RC8
 
