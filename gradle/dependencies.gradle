@@ -14,7 +14,7 @@ ext {
             thymeleaf                        : '3.0.3.RELEASE',
             thymeleaf_layout_dialect         : '2.2.0',
             javax_servlet_api                : '3.1.0',
-            togglz                           : '2.4.0.Final',
+            togglz                           : '2.4.1.Final',
             mongodb_driver                   : '3.4.2',
             caffeine                         : '2.4.0',
             json_path                        : '2.2.0',
