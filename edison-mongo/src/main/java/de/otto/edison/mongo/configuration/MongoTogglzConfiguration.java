@@ -1,7 +1,8 @@
 package de.otto.edison.mongo.configuration;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
+import com.mongodb.client.MongoDatabase;
+import de.otto.edison.mongo.togglz.MongoTogglzRepository;
+import de.otto.edison.togglz.FeatureClassProvider;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
@@ -9,10 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.UserProvider;
 
-import com.mongodb.client.MongoDatabase;
-
-import de.otto.edison.mongo.togglz.MongoTogglzRepository;
-import de.otto.edison.togglz.FeatureClassProvider;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
 @ConditionalOnClass(name = "de.otto.edison.togglz.configuration.TogglzConfiguration")
