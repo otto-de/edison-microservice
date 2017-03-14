@@ -3,7 +3,8 @@
 ## 1.0.0.RC9
 
 **New Features:**
-* **[edison-jobs]** Add the cleanup strategy `DeleteSkippedJobs` to remove skipped jobs first. Configure with property `edison.jobs.cleanup.number-of-skipped-jobs-to-keep`
+* **[edison-jobs]** Add the cleanup strategy `DeleteSkippedJobs` to remove skipped jobs first. Configure with property
+`edison.jobs.cleanup.number-of-skipped-jobs-to-keep`
 * **[edison-mongo]** Extend @ConditionalOnMissingBean for mongoClient & mongoDatabase by name matcher
 
 **Maintenance:**

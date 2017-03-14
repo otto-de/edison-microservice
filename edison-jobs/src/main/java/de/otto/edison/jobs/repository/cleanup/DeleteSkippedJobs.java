@@ -26,7 +26,7 @@ import de.otto.edison.jobs.repository.cleanup.JobCleanupStrategy;
  * <p>
  *
  * @author Peter Fouquet
- * @since 06.03.15
+ * @since 1.0.0
  */
 public class DeleteSkippedJobs implements JobCleanupStrategy {
 

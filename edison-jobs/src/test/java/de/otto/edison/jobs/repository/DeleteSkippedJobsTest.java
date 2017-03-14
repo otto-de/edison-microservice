@@ -27,7 +27,6 @@ public class DeleteSkippedJobsTest {
     private final Clock now = fixed(Instant.now(), systemDefault());
     private final Clock earlier = fixed(Instant.now().minusSeconds(1), systemDefault());
     private final Clock muchEarlier = fixed(Instant.now().minusSeconds(10), systemDefault());
-    private final Clock evenEarlier = fixed(Instant.now().minusSeconds(20), systemDefault());
 
     @Test
     public void shouldRemoveOldestJobs() {

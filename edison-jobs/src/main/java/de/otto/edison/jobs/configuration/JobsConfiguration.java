@@ -48,12 +48,10 @@ public class JobsConfiguration {
 
     public static final Logger LOG = LoggerFactory.getLogger(JobsConfiguration.class);
 
-    private final JobMutexGroups mutexGroups;
     private final JobsProperties jobsProperties;
 
     @Autowired
-    public JobsConfiguration(final JobsProperties jobsProperties, final JobMutexGroups jobMutexGroups) {
-        this.mutexGroups = jobMutexGroups;
+    public JobsConfiguration(final JobsProperties jobsProperties) {
         this.jobsProperties = jobsProperties;
         final Map<String, String> calculator = this.jobsProperties.getStatus().getCalculator();
         if (!calculator.containsKey("default")) {
