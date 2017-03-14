@@ -15,7 +15,7 @@ Many of otto.de's microservices make use of the [Caffeine](https://github.com/be
     }
 ```
 
-This will provided you with a transitive dependency to com.github.ben-manes.caffeine:caffeine:<version>.
+This will provide you with a transitive dependency to com.github.ben-manes.caffeine:caffeine:<version>.
  
 *Configure your Caffeine caches*:
 
