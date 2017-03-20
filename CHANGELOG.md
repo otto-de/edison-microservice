@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.0.1-SNAPSHOT
+**New Features:**
+* **[edison-mongo]** Add @ConditionalOnMissingBean to MongoTogglzRepository
+
 ## 1.0.0.RC9
 
 **New Features:**
