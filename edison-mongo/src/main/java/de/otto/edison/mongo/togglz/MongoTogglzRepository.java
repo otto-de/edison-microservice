@@ -1,24 +1,24 @@
 package de.otto.edison.mongo.togglz;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
-import java.util.Map;
-import java.util.Optional;
-
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import de.otto.edison.mongo.AbstractMongoRepository;
+import de.otto.edison.togglz.FeatureClassProvider;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.UserProvider;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import java.util.Map;
+import java.util.Optional;
 
-import de.otto.edison.mongo.AbstractMongoRepository;
-import de.otto.edison.togglz.FeatureClassProvider;
+import static org.springframework.util.StringUtils.isEmpty;
 
+@ConditionalOnMissingBean(StateRepository.class)
 public class MongoTogglzRepository extends AbstractMongoRepository<String, FeatureState> implements StateRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoTogglzRepository.class);
