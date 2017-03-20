@@ -20,7 +20,6 @@ Feel free to contact any of us if you have any questions or need help!
 * [Guido Steinacker](https://github.com/gsteinacker) aka "The Author"
 * [Matthias Bargmann](https://github.com/mazzeb)
 * [Peter Fouquet](https://github.com/pfouquet1)
-* [Simon Monecke](https://github.com/SimonMonecke)
 * [Benedikt Stemmildt](https://github.com/BeneStem)
 
 Our colleagues at OTTO can use the chat group "edison-microservice" to contact us.
