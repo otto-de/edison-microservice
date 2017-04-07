@@ -1,30 +1,35 @@
 package de.otto.edison.mongo;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.FindOneAndReplaceOptions;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.DeleteResult;
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
-import javax.annotation.PostConstruct;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.ReturnDocument.AFTER;
+
+import static de.otto.edison.mongo.UpdateIfMatchResult.CONCURRENTLY_MODIFIED;
+import static de.otto.edison.mongo.UpdateIfMatchResult.NOT_FOUND;
+import static de.otto.edison.mongo.UpdateIfMatchResult.OK;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.ReturnDocument.AFTER;
-import static de.otto.edison.mongo.UpdateIfMatchResult.*;
-import static java.util.Objects.isNull;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
+import javax.annotation.PostConstruct;
+
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.model.UpdateOptions;
 
 public abstract class AbstractMongoRepository<K, V> {
 
-    protected static final String ID = "_id";
-    protected static final String ETAG = "etag";
+    public static final String ID = "_id";
+    public static final String ETAG = "etag";
 
     private static final boolean DISABLE_PARALLEL_STREAM_PROCESSING = false;
 
@@ -79,7 +84,7 @@ public abstract class AbstractMongoRepository<K, V> {
     }
 
     public V createOrUpdate(final V value) {
-        Document doc = encode(value);
+        final Document doc = encode(value);
         collection().replaceOne(byId(keyOf(value)), doc, new UpdateOptions().upsert(true));
         return decode(doc);
     }
@@ -87,7 +92,7 @@ public abstract class AbstractMongoRepository<K, V> {
     public V create(final V value) {
         final K key = keyOf(value);
         if (key != null) {
-            Document doc = encode(value);
+            final Document doc = encode(value);
             collection().insertOne(doc);
             return decode(doc);
         } else {

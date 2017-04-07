@@ -3,6 +3,7 @@
 ## 1.0.1-SNAPSHOT
 **New Features:**
 * **[edison-mongo]** Add @ConditionalOnMissingBean to MongoTogglzRepository
+* **[edison-mongo]** Make ID and ETAG constants public to be able to access them from outside
 
 ## 1.0.0.RC9
 
