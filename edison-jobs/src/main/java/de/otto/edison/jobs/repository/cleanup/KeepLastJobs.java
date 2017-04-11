@@ -34,6 +34,7 @@ public class KeepLastJobs implements JobCleanupStrategy {
     private JobRepository jobRepository;
 
     /**
+     * @param jobRepository the JobRepository instance used to fetch job infos
      * @param numberOfJobsToKeep the number of jobs that are kept
      */
     public KeepLastJobs(final JobRepository jobRepository, final int numberOfJobsToKeep) {

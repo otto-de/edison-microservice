@@ -191,6 +191,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                 document.getString(JobStructure.HOSTNAME.key()));
     }
 
+    @SuppressWarnings("unchecked")
     private List<JobMessage> getMessagesFrom(final Document document) {
         final List<Document> messages = (List<Document>) document.get(JobStructure.MESSAGES.key());
         if (messages != null) {

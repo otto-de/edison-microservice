@@ -91,6 +91,7 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected FeatureState decode(final Document document) {
         final String name = document.getString(NAME);
         final Boolean enabled = document.getBoolean(ENABLED);
@@ -112,6 +113,7 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
         // no indices
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Feature resolveEnumValue(final String name) {
         final Class enumType = featureClassProvider.getFeatureClass();
         return (Feature) Enum.valueOf(enumType, name);

@@ -37,6 +37,7 @@ public class DeleteSkippedJobs implements JobCleanupStrategy {
     private JobRepository jobRepository;
 
     /**
+     * @param jobRepository the JobRepository instance used to fetch job infos
      * @param numberOfJobsToKeep the number of jobs that are kept
      */
     public DeleteSkippedJobs(final JobRepository jobRepository, final int numberOfJobsToKeep) {
