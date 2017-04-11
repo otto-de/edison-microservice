@@ -26,3 +26,10 @@ edison:
             business-contact: edison-team@example.org
             name: Edison Team
             technical-contact: edison-dev@example.org
+    ldap:
+        enabled: true
+        host: ldap.lhotse.ov.otto.de
+        port: 389
+        base-dn: ou=otto,ou=people,dc=lhotse,dc=otto,dc=de
+        rdn-identifier: uid
+        whitelisted-paths: /internal/health,/internal/status
