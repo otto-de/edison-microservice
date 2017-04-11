@@ -2,6 +2,7 @@ package de.otto.edison.metrics.configuration;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Min;
  * @since 1.0.0
  */
 @ConfigurationProperties(prefix = "edison.metrics")
+@Validated
 public class MetricsProperties {
     @Valid
     private Graphite graphite;

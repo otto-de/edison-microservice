@@ -3,6 +3,7 @@ package de.otto.edison.togglz.configuration;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
 
@@ -13,6 +14,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  * Properties used to configure the LDAP authentication of the Togglz Console.
  */
 @ConfigurationProperties(prefix = "edison.togglz.console.ldap")
+@Validated
 public class TogglzLdapProperties {
 
     private static final Logger LOG = getLogger(TogglzLdapProperties.class);

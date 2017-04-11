@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -14,6 +15,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @ConfigurationProperties(prefix = "edison.jobs")
+@Validated
 public class JobsProperties {
     /** Enables / disabled the support for external triggers (->Edison JobTrigger). If false, the job controllers are not available. */
     private boolean externalTrigger = true;

@@ -2,6 +2,7 @@ package de.otto.edison.metrics.load;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.Min;
  * Configuration used to configure the {@link LoadDetector} of Edison services.
  */
 @ConfigurationProperties(prefix = "edison.metrics.load")
+@Validated
 public class MetricsLoadProperties {
 
     /**

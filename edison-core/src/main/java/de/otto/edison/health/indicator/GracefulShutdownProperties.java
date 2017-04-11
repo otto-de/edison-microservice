@@ -1,6 +1,7 @@
 package de.otto.edison.health.indicator;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
 
@@ -10,6 +11,7 @@ import javax.validation.constraints.Min;
  * @since 1.0.0
  */
 @ConfigurationProperties(prefix = "edison.gracefulshutdown")
+@Validated
 public class GracefulShutdownProperties {
 
     /**
