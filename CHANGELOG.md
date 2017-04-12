@@ -11,6 +11,8 @@ interface obsolete.
 
 **Deprecations:**
 * **[edison-cache]** The `CacheRegistry` is now deprecated and will be removed in release 2.0.0.
+* **[edison-mongo]** Deprecation of `edison.mongo.passwd`. Use `edison.mongo.password` instead to sanitize value in environment. 
+The support for `edison.mongo.passwd` will be removed in 2.0.0
 
 ## 1.0.0.RC9
 
