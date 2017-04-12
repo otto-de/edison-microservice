@@ -42,11 +42,17 @@ public class MongoProperties {
     /**
      * database user name
      */
-    private String user= "";
+    private String user = "";
+    /**
+     * database user password
+     * @deprecated use password instead
+     */
+    @Deprecated
+    private String passwd = "";
     /**
      * database user password
      */
-    private String passwd= "";
+    private String password = "";
     /**
      * Represents preferred replica set members to which a query or command can be sent.
      */
@@ -111,12 +117,21 @@ public class MongoProperties {
         this.user = user;
     }
 
-    public String getPasswd() {
-        return passwd;
-    }
-
+    /**
+     * @param passwd database user password
+     * @deprecated use #setPassword(String); otherwise password will not be sanitized
+     */
+    @Deprecated
     public void setPasswd(String passwd) {
         this.passwd = passwd;
+    }
+
+    public String getPassword() {
+        return password != null && !password.isEmpty() ? password : passwd;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getReadPreference() {

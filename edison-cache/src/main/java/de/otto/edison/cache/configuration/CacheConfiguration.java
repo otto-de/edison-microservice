@@ -1,5 +1,6 @@
 package de.otto.edison.cache.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.cache.CacheStatistics;
 import org.springframework.boot.actuate.cache.CaffeineCacheStatisticsProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -26,18 +27,22 @@ import java.util.List;
 @EnableCaching
 public class CacheConfiguration {
 
+    @Autowired(required = false)
+    private List<CaffeineCacheConfig> cacheConfigs;
+    @Autowired(required = false)
+    private List<CaffeineCache>  caffeineCaches;
+
     @Bean
-    @ConditionalOnBean(CaffeineCacheConfig.class)
-    public CacheManager cacheManager(final List<CaffeineCacheConfig> cacheConfigs) {
-        return new DefaultCacheRegistry(cacheConfigs);
+    public CacheManager cacheManager() {
+        return new EdisonCacheManager(cacheConfigs, caffeineCaches);
     }
 
     @Bean
     public CaffeineCacheStatisticsProvider caffeineCacheCacheStatisticsProvider() {
         return new CaffeineCacheStatisticsProvider() {
             @Override
-            public CacheStatistics getCacheStatistics(CacheManager cacheManager,
-                                                      CaffeineCache cache) {
+            public CacheStatistics getCacheStatistics(final CacheManager cacheManager,
+                                                      final CaffeineCache cache) {
                 return new CaffeineCacheStatistics(cache);
             }
         };

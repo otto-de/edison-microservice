@@ -7,7 +7,7 @@ Feature toggles for Edison Microservices.
 There is an example showing how to use the `edison-togglz` library: see `examples/example-togglz`.  
 
 Basically, you have to:
-1. Add `de.otto.edison:edison-toggz:<version>` to you project.
+1. Add `de.otto.edison:edison-togglz:<version>` to you project.
 2. In clustered environments, also add `de.otto.edison:edison-mongo:<version>` and configure MongoDB's
  properties as described in [Edison Mongo README](https://github.com/otto-de/edison-microservice/tree/master/edison-mongo).
 3. Implement your Features enum:
