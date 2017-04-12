@@ -47,5 +47,5 @@ edison:
     # mongo
     #    db: edison-example
     #    user: edison-example
-    #    passwd:
+    #    password:
     #    host: localhost
