@@ -27,7 +27,7 @@ edison:
     mongo:
         db: edison-example
         host: localhost:27017
-        passwd: ''
+        password: ''
         user: edison-example
     status:
         application:

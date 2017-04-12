@@ -5,6 +5,9 @@
 * **[edison-mongo]** Add @ConditionalOnMissingBean to MongoTogglzRepository
 * **[edison-mongo]** Make ID and ETAG constants public to be able to access them from outside
 
+**Breaking Changes:**
+* **[edison-mongo]** Rename property from `edison.mongo.passwd` to `edison.mongo.password` (to be automatically hidden in environment variables by spring)
+
 ## 1.0.0.RC9
 
 **New Features:**

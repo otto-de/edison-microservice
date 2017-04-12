@@ -22,7 +22,7 @@ public class UserProviderTest {
         final UserProvider userProvider = new TogglzConfiguration().userProvider();
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-        when(mockRequest.getHeader("Authorization")).thenReturn("Basic " + Base64Utils.encodeToString("testuser:passwd".getBytes()));
+        when(mockRequest.getHeader("Authorization")).thenReturn("Basic " + Base64Utils.encodeToString("testuser:password".getBytes()));
 
         HttpServletRequestHolder.bind(mockRequest);
 

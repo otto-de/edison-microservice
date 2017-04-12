@@ -31,11 +31,11 @@ public class MongoConfiguration {
             return Collections.emptyList();
         }
         return singletonList(
-                createCredential(mongoProperties.getUser(), mongoProperties.getDb(), mongoProperties.getPasswd().toCharArray()));
+                createCredential(mongoProperties.getUser(), mongoProperties.getDb(), mongoProperties.getPassword().toCharArray()));
     }
 
     private static boolean useUnauthorizedConnection(final MongoProperties mongoProperties) {
-        return mongoProperties.getUser().isEmpty() || mongoProperties.getPasswd().isEmpty();
+        return mongoProperties.getUser().isEmpty() || mongoProperties.getPassword().isEmpty();
     }
 
     @Bean
