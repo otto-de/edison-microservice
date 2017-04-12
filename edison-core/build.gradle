@@ -16,6 +16,7 @@ dependencies {
     compile libraries.metrics_jvm
     compile libraries.metrics_spring
     compile libraries.spring_context_support
+    compile libraries.unboundid_ldapsdk_minimal_edition
 
     testCompile project(":edison-testsupport")
     testCompile libraries.async_http_client
