@@ -1,0 +1,15 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    compile project(":edison-core")
+    compile project(":edison-cache")
+    compile libraries.spring_boot_devtools
+
+    testCompile project(":edison-testsupport")
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
