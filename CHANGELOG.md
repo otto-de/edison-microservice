@@ -9,6 +9,7 @@
 use them using `@Cacheable`. For example, this way it is possible, to configure loading caches.
 The new `example-cache` contains a showcase for this. This feature makes the 'old' `CacheRegistry`
 interface obsolete.
+* **[edison-core]** Fix reporting of http request count and time to Graphite
 
 **Deprecations:**
 * **[edison-cache]** The `CacheRegistry` is now deprecated and will be removed in release 2.0.0.
