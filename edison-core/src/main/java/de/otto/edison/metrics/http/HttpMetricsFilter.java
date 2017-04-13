@@ -19,12 +19,12 @@ import java.io.IOException;
  * @since 0.60.0
  */
 @Component
-public class MetricsFilter implements Filter {
+public class HttpMetricsFilter implements Filter {
 
     private final MetricRegistry metricRegistry;
 
     @Autowired
-    public MetricsFilter(final MetricRegistry metricRegistry) {
+    public HttpMetricsFilter(final MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
     }
 

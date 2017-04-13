@@ -15,7 +15,7 @@ import java.io.IOException;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class MetricsFilterTest {
+public class HttpMetricsFilterTest {
 
     @Test
     public void shouldCountRequestsAndMeasureResponseTimes() throws IOException, ServletException {
@@ -36,7 +36,7 @@ public class MetricsFilterTest {
         when(response.getStatus()).thenReturn(200);
 
         // when
-        new MetricsFilter(metricRegistry).doFilter(request, response, mock(FilterChain.class));
+        new HttpMetricsFilter(metricRegistry).doFilter(request, response, mock(FilterChain.class));
 
         // then
         verify(metricRegistry).counter("counter.http.get.200");
@@ -65,7 +65,7 @@ public class MetricsFilterTest {
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
         // when
-        new MetricsFilter(metricRegistry).doFilter(request, response, filterChain);
+        new HttpMetricsFilter(metricRegistry).doFilter(request, response, filterChain);
 
         // then
         verify(filterChain).doFilter(request, response);
