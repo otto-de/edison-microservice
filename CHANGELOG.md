@@ -1,15 +1,16 @@
 # Release Notes
 
-## 1.0.1-SNAPSHOT
+## 1.0.1.RELEASE
+
 **New Features:**
+* **[edison-core]** Allow LDAP authentication for user-defined paths.
+* **[edison-core]** Fix reporting of http request count and time to Graphite
 * **[edison-mongo]** Add @ConditionalOnMissingBean to MongoTogglzRepository
 * **[edison-mongo]** Make ID and ETAG constants public to be able to access them from outside
-* **[edison-core]** Allow LDAP authentication for user-defined paths.
 * **[edison-cache]** It is now possible to configure `CaffeineCache` instances as Spring beans and
 use them using `@Cacheable`. For example, this way it is possible, to configure loading caches.
 The new `example-cache` contains a showcase for this. This feature makes the 'old' `CacheRegistry`
 interface obsolete.
-* **[edison-core]** Fix reporting of http request count and time to Graphite
 
 **Deprecations:**
 * **[edison-cache]** The `CacheRegistry` is now deprecated and will be removed in release 2.0.0.
