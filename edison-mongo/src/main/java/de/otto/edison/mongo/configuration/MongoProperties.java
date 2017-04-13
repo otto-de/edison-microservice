@@ -1,23 +1,27 @@
 package de.otto.edison.mongo.configuration;
 
-import com.mongodb.MongoClientOptions;
-import com.mongodb.ReadPreference;
-import com.mongodb.ServerAddress;
+import static java.util.stream.Collectors.toList;
+
+import static org.slf4j.LoggerFactory.getLogger;
+
+import static com.mongodb.MongoClientOptions.builder;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.bson.codecs.configuration.CodecRegistry;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
-
-import static com.mongodb.MongoClientOptions.builder;
-import static java.util.stream.Collectors.toList;
-import static org.slf4j.LoggerFactory.getLogger;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.ReadPreference;
+import com.mongodb.ServerAddress;
 
 /**
  * Properties used to configure MongoDB clients.
@@ -115,6 +119,14 @@ public class MongoProperties {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    /**
+     * @deprecated use #getPassword();
+     */
+    @Deprecated
+    public String getPasswd() {
+        return passwd;
     }
 
     /**
