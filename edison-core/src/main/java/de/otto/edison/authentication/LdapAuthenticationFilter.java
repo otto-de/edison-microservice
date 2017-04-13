@@ -21,6 +21,11 @@ import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.util.StringUtils.isEmpty;
 
+/**
+ * Filter that checks for LDAP authentication once per request. Will not filter routes starting with
+ * {@link LdapProperties#whitelistedPaths}. Uses {@link LdapProperties} to create an SSL based connection to the
+ * configured LDAP server. Rejects requests with {@code HTTP 401} if authorization fails.
+ */
 public class LdapAuthenticationFilter extends OncePerRequestFilter {
 
     private static Logger LOG = LoggerFactory.getLogger(LdapAuthenticationFilter.class);

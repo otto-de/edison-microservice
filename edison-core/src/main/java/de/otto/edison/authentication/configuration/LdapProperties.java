@@ -19,7 +19,11 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class LdapProperties {
 
     private static final Logger LOG = getLogger(LdapProperties.class);
-
+/**
+ * Add an authentication filter to the web application context if edison.ldap property is set to {@code enabled}'.
+ * All routes starting with the value of the {@code edison.ldap.prefix} property will be secured by LDAP. If no
+ * property is set this will default to all routes starting with '/internal'.
+ */
     /**
      * Enable / disable the LDAP authentication
      */
@@ -62,6 +66,8 @@ public class LdapProperties {
      * @param port LDAP port
      * @param baseDn Base distinguished name
      * @param rdnIdentifier Relative distinguished name
+     * @param prefix Prefix for paths that should require LDAP authentication
+     * @param whitelistedPaths Paths that should be excluded from LDAP authentication (includes sub-paths)
      * @return Ldap properties
      */
     public static LdapProperties ldapProperties(final String host,
@@ -81,6 +87,10 @@ public class LdapProperties {
         return ldap;
     }
 
+    /**
+     * Validate LdapProperties
+     * @return true if properties are valid, false otherwise
+     */
     public boolean isValid() {
         if (isEmpty(host)) {
             LOG.error("host is undefined");

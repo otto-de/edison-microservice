@@ -9,12 +9,21 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration for LDAP authentication. Secures specific endpoints according to the {@code edison.ldap} configuration
+ * as given in {@link LdapProperties}}.
+ */
 @Configuration
 @EnableConfigurationProperties(LdapProperties.class)
 @ConditionalOnProperty(prefix = "edison.ldap", name = "enabled", havingValue = "true")
 @ConditionalOnMissingBean(name = "authenticationFilter")
 public class LdapConfiguration {
 
+    /**
+     * Add an authentication filter to the web application context if edison.ldap property is set to {@code enabled}'.
+     * All routes starting with the value of the {@code edison.ldap.prefix} property will be secured by LDAP. If no
+     * property is set this will default to all routes starting with '/internal'.
+     */
     @Bean
     public FilterRegistrationBean authenticationFilter(final @Value("${edison.ldap.prefix:/internal}") String prefix,
                                                        final LdapProperties ldapProperties) {
