@@ -2,9 +2,12 @@
 
 ## 1.0.1.RELEASE
 
+**Bugfixes:**
+* **[edison-core]** Fix reporting of http request count and time to Graphite
+* **[edison-mongo]** Fixed display of mongo password in /internal/env
+
 **New Features:**
 * **[edison-core]** Allow LDAP authentication for user-defined paths.
-* **[edison-core]** Fix reporting of http request count and time to Graphite
 * **[edison-mongo]** Add @ConditionalOnMissingBean to MongoTogglzRepository
 * **[edison-mongo]** Make ID and ETAG constants public to be able to access them from outside
 * **[edison-cache]** It is now possible to configure `CaffeineCache` instances as Spring beans and
