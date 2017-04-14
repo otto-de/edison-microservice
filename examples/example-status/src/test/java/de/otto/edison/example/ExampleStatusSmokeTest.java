@@ -41,9 +41,4 @@ public class ExampleStatusSmokeTest {
         assertThat(response.getStatusCodeValue()).isIn(200, 503);
     }
 
-    @Test
-    public void shouldUseLdapAuthenticationForNonWhitelistedEndpoints() {
-        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobs", String.class);
-        assertThat(response.getStatusCodeValue()).isEqualTo(401);
-    }
 }
