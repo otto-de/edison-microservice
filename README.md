@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/otto-de/edison-microservice.png?label=ready&title=Ready)](https://waffle.io/otto-de/edison-microservice)
 # edison-microservice
 
 Collection of independent libraries on top of Spring Boot to provide a faster setup of jvm microservices.
