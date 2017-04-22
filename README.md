@@ -7,6 +7,7 @@ Collection of independent libraries on top of Spring Boot to provide a faster se
 
 ## Status
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3b4933ec0be8485d830b38430c9f1d9f)](https://www.codacy.com/app/BeneStem/edison-microservice?utm_source=github.com&utm_medium=referral&utm_content=otto-de/edison-microservice&utm_campaign=badger)
 [![Next Selected Stories](https://badge.waffle.io/otto-de/edison-microservice.svg?label=Ready&title=Selected)](http://waffle.io/otto-de/edison-microservice)
 [![Active Stories](https://badge.waffle.io/otto-de/edison-microservice.svg?label=In%20Progress&title=Doing)](http://waffle.io/otto-de/edison-microservice)
 
