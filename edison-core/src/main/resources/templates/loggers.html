@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="fragments/head  :: head" />
+
+<body>
+
+    <div th:replace="fragments/navigation  :: navigation" />
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Loggers</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Logger</th>
+                                <th>Level</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="logger : ${loggers}">
+                                <td th:text="${logger.displayName}">Logger Name</td>
+                                <td>
+                                    <form th:action="${baseUri} + '/internal/loggers'" method="POST">
+                                        <div class="input-group input-group-sm">
+                                            <select class="form-control" name="level">
+                                                <option th:selected="${logger.effectiveLevel == 'TRACE'}">TRACE</option>
+                                                <option th:selected="${logger.effectiveLevel == 'DEBUG'}">DEBUG</option>
+                                                <option th:selected="${logger.effectiveLevel == 'INFO'}">INFO</option>
+                                                <option th:selected="${logger.effectiveLevel == 'WARN'}">WARN</option>
+                                                <option th:selected="${logger.effectiveLevel == 'ERROR'}">ERROR</option>
+                                            </select>
+                                            <input type="hidden" hidden name="name" th:value="${logger.name}">
+                                            <span class="input-group-btn">
+                                                <button type="submit" class="btn btn-primary" th:title="'Log Level'">
+                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                </button>
+                                            </span>
+                                        </div><!-- /input-group -->
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- /container -->
+
+    <span th:replace="fragments/footer :: footer" />
+</body>
+</html>

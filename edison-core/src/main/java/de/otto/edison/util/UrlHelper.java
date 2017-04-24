@@ -1,4 +1,4 @@
-package de.otto.edison.status.controller;
+package de.otto.edison.util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
@@ -8,9 +8,9 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 
 /**
  * @author Guido Steinacker
- * @since 21.08.15
+ * @since 1.0.1
  */
-class UrlHelper {
+public class UrlHelper {
 
     private UrlHelper() {}
 
@@ -37,8 +37,8 @@ class UrlHelper {
      * This method relies on Spring's {@link org.springframework.web.context.request.RequestContextHolder} to find
      * the current request.
      *
-     * @param path
-     * @return
+     * @param path the relative url path
+     * @return returns the absolute href of the given path
      */
     public static String absoluteHrefOf(final String path) {
         try {

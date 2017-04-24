@@ -21,9 +21,9 @@ import java.time.Duration;
 import java.util.*;
 
 import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.representationOf;
-import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static de.otto.edison.status.domain.Link.link;
+import static de.otto.edison.util.UrlHelper.baseUriOf;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;

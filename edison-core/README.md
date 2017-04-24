@@ -15,7 +15,7 @@ menu items to the main menu by overriding templates/fragments/navbar/main.html.
 The main navigation of /internal pages contains the Name of the Edison service. The name can be configured
 by setting `edison.status.application.title` in the application properties.
 
-## 1.2 Customizing menu itemsf
+## 1.2 Customizing menu items
 
 Beside of replacing fragment HTMLs, it is easy to add more menu items to the navigation of /internal pages using
 the two `NavBar` beans configured in the `NavBarConfiguration`:

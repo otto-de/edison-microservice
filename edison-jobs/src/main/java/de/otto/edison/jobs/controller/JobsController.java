@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
-import static de.otto.edison.jobs.controller.UrlHelper.baseUriOf;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
+import static de.otto.edison.util.UrlHelper.baseUriOf;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
