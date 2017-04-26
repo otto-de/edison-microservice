@@ -13,6 +13,7 @@ import static de.otto.edison.status.configuration.VersionInfoProperties.versionI
 import static de.otto.edison.status.controller.StatusRepresentation.statusRepresentationOf;
 import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
+import static de.otto.edison.status.domain.ClusterInfo.clusterInfo;
 import static de.otto.edison.status.domain.Link.link;
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
@@ -57,7 +58,7 @@ public class StatusRepresentationTest {
     @Test
     public void shouldCreateStatusRepresentationWithClusterInfo() {
         // given
-        final ClusterInfo cluster = new ClusterInfo("BLU", "active");
+        final ClusterInfo cluster = clusterInfo("BLU", "active");
         final StatusRepresentation json = statusRepresentationOf(
                 applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
         );
@@ -69,7 +70,7 @@ public class StatusRepresentationTest {
     @Test
     public void shouldCreateStatusRepresentationWithoutClusterInfo() {
         // given
-        final ClusterInfo cluster = new ClusterInfo("", "");
+        final ClusterInfo cluster = clusterInfo("", "");
         final StatusRepresentation json = statusRepresentationOf(
                 applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
         );

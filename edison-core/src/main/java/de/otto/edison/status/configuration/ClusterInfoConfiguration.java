@@ -26,7 +26,7 @@ public class ClusterInfoConfiguration {
     @Bean
     @ConditionalOnMissingBean(ClusterInfo.class)
     public ClusterInfo clusterInfo() {
-        return new ClusterInfo(
+        return ClusterInfo.clusterInfo(
                 () -> httpHeaderValue(clusterInfoProperties.getColorHeader()),
                 () -> httpHeaderValue(clusterInfoProperties.getColorStateHeader())
         );
