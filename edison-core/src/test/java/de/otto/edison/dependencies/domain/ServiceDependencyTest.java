@@ -23,7 +23,7 @@ public class ServiceDependencyTest {
                 "\"description\":" +
                 "\"Imports shoppingcarts\"," +
                 "\"type\":\"service\"," +
-                "\"subType\":\"REST\"," +
+                "\"subtype\":\"REST\"," +
                 "\"url\":\"http://example.com/order/shoppingcarts\"," +
                 "\"methods\":[\"GET\"]," +
                 "\"mediaTypes\":[\"application/json\"]," +
@@ -39,7 +39,7 @@ public class ServiceDependencyTest {
                 "\"description\":" +
                 "\"Imports shoppingcarts\"," +
                 "\"type\":\"service\"," +
-                "\"subType\":\"REST\"," +
+                "\"subtype\":\"REST\"," +
                 "\"url\":\"http://example.com/order/shoppingcarts\"," +
                 "\"methods\":[\"GET\"]," +
                 "\"mediaTypes\":[\"application/json\"]," +

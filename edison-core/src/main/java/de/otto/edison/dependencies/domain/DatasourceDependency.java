@@ -36,9 +36,9 @@ public class DatasourceDependency extends ExternalDependency {
                                 final String group,
                                 final String description,
                                 final String type,
-                                final String subType,
+                                final String subtype,
                                 final List<Datasource> datasources) {
-        super(name, group, description, type, subType);
+        super(name, group, description, type, subtype);
         this.datasources = datasources;
     }
 

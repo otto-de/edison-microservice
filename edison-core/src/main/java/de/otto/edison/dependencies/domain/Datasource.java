@@ -68,18 +68,25 @@ public final class Datasource {
      */
     @JsonCreator
     public static Datasource datasource(final String ds) {
-        String s = ds;
+        int colonPos = ds.indexOf(":");
+        int slashPos = ds.indexOf("/");
+
+        String nodeAndPort = ds;
+        String node;
+        int port = -1;
         String resource = "";
-        if (ds.contains("/")) {
-            final String[] serverAndResource = ds.split("/");
-            s = serverAndResource[0];
-            resource = serverAndResource[1];
+
+        if (slashPos != -1) {
+            nodeAndPort = ds.substring(0, slashPos);
+            resource = ds.substring(slashPos+1);
         }
-        if (ds.contains(":")) {
-            String[] nodeAndPort = s.split(":");
-            return datasource(nodeAndPort[0], valueOf(nodeAndPort[1]), resource);
+        if (colonPos != -1) {
+            node = nodeAndPort.substring(0, colonPos);
+            port = valueOf(nodeAndPort.substring(colonPos+1));
+            return datasource(node, port, resource);
+        } else {
+            return datasource(nodeAndPort, -1, resource);
         }
-        return datasource(s, -1, resource);
     }
 
     /**
@@ -114,6 +121,13 @@ public final class Datasource {
 
     @Override
     public String toString() {
-        return node + ':' + port + "/" + resource;
+        final StringBuilder sb = new StringBuilder(node);
+        if (port != -1) {
+            sb.append(":" + port);
+        }
+        if (!resource.isEmpty()) {
+            sb.append("/" + resource);
+        }
+        return sb.toString();
     }
 }

@@ -47,11 +47,11 @@ public class ServiceDependency extends ExternalDependency {
                              final String description,
                              final String url,
                              final String type,
-                             final String subType,
+                             final String subtype,
                              final List<String> methods,
                              final List<String> mediaTypes,
                              final String authentication) {
-        super(name, group, description, type, subType);
+        super(name, group, description, type, subtype);
         this.url = url;
         this.methods = methods;
         this.mediaTypes = mediaTypes;

@@ -33,6 +33,14 @@ public class DatasourceTest {
     }
 
     @Test
+    public void shouldBuildDatasourceFromString2() {
+        final Datasource testee = datasource("foo:42/bar:foobar/0815");
+        assertThat(testee.node).isEqualTo("foo");
+        assertThat(testee.port).isEqualTo(42);
+        assertThat(testee.resource).isEqualTo("bar:foobar/0815");
+    }
+
+    @Test
     public void shouldBuildDatasourceFromStringWithoutPort() {
         final Datasource testee = datasource("foo/bar");
         assertThat(testee.node).isEqualTo("foo");

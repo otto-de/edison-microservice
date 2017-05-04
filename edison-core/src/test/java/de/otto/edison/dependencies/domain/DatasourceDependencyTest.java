@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static de.otto.edison.dependencies.domain.Datasource.datasource;
+import static de.otto.edison.dependencies.domain.DatasourceDependencyBuilder.mongoDependency;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,7 +22,7 @@ public class DatasourceDependencyTest {
                 "\"group\":\"order\"," +
                 "\"description\":\"Shoppingcart Database\"," +
                 "\"type\":\"db\"," +
-                "\"subType\":\"MongoDB\"," +
+                "\"subtype\":\"MongoDB\"," +
                 "\"datasources\":[\"10.42.42.41:27001/shoppingcarts\",\"10.42.42.42:27001/shoppingcarts\"]" +
                 "}");
     }
@@ -33,7 +34,7 @@ public class DatasourceDependencyTest {
                 "\"group\":\"order\"," +
                 "\"description\":\"Shoppingcart Database\"," +
                 "\"type\":\"db\"," +
-                "\"subType\":\"MongoDB\"," +
+                "\"subtype\":\"MongoDB\"," +
                 "\"datasources\":[\"10.42.42.41:27001/shoppingcarts\",\"10.42.42.42:27001/shoppingcarts\"]" +
                 "}";
         final DatasourceDependency dependency = new ObjectMapper().readValue(json, DatasourceDependency.class);
@@ -59,16 +60,12 @@ public class DatasourceDependencyTest {
     }
 
     private DatasourceDependency someMongoDb() {
-        return new DatasourceDependency(
-                "shoppingcart-db",
-                "order",
-                "Shoppingcart Database",
-                DatasourceDependency.TYPE_DB,
-                DatasourceDependency.SUBTYPE_MONGODB,
-                asList(
-                        datasource("10.42.42.41:27001/shoppingcarts"),
-                        datasource("10.42.42.42:27001/shoppingcarts")
-                )
-        );
+        return mongoDependency(asList(
+                datasource("10.42.42.41:27001/shoppingcarts"),
+                        datasource("10.42.42.42:27001/shoppingcarts")))
+                .withName("shoppingcart-db")
+                .withGroup("order")
+                .withDescription("Shoppingcart Database")
+                .build();
     }
 }

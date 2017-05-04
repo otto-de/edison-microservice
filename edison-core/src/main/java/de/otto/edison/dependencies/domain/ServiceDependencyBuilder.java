@@ -8,7 +8,7 @@ public class ServiceDependencyBuilder {
     private String description;
     private String url;
     private String type;
-    private String subType;
+    private String subtype;
     private List<String> methods;
     private List<String> mediaTypes;
     private String authentication;
@@ -20,14 +20,14 @@ public class ServiceDependencyBuilder {
                 .withDescription(other.description)
                 .withUrl(other.url)
                 .withType(other.type)
-                .withSubType(other.subType)
+                .withSubtype(other.subtype)
                 .withMethods(other.methods)
                 .withMediaTypes(other.mediaTypes)
                 .withAuthentication(other.authentication);
     }
 
     /**
-     * Creates a ServiceDependencyBuilder with type="service" and subType="REST".
+     * Creates a ServiceDependencyBuilder with type="service" and subtype="REST".
      *
      * @param url the url or uri-template of the accessed REST service.
      * @return ServiceDependencyBuilder
@@ -36,11 +36,11 @@ public class ServiceDependencyBuilder {
         return new ServiceDependencyBuilder()
                 .withUrl(url)
                 .withType(ServiceDependency.TYPE_SERVICE)
-                .withSubType(ServiceDependency.SUBTYPE_REST);
+                .withSubtype(ServiceDependency.SUBTYPE_REST);
     }
 
     /**
-     * Creates a generic ServiceDependencyBuilder with type="service" and subType="OTHER".
+     * Creates a generic ServiceDependencyBuilder with type="service" and subtype="OTHER".
      *
      * @param url the url or uri-template of the accessed service.
      * @return ServiceDependencyBuilder
@@ -49,7 +49,7 @@ public class ServiceDependencyBuilder {
         return new ServiceDependencyBuilder()
                 .withUrl(url)
                 .withType(ServiceDependency.TYPE_SERVICE)
-                .withSubType(ServiceDependency.SUBTYPE_OTHER);
+                .withSubtype(ServiceDependency.SUBTYPE_OTHER);
     }
 
     /**
@@ -80,7 +80,7 @@ public class ServiceDependencyBuilder {
      * @param url A URL that is identifying the dependency. Generally an URI template of the accessed REST
      * resource or the URI of the database.
      */
-    public ServiceDependencyBuilder withUrl(final String url) {
+    private ServiceDependencyBuilder withUrl(final String url) {
         this.url = url;
         return this;
     }
@@ -94,10 +94,10 @@ public class ServiceDependencyBuilder {
     }
 
     /**
-     * @param subType The sub-type of the dependency: Cassandra, MongoDB, Kafka, REST, ...
+     * @param subtype The sub-type of the dependency: Cassandra, MongoDB, Kafka, REST, ...
      */
-    public ServiceDependencyBuilder withSubType(final String subType) {
-        this.subType = subType;
+    public ServiceDependencyBuilder withSubtype(final String subtype) {
+        this.subtype = subtype;
         return this;
     }
 
@@ -131,6 +131,6 @@ public class ServiceDependencyBuilder {
      * @return service dependency
      */
     public ServiceDependency build() {
-        return new ServiceDependency(name, group, description, url, type, subType, methods, mediaTypes, authentication);
+        return new ServiceDependency(name, group, description, url, type, subtype, methods, mediaTypes, authentication);
     }
 }

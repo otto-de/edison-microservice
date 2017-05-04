@@ -12,13 +12,13 @@ public final class JobMessage {
     private final String message;
     private final OffsetDateTime timestamp;
 
-    private JobMessage(final Level level, final String message, OffsetDateTime timestamp) {
+    private JobMessage(final Level level, final String message, final OffsetDateTime timestamp) {
         this.level = level;
         this.message = message;
         this.timestamp = timestamp;
     }
 
-    public static JobMessage jobMessage(final Level level, final String message, OffsetDateTime ts) {
+    public static JobMessage jobMessage(final Level level, final String message, final OffsetDateTime ts) {
         return new JobMessage(level, message, ts);
     }
 

@@ -34,18 +34,18 @@ public class ExternalDependency {
     /**
      * The sub-type of the dependency: Cassandra, MongoDB, Kafka, REST, ...
      */
-    public final String subType;
+    public final String subtype;
 
     protected ExternalDependency(final String name,
                                  final String group,
                                  final String description,
                                  final String type,
-                                 final String subType) {
+                                 final String subtype) {
         this.name = name;
         this.group = group;
         this.description = description;
         this.type = type;
-        this.subType = subType;
+        this.subtype = subtype;
     }
 
     @Override
@@ -57,12 +57,12 @@ public class ExternalDependency {
                 Objects.equals(group, that.group) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(type, that.type) &&
-                Objects.equals(subType, that.subType);
+                Objects.equals(subtype, that.subtype);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, group, description, type, subType);
+        return Objects.hash(name, group, description, type, subtype);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class ExternalDependency {
                 ", group='" + group + '\'' +
                 ", description='" + description + '\'' +
                 ", type='" + type + '\'' +
-                ", subType='" + subType + '\'' +
+                ", subtype='" + subtype + '\'' +
                 '}';
     }
 }
