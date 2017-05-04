@@ -1,7 +1,15 @@
 package de.otto.edison.dependencies.domain;
 
+import de.otto.edison.annotations.Beta;
+
 import java.util.List;
 
+/**
+ * A builder used to build {@link ServiceDependency service dependencies}
+ *
+ * @since 1.1.0
+ */
+@Beta
 public class ServiceDependencyBuilder {
     private String name;
     private String group;
@@ -13,17 +21,25 @@ public class ServiceDependencyBuilder {
     private List<String> mediaTypes;
     private String authentication;
 
-    public static ServiceDependencyBuilder copyOf(final ServiceDependency other) {
+    /**
+     * Returns a builder instance that is initialized using a prototype ServiceDependency.
+     * <p>
+     *     All values of the prototype are copied.
+     * </p>
+     * @param prototype the prototype dependency
+     * @return ServiceDependencyBuilder
+     */
+    public static ServiceDependencyBuilder copyOf(final ServiceDependency prototype) {
         return new ServiceDependencyBuilder()
-                .withName(other.name)
-                .withGroup(other.group)
-                .withDescription(other.description)
-                .withUrl(other.url)
-                .withType(other.type)
-                .withSubtype(other.subtype)
-                .withMethods(other.methods)
-                .withMediaTypes(other.mediaTypes)
-                .withAuthentication(other.authentication);
+                .withName(prototype.name)
+                .withGroup(prototype.group)
+                .withDescription(prototype.description)
+                .withUrl(prototype.url)
+                .withType(prototype.type)
+                .withSubtype(prototype.subtype)
+                .withMethods(prototype.methods)
+                .withMediaTypes(prototype.mediaTypes)
+                .withAuthentication(prototype.authentication);
     }
 
     /**

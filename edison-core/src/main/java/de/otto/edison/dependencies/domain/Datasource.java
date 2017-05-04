@@ -3,6 +3,7 @@ package de.otto.edison.dependencies.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import de.otto.edison.annotations.Beta;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +13,12 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
+/**
+ * A datasource used in {@link DatasourceDependency datasource dependencies} to describe databases, queues, etc.
+ *
+ * @since 1.1.0
+ */
+@Beta
 @JsonSerialize(using = ToStringSerializer.class)
 public final class Datasource {
 

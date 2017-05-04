@@ -10,6 +10,11 @@ import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
+/**
+ * A dependency to a RESTful or other kind of service.
+ *
+ * @since 1.1.0
+ */
 @Beta
 @Immutable
 @JsonIgnoreProperties(ignoreUnknown = true)

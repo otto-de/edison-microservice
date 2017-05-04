@@ -1,5 +1,6 @@
 package de.otto.edison.dependencies.controller;
 
+import de.otto.edison.annotations.Beta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,10 @@ import static java.util.Collections.singletonMap;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 
+/**
+ * @since 1.1.0
+ */
+@Beta
 @RestController
 public class DependenciesController {
 

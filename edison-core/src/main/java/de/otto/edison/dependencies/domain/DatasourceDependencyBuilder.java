@@ -1,9 +1,17 @@
 package de.otto.edison.dependencies.domain;
 
+import de.otto.edison.annotations.Beta;
+
 import java.util.List;
 
 import static java.util.Arrays.asList;
 
+/**
+ * A builder used to build {@link DatasourceDependency datasource dependencies}.
+ *
+ * @since 1.1.0
+ */
+@Beta
 public class DatasourceDependencyBuilder {
     private String name;
     private String group;
@@ -12,14 +20,22 @@ public class DatasourceDependencyBuilder {
     private String subtype;
     private List<Datasource> datasources;
 
-    public static DatasourceDependencyBuilder copyOf(final DatasourceDependency other) {
+    /**
+     * Returns a builder instance that is initialized using a prototype DatasourceDependency.
+     * <p>
+     *     All values of the prototype are copied.
+     * </p>
+     * @param prototype the prototype dependency
+     * @return DatasourceDependencyBuilder
+     */
+    public static DatasourceDependencyBuilder copyOf(final DatasourceDependency prototype) {
         return new DatasourceDependencyBuilder()
-                .withName(other.name)
-                .withGroup(other.group)
-                .withDescription(other.description)
-                .withType(other.type)
-                .withSubtype(other.subtype)
-                .withDatasources(other.datasources);
+                .withName(prototype.name)
+                .withGroup(prototype.group)
+                .withDescription(prototype.description)
+                .withType(prototype.type)
+                .withSubtype(prototype.subtype)
+                .withDatasources(prototype.datasources);
     }
 
     /**

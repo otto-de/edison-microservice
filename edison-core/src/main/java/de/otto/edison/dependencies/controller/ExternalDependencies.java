@@ -1,5 +1,6 @@
 package de.otto.edison.dependencies.controller;
 
+import de.otto.edison.annotations.Beta;
 import de.otto.edison.dependencies.domain.ExternalDependency;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,10 @@ import static java.util.Collections.emptyList;
  *     This class is mostly used for testing purposes, as it helps to mock the
  *     list of ExternalDependency objects.
  * </p>
+ *
+ * @since 1.1.0
  */
+@Beta
 @Component
 class ExternalDependencies {
     @Autowired(required = false)
