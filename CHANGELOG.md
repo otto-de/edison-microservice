@@ -1,5 +1,17 @@
 # Release Notes
 
+## 1.1.0 (CURRENT SNAPSHOT)
+
+**Deprecations:**
+* **[edison-core]** Deprecated the (Beta) ServiceSpecs.
+
+**New Features:**
+* **[edison-core]** Introduced the configuration of external dependencies, which is replacing the now
+deprecated ServiceSpecs. External dependencies include datasources like databases or queues, as well as
+dependencies to REST or other services.
+* **[edison-core]** Introduced the configuration of information about the criticality of a service.
+* **[edison-core]** Enhanced /internal/status JSON and HTML to return criticality and external dependencies.
+
 ## 1.0.1.RELEASE
 
 **Bugfixes:**

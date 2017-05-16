@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 public class MongoPropertiesTest {
 
     @Test
+    @SuppressWarnings("deprecation")
     public void shouldReturnPasswordWhenDeprecatedPasswordFieldIsUsed() throws Exception {
         MongoProperties props = new MongoProperties();
         props.setPasswd("somePassword");
@@ -22,6 +23,7 @@ public class MongoPropertiesTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void shouldPreferNewPasswordOverDeprecatedOne() throws Exception {
         MongoProperties props = new MongoProperties();
         props.setPasswd("someDeprecatedPassword");

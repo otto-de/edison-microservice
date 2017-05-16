@@ -45,7 +45,6 @@ public class ApplicationStatusAggregatorConfigurationTest {
         assertThat(status.vcs, is(notNullValue()));
         assertThat(status.team, is(notNullValue()));
         assertThat(status.statusDetails.isEmpty(), is(true));
-        assertThat(status.serviceSpecs.isEmpty(), is(true));
     }
 
 }

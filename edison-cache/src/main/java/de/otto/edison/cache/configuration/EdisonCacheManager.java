@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 import static com.github.benmanes.caffeine.cache.Caffeine.from;
 
 @Beta
+@SuppressWarnings("deprecation")
 public class EdisonCacheManager implements CacheManager, CacheRegistry {
 
     private ConcurrentMap<String, Cache> caches;

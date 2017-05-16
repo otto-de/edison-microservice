@@ -26,7 +26,7 @@ edison:
             logger: de.otto.edison.example.metrics
     mongo:
         db: edison-example
-        host: localhost:27017
+        host: localhost:27017,localhost:27018,localhost:27019
         passwd: ''
         user: edison-example
     status:

@@ -34,7 +34,7 @@ public class StatusRepresentationTest {
         // given
         ApplicationInfoProperties applicationInfoProperties = applicationInfoProperties("Some Title", "group", "local-env", "desc");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(applicationInfo("app-name", applicationInfoProperties), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(applicationInfo("app-name", applicationInfoProperties), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList())
         );
         // then
         assertThat(json.application.name, is("app-name"));
@@ -47,7 +47,7 @@ public class StatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithVersionInfo() {
         // given
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), mock(ClusterInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo(versionInfoProperties("1.0.0", "0815", "http://example.org/commits/{commit}")), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), mock(ClusterInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo(versionInfoProperties("1.0.0", "0815", "http://example.org/commits/{commit}")), mock(TeamInfo.class), emptyList())
         );
         // then
         assertThat(json.application.version, is("1.0.0"));
@@ -60,7 +60,7 @@ public class StatusRepresentationTest {
         // given
         final ClusterInfo cluster = clusterInfo("BLU", "active");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList())
         );
         // then
         assertThat(json.cluster.getColor(), is("BLU"));
@@ -72,7 +72,7 @@ public class StatusRepresentationTest {
         // given
         final ClusterInfo cluster = clusterInfo("", "");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList())
         );
         // then
         assertThat(json.cluster, is(nullValue()));
@@ -83,7 +83,7 @@ public class StatusRepresentationTest {
         // given
         final StatusRepresentation json = statusRepresentationOf(
                 applicationStatus(mock(ApplicationInfo.class), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(
-                        statusDetail("someDetail", WARNING, "detailed warning")), emptyList()
+                        statusDetail("someDetail", WARNING, "detailed warning"))
                 )
         );
         // then
@@ -106,8 +106,8 @@ public class StatusRepresentationTest {
                         mock(VersionInfo.class),
                         mock(TeamInfo.class),
                         singletonList(
-                                statusDetail("someDetail", OK, "some message", link("item", "http://example.org/some/url", "some title"))),
-                        emptyList()
+                                statusDetail("someDetail", OK, "some message", link("item", "http://example.org/some/url", "some title"))
+                        )
                 )
         );
         // then
@@ -127,7 +127,7 @@ public class StatusRepresentationTest {
         final StatusRepresentation json = statusRepresentationOf(
                 applicationStatus(mock(ApplicationInfo.class), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                         statusDetail("Some Detail", OK, "perfect"),
-                        statusDetail("Some Other Detail", WARNING, "detailed warning", detailMap)), emptyList()
+                        statusDetail("Some Other Detail", WARNING, "detailed warning", detailMap))
                 )
         );
         // then

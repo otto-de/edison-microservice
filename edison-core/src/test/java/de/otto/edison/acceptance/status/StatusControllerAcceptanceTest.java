@@ -4,14 +4,16 @@ import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import static de.otto.edison.acceptance.api.StatusApi.*;
 import static de.otto.edison.testsupport.dsl.Then.assertThat;
 import static de.otto.edison.testsupport.dsl.Then.then;
 import static de.otto.edison.testsupport.dsl.When.when;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 
 public class StatusControllerAcceptanceTest {
 
@@ -124,25 +126,27 @@ public class StatusControllerAcceptanceTest {
     }
 
     @Test
-    public void shouldGetServiceSpecs() throws IOException {
+    public void shouldGetStatusWithCriticality() throws IOException {
         when(
                 internal_status_is_retrieved_as("application/json")
         );
 
         then(
-                assertThat(the_returned_json().at("/serviceSpecs/0/url").asText(), not(isEmptyString())),
-                assertThat(the_returned_json().at("/serviceSpecs/0/type").asText(), is("TEST")),
-                assertThat(the_returned_json().at("/serviceSpecs/0/criticality").asText(), is("MISSION_CRITICAL")),
-                assertThat(the_returned_json().at("/serviceSpecs/0/disasterImpact").asText(), is("test will fail")),
-                assertThat(the_returned_json().at("/serviceSpecs/0/expectations/availability").asText(), is("HIGH")),
-                assertThat(the_returned_json().at("/serviceSpecs/0/expectations/performance").asText(), is("HIGH")),
+                assertThat(the_status_code().value(), is(200)),
+                assertThat(the_returned_json().at("/criticality/level").asText(), is("LOW")),
+                assertThat(the_returned_json().at("/criticality/disasterImpact").asText(), is("some impact"))
+        );
+    }
 
-                assertThat(the_returned_json().at("/serviceSpecs/1/url").asText(), not(isEmptyString())),
-                assertThat(the_returned_json().at("/serviceSpecs/1/type").asText(), is("not specified")),
-                assertThat(the_returned_json().at("/serviceSpecs/1/criticality").asText(), is("NOT_SPECIFIED")),
-                assertThat(the_returned_json().at("/serviceSpecs/1/disasterImpact").asText(), is("not specified")),
-                assertThat(the_returned_json().at("/serviceSpecs/1/expectations/availability").asText(), is("NOT_SPECIFIED")),
-                assertThat(the_returned_json().at("/serviceSpecs/1/expectations/performance").asText(), is("NOT_SPECIFIED"))
+    @Test
+    public void shouldGetStatusWithDependencies() throws IOException {
+        when(
+                internal_status_is_retrieved_as("application/json")
+        );
+
+        then(
+                assertThat(the_status_code().value(), is(200)),
+                assertThat(the_returned_json().at("/dependencies/0/url").asText(), is("http://example.com/foo"))
         );
     }
 

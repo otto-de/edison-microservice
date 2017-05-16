@@ -1,4 +1,4 @@
-package de.otto.edison.dependencies.domain;
+package de.otto.edison.status.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,9 +6,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static de.otto.edison.dependencies.domain.Datasource.datasource;
-import static de.otto.edison.dependencies.domain.DatasourceDependencyBuilder.mongoDependency;
+import static de.otto.edison.status.domain.Datasource.datasource;
+import static de.otto.edison.status.domain.DatasourceDependencyBuilder.mongoDependency;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DatasourceDependencyTest {
@@ -23,6 +24,8 @@ public class DatasourceDependencyTest {
                 "\"description\":\"Shoppingcart Database\"," +
                 "\"type\":\"db\"," +
                 "\"subtype\":\"MongoDB\"," +
+                "\"criticality\":{\"level\":\"NOT_SPECIFIED\",\"disasterImpact\":\"Not Specified\"}," +
+                "\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"}," +
                 "\"datasources\":[\"10.42.42.41:27001/shoppingcarts\",\"10.42.42.42:27001/shoppingcarts\"]" +
                 "}");
     }
@@ -44,9 +47,9 @@ public class DatasourceDependencyTest {
 
     @Test
     public void shouldIgnoreNullValues() throws JsonProcessingException {
-        final DatasourceDependency dependency = new DatasourceDependency(null, null, null, null, null, null);
+        final DatasourceDependency dependency = new DatasourceDependency(null, null, null, "", "", emptyList(), null, null);
         final String json = new ObjectMapper().writeValueAsString(dependency);
-        assertThat(json).isEqualTo("{}");
+        assertThat(json).isEqualTo("{\"name\":\"\",\"group\":\"\",\"description\":\"\",\"type\":\"\",\"subtype\":\"\",\"criticality\":{\"level\":\"NOT_SPECIFIED\",\"disasterImpact\":\"Not Specified\"},\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"},\"datasources\":[]}");
     }
 
     @Test

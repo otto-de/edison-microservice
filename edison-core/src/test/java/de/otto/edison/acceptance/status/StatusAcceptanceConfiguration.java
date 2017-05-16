@@ -1,6 +1,5 @@
 package de.otto.edison.acceptance.status;
 
-import de.otto.edison.status.configuration.TeamInfoProperties;
 import de.otto.edison.status.domain.*;
 import de.otto.edison.status.indicator.MutableStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
@@ -8,12 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static de.otto.edison.status.configuration.ApplicationInfoProperties.applicationInfoProperties;
-import static de.otto.edison.status.configuration.TeamInfoProperties.*;
+import static de.otto.edison.status.configuration.TeamInfoProperties.teamInfoProperties;
 import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
-import static de.otto.edison.status.domain.Criticality.MISSION_CRITICAL;
-import static de.otto.edison.status.domain.Expectations.highExpectations;
-import static de.otto.edison.status.domain.ServiceSpec.serviceSpec;
-import static de.otto.edison.status.domain.ServiceType.serviceType;
+import static de.otto.edison.status.domain.ServiceDependencyBuilder.restServiceDependency;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 
 /**
@@ -40,18 +36,6 @@ public class StatusAcceptanceConfiguration {
         return VersionInfo.versionInfo(versionInfoProperties("1.0.0", "ab1234", "http://example.org/vcs/{version}"));
     }
 
-    // some serviceSpecs:
-
-    @Bean
-    ServiceSpec fooTestService() {
-        return serviceSpec("fooTest", "http://example.org/foo");
-    }
-
-    @Bean
-    ServiceSpec barTestService() {
-        return serviceSpec("BarTest", "http://example.org/bar", serviceType("TEST", MISSION_CRITICAL, "test will fail"), highExpectations());
-    }
-
     // some statusDetailIndicators:
 
     @Bean
@@ -64,4 +48,13 @@ public class StatusAcceptanceConfiguration {
         return new MutableStatusDetailIndicator(statusDetail("bar", Status.WARNING, "test warning"));
     }
 
+    @Bean
+    Criticality criticality() {
+        return Criticality.criticality(Level.LOW, "some impact");
+    }
+
+    @Bean
+    ServiceDependency someDependency() {
+        return restServiceDependency("http://example.com/foo").build();
+    }
 }

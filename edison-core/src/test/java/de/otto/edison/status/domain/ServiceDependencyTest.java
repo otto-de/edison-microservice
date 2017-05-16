@@ -1,4 +1,4 @@
-package de.otto.edison.dependencies.domain;
+package de.otto.edison.status.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,8 +6,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static de.otto.edison.dependencies.domain.ServiceDependency.SUBTYPE_REST;
-import static de.otto.edison.dependencies.domain.ServiceDependency.TYPE_SERVICE;
+import static de.otto.edison.status.domain.Criticality.criticality;
+import static de.otto.edison.status.domain.Expectations.unspecifiedExpectations;
+import static de.otto.edison.status.domain.ServiceDependency.SUBTYPE_REST;
+import static de.otto.edison.status.domain.ServiceDependency.TYPE_SERVICE;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,6 +26,8 @@ public class ServiceDependencyTest {
                 "\"Imports shoppingcarts\"," +
                 "\"type\":\"service\"," +
                 "\"subtype\":\"REST\"," +
+                "\"criticality\":{\"level\":\"HIGH\",\"disasterImpact\":\"really bad\"}," +
+                "\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"}," +
                 "\"url\":\"http://example.com/order/shoppingcarts\"," +
                 "\"methods\":[\"GET\"]," +
                 "\"mediaTypes\":[\"application/json\"]," +
@@ -40,6 +44,8 @@ public class ServiceDependencyTest {
                 "\"Imports shoppingcarts\"," +
                 "\"type\":\"service\"," +
                 "\"subtype\":\"REST\"," +
+                "\"criticality\":{\"level\":\"HIGH\",\"disasterImpact\":\"really bad\"}," +
+                "\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"}," +
                 "\"url\":\"http://example.com/order/shoppingcarts\"," +
                 "\"methods\":[\"GET\"]," +
                 "\"mediaTypes\":[\"application/json\"]," +
@@ -52,9 +58,9 @@ public class ServiceDependencyTest {
 
     @Test
     public void shouldIgnoreNullValues() throws JsonProcessingException {
-        final ServiceDependency dependency = new ServiceDependency(null, null, null, null, null, null, null, null, null);
+        final ServiceDependency dependency = new ServiceDependency(null, null, null, "", "", "", null, null, null, null, null);
         final String json = new ObjectMapper().writeValueAsString(dependency);
-        assertThat(json).isEqualTo("{}");
+        assertThat(json).isEqualTo("{\"name\":\"\",\"group\":\"\",\"description\":\"\",\"type\":\"\",\"subtype\":\"\",\"criticality\":{\"level\":\"NOT_SPECIFIED\",\"disasterImpact\":\"Not Specified\"},\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"},\"url\":\"\",\"methods\":[],\"mediaTypes\":[],\"authentication\":\"\"}");
     }
 
     @Test
@@ -77,6 +83,8 @@ public class ServiceDependencyTest {
                 SUBTYPE_REST,
                 singletonList("GET"),
                 singletonList("application/json"),
-                "OAUTH");
+                "OAUTH",
+                criticality(Level.HIGH, "really bad"),
+                unspecifiedExpectations());
     }
 }

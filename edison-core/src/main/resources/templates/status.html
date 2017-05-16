@@ -94,6 +94,21 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-6" th:if="${criticality}">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Criticality</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                            <dt>Level:</dt>
+                            <dd th:text="${criticality.level}"></dd>
+                            <dt>Disaster Impact:</dt>
+                            <dd th:text="${criticality.disasterImpact}"></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-6" th:if="${status.cluster.enabled}">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -148,30 +163,45 @@
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Services in Use</h3>
+                        <h3 class="panel-title">Dependencies</h3>
                     </div>
                     <div class="panel-body">
 
                         <table class="table table-striped table-hover">
                             <tr>
-                                <th>Name</th>
-                                <th>Url</th>
                                 <th>Type</th>
+                                <th>Name</th>
+                                <th>Description</th>
                                 <th>Requirements</th>
                             </tr>
-                            <tr th:each="spec : ${status.serviceSpecs}">
-                                <td th:text="${spec.name}">Service</td>
-                                <td th:text="${spec.url}">Url</td>
-                                <td><ul>
-                                    <li>Type: <span th:text="${spec.type.type}">Type</span></li>
-                                    <li>Criticality: <span th:text="${spec.type.criticality}">Criticality</span></li>
-                                    <li>Impact: <span th:text="${spec.type.disasterImpact}">Impact</span></li>
-                                </ul>
+                            <tr th:each="dep : ${dependencies}">
+                                <td th:text="${dep.type}">Type</td>
+                                <td th:text="${dep.name}">Service</td>
+                                <td>
+                                    <p th:if="${!#strings.isEmpty(dep.description)}">Description:<br/>
+                                        <span th:text="${dep.description}"></span>
+                                    </p>
+                                    <p th:if="${!#lists.isEmpty(dep.datasources)}">Datasources:<br/>
+                                        <span th:each="ds : ${dep.datasources}"><span th:text="${ds}"></span><br/></span>
+                                    </p>
+                                    <p th:if="${!#strings.isEmpty(dep.url)}">Service:<br/>
+                                        <span th:text="${dep.authentication}"></span>
+                                    </p>
+                                    <p th:if="${!#strings.isEmpty(dep.methods)}">Methods:<br/>
+                                        <span th:text="${dep.methods}"></span>
+                                    </p>
+                                    <p th:if="${!#lists.isEmpty(dep.mediatypes)}">Mediatypes:<br/>
+                                        <span th:each="mt : ${dep.mediatypes}"><span th:text="${mt}"></span><br/></span>
+                                    </p>
+                                    <p th:if="${!#strings.isEmpty(dep.authentication)}">Authentication:<br/>
+                                        <span th:text="${dep.authentication}"></span>
+                                    </p>
                                 </td>
-                                <td><ul>
-                                    <li>Availability: <span th:text="${spec.expectations.availability}" /></li>
-                                    <li>Performance:  <span th:text="${spec.expectations.performance}" /></li>
-                                </ul>
+                                <td>
+                                    <p>Criticality:<br/> <span th:text="${dep.criticality.level}">Criticality</span></p>
+                                    <p>Impact:<br/> <span th:text="${dep.criticality.disasterImpact}">Impact</span></p>
+                                    <p>Availability:<br/> <span th:text="${dep.expectations.availability}" /></p>
+                                    <p>Performance:<br/>  <span th:text="${dep.expectations.performance}" /></p>
                                 </td>
                             </tr>
                         </table>

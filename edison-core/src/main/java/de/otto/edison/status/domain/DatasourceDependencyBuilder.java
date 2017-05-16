@@ -1,4 +1,4 @@
-package de.otto.edison.dependencies.domain;
+package de.otto.edison.status.domain;
 
 import de.otto.edison.annotations.Beta;
 
@@ -19,6 +19,8 @@ public class DatasourceDependencyBuilder {
     private String type;
     private String subtype;
     private List<Datasource> datasources;
+    private Criticality criticality;
+    private Expectations expectations;
 
     /**
      * Returns a builder instance that is initialized using a prototype DatasourceDependency.
@@ -30,12 +32,12 @@ public class DatasourceDependencyBuilder {
      */
     public static DatasourceDependencyBuilder copyOf(final DatasourceDependency prototype) {
         return new DatasourceDependencyBuilder()
-                .withName(prototype.name)
-                .withGroup(prototype.group)
-                .withDescription(prototype.description)
-                .withType(prototype.type)
-                .withSubtype(prototype.subtype)
-                .withDatasources(prototype.datasources);
+                .withName(prototype.getName())
+                .withGroup(prototype.getGroup())
+                .withDescription(prototype.getDescription())
+                .withType(prototype.getType())
+                .withSubtype(prototype.getSubtype())
+                .withDatasources(prototype.getDatasources());
     }
 
     /**
@@ -108,6 +110,29 @@ public class DatasourceDependencyBuilder {
     }
 
     /**
+     * Creates a ServiceDependencyBuilder with type="db" and subtype="ElasticSearch".
+     *
+     * @param datasources the datasources of the accessed ES services.
+     * @return builder used to configure ES datasource dependencies
+     */
+    public static DatasourceDependencyBuilder elasticSearchDependency(final List<Datasource> datasources) {
+        return new DatasourceDependencyBuilder()
+                .withDatasources(datasources)
+                .withType(DatasourceDependency.TYPE_DB)
+                .withSubtype(DatasourceDependency.SUBTYPE_ELASTICSEARCH);
+    }
+
+    /**
+     * Creates a ServiceDependencyBuilder with type="db" and subtype="ElasticSearch".
+     *
+     * @param datasources the datasources of the accessed ES services.
+     * @return builder used to configure ES datasource dependencies
+     */
+    public static DatasourceDependencyBuilder elasticSearchDependency(final Datasource... datasources) {
+        return elasticSearchDependency(asList(datasources));
+    }
+
+    /**
      * Creates a ServiceDependencyBuilder with type="queue" and subtype="Kafka".
      *
      * @param datasources the datasources of the accessed queue.
@@ -152,6 +177,7 @@ public class DatasourceDependencyBuilder {
 
     /**
      * @param name The name of the dependent service.
+     * @return this
      */
     public DatasourceDependencyBuilder withName(final String name) {
         this.name = name;
@@ -160,6 +186,7 @@ public class DatasourceDependencyBuilder {
 
     /**
      * @param group The service group like, for example, the vertical aka SCS the service is belonging to.
+     * @return this
      */
     public DatasourceDependencyBuilder withGroup(final String group) {
         this.group = group;
@@ -168,6 +195,7 @@ public class DatasourceDependencyBuilder {
 
     /**
      * @param description A human readable description of the dependency.
+     * @return this
      */
     public DatasourceDependencyBuilder withDescription(final String description) {
         this.description = description;
@@ -176,6 +204,7 @@ public class DatasourceDependencyBuilder {
 
     /**
      * @param type The type of the dependency: db, queue, service, ...
+     * @return this
      */
     public DatasourceDependencyBuilder withType(final String type) {
         this.type = type;
@@ -184,6 +213,7 @@ public class DatasourceDependencyBuilder {
 
     /**
      * @param subtype The sub-type of the dependency: Cassandra, MongoDB, Kafka, REST, ...
+     * @return this
      */
     public DatasourceDependencyBuilder withSubtype(final String subtype) {
         this.subtype = subtype;
@@ -192,9 +222,29 @@ public class DatasourceDependencyBuilder {
 
     /**
      * @param dataSources DataSource descriptors for databases or queues
+     * @return this
      */
     private DatasourceDependencyBuilder withDatasources(final List<Datasource> dataSources) {
         this.datasources = dataSources;
+        return this;
+    }
+
+
+    /**
+     * @param criticality The criticality of the dependency
+     * @return this
+     */
+    public DatasourceDependencyBuilder withCriticality(final Criticality criticality) {
+        this.criticality = criticality;
+        return this;
+    }
+
+    /**
+     * @param expectations The expectations of of the dependency
+     * @return this
+     */
+    public DatasourceDependencyBuilder withExpectations(final Expectations expectations) {
+        this.expectations = expectations;
         return this;
     }
 
@@ -204,6 +254,6 @@ public class DatasourceDependencyBuilder {
      * @return service dependency
      */
     public DatasourceDependency build() {
-        return new DatasourceDependency(name, group, description, type, subtype, datasources);
+        return new DatasourceDependency(name, group, description, type, subtype, datasources, criticality, expectations);
     }
 }

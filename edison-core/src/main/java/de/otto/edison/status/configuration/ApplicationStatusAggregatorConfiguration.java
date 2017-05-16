@@ -8,7 +8,6 @@ import de.otto.edison.status.scheduler.CronScheduler;
 import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
 import de.otto.edison.status.scheduler.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
 
-import static de.otto.edison.status.domain.ApplicationStatus.*;
+import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static java.util.Collections.emptyList;
 
 /**
@@ -33,12 +32,6 @@ public class ApplicationStatusAggregatorConfiguration {
 
     @Autowired(required = false)
     private ClusterInfo clusterInfo;
-
-    @Autowired(required = false)
-    private List<ServiceSpec> serviceSpecs = emptyList();
-
-    @Autowired(required = false)
-    private List<InfoContributor> infoContributors = emptyList();
 
     /**
      * By default, a CachedApplicationStatusAggregator is used. The status is updated using a
@@ -59,11 +52,8 @@ public class ApplicationStatusAggregatorConfiguration {
         final List<StatusDetailIndicator> indicators = statusDetailIndicators != null
                 ? statusDetailIndicators
                 : emptyList();
-        final List<ServiceSpec> services = serviceSpecs != null
-                ? serviceSpecs
-                : emptyList();
         return new CachedApplicationStatusAggregator(
-                applicationStatus(applicationInfo, clusterInfo, systemInfo, versionInfo, teamInfo, emptyList(), services),
+                applicationStatus(applicationInfo, clusterInfo, systemInfo, versionInfo, teamInfo, emptyList()),
                 indicators);
     }
 

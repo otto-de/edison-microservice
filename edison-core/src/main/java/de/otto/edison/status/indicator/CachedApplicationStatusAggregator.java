@@ -1,8 +1,7 @@
 package de.otto.edison.status.indicator;
 
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.ApplicationStatus;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
@@ -42,8 +41,7 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
                 indicators
                         .stream()
                         .flatMap(i -> i.statusDetails().stream())
-                        .collect(toList()),
-                cachedStatus.serviceSpecs);
+                        .collect(toList()));
     }
 
 }

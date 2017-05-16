@@ -1,7 +1,5 @@
-package de.otto.edison.dependencies.controller;
+package de.otto.edison.status.controller;
 
-import de.otto.edison.status.domain.ApplicationStatus;
-import de.otto.edison.status.domain.ServiceSpec;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +9,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-
-import static de.otto.edison.dependencies.domain.Datasource.datasource;
-import static de.otto.edison.dependencies.domain.DatasourceDependencyBuilder.mongoDependency;
-import static de.otto.edison.dependencies.domain.ServiceDependencyBuilder.restServiceDependency;
-import static de.otto.edison.status.configuration.ApplicationInfoProperties.applicationInfoProperties;
-import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
-import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
-import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
-import static de.otto.edison.status.domain.ClusterInfo.clusterInfo;
-import static de.otto.edison.status.domain.VersionInfo.versionInfo;
+import static de.otto.edison.status.domain.Criticality.criticality;
+import static de.otto.edison.status.domain.Datasource.datasource;
+import static de.otto.edison.status.domain.DatasourceDependencyBuilder.mongoDependency;
+import static de.otto.edison.status.domain.Expectations.lowExpectations;
+import static de.otto.edison.status.domain.Level.HIGH;
+import static de.otto.edison.status.domain.ServiceDependencyBuilder.restServiceDependency;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -91,16 +84,40 @@ public class ExternalDependenciesTest {
                 );
     }
 
-    private ApplicationStatus someApplicationStatus(final List<ServiceSpec> serviceSpecs) {
-        return applicationStatus(
-                applicationInfo("test", applicationInfoProperties("test", "test", "test", "")),
-                clusterInfo("", "staged"),
-                null,
-                versionInfo(versionInfoProperties("", "", "")),
-                null,
-                emptyList(),
-                serviceSpecs
-        );
+    @Test
+    public void shouldReturnCriticalityAndExpectations() throws Exception {
+        when(externalDependencies.getDependencies()).thenReturn(asList(
+                mongoDependency(singletonList(datasource("foo:42/bar"))).build(),
+                restServiceDependency("foobar:4711")
+                        .withCriticality(criticality(HIGH, "Bad. Really bad."))
+                        .withExpectations(lowExpectations())
+                        .build()
+        ));
+        mockMvc.perform(get("/internal/dependencies").accept(APPLICATION_JSON))
+                .andExpect(
+                        jsonPath("@.dependencies[0].criticality.level").value("NOT_SPECIFIED")
+                )
+                .andExpect(
+                        jsonPath("@.dependencies[0].criticality.disasterImpact").value("Not Specified")
+                )
+                .andExpect(
+                        jsonPath("@.dependencies[0].expectations.availability").value("NOT_SPECIFIED")
+                )
+                .andExpect(
+                        jsonPath("@.dependencies[0].expectations.performance").value("NOT_SPECIFIED")
+                )
+                .andExpect(
+                        jsonPath("@.dependencies[1].criticality.level").value("HIGH")
+                )
+                .andExpect(
+                        jsonPath("@.dependencies[1].criticality.disasterImpact").value("Bad. Really bad.")
+                )
+                .andExpect(
+                        jsonPath("@.dependencies[1].expectations.availability").value("LOW")
+                )
+                .andExpect(
+                        jsonPath("@.dependencies[1].expectations.performance").value("LOW")
+                );
     }
 
     @SpringBootApplication(scanBasePackages = "de.otto.edison.dependencies")

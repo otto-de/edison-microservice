@@ -1,4 +1,4 @@
-package de.otto.edison.dependencies.controller;
+package de.otto.edison.status.controller;
 
 import de.otto.edison.annotations.Beta;
 import org.springframework.beans.factory.annotation.Autowired;

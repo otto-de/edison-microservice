@@ -1,11 +1,11 @@
-package de.otto.edison.dependencies.domain;
+package de.otto.edison.status.domain;
 
 import org.junit.Test;
 
 import java.util.List;
 
-import static de.otto.edison.dependencies.domain.Datasource.datasource;
-import static de.otto.edison.dependencies.domain.Datasource.datasources;
+import static de.otto.edison.status.domain.Datasource.datasource;
+import static de.otto.edison.status.domain.Datasource.datasources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DatasourceTest {

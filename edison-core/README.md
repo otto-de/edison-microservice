@@ -119,7 +119,8 @@ The /internal/status API contains information about the application status:
 * An HTML representation / status page for human beeings.
 * A possibility to indicate the status of jobs, repositories or other components
 (see `de.otto.edison.status.indicator.StatusDetailIndicator`)
-* A possibility to add information about required services (see `de.otto.edison.about.spec.ServiceSpec`)
+* A possibility to add information about required services and datasources:
+(see `de.otto.edison.status.domain.ExternalDependency` and associated classes).
 
 ## 3.1 Usage
 
@@ -133,8 +134,13 @@ should generally not be necessary.
 
 ## 3.2 /internal/status
 
+### 3.2.1 Criticality
 
+TODO
 
+### 3.2.2 External Dependencies
+
+TODO
 
 ## 3.3 Environment Properties
 

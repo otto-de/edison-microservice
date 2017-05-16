@@ -48,6 +48,7 @@ public class ClusterInfo {
      * @param color the color of the cluster in Blue/Green deployment scenarios.
      * @param colorState the state of the color, for example "staged" or "live" to determine if the color is currently
      *                   in production, or not.
+     * @return ClusterInfo with color and state
      */
     public static ClusterInfo clusterInfo(final String color, final String colorState) {
         return new ClusterInfo(() -> color, () -> colorState);
@@ -59,6 +60,7 @@ public class ClusterInfo {
      * @param colorSupplier the Supplier for the color of the cluster in Blue/Green deployment scenarios.
      * @param colorStateSupplier the Supplier for the state of the cluster, for example "staged" or "live",
      *                           to determine if the color is currently in production, or not.
+     * @return ClusterInfo with color and state provided by suppliers
      */
     public static ClusterInfo clusterInfo(final Supplier<String> colorSupplier, final Supplier<String> colorStateSupplier) {
         return new ClusterInfo(colorSupplier, colorStateSupplier);

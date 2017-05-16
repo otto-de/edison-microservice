@@ -1,4 +1,4 @@
-package de.otto.edison.dependencies.domain;
+package de.otto.edison.status.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
