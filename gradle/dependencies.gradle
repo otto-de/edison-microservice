@@ -8,15 +8,15 @@ ext {
             spring                           : '4.3.7.RELEASE',
             async_http_client                : '1.9.40',
             jcip_annotations                 : '1.0',
-            logback_classic                  : '1.1.11',
-            metrics                          : '3.1.3',
+            logback_classic                  : '1.2.3',
+            metrics                          : '3.2.2',
             metrics_spring                   : '3.1.3',
-            thymeleaf                        : '3.0.5.RELEASE',
-            thymeleaf_layout_dialect         : '2.2.1',
+            thymeleaf                        : '3.0.6.RELEASE',
+            thymeleaf_layout_dialect         : '2.2.2',
             javax_servlet_api                : '3.1.0',
             togglz                           : '2.4.1.Final',
             mongodb_driver                   : '3.4.2',
-            caffeine                         : '2.3.5',
+            caffeine                         : '2.5.0',
             json_path                        : '2.2.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1'
     ]
@@ -24,8 +24,8 @@ ext {
             junit       : '4.12',
             hamcrest    : '1.3',
             mockito_core: '1.10.19',
-            jsonassert  : '1.4.0',
-            fongo       : '2.0.12'
+            jsonassert  : '1.5.0',
+            fongo       : '2.1.0'
     ]
     plugin_versions = [
             versions: '0.14.0',
