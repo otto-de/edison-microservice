@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -19,7 +18,6 @@ import static org.hamcrest.core.Is.is;
 @SpringBootTest(classes = {
         SystemInfoConfiguration.class,
         ClusterInfoConfiguration.class,
-        PropertyPlaceholderAutoConfiguration.class,
         ApplicationInfoConfiguration.class,
         VersionInfoConfiguration.class,
         TeamInfoConfiguration.class,
