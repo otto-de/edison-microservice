@@ -1,21 +1,16 @@
 package de.otto.edison.status.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.annotations.Beta;
 import net.jcip.annotations.Immutable;
 
 import java.util.List;
 import java.util.Objects;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
 @Beta
 @Immutable
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(NON_NULL)
 public class DatasourceDependency extends ExternalDependency {
     public static final String TYPE_DB = "db";
     public static final String TYPE_QUEUE = "queue";

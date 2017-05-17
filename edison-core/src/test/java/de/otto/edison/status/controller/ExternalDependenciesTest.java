@@ -65,6 +65,9 @@ public class ExternalDependenciesTest {
                         jsonPath("@.dependencies[0].datasources[0]").value("foo:42/bar")
                 )
                 .andExpect(
+                        jsonPath("@.dependencies[0].url").doesNotExist()
+                )
+                .andExpect(
                         jsonPath("@.dependencies[0].name").value("test")
                 )
                 .andExpect(
@@ -81,7 +84,11 @@ public class ExternalDependenciesTest {
                 )
                 .andExpect(
                         jsonPath("@.dependencies[1].subtype").value("REST")
-                );
+                )
+                .andExpect(
+                        jsonPath("@.dependencies[1].datasources").doesNotExist()
+                )
+        ;
     }
 
     @Test

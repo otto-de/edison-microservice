@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentContextPath;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(NON_NULL)
+@JsonInclude(NON_EMPTY)
 public class StatusRepresentation {
 
     private static final Pattern STATUS_DETAIL_JSON_SEPARATOR_PATTERN = Pattern.compile("\\s(.)");
@@ -60,6 +60,7 @@ public class StatusRepresentation {
     }
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(NON_EMPTY)
     static class DependencyRepresentation {
         public Expectations expectations;
         public Criticality criticality;
