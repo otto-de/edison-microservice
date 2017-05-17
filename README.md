@@ -41,7 +41,7 @@ It's purpose is to provide a common implementation for cross-cutting requirement
 
 This project maintains its roadmap with [issues](https://github.com/otto-de/edison-microservice/issues) and [milestones](https://github.com/otto-de/edison-microservice/milestones).
 
-**[1.0.0](https://github.com/otto-de/edison-microservice/milestone/1)**: Edison Microservices for Spring Boot 1.4
+**[1.0.0](https://github.com/otto-de/edison-microservice/milestone/1)**: Edison Microservices for Spring Boot 1.4 &#10004;
 
 **[1.1.0](https://github.com/otto-de/edison-microservice/milestone/2)**: Edison Microservices for Spring Boot 1.5
 
