@@ -1,4 +1,4 @@
-package de.otto.edison.loggers;
+package de.otto.edison.logging.ui;
 
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;

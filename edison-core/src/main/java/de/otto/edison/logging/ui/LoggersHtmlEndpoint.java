@@ -1,7 +1,6 @@
-package de.otto.edison.loggers;
+package de.otto.edison.logging.ui;
 
 import de.otto.edison.navigation.NavBar;
-import de.otto.edison.navigation.NavBarItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.LoggersEndpoint;
 import org.springframework.boot.actuate.endpoint.LoggersEndpoint.LoggerLevels;
@@ -21,10 +20,7 @@ import static de.otto.edison.util.UrlHelper.baseUriOf;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.boot.actuate.endpoint.mvc.ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE;
 import static org.springframework.boot.logging.LogLevel.valueOf;
-import static org.springframework.http.MediaType.ALL_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -37,7 +33,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @since 1.1.0
  */
 @Controller
-@ConditionalOnProperty(prefix = "edison.loggers", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "edison.logging.ui", name = "enabled", matchIfMissing = true)
 public class LoggersHtmlEndpoint {
 
     private final LoggersEndpoint loggersEndpoint;

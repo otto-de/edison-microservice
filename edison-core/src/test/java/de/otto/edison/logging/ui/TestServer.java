@@ -1,7 +1,6 @@
-package de.otto.edison.loggers;
+package de.otto.edison.logging.ui;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.PropertySource;
 
 import static org.springframework.boot.SpringApplication.run;
 
