@@ -176,16 +176,16 @@
                             </tr>
                             <tr th:each="dep : ${dependencies}">
                                 <td th:text="${dep.type}">Type</td>
-                                <td th:text="${dep.name}">Service</td>
+                                <td th:text="${dep.name}">Name</td>
                                 <td>
-                                    <p th:if="${!#strings.isEmpty(dep.description)}">Description:<br/>
-                                        <span th:text="${dep.description}"></span>
-                                    </p>
                                     <p th:if="${!#lists.isEmpty(dep.datasources)}">Datasources:<br/>
                                         <span th:each="ds : ${dep.datasources}"><span th:text="${ds}"></span><br/></span>
                                     </p>
                                     <p th:if="${!#strings.isEmpty(dep.url)}">Service:<br/>
-                                        <span th:text="${dep.authentication}"></span>
+                                        <span th:text="${dep.url}"></span>
+                                    </p>
+                                    <p th:if="${!#strings.isEmpty(dep.description)}">Description:<br/>
+                                        <span th:text="${dep.description}"></span>
                                     </p>
                                     <p th:if="${!#strings.isEmpty(dep.methods)}">Methods:<br/>
                                         <span th:text="${dep.methods}"></span>
