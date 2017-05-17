@@ -1,6 +1,7 @@
 package de.otto.edison.status.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.otto.edison.annotations.Beta;
 import net.jcip.annotations.Immutable;
 
@@ -19,6 +20,16 @@ import static java.util.Collections.singletonList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Deprecated
 public class ServiceSpec extends ServiceDependency {
+
+    /** A human readable name of the service. */
+    public final String name;
+    /** A URL that is identifying the required REST API. Generally a prefix of the accessed REST resource. */
+    public final String url;
+    /** The type of the service dependency. */
+    @JsonUnwrapped
+    public final ServiceType type;
+    /** Expectations about the required service. */
+    public final Expectations expectations;
 
     /**
      * Create a specification for a service that is required by this service.
@@ -58,6 +69,42 @@ public class ServiceSpec extends ServiceDependency {
                 null,
                 criticality(type.criticality.level, type.disasterImpact),
                 expectations);
+        this.name = name;
+        this.type = type;
+        this.url = url;
+        this.expectations = expectations;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ServiceSpec that = (ServiceSpec) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (url != null ? !url.equals(that.url) : that.url != null) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        return !(expectations != null ? !expectations.equals(that.expectations) : that.expectations != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (expectations != null ? expectations.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceSpec{" +
+                "name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", type=" + type +
+                ", expectations=" + expectations +
+                '}';
+    }
 }
