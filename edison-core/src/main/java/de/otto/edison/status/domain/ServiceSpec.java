@@ -60,7 +60,6 @@ public class ServiceSpec extends ServiceDependency {
         super(
                 name,
                 null,
-                null,
                 url,
                 TYPE_SERVICE,
                 SUBTYPE_REST,

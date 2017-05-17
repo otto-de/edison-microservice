@@ -24,18 +24,17 @@ public class DatasourceDependency extends ExternalDependency {
     private final List<Datasource> datasources;
 
     DatasourceDependency() {
-        this(null, null, null, "", "", emptyList(), null, null);
+        this(null, null, "", "", emptyList(), null, null);
     }
 
     public DatasourceDependency(final String name,
-                                final String group,
                                 final String description,
                                 final String type,
                                 final String subtype,
                                 final List<Datasource> datasources,
                                 final Criticality criticality,
                                 final Expectations expectations) {
-        super(name, group, description, type, subtype, criticality, expectations);
+        super(name, description, type, subtype, criticality, expectations);
         this.datasources = requireNonNull(datasources, "Parameter 'datasources' must not be null");
     }
 

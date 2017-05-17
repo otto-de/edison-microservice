@@ -16,11 +16,9 @@ public class DatasourceDependencyBuilderTest {
                 .withSubtype("unittest")
                 .withName("name")
                 .withDescription("description")
-                .withGroup("search")
                 .build();
         assertThat(dependency.getName()).isEqualTo("name");
         assertThat(dependency.getDescription()).isEqualTo("description");
-        assertThat(dependency.getGroup()).isEqualTo("search");
         assertThat(dependency.getType()).isEqualTo("test");
         assertThat(dependency.getSubtype()).isEqualTo("unittest");
         assertThat(dependency.getDatasources()).contains(datasource("foo", 42, "bar"));

@@ -14,7 +14,6 @@ import static java.util.Arrays.asList;
 @Beta
 public class DatasourceDependencyBuilder {
     private String name;
-    private String group;
     private String description;
     private String type;
     private String subtype;
@@ -33,11 +32,12 @@ public class DatasourceDependencyBuilder {
     public static DatasourceDependencyBuilder copyOf(final DatasourceDependency prototype) {
         return new DatasourceDependencyBuilder()
                 .withName(prototype.getName())
-                .withGroup(prototype.getGroup())
                 .withDescription(prototype.getDescription())
                 .withType(prototype.getType())
                 .withSubtype(prototype.getSubtype())
-                .withDatasources(prototype.getDatasources());
+                .withDatasources(prototype.getDatasources())
+                .withCriticality(prototype.getCriticality())
+                .withExpectations(prototype.getExpectations());
     }
 
     /**
@@ -185,15 +185,6 @@ public class DatasourceDependencyBuilder {
     }
 
     /**
-     * @param group The service group like, for example, the vertical aka SCS the service is belonging to.
-     * @return this
-     */
-    public DatasourceDependencyBuilder withGroup(final String group) {
-        this.group = group;
-        return this;
-    }
-
-    /**
      * @param description A human readable description of the dependency.
      * @return this
      */
@@ -254,6 +245,6 @@ public class DatasourceDependencyBuilder {
      * @return service dependency
      */
     public DatasourceDependency build() {
-        return new DatasourceDependency(name, group, description, type, subtype, datasources, criticality, expectations);
+        return new DatasourceDependency(name, description, type, subtype, datasources, criticality, expectations);
     }
 }

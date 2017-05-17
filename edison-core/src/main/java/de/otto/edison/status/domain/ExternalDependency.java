@@ -19,7 +19,6 @@ import static de.otto.edison.status.domain.Expectations.unspecifiedExpectations;
 @Immutable
 public class ExternalDependency {
     private final String name;
-    private final String group;
     private final String description;
     private final String type;
     private final String subtype;
@@ -29,7 +28,6 @@ public class ExternalDependency {
     /**
      *
      * @param name The name of the dependent service or datasource
-     * @param group The service group like, for example, the vertical aka SCS the service is belonging to.
      * @param description A human readable description of the dependency.
      * @param type The type of the dependency: db, queue, service, ...
      * @param subtype The sub-type of the dependency: Cassandra, MongoDB, Kafka, REST, ...
@@ -37,14 +35,12 @@ public class ExternalDependency {
      * @param expectations Expectations of this service to the external dependency with respect to availability and performance.
      */
     protected ExternalDependency(final String name,
-                                 final String group,
                                  final String description,
                                  final String type,
                                  final String subtype,
                                  final Criticality criticality,
                                  final Expectations expectations) {
         this.name = Objects.toString(name, "");
-        this.group = Objects.toString(group, "");
         this.description = Objects.toString(description, "");
         this.type = Objects.requireNonNull(type, "Parameter 'type' must not be null");
         this.subtype = Objects.requireNonNull(subtype, "Parameter 'subtype' must not be null");
@@ -57,13 +53,6 @@ public class ExternalDependency {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * @return The service group like, for example, the vertical aka SCS the service is belonging to.
-     */
-    public String getGroup() {
-        return group;
     }
 
     /**
@@ -107,7 +96,6 @@ public class ExternalDependency {
         if (!(o instanceof ExternalDependency)) return false;
         ExternalDependency that = (ExternalDependency) o;
         return Objects.equals(getName(), that.getName()) &&
-                Objects.equals(getGroup(), that.getGroup()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
                 Objects.equals(getType(), that.getType()) &&
                 Objects.equals(getSubtype(), that.getSubtype()) &&
@@ -115,16 +103,14 @@ public class ExternalDependency {
                 Objects.equals(getExpectations(), that.getExpectations());
     }
 
-    @Override
     public int hashCode() {
-        return Objects.hash(getName(), getGroup(), getDescription(), getType(), getSubtype(), getCriticality(), getExpectations());
+        return Objects.hash(getName(), getDescription(), getType(), getSubtype(), getCriticality(), getExpectations());
     }
 
     @Override
     public String toString() {
         return "ExternalDependency{" +
                 "name='" + getName() + '\'' +
-                ", group='" + getGroup() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", type='" + getType() + '\'' +
                 ", subtype='" + getSubtype() + '\'' +

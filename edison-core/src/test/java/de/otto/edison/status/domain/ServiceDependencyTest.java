@@ -21,7 +21,6 @@ public class ServiceDependencyTest {
         final String json = new ObjectMapper().writeValueAsString(dependency);
         assertThat(json).isEqualTo("{" +
                 "\"name\":\"shoppingcart\"," +
-                "\"group\":\"order\"," +
                 "\"description\":" +
                 "\"Imports shoppingcarts\"," +
                 "\"type\":\"service\"," +
@@ -39,7 +38,6 @@ public class ServiceDependencyTest {
     public void shouldTransformFromJson() throws IOException {
         final String json = "{" +
                 "\"name\":\"shoppingcart\"," +
-                "\"group\":\"order\"," +
                 "\"description\":" +
                 "\"Imports shoppingcarts\"," +
                 "\"type\":\"service\"," +
@@ -58,9 +56,9 @@ public class ServiceDependencyTest {
 
     @Test
     public void shouldIgnoreNullValues() throws JsonProcessingException {
-        final ServiceDependency dependency = new ServiceDependency(null, null, null, "", "", "", null, null, null, null, null);
+        final ServiceDependency dependency = new ServiceDependency(null, null, "", "", "", null, null, null, null, null);
         final String json = new ObjectMapper().writeValueAsString(dependency);
-        assertThat(json).isEqualTo("{\"name\":\"\",\"group\":\"\",\"description\":\"\",\"type\":\"\",\"subtype\":\"\",\"criticality\":{\"level\":\"NOT_SPECIFIED\",\"disasterImpact\":\"Not Specified\"},\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"},\"url\":\"\",\"methods\":[],\"mediaTypes\":[],\"authentication\":\"\"}");
+        assertThat(json).isEqualTo("{\"name\":\"\",\"description\":\"\",\"type\":\"\",\"subtype\":\"\",\"criticality\":{\"level\":\"NOT_SPECIFIED\",\"disasterImpact\":\"Not Specified\"},\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"},\"url\":\"\",\"methods\":[],\"mediaTypes\":[],\"authentication\":\"\"}");
     }
 
     @Test
@@ -76,7 +74,6 @@ public class ServiceDependencyTest {
     private ServiceDependency someRestfulService() {
         return new ServiceDependency(
                 "shoppingcart",
-                "order",
                 "Imports shoppingcarts",
                 "http://example.com/order/shoppingcarts",
                 TYPE_SERVICE,

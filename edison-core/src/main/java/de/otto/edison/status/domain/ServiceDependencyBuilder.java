@@ -4,6 +4,7 @@ import de.otto.edison.annotations.Beta;
 
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 /**
@@ -14,7 +15,6 @@ import static java.util.Collections.singletonList;
 @Beta
 public class ServiceDependencyBuilder {
     private String name;
-    private String group;
     private String description;
     private String url;
     private String type;
@@ -36,14 +36,15 @@ public class ServiceDependencyBuilder {
     public static ServiceDependencyBuilder copyOf(final ServiceDependency prototype) {
         return new ServiceDependencyBuilder()
                 .withName(prototype.getName())
-                .withGroup(prototype.getGroup())
                 .withDescription(prototype.getDescription())
                 .withUrl(prototype.getUrl())
                 .withType(prototype.getType())
                 .withSubtype(prototype.getSubtype())
                 .withMethods(prototype.getMethods())
                 .withMediaTypes(prototype.getMediaTypes())
-                .withAuthentication(prototype.getAuthentication());
+                .withAuthentication(prototype.getAuthentication())
+                .withCriticality(prototype.getCriticality())
+                .withExpectations(prototype.getExpectations());
     }
 
     /**
@@ -80,15 +81,6 @@ public class ServiceDependencyBuilder {
      */
     public ServiceDependencyBuilder withName(final String name) {
         this.name = name;
-        return this;
-    }
-
-    /**
-     * @param group The service group like, for example, the vertical aka SCS the service is belonging to.
-     * @return this
-     */
-    public ServiceDependencyBuilder withGroup(final String group) {
-        this.group = group;
         return this;
     }
 
@@ -139,11 +131,29 @@ public class ServiceDependencyBuilder {
     }
 
     /**
+     * @param methods HTTP Methods used to access the service (GET, PUT, POST, DELETE, HEAD, ...)
+     * @return this
+     */
+    public ServiceDependencyBuilder withMethods(final String... methods) {
+        this.methods = asList(methods);
+        return this;
+    }
+
+    /**
      * @param mediaTypes The MediaType used to access a REST service
      * @return this
      */
     public ServiceDependencyBuilder withMediaTypes(final List<String> mediaTypes) {
         this.mediaTypes = mediaTypes;
+        return this;
+    }
+
+    /**
+     * @param mediaTypes The MediaType used to access a REST service
+     * @return this
+     */
+    public ServiceDependencyBuilder withMediaTypes(final String... mediaTypes) {
+        this.mediaTypes = asList(mediaTypes);
         return this;
     }
 
@@ -180,6 +190,6 @@ public class ServiceDependencyBuilder {
      * @return service dependency
      */
     public ServiceDependency build() {
-        return new ServiceDependency(name, group, description, url, type, subtype, methods, mediaTypes, authentication, criticality, expectations);
+        return new ServiceDependency(name, description, url, type, subtype, methods, mediaTypes, authentication, criticality, expectations);
     }
 }

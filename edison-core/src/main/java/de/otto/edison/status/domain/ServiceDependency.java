@@ -36,7 +36,7 @@ public class ServiceDependency extends ExternalDependency {
     private final String authentication;
 
     ServiceDependency() {
-        this(null, null, null, "", "", "", null, null, null, null, null);
+        this(null, null, "", "", "", null, null, null, null, null);
     }
 
     /**
@@ -47,7 +47,6 @@ public class ServiceDependency extends ExternalDependency {
      * </p>
      *
      * @param name The name of the dependent service or datasource
-     * @param group The service group like, for example, the vertical aka SCS the service is belonging to.
      * @param description A human readable description of the dependency.
      * @param type The type of the dependency: db, queue, service, ...
      * @param subtype The sub-type of the dependency: Cassandra, MongoDB, Kafka, REST, ...
@@ -59,7 +58,6 @@ public class ServiceDependency extends ExternalDependency {
      * @param authentication Authentication scheme used to access the remote service (HMAC, OAUTH, ...)
      */
     public ServiceDependency(final String name,
-                             final String group,
                              final String description,
                              final String url,
                              final String type,
@@ -69,7 +67,7 @@ public class ServiceDependency extends ExternalDependency {
                              final String authentication,
                              final Criticality criticality,
                              final Expectations expectations) {
-        super(name, group, description, type, subtype, criticality, expectations);
+        super(name, description, type, subtype, criticality, expectations);
         this.url = requireNonNull(url, "Parameter 'url' must not be null");
         this.methods = methods != null ? methods : emptyList();
         this.mediaTypes = mediaTypes != null ? mediaTypes : emptyList();

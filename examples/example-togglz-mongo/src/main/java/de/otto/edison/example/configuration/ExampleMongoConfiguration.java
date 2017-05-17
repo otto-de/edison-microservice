@@ -51,7 +51,6 @@ public class ExampleMongoConfiguration {
                 .withName("OTTO API")
                 .withDescription("Just an example to show how to configure a dependency to a REST service.")
                 .withExpectations(highExpectations())
-                .withGroup("test")
                 .withCriticality(FUNCTIONAL_CRITICAL)
                 .build();
     }

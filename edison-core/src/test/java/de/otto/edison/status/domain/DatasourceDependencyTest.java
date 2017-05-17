@@ -20,7 +20,6 @@ public class DatasourceDependencyTest {
         final String json = new ObjectMapper().writeValueAsString(dependency);
         assertThat(json).isEqualTo("{" +
                 "\"name\":\"shoppingcart-db\"," +
-                "\"group\":\"order\"," +
                 "\"description\":\"Shoppingcart Database\"," +
                 "\"type\":\"db\"," +
                 "\"subtype\":\"MongoDB\"," +
@@ -34,7 +33,6 @@ public class DatasourceDependencyTest {
     public void shouldTransformFromJson() throws IOException {
         final String json = "{" +
                 "\"name\":\"shoppingcart-db\"," +
-                "\"group\":\"order\"," +
                 "\"description\":\"Shoppingcart Database\"," +
                 "\"type\":\"db\"," +
                 "\"subtype\":\"MongoDB\"," +
@@ -47,9 +45,9 @@ public class DatasourceDependencyTest {
 
     @Test
     public void shouldIgnoreNullValues() throws JsonProcessingException {
-        final DatasourceDependency dependency = new DatasourceDependency(null, null, null, "", "", emptyList(), null, null);
+        final DatasourceDependency dependency = new DatasourceDependency(null, null, "", "", emptyList(), null, null);
         final String json = new ObjectMapper().writeValueAsString(dependency);
-        assertThat(json).isEqualTo("{\"name\":\"\",\"group\":\"\",\"description\":\"\",\"type\":\"\",\"subtype\":\"\",\"criticality\":{\"level\":\"NOT_SPECIFIED\",\"disasterImpact\":\"Not Specified\"},\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"},\"datasources\":[]}");
+        assertThat(json).isEqualTo("{\"name\":\"\",\"description\":\"\",\"type\":\"\",\"subtype\":\"\",\"criticality\":{\"level\":\"NOT_SPECIFIED\",\"disasterImpact\":\"Not Specified\"},\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"},\"datasources\":[]}");
     }
 
     @Test
@@ -67,7 +65,6 @@ public class DatasourceDependencyTest {
                 datasource("10.42.42.41:27001/shoppingcarts"),
                         datasource("10.42.42.42:27001/shoppingcarts")))
                 .withName("shoppingcart-db")
-                .withGroup("order")
                 .withDescription("Shoppingcart Database")
                 .build();
     }

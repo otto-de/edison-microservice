@@ -18,14 +18,12 @@ public class ServiceDependencyBuilderTest {
         final ServiceDependency dependency = serviceDependency("http://example.com")
                 .withName("name")
                 .withDescription("description")
-                .withGroup("search")
                 .withMediaTypes(singletonList("application/json"))
                 .withMethods(asList("GET", "HEAD"))
                 .withAuthentication(AUTH_HMAC)
                 .build();
         assertThat(dependency.getName()).isEqualTo("name");
         assertThat(dependency.getDescription()).isEqualTo("description");
-        assertThat(dependency.getGroup()).isEqualTo("search");
         assertThat(dependency.getAuthentication()).isEqualTo("HMAC");
         assertThat(dependency.getMediaTypes()).contains("application/json");
         assertThat(dependency.getMethods()).contains("GET", "HEAD");
@@ -39,14 +37,12 @@ public class ServiceDependencyBuilderTest {
         final ServiceDependency dependency = restServiceDependency("http://example.com")
                 .withName("name")
                 .withDescription("description")
-                .withGroup("search")
                 .withMediaTypes(singletonList("application/json"))
                 .withAuthentication(AUTH_OAUTH)
                 .withMethods(asList("GET", "HEAD"))
                 .build();
         assertThat(dependency.getName()).isEqualTo("name");
         assertThat(dependency.getDescription()).isEqualTo("description");
-        assertThat(dependency.getGroup()).isEqualTo("search");
         assertThat(dependency.getAuthentication()).isEqualTo("OAUTH");
         assertThat(dependency.getMediaTypes()).contains("application/json");
         assertThat(dependency.getMethods()).contains("GET", "HEAD");
@@ -60,7 +56,6 @@ public class ServiceDependencyBuilderTest {
         final ServiceDependency dependency = serviceDependency("http://example.com")
                 .withName("name")
                 .withDescription("description")
-                .withGroup("search")
                 .withMediaTypes(singletonList("application/json"))
                 .withAuthentication(AUTH_HMAC)
                 .withMethods(asList("GET", "HEAD"))

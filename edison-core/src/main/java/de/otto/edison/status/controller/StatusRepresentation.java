@@ -74,11 +74,7 @@ public class StatusRepresentation {
         public String type;
 
         public DependencyRepresentation(final ExternalDependency dependency) {
-            if (!dependency.getGroup().isEmpty()) {
-                name = dependency.getGroup() + "/" + dependency.getName();
-            } else {
-                name = dependency.getName();
-            }
+            name = dependency.getName();
             description = dependency.getDescription();
             type = dependency.getType() + "/" + dependency.getSubtype();
             criticality = dependency.getCriticality();
