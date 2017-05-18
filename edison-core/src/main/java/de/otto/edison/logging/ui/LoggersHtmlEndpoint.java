@@ -42,7 +42,7 @@ public class LoggersHtmlEndpoint {
     public LoggersHtmlEndpoint(final LoggersEndpoint loggersEndpoint,
                                final NavBar rightNavBar) {
         this.loggersEndpoint = loggersEndpoint;
-        rightNavBar.register(navBarItem(1, "Loggers", "internal/loggers"));
+        rightNavBar.register(navBarItem(1, "Loggers", "/internal/loggers"));
     }
 
     @RequestMapping(
