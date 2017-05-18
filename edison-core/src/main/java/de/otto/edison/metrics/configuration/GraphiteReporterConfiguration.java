@@ -42,13 +42,13 @@ public class GraphiteReporterConfiguration {
     private static final Logger LOG = getLogger(GraphiteReporterConfiguration.class);
 
     @Bean
-    public GraphiteReporter graphiteReporter(
-            final MetricRegistry metricRegistry,
-            final MetricsProperties metricsProperties,
-            final Predicate<String> graphiteFilterPredicate) {
-        MetricsProperties.Graphite graphiteMetricsProperties = metricsProperties.getGraphite();
-        final String prefix = graphiteMetricsProperties.isAddHostToPrefix() ?
-                graphiteMetricsProperties.getPrefix() + "." + reverse(hostName()) + ".metrics" : graphiteMetricsProperties.getPrefix();
+    public GraphiteReporter graphiteReporter(final MetricRegistry metricRegistry,
+                                             final MetricsProperties metricsProperties,
+                                             final Predicate<String> graphiteFilterPredicate) {
+        final MetricsProperties.Graphite graphiteMetricsProperties = metricsProperties.getGraphite();
+        final String prefix = graphiteMetricsProperties.isAddHostToPrefix()
+                ? graphiteMetricsProperties.getPrefix() + "." + reverse(hostName()) + ".metrics"
+                : graphiteMetricsProperties.getPrefix();
         final GraphiteReporter graphiteReporter = forRegistry(metricRegistry)
                 .prefixedWith(prefix)
                 .build(graphiteSender(graphiteMetricsProperties, graphiteFilterPredicate));
@@ -56,13 +56,14 @@ public class GraphiteReporterConfiguration {
         return graphiteReporter;
     }
 
-    private GraphiteSender graphiteSender(final MetricsProperties.Graphite graphiteMetricsProperties, final Predicate<String> graphiteFilterPredicate) {
+    private GraphiteSender graphiteSender(final MetricsProperties.Graphite graphiteMetricsProperties,
+                                          final Predicate<String> graphiteFilterPredicate) {
         final InetSocketAddress address = new InetSocketAddress(graphiteMetricsProperties.getHost(), valueOf(graphiteMetricsProperties.getPort()));
         return new FilteringGraphiteSender(new Graphite(address), graphiteFilterPredicate);
     }
 
     /**
-     * This implementation provides a filter Predicate<String> if no Bean 'graphiteFilterPredicate' is
+     * This implementation provides a filter Predicate&lt;String&gt; if no Bean 'graphiteFilterPredicate' is
      * defined. It removes all metric values that have a postfix of .m5_rate, .m_15_rate, ...
      * If you want to override this behaviour you can define a bean 'graphiteFilterPredicate' with an own
      * implementation. All Predicate executions that return true are sent.
