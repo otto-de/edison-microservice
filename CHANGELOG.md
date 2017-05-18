@@ -8,9 +8,6 @@
 you should migrate to the LDAP authentication introduced with 1.0.1.RELEASE.
 
 **New Features:**
-<<<<<<< e4b08c65abfe7199b4f41e8a650b28cc092bbd8d
-* **[edison-metrics]** Added support to filter metrics. Default: Filter all values that have a postfix .m5_rate, .m15_rate, .min, .max, .mean_rate, .p50, .p75, .p98 or .stddev .  
-* **[edison-metrics]** Add property to switch off the hostname in graphite prefix
 * **[edison-core]** Added a UI to configure the log levels of the service. The UI is added to the right nav bar and is
 available under `/internal/loggers`
 * **[edison-core]** Introduced the configuration of external dependencies, which is replacing the now
@@ -18,6 +15,15 @@ deprecated ServiceSpecs. External dependencies include datasources like database
 dependencies to REST or other services.
 * **[edison-core]** Introduced the configuration of information about the criticality of a service.
 * **[edison-core]** Enhanced /internal/status JSON and HTML to return criticality and external dependencies.
+* **[edison-core]** Introduced support to add HTTP request headers to the Slf4j MDC. By default, X-Origin headers are
+added, so log messages can automatically be enhanced by the value of this header.
+* **[edison-metrics]** Added support to filter metrics sent to Graphite.
+By default, metrics with names having a postfix of`.m5_rate`, `.m15_rate`, `.min`, `.max`, `.mean_rate`,
+ `.p50`, `.p75`, `.p98` or `.stddev` are filtered and not reported to graphite.
+You may configure the filtering by overriding
+the default `GraphiteReporterConfiguration.graphiteFilterPredicate` bean definition.
+* **[edison-metrics]** Add property `edison.metrics.graphite.addHostToPrefix:true` to switch off the hostname in
+graphite prefix
 
 ## 1.0.1.RELEASE
 
