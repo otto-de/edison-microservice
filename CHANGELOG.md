@@ -4,6 +4,8 @@
 
 **Deprecations:**
 * **[edison-core]** Deprecated the (Beta) ServiceSpecs.
+* **[edison-togglz]** Deprecated the usage of TogglzLdapProperties and TogglzLdapConfiguration. Instead of using this,
+you should migrate to the LDAP authentication introduced with 1.0.1.RELEASE.
 
 **New Features:**
 <<<<<<< e4b08c65abfe7199b4f41e8a650b28cc092bbd8d

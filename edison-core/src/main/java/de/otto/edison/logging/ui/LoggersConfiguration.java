@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class LoggersConfiguration {
 
     @Bean
-    public DisableEndpointPostProcessor loggersPropertySource() {
+    public static DisableEndpointPostProcessor loggersPropertySource() {
         return new DisableEndpointPostProcessor("loggers");
     }
 

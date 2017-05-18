@@ -12,9 +12,13 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * Properties used to configure the LDAP authentication of the Togglz Console.
+ *
+ * @deprecated Use {@link de.otto.edison.authentication.configuration.LdapProperties} together with
+ * {@link de.otto.edison.authentication.LdapAuthenticationFilter} instead of this. This class will be removed in 2.0.0
  */
 @ConfigurationProperties(prefix = "edison.togglz.console.ldap")
 @Validated
+@Deprecated
 public class TogglzLdapProperties {
 
     private static final Logger LOG = getLogger(TogglzLdapProperties.class);
