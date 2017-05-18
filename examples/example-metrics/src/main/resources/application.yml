@@ -33,6 +33,7 @@ edison:
         #     host=
         #     port=
         #     prefix=servers
+        #     add-host-to-prefix=true|false
         # Log metrics using SLF4J to the following logger:
         # Configure Beta-feature to support elastic load balancing:
         # load:

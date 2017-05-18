@@ -50,8 +50,10 @@ public class GraphiteReporterConfiguration {
     @Bean
     public GraphiteReporter graphiteReporter() {
         final InetSocketAddress address = new InetSocketAddress(graphiteMetricsProperties.getHost(), valueOf(graphiteMetricsProperties.getPort()));
+        final String prefix = graphiteMetricsProperties.isAddHostToPrefix() ?
+                graphiteMetricsProperties.getPrefix() + "." + reverse(hostName()) + ".metrics" : graphiteMetricsProperties.getPrefix();
         final GraphiteReporter graphiteReporter = forRegistry(metricRegistry)
-                .prefixedWith(graphiteMetricsProperties.getPrefix() + "." + reverse(hostName()) + ".metrics")
+                .prefixedWith(prefix)
                 .build(new com.codahale.metrics.graphite.Graphite(address));
         graphiteReporter.start(1, TimeUnit.MINUTES);
         return graphiteReporter;

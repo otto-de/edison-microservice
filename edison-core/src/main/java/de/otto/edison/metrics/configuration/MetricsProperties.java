@@ -88,6 +88,14 @@ public class MetricsProperties {
         @NotEmpty
         private String prefix;
 
+        /**
+         * Use the reversed hostname of server in the prefix.
+         * default true
+         * if true, the hostname is part of prefix like: "myPrefix.com.mydomain.www.metrics"
+         * otherwise only the prefix is used
+         */
+        private boolean addHostToPrefix = true;
+
         public String getHost() {
             return host;
         }
@@ -110,6 +118,14 @@ public class MetricsProperties {
 
         public void setPrefix(String prefix) {
             this.prefix = prefix;
+        }
+
+        public void setAddHostToPrefix(boolean addHostToPrefix) {
+            this.addHostToPrefix = addHostToPrefix;
+        }
+
+        public boolean isAddHostToPrefix() {
+            return addHostToPrefix;
         }
     }
 }

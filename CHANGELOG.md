@@ -6,6 +6,7 @@
 * **[edison-core]** Deprecated the (Beta) ServiceSpecs.
 
 **New Features:**
+* **[edison-metrics]** Add property to switch off the hostname in graphite prefix
 * **[edison-core]** Added a UI to configure the log levels of the service. The UI is added to the right nav bar and is
 available under `/internal/loggers`
 * **[edison-core]** Introduced the configuration of external dependencies, which is replacing the now
