@@ -6,6 +6,8 @@
 * **[edison-core]** Deprecated the (Beta) ServiceSpecs.
 
 **New Features:**
+<<<<<<< e4b08c65abfe7199b4f41e8a650b28cc092bbd8d
+* **[edison-metrics]** Added support to filter metrics. Default: Filter all values that have a postfix .m5_rate, .m15_rate, .min, .max, .mean_rate, .p50, .p75, .p98 or .stddev .  
 * **[edison-metrics]** Add property to switch off the hostname in graphite prefix
 * **[edison-core]** Added a UI to configure the log levels of the service. The UI is added to the right nav bar and is
 available under `/internal/loggers`

@@ -1,9 +1,12 @@
 package de.otto.edison.metrics.configuration;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
+import com.codahale.metrics.graphite.GraphiteSender;
+import de.otto.edison.metrics.sender.FilteringGraphiteSender;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +17,7 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import static com.codahale.metrics.graphite.GraphiteReporter.forRegistry;
 import static java.lang.Integer.valueOf;
@@ -37,26 +41,38 @@ public class GraphiteReporterConfiguration {
 
     private static final Logger LOG = getLogger(GraphiteReporterConfiguration.class);
 
-    private final MetricRegistry metricRegistry;
-    private final MetricsProperties.Graphite graphiteMetricsProperties;
-
-    @Autowired
-    public GraphiteReporterConfiguration(final MetricRegistry metricRegistry,
-                                         final MetricsProperties graphiteMetricsProperties) {
-        this.metricRegistry = metricRegistry;
-        this.graphiteMetricsProperties = graphiteMetricsProperties.getGraphite();
-    }
-
     @Bean
-    public GraphiteReporter graphiteReporter() {
-        final InetSocketAddress address = new InetSocketAddress(graphiteMetricsProperties.getHost(), valueOf(graphiteMetricsProperties.getPort()));
+    public GraphiteReporter graphiteReporter(
+            final MetricRegistry metricRegistry,
+            final MetricsProperties metricsProperties,
+            final Predicate<String> graphiteFilterPredicate) {
+        MetricsProperties.Graphite graphiteMetricsProperties = metricsProperties.getGraphite();
         final String prefix = graphiteMetricsProperties.isAddHostToPrefix() ?
                 graphiteMetricsProperties.getPrefix() + "." + reverse(hostName()) + ".metrics" : graphiteMetricsProperties.getPrefix();
         final GraphiteReporter graphiteReporter = forRegistry(metricRegistry)
                 .prefixedWith(prefix)
-                .build(new com.codahale.metrics.graphite.Graphite(address));
+                .build(graphiteSender(graphiteMetricsProperties, graphiteFilterPredicate));
         graphiteReporter.start(1, TimeUnit.MINUTES);
         return graphiteReporter;
+    }
+
+    private GraphiteSender graphiteSender(final MetricsProperties.Graphite graphiteMetricsProperties, final Predicate<String> graphiteFilterPredicate) {
+        final InetSocketAddress address = new InetSocketAddress(graphiteMetricsProperties.getHost(), valueOf(graphiteMetricsProperties.getPort()));
+        return new FilteringGraphiteSender(new Graphite(address), graphiteFilterPredicate);
+    }
+
+    /**
+     * This implementation provides a filter Predicate<String> if no Bean 'graphiteFilterPredicate' is
+     * defined. It removes all metric values that have a postfix of .m5_rate, .m_15_rate, ...
+     * If you want to override this behaviour you can define a bean 'graphiteFilterPredicate' with an own
+     * implementation. All Predicate executions that return true are sent.
+     *
+     * @return graphiteFilterPredicate
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public Predicate<String> graphiteFilterPredicate() {
+        return FilteringGraphiteSender.removePostfixValues(".m5_rate", ".m15_rate", ".min", ".max", ".mean_rate", ".p50", ".p75", ".p98", ".stddev");
     }
 
     private static String reverse(final String host) {
