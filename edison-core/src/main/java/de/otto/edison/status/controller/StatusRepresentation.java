@@ -123,7 +123,7 @@ public class StatusRepresentation {
             this.group = applicationStatus.application.group;
             this.environment = applicationStatus.application.environment;
             this.version = applicationStatus.vcs.version;
-            this.commit = applicationStatus.vcs.commit;
+            this.commit = applicationStatus.vcs.commitId;
             this.vcsUrl = applicationStatus.vcs.url;
             this.status = applicationStatus.status;
             this.statusDetails = statusDetailsOf(applicationStatus.statusDetails);

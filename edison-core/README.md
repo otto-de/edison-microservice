@@ -132,57 +132,29 @@ be automatically added to the status details section of the status page / JSON d
 4. Optionally override the behaviour of the StatusAggregator and/or schedulers (see 'Conditional Spring Beans'). This
 should generally not be necessary.
 
-## 3.2 /internal/status
+## 3.2 Endpoint /internal/status
 
-### 3.2.1 Criticality
+The Status endpoint is available in HTML and JSON format. It provides information about the application's configuration
+as well as the dynamic status.
 
-TODO
+### 3.3 Application Info
 
-### 3.2.2 External Dependencies
+The application section of the status page contains general information about the application that is configured using
+`de.edison.status.configuration.ApplicationInfoProperties`:
 
-TODO
+  * `edison.status.application.title` A short title that is used in the top navigation and the html title tag.
+  * `edison.status.application.description` A human-readable short description of the application's purpose.
+  * `edison.status.application.group` Information about the group of services this service is belonging to.
+  Example: 'order', 'user', 'campaign'
+  * `edison.status.application.environment` The stage environment (like develop, prelive, live) of the service.
 
-## 3.3 Environment Properties
+### 3.4 Application Status
 
-The following properties should be added to your application.properties or application.yml configuration.
+In addition to the static application info, there is a dynamically calculated status, that can be used to monitor
+whether or not the application is behaving as expected.
 
-**Required:**
-* `spring.application.name` The default Spring Boot property containing the name of the service.
-
-Optional information about the system:
-* `server.port` The port used to access the application
-* `server.hostname` The hostname of the server
-* `HOSTNAME` if server.hostname is not configured, the system environment's HOSTNAME is tried. If this is not available, 
-the SystemInfoConfiguration is trying to get the hostname using InetAddress.getLocalHost().getHostName().
-
-**
-* `edison.status.redirect-internal.enabled:true` Redirect /internal to /internal/status
-
-**de.edison.status.configuration.ApplicationInfoProperties:** Optional information about the application:
-* `edison.status.application.title` A short title that is used in the top navigation and the html title tag.
-* `edison.status.application.description` A human-readable short description of the application's purpose.
-* `edison.status.application.group` Information about the group of services this service is belonging to.
-Example: 'order', 'user', 'campaign'
-* `edison.status.application.environment` The stage environment (like develop, prelive, live) of the service.
-
-**de.edison.status.configuration.VersionInfoProperties:** Optional VCS information about the deployed application:
-* `edison.status.vcs.version` The version number (something like 1.5.2)
-* `edison.status.vcs.commit:`The GIT commit hash
-* `edison.status.vcs.url-template:`the URL template used to build an URL to the VCS
-(e.g. https://github.com/otto-de/edison-microservice/commit/{commit})
-
-**de.edison.status.configuration.TeamInfoProperties:** Optional information about the team responsible for the service:
-* `edison.status.team.name`
-* `edison.status.team.technical-contact`
-* `edison.status.team.business-contact`
-
-**de.edison.status.configuration.ClusterInfoProperties:** Optional properties about how to access information about
- the current cluster state in green/blue deployment scenarios:
-* `edison.status.cluster.enabled:false`
-* `edison.status.cluster.color-header:X-Color`
-* `edison.status.cluster.color-state-header:X-Staging`
-
-## 3.4 Conditional Spring Beans
+Similar to the HealthIndicators, Edison provides StatusDetailIndicators to determine the application status. For
+example, for every job Edison is auto-configuring an indicator that is monitoring the execution of jobs.
 
 By default, the status of the application is calculated every 10 seconds and cached in the meantime. You
 can change this default behaviour in the following ways:
@@ -197,6 +169,72 @@ StatusAggregator every 10 seconds.
 
 3. Provide a `cronScheduler` bean and configure `edison.status.scheduler.cron` in your application properties with
 a valid cron expression. This way, the cron scheduler is used instead of the fixedDelayScheduler.
+
+### 3.5 System Information
+
+### 3.6 Version Information
+
+The application can be configured to provide information about the currently deployed version. Version info is displayed
+in both HTML and JSON format.
+
+There are two ways to configure the data:
+
+### 3.6.1. Using Edison Properties
+
+A) Edison is supporting a number of properties (see `de.edison.status.configuration.VersionInfoProperties`) to
+configure the VCS information:
+
+* `edison.status.vcs.version` The version number (something like 1.5.2)
+* `edison.status.vcs.commit:` The GIT commit hash
+* `edison.status.vcs.url-template:` The URL template used to build an URL to the VCS
+(e.g. https://github.com/otto-de/edison-microservice/commit/{commit})
+* `edison.status.vcs.commit-time:` Time of the commit
+* `edison.status.vcs.user-name:` Name of the committer
+* `edison.status.vcs.user-email:` Email of the committer
+* `edison.status.vcs.message-short:` Short commit message
+* `edison.status.vcs.message-full:` Full commit message
+* `edison.status.vcs.branch:` The branch of the commit
+
+### 3.6.2 Using Spring Boot GitProperties
+
+B) Spring Boot is auto-configuring a `GitProperties` bean, if a `git.properties` resource is found in the classpath. See
+(http://docs.spring.io/spring-boot/docs/1.5.2.RELEASE/reference/htmlsingle/#production-ready-application-info-git)[] for
+more information about the usage of GitProperties and how to generate the properties in your Gradle or Maven build.
+
+Because GitProperties do not contain fields for VCS url or version, you may provide these two properties as in A), while
+using the Spring Boot GitProperties for all the other information.
+
+### 3.7 Team Information
+
+### 3.8 Criticality
+
+### 3.9 External Dependencies
+
+## 3.3 Environment Properties
+
+The following properties should be added to your application.properties or application.yml configuration.
+
+**Required:**
+* `spring.application.name` The default Spring Boot property containing the name of the service.
+
+Optional information about the system:
+* `server.port` The port used to access the application
+* `server.hostname` The hostname of the server
+* `HOSTNAME` if server.hostname is not configured, the system environment's HOSTNAME is tried. If this is not available, 
+the SystemInfoConfiguration is trying to get the hostname using InetAddress.getLocalHost().getHostName().
+
+* `edison.status.redirect-internal.enabled:true` Redirect /internal to /internal/status
+
+**de.edison.status.configuration.TeamInfoProperties:** Optional information about the team responsible for the service:
+* `edison.status.team.name`
+* `edison.status.team.technical-contact`
+* `edison.status.team.business-contact`
+
+**de.edison.status.configuration.ClusterInfoProperties:** Optional properties about how to access information about
+ the current cluster state in green/blue deployment scenarios:
+* `edison.status.cluster.enabled:false`
+* `edison.status.cluster.color-header:X-Color`
+* `edison.status.cluster.color-state-header:X-Staging`
 
 # 4. de.otto.edison.metrics
 

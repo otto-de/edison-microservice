@@ -64,8 +64,17 @@
                         <dl class="dl-horizontal" th:with="vcs=${status.vcs}">
                             <dt>Version:</dt>
                             <dd th:text="${vcs.version}">Version</dd>
-                            <dt>Git Commit:</dt>
-                            <dd th:text="${vcs.commit}">Git commit</dd>
+                            <dt>Commit Message:</dt>
+                            <dd th:text="${vcs.messageShort}">Short Message</dd>
+                            <dt>Commit ID:</dt>
+                            <dd th:text="${vcs.commitId}">Git commit</dd>
+                            <dt>Commit Time:</dt>
+                            <dd th:text="${vcs.commitTime}">Git time</dd>
+                            <dt>Branch:</dt>
+                            <dd th:text="${vcs.branch}">master</dd>
+                            <dt>User:</dt>
+                            <dd th:text="${vcs.userName + ' (' + vcs.userEmail + ')'}">
+                            </dd>
                             <dt>VCS:</dt>
                             <dd th:with="isHttpUrl=${#strings.startsWith(vcs.url, 'http')}" >
                                 <a th:if="${isHttpUrl}" th:href="${vcs.url}">Open VCS UI</a>
