@@ -1,7 +1,7 @@
 package de.otto.edison.status.configuration;
 
 import de.otto.edison.status.domain.VersionInfo;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.info.GitProperties;
@@ -18,18 +18,13 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(VersionInfoProperties.class)
 public class VersionInfoConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean(VersionInfo.class)
-    @ConditionalOnBean(GitProperties.class)
-    public VersionInfo gitInfo(final VersionInfoProperties versionInfoProperties,
-                               final GitProperties gitProperties) {
-        return VersionInfo.versionInfo(versionInfoProperties, gitProperties);
-    }
+    @Autowired(required = false)
+    private GitProperties gitProperties = null;
 
     @Bean
-    @ConditionalOnMissingBean({VersionInfo.class, GitProperties.class})
-    public VersionInfo versionInfo(final VersionInfoProperties versionInfoProperties) {
-        return VersionInfo.versionInfo(versionInfoProperties);
+    @ConditionalOnMissingBean(VersionInfo.class)
+    public VersionInfo gitInfo(final VersionInfoProperties versionInfoProperties) {
+        return VersionInfo.versionInfo(versionInfoProperties, gitProperties);
     }
 
 }
