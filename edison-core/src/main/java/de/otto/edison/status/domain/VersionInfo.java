@@ -19,10 +19,10 @@ import java.util.Objects;
 public class VersionInfo {
 
     private static final String COMMIT_TIME = "commit.time";
-    private static final String USER_NAME = "user.name";
-    private static final String USER_EMAIL = "user.email";
-    private static final String MESSAGE_SHORT = "message.short";
-    private static final String MESSAGE_FULL = "message.full";
+    private static final String USER_NAME = "commit.user.name";
+    private static final String USER_EMAIL = "commit.user.email";
+    private static final String MESSAGE_SHORT = "commit.message.short";
+    private static final String MESSAGE_FULL = "commit.message.full";
 
     /**
      * The version number of the service, or {@link #commitId}, if no version property is set.
