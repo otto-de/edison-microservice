@@ -3,6 +3,7 @@ package de.otto.edison.authentication.configuration;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  * Properties used to configure LDAP authentication.
  */
 @ConfigurationProperties(prefix = "edison.ldap")
+@Validated
 public class LdapProperties {
 
     private static final Logger LOG = getLogger(LdapProperties.class);
