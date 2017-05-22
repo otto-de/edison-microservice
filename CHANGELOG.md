@@ -1,13 +1,17 @@
 # Release Notes
 
-## 1.1.0 (CURRENT SNAPSHOT)
+## 1.1.0
+
+**Edison 1.1.0 is depending on Spring Boot 1.5.2.RELEASE**
 
 **Deprecations:**
+
 * **[edison-core]** Deprecated the (Beta) ServiceSpecs.
 * **[edison-togglz]** Deprecated the usage of TogglzLdapProperties and TogglzLdapConfiguration. Instead of using this,
 you should migrate to the LDAP authentication introduced with 1.0.1.RELEASE.
 
 **New Features:**
+
 * **[edison-core]** Added a UI to configure the log levels of the service. The UI is added to the right nav bar and is
 available under `/internal/loggers`
 * **[edison-core]** Introduced the configuration of external dependencies, which is replacing the now
@@ -31,10 +35,12 @@ graphite prefix
 ## 1.0.1.RELEASE
 
 **Bugfixes:**
+
 * **[edison-core]** Fix reporting of http request count and time to Graphite
 * **[edison-mongo]** Fixed display of mongo password in /internal/env
 
 **New Features:**
+
 * **[edison-core]** Allow LDAP authentication for user-defined paths.
 * **[edison-mongo]** Add @ConditionalOnMissingBean to MongoTogglzRepository
 * **[edison-mongo]** Make ID and ETAG constants public to be able to access them from outside
@@ -44,6 +50,7 @@ The new `example-cache` contains a showcase for this. This feature makes the 'ol
 interface obsolete.
 
 **Deprecations:**
+
 * **[edison-cache]** The `CacheRegistry` is now deprecated and will be removed in release 2.0.0.
 * **[edison-mongo]** Deprecation of `edison.mongo.passwd`. Use `edison.mongo.password` instead to sanitize value in environment. 
 The support for `edison.mongo.passwd` will be removed in 2.0.0
@@ -51,11 +58,13 @@ The support for `edison.mongo.passwd` will be removed in 2.0.0
 ## 1.0.0.RC9
 
 **New Features:**
+
 * **[edison-jobs]** Add the cleanup strategy `DeleteSkippedJobs` to remove skipped jobs first. Configure with property
 `edison.jobs.cleanup.number-of-skipped-jobs-to-keep`
 * **[edison-mongo]** Extend @ConditionalOnMissingBean for mongoClient & mongoDatabase by name matcher
 
 **Maintenance:**
+
 * **[edison-*]** Add gradle task to determine possible dependency updates (see [README.md](README.md##dependency-update))
 * **[edison-*]** Gradle test tasks now will generate a coverage report 
 * **[edison-*]** Minor dependency updates
@@ -63,15 +72,18 @@ The support for `edison.mongo.passwd` will be removed in 2.0.0
 ## 1.0.0.RC8
 
 **Bugfixes:**
+
 * **[edison-jobs]** Catching duplicate key exceptions in `JobMetaRepository.createValue`
 * **[edison-jobs]** Fixed `@Value` annotation to configure the Mongo collections in `MongoJobsConfiguration`
 
 **New Features:**
+
 * **[edison-jobs]** Add a button to show the last runs of a job type
 
 ## 1.0.0.RC7
 
 **New Features:**
+
 * **[edison-jobs]** Introduced possibility to change the collection names used in MongoJob*Repositories using properties:
   * `edison.jobs.collection.jobinfo`: name of the collection used to store job information. Default value is `jobinfo`.
   * `edison.jobs.collection.jobmeta`: name of the collection used to store job meta information. Default value is `jobmeta`.
@@ -79,18 +91,22 @@ The support for `edison.mongo.passwd` will be removed in 2.0.0
 ## 1.0.0.RC6
 
 **Bugfixes:**
+
 * **[edison-jobs]** Fixed: JobDefinitions-Page throws error with RC5
 
 ## 1.0.0.RC5
 
 **Bugfixes:**
+
 * **[edison-jobs]** Fixed bug in configuration of JobMutexGroups.
 * **[edison-jobs]** Fixed missing `deleteAll()` in JobRepository.
 
 **Breaking Changes:**
+
 * **[edison-jobs]** Refactored JobRepository.
 
 **New Features:**
+
 * **[edison-jobs]** Introduced JobMetaService and JobMetaRepository to store meta data about jobs.
 * **[edison-jobs]** Introduced MetaJobRunnable to make it easy to implement jobs having metadata like,
 for example, import jobs that are keeping track of their last read position.
@@ -99,6 +115,7 @@ for example, import jobs that are keeping track of their last read position.
 ## 1.0.0.RC4
 
 **Bugfixes:**
+
 * **[edison-core]** Fixed version conflict for Thymeleaf; Updated dependencies to Thymeleaf 3.
 * **[edison-core]** Fixed broken links to jobs in status details JSON.
 * **[edison-jobs]** Fix property name numberOfToKeep => numberOfJobsToKeep
@@ -106,26 +123,31 @@ for example, import jobs that are keeping track of their last read position.
 * **[edison-jobs]** Sleep with retry delay before retry job execution.
 
 **New Features:**
+
 * **[edison-jobs]** Added new JobStatus SKIPPED for jobs that have been skipped because there was nothing to do.
 JobRunnables can not call `jobEventPublisher.skipped()` to announce skipped jobs.
 * **[edison-jobs]** Added buttons to retrigger jobs in the job UI
 
 **Breaking Changes:**
+
 * **[edison-jobs]** Refactored JobRepository.
 
 ## 1.0.0.RC3
 
 **Bugfixes:**
+
 * **[edison-mongo]** Fixed issue Unable to use MongoJobRepository
 
 
 ## 1.0.0.RC2
 
 **Bugfixes:**
+
 * **[edison-core]** Fixed issue Status page should always render `vcs.url`
 * **[edison-jobs]** Fixed issue add `JobRepository.deleteAll()`
 
 **New Features:**
+
 * **[edison-core]** Added `@ConfigurationProperties MetricsProperties`
 * **[edison-core]** Added `StatusDetail.getLinks()` and rendering hyperlinks on status pages. Job details are now using
 links; this way you can directly jump from the status page to the job messages.
@@ -144,6 +166,7 @@ _**Beginning with 1.0.0, we will start using semantic versioning of releases.**_
 _Because a couple of modules have been removed in this release, you should probably delete your existing project and clone the current version from scratch_
 
 **Breaking Changes:**
+
 * **[edison-*]** Refactored module structure: 
   * moved `edison-status`, `edison-health`, `edison-metrics`, `edison-microservice` and `èdison-servicediscovery-client`
     into `edison-core`.
@@ -174,11 +197,13 @@ The new structure of the properties is like this:
 is replaced by setting  `edison.jobs.status.calculator.default=errorOnLastJobFailed`.
 
 **Bugfixes:**
+
 * **[edison-jobs]** Fixed broken link from job messages to /jobdefinitions/<jobType>. `JobDefinitionService.getJobDefition(jobType)`
 is now case insensitive.
 * **[edison-mongo]** Using `primaryPreferred` instead of `primary` to increase availability during master election.
 
 **New Features:**
+
 * **[edison-core]** Added feature to configure the entries of the navigation bar of /internal/* pages. See
 `de.otto.edison navigation` for details and have a look at the `NavigationConfiguration` in the examples. 
 * **[edison-core]** Added support to get status information for service that deployed using green/blue deployments. See
@@ -213,12 +238,10 @@ case-insensitive, blanks are converted to `-`.
   
   **Example**: A job type named `Delta Import` should use `errorOnLastThreeJobsFailed`, while all other jobs 
   should use `errorOnLastJobFailed`:
+
    * `edison.jobs.status.calculator.default = errorOnLastJobFailed`
    * `edison.jobs.status.calculator.delta-import = errorOnLastThreeJobsFailed`
 * **[edison-mongo]** Added auto-configuration for `FeatureRepository` and `JobRepository`
-
-## 0.82.2
-* **[edision-mongo]** use version of mongo driver to 3.4.1, fongo 2.0.11
 
 ## 0.82.2
 * **[edision-mongo]** use version of mongo driver to 3.4.1, fongo 2.0.11
