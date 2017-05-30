@@ -59,7 +59,7 @@ public class LdapProperties {
     /**
      * List of paths that should be whitelisted from LDAP authentication (sub-paths will also be whitelisted)
      */
-    private List<String> whitelistedPaths = Collections.singletonList("/internal/health");
+    private List<String> whitelistedPaths = Collections.singletonList("/internal/health,/internal/js");
 
     /**
      * Creates Ldap properties. Primarily used in tests.
