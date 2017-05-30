@@ -4,6 +4,11 @@
 
 **Edison 1.1.0 is depending on Spring Boot 1.5.2.RELEASE**
 
+**Bugfixes:**
+
+* **[edison-core]** Added /internal/js to LDAP whitelist, so the JS can be loaded w/o authentication in case of
+whilelisted /internal/jobs or /internal/jobdefinitions
+
 **Deprecations:**
 
 * **[edison-core]** Deprecated the (Beta) ServiceSpecs.
