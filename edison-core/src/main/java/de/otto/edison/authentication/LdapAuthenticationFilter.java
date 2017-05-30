@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
+import static de.otto.edison.authentication.Credentials.readFrom;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -28,6 +29,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  */
 public class LdapAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final String INTERNAL_JS_PATH = "/internal/js/";
     private static Logger LOG = LoggerFactory.getLogger(LdapAuthenticationFilter.class);
 
     private final LdapProperties ldapProperties;
@@ -37,18 +39,21 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return ldapProperties.getWhitelistedPaths()
+    protected boolean shouldNotFilter(final HttpServletRequest request) throws ServletException {
+        final String servletPath = request.getServletPath();
+        return servletPath.startsWith(INTERNAL_JS_PATH) || ldapProperties.getWhitelistedPaths()
                 .stream()
-                .anyMatch(whitelistedPath -> request.getServletPath().startsWith(whitelistedPath));
+                .anyMatch(servletPath::startsWith);
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request,
+                                    final HttpServletResponse response,
+                                    final FilterChain filterChain) throws ServletException, IOException {
         if (isEmpty(request.getHeader("Authorization"))) {
             unauthorized(response);
         } else {
-            Optional<Credentials> credentials = Credentials.readFrom(request);
+            Optional<Credentials> credentials = readFrom(request);
 
             if (!ldapProperties.isValid() || !credentials.isPresent() || !ldapAuthentication(credentials.get())) {
                 unauthorized(response);
@@ -58,12 +63,12 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void unauthorized(HttpServletResponse httpResponse) {
+    private void unauthorized(final HttpServletResponse httpResponse) {
         httpResponse.addHeader(WWW_AUTHENTICATE, "Basic realm=Authorization Required");
         httpResponse.setStatus(UNAUTHORIZED.value());
     }
 
-    private boolean ldapAuthentication(Credentials credentials) {
+    private boolean ldapAuthentication(final Credentials credentials) {
         boolean authOK = false;
         LDAPConnection ldapConnection = null;
         try {

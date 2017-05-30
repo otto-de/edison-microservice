@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -63,6 +65,17 @@ public class LdapAuthenticationFilterTest {
     public void shouldNotApplyFilterToWhitelistedEndpoint() throws Exception {
         HttpServletRequest request = requestWithoutAuthorizationHeader();
         when(request.getServletPath()).thenReturn(WHITELISTED_PATH + "/etc");
+
+        FilterChain filterChain = mock(FilterChain.class);
+        testee.doFilter(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    public void shouldNotApplyFilterToInternalJavascript() throws Exception {
+        HttpServletRequest request = requestWithoutAuthorizationHeader();
+        when(request.getServletPath()).thenReturn("/internal/js/foo.js");
 
         FilterChain filterChain = mock(FilterChain.class);
         testee.doFilter(request, response, filterChain);
