@@ -20,6 +20,11 @@ import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.util.StringUtils.isEmpty;
 
+/**
+ * @deprecated Use {@link de.otto.edison.authentication.LdapAuthenticationFilter} instead of this.
+ * This class will be removed in 2.0.0
+ */
+@Deprecated
 public class LdapAuthenticationFilter implements Filter {
 
     private static Logger LOG = LoggerFactory.getLogger(LdapAuthenticationFilter.class);
@@ -32,12 +37,10 @@ public class LdapAuthenticationFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     @Override
     public void destroy() {
-
     }
 
     @Override
