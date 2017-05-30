@@ -1,6 +1,7 @@
 package de.otto.edison.metrics.sender;
 
 import com.codahale.metrics.graphite.GraphiteSender;
+import de.otto.edison.metrics.configuration.GraphiteReporterConfiguration;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,11 +16,35 @@ public class FilteringGraphiteSenderTest {
     private final Long timestamp = 2L;
     private final String value = "45";
     private final Predicate<String> predicate = keepValuesByPattern(compile("anothermetric"));
+    private final GraphiteSender delegate = mock(GraphiteSender.class);
+
+    @Test
+    public void shouldSendMetricForNotFilteredSuffix() throws Exception {
+        // given
+        String name = "testtest.foo.bar.metrics.filedescriptors.ratio";
+
+        // when
+        new FilteringGraphiteSender(delegate, new GraphiteReporterConfiguration().graphiteFilterPredicate()).send(name, value, timestamp);
+
+        // then
+        verify(delegate).send(name, value, timestamp);
+    }
+
+    @Test
+    public void shouldNotSendMetricForFilteredSuffixes() throws Exception {
+        // given
+        String name = "testtest.foo.bar.metrics.filedescriptors.p98";
+
+        // when
+        new FilteringGraphiteSender(delegate, new GraphiteReporterConfiguration().graphiteFilterPredicate()).send(name, value, timestamp);
+
+        // then
+        verifyZeroInteractions(delegate);
+    }
 
     @Test
     public void shouldNotSendMetric() throws Exception {
         // given
-        GraphiteSender delegate = mock(GraphiteSender.class);
         String name = "metrics.http.exception.p95";
 
         // when
@@ -32,7 +57,6 @@ public class FilteringGraphiteSenderTest {
     @Test
     public void shouldSendMetric() throws Exception {
         // given
-        GraphiteSender delegate = mock(GraphiteSender.class);
         String name = "metrics.anothermetric.min";
 
         // when
@@ -46,7 +70,6 @@ public class FilteringGraphiteSenderTest {
     @Test
     public void shouldFilterDefaultValues() throws Exception {
         // given
-        GraphiteSender delegate = mock(GraphiteSender.class);
         FilteringGraphiteSender graphiteSender = new FilteringGraphiteSender(delegate, removePostfixValues("abc"));
         String name = "holy.moly.string.ends.with.abc";
 
@@ -55,6 +78,19 @@ public class FilteringGraphiteSenderTest {
 
         // then
         verifyZeroInteractions(delegate);
+    }
+
+    @Test
+    public void shouldNotFilterNonDefaultValues() throws Exception {
+        // given
+        FilteringGraphiteSender graphiteSender = new FilteringGraphiteSender(delegate, removePostfixValues("abc"));
+        String name = "holy.moly.string.ends.with.def";
+
+        // when
+        graphiteSender.send(name, value, timestamp);
+
+        // then
+        verify(delegate).send(name, value, timestamp);
     }
 
     private void sendValue(String name, GraphiteSender delegate) throws IOException {

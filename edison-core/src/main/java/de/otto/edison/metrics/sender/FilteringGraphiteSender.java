@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class FilteringGraphiteSender implements GraphiteSender {
-    private static final Predicate<String> PREDICATE_ALL = (a) -> true;
+    private static final Predicate<String> PREDICATE_NONE = (a) -> false;
 
     private final GraphiteSender delegate;
     private final Predicate<String> predicate;
@@ -24,8 +24,8 @@ public class FilteringGraphiteSender implements GraphiteSender {
         delegate.connect();
     }
 
-    public static Predicate<String> keepAll() {
-        return PREDICATE_ALL;
+    public static Predicate<String> keepNone() {
+        return PREDICATE_NONE;
     }
 
     public static Predicate<String> keepValuesByPattern(Pattern pattern) {
@@ -35,7 +35,7 @@ public class FilteringGraphiteSender implements GraphiteSender {
     public static Predicate<String> keepValuesByPatterns(Stream<Pattern> pattern) {
         return pattern
                 .map(Pattern::asPredicate)
-                .reduce(keepAll(), Predicate::or);
+                .reduce(keepNone(), Predicate::or);
     }
 
     @Override
@@ -65,11 +65,11 @@ public class FilteringGraphiteSender implements GraphiteSender {
         delegate.close();
     }
 
-    public static Predicate<String> removePostfixValues(String ... postfixValues) {
-        return keepValuesByPatterns(Arrays.stream(postfixValues)
+    public static Predicate<String> removePostfixValues(String... postfixValues) {
+        Stream<Pattern> patternStream = Arrays.stream(postfixValues)
                 .map(Pattern::quote)
-                .map(s -> s+"$")
-                .map(Pattern::compile))
-                .negate();
+                .map(s -> ".*" + s + "$")
+                .map(Pattern::compile);
+        return keepValuesByPatterns(patternStream).negate();
     }
 }
