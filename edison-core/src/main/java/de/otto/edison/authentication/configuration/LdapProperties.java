@@ -15,17 +15,17 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * Properties used to configure LDAP authentication.
+ *
+ * Add an authentication filter to the web application context if edison.ldap property is set to {@code enabled}'.
+ * All routes starting with the value of the {@code edison.ldap.prefix} property will be secured by LDAP. If no
+ * property is set this will default to all routes starting with '/internal'.
  */
 @ConfigurationProperties(prefix = "edison.ldap")
 @Validated
 public class LdapProperties {
 
     private static final Logger LOG = getLogger(LdapProperties.class);
-/**
- * Add an authentication filter to the web application context if edison.ldap property is set to {@code enabled}'.
- * All routes starting with the value of the {@code edison.ldap.prefix} property will be secured by LDAP. If no
- * property is set this will default to all routes starting with '/internal'.
- */
+
     /**
      * Enable / disable the LDAP authentication
      */
@@ -45,6 +45,10 @@ public class LdapProperties {
      */
     @NotEmpty
     private String baseDn;
+    /**
+     * Distinguished name used to select user roles
+     */
+    private String roleBaseDn = null;
     /**
      * Relative distinguished name (RDN)
      */
@@ -67,6 +71,7 @@ public class LdapProperties {
      * @param host LDAP server
      * @param port LDAP port
      * @param baseDn Base distinguished name
+     * @param roleBaseDn Base distinguished name used to select user roles
      * @param rdnIdentifier Relative distinguished name
      * @param prefix Prefix for paths that should require LDAP authentication
      * @param whitelistedPaths Paths that should be excluded from LDAP authentication (includes sub-paths)
@@ -75,6 +80,7 @@ public class LdapProperties {
     public static LdapProperties ldapProperties(final String host,
                                                 final int port,
                                                 final String baseDn,
+                                                final String roleBaseDn,
                                                 final String rdnIdentifier,
                                                 final String prefix,
                                                 final String... whitelistedPaths) {
@@ -83,6 +89,7 @@ public class LdapProperties {
         ldap.setHost(host);
         ldap.setPort(port);
         ldap.setBaseDn(baseDn);
+        ldap.setRoleBaseDn(roleBaseDn);
         ldap.setRdnIdentifier(rdnIdentifier);
         ldap.setPrefix(prefix);
         ldap.setWhitelistedPaths(Arrays.asList(whitelistedPaths));
@@ -137,6 +144,14 @@ public class LdapProperties {
 
     public void setBaseDn(String baseDn) {
         this.baseDn = baseDn;
+    }
+
+    public String getRoleBaseDn() {
+        return roleBaseDn;
+    }
+
+    public void setRoleBaseDn(String roleBaseDn) {
+        this.roleBaseDn = roleBaseDn;
     }
 
     public String getRdnIdentifier() {

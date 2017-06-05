@@ -1,5 +1,10 @@
 package de.otto.edison.authentication;
 
+import com.unboundid.ldap.sdk.BindResult;
+import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.ResultCode;
+import de.otto.edison.authentication.configuration.LdapProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.Base64Utils;
@@ -8,10 +13,18 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import static com.unboundid.ldap.sdk.ResultCode.AUTHORIZATION_DENIED;
+import static com.unboundid.ldap.sdk.ResultCode.SUCCESS;
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -27,30 +40,27 @@ public class LdapAuthenticationFilterTest {
 
     @Before
     public void setUp() throws Exception {
-        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, "someBaseDn", "someRdnIdentifier", "/internal", WHITELISTED_PATH));
+        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, "someBaseDn", null, "someRdnIdentifier", "/internal", WHITELISTED_PATH));
         response = mock(HttpServletResponse.class);
     }
 
-    @Test
-    public void shouldBeUnauthenticatedIfHostIsNotConfigured() throws Exception {
-        testee = new LdapAuthenticationFilter(ldapProperties("", 389, "someBaseDn", "someRdnIdentifier", "/internal"));
-        assertValidRequestIsUnauthorized();
+    @Test(expected = IllegalStateException.class)
+    public void shouldFailToStartIfHostIsNotConfigured() throws Exception {
+        new LdapAuthenticationFilter(ldapProperties("", 389, "someBaseDn", null, "someRdnIdentifier", "/internal"));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldFailToStartIfBaseDnIsNotConfigured() throws Exception {
+        new LdapAuthenticationFilter(ldapProperties("someHost", 389, "", null, "someRdnIdentifier", "/internal"));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldFailToStartIfRdnIdentifierIsNotConfigured() throws Exception {
+        new LdapAuthenticationFilter(ldapProperties("someHost", 389, "someBaseDn", null, "", "/internal"));
     }
 
     @Test
-    public void shouldBeUnauthenticatedIfBaseDnIsNotConfigured() throws Exception {
-        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, "", "someRdnIdentifier", "/internal"));
-        assertValidRequestIsUnauthorized();
-    }
-
-    @Test
-    public void shouldBeUnauthenticatedIfRdnIdentifierIsNotConfigured() throws Exception {
-        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, "someBaseDn", "", "/internal"));
-        assertValidRequestIsUnauthorized();
-    }
-
-    @Test
-    public void shouldBeUnauthenticatedIfAuthorizationHeaderIsMissing() throws Exception {
+    public void shouldFailToStartIfAuthorizationHeaderIsMissing() throws Exception {
         testee.doFilter(requestWithoutAuthorizationHeader(), response, mock(FilterChain.class));
         assertUnauthorized();
     }
@@ -83,6 +93,52 @@ public class LdapAuthenticationFilterTest {
         verify(filterChain).doFilter(request, response);
     }
 
+    @Test
+    public void shouldApplyFilterToAuthenticatedUser() throws IOException, ServletException, GeneralSecurityException, LDAPException {
+        final LdapProperties ldapProperties = ldapProperties("someHost", 389, "someBaseDn", null, "someRdnIdentifier", "/internal", WHITELISTED_PATH);
+        final LdapConnectionFactory connectionFactory = mock(LdapConnectionFactory.class);
+        final LDAPConnection ldapConnection = someLdapConnectionReturning(SUCCESS);
+        when(connectionFactory.buildLdapConnection()).thenReturn(ldapConnection);
+        testee = new LdapAuthenticationFilter(ldapProperties, connectionFactory);
+        final HttpServletRequest request = requestWithAuthorizationHeader();
+        when(request.getServletPath()).thenReturn("/foo");
+        FilterChain filterChain = mock(FilterChain.class);
+        testee.doFilter(request, response, filterChain);
+        verify(filterChain).doFilter(any(HttpServletRequest.class), any(HttpServletResponse.class));
+    }
+
+    @Test
+    public void shouldNotApplyFilterToNotAuthenticatedUser() throws IOException, ServletException, GeneralSecurityException, LDAPException {
+        final LdapProperties ldapProperties = ldapProperties("someHost", 389, "someBaseDn", null, "someRdnIdentifier", "/internal", WHITELISTED_PATH);
+        final LdapConnectionFactory connectionFactory = mock(LdapConnectionFactory.class);
+        final LDAPConnection ldapConnection = someLdapConnectionReturning(AUTHORIZATION_DENIED);
+        when(connectionFactory.buildLdapConnection()).thenReturn(ldapConnection);
+        testee = new LdapAuthenticationFilter(ldapProperties, connectionFactory);
+        final HttpServletRequest request = requestWithAuthorizationHeader();
+        when(request.getServletPath()).thenReturn("/foo");
+        FilterChain filterChain = mock(FilterChain.class);
+        testee.doFilter(request, response, filterChain);
+        verify(filterChain, never()).doFilter(any(HttpServletRequest.class), any(HttpServletResponse.class));
+    }
+
+    @Test
+    public void shouldAuthenticateUser() throws LDAPException {
+        boolean authenticated = testee.authenticate(someLdapConnectionReturning(SUCCESS), "user", "password");
+        assertThat(authenticated).isEqualTo(true);
+    }
+
+    @Test
+    public void shouldNotAuthenticateUser() throws LDAPException {
+        boolean authenticated = testee.authenticate(someLdapConnectionReturning(AUTHORIZATION_DENIED), "user", "password");
+        assertThat(authenticated).isEqualTo(false);
+    }
+
+    @Test
+    public void shouldBuildUserDnFromCredentials() {
+        final String userDn = testee.userDnFrom(new Credentials("user", "password"));
+        assertThat(userDn).isEqualTo("someRdnIdentifier=user,someBaseDn");
+    }
+
     private HttpServletRequest requestWithoutAuthorizationHeader() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getServletPath()).thenReturn("/internal");
@@ -96,15 +152,16 @@ public class LdapAuthenticationFilterTest {
         return request;
     }
 
-    private void assertValidRequestIsUnauthorized() throws IOException, ServletException {
-        testee.doFilter(requestWithAuthorizationHeader(), response, mock(FilterChain.class));
-
-        assertUnauthorized();
-    }
-
     private void assertUnauthorized() {
         verify(response).setStatus(UNAUTHORIZED.value());
         verify(response).addHeader(WWW_AUTHENTICATE, "Basic realm=Authorization Required");
     }
 
+    private LDAPConnection someLdapConnectionReturning(final ResultCode resultCode) throws LDAPException {
+        final LDAPConnection ldap = mock(LDAPConnection.class);
+        final BindResult mockBindResult = mock(BindResult.class);
+        when(mockBindResult.getResultCode()).thenReturn(resultCode);
+        when(ldap.bind(anyString(), anyString())).thenReturn(mockBindResult);
+        return ldap;
+    }
 }

@@ -22,7 +22,10 @@ import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.time.Duration.ofSeconds;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 

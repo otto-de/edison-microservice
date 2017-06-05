@@ -23,7 +23,7 @@ ext {
     test_versions = [
             junit       : '4.12',
             hamcrest    : '1.3',
-            mockito_core: '1.10.19',
+            mockito_core: '2.8.9',
             jsonassert  : '1.5.0',
             fongo       : '2.1.0'
     ]
