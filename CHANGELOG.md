@@ -36,6 +36,8 @@ You may configure the filtering by overriding
 the default `GraphiteReporterConfiguration.graphiteFilterPredicate` bean definition.
 * **[edison-metrics]** Add property `edison.metrics.graphite.addHostToPrefix:true` to switch off the hostname in
 graphite prefix
+* **[edison-mongo]** The new MongoStatusDetailIndicator is autoconfigured and regularly checks the availability of the
+MongoDB. The indicator can be disabled by setting the property `edison.mongo.status.enabled=false`.
 
 ## 1.0.1.RELEASE
 

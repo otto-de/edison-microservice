@@ -13,7 +13,7 @@ import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
 
 @Component
-@ConditionalOnProperty(prefix = "edison.mongo.check-status", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "edison.mongo.status", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class MongoStatusDetailIndicator implements StatusDetailIndicator {
 
     private final MongoDatabase mongoDatabase;

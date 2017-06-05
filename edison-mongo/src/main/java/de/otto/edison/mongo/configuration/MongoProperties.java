@@ -4,7 +4,6 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import de.otto.edison.status.domain.Datasource;
-import de.otto.edison.togglz.configuration.TogglzProperties;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -84,20 +83,20 @@ public class MongoProperties {
     private int serverSelectionTimeout = 30000;
 
     @Valid
-    private CheckStatus checkStatus = new CheckStatus();
+    private Status status = new Status();
 
-    public MongoProperties.CheckStatus getCheckStatus() {
-        return checkStatus;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setCheckStatus(CheckStatus checkStatus) {
-        this.checkStatus = checkStatus;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     /**
      * Creates a StatusDetailIndicator that checks the MongoDB connection through a ping command
      */
-    public static class CheckStatus {
+    public static class Status {
         /**
          * Enable / disable the MongoDB StatusDetailIndicator
          */

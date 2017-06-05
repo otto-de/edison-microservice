@@ -5,7 +5,12 @@ MongoDB persistence for Edison Microservices.
 ## Usage
  
  *PENDING*
- 
+
+## MongoStatusDetailIndicator
+
+A StatusDetailIndicator is autoconfigured and regularly checks the availability of the MongoDB. The indicator can be
+disabled by setting the property `edison.mongo.status.enabled=false`.
+
 ## MongoJobRepository
 
 If edison-mongo is configured appropriately and edison-jobs is in the classpath, a MongoDB implementation
