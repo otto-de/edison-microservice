@@ -2,7 +2,10 @@
 
 ## 1.1.0
 
-**Edison 1.1.0 is depending on Spring Boot 1.5.2.RELEASE**
+**Dependency Updates:**
+* Updated to Spring Boot 1.5.3.RELEASE
+* Updated to Spring Framework 4.3.7.RELEASE
+* Updated to Mockito Core 2.8.9
 
 **Bugfixes:**
 
