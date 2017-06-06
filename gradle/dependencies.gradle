@@ -4,8 +4,8 @@
  */
 ext {
     versions = [
-            spring_boot                      : '1.5.2.RELEASE',
-            spring                           : '4.3.7.RELEASE',
+            spring_boot                      : '1.5.3.RELEASE',
+            spring                           : '4.3.8.RELEASE',
             async_http_client                : '1.9.40',
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.3',
