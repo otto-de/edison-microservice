@@ -22,6 +22,7 @@ apply from: "${rootDir}/gradle/root/versions.gradle"
 apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
 apply from: "${rootDir}/gradle/root/jacoco.gradle"
+apply from: "${rootDir}/gradle/root/nexusstaging.gradle"
 
 subprojects {
     apply plugin: 'eclipse'
