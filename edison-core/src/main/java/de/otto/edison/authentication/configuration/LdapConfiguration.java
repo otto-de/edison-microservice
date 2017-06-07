@@ -16,7 +16,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(LdapProperties.class)
 @ConditionalOnProperty(prefix = "edison.ldap", name = "enabled", havingValue = "true")
-@ConditionalOnMissingBean(name = "authenticationFilter")
+@ConditionalOnMissingBean(name = {"ldapAuthenticationFilter", "togglzAuthenticationFilter"})
+//TODO: remove deprecated togglzAuthenticationFilter from ConditionalOnMissingBean in Edison 2.0.0
 public class LdapConfiguration {
 
     /**
@@ -29,8 +30,8 @@ public class LdapConfiguration {
      * @return FilterRegistrationBean
      */
     @Bean
-    public FilterRegistrationBean authenticationFilter(final @Value("${edison.ldap.prefix:/internal}") String prefix,
-                                                       final LdapProperties ldapProperties) {
+    public FilterRegistrationBean ldapAuthenticationFilter(final @Value("${edison.ldap.prefix:/internal}") String prefix,
+                                                           final LdapProperties ldapProperties) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
         filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties));
         filterRegistration.addUrlPatterns(String.format("%s/*", prefix));

@@ -36,7 +36,7 @@ public class LdapConfigurationTest {
                 "edison.ldap.rdn-identifier=test-rdn");
         this.context.refresh();
 
-        assertThat(this.context.containsBean("authenticationFilter"), is(true));
+        assertThat(this.context.containsBean("ldapAuthenticationFilter"), is(true));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class LdapConfigurationTest {
                 "edison.ldap.enabled=false");
         this.context.refresh();
 
-        assertThat(this.context.containsBean("authenticationFilter"), is(false));
+        assertThat(this.context.containsBean("ldapAuthenticationFilter"), is(false));
     }
 
     @Test(expected = UnsatisfiedDependencyException.class)

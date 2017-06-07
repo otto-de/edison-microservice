@@ -1,6 +1,6 @@
 # Release Notes
 
-## 1.1.0
+## 1.1.0 (Current BETA)
 
 **Dependency Updates:**
 * Updated to Spring Boot 1.5.3.RELEASE
@@ -11,6 +11,9 @@
 
 * **[edison-core]** Added /internal/js to LDAP whitelist, so the JS can be loaded w/o authentication in case of
 whilelisted /internal/jobs or /internal/jobdefinitions
+* **[edison-core]** Renamed Spring Bean `authenticationFilter` (see `LdapConfiguration`) to `ldapAuthenticationFilter`
+to prevent naming collisions with `authenticationFilter` bean registered by
+`de.otto.hmac.authentication.AuthenticationFilter` from `hmac-auth-server` library.
 
 **Deprecations:**
 
