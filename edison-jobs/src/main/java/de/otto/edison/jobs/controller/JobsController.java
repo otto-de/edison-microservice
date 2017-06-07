@@ -52,7 +52,7 @@ public class JobsController {
         rightNavBar.register(navBarItem(10, "Job Overview", "/internal/jobs"));
     }
 
-    @RequestMapping(value = "/internal/jobs", method = GET, produces = "text/html")
+    @RequestMapping(value = "${management.context-path}/jobs", method = GET, produces = "text/html")
     public ModelAndView getJobsAsHtml(@RequestParam(value = "type", required = false) String type,
                                       @RequestParam(value = "count", defaultValue = "100") int count,
                                       @RequestParam(value = "distinct", defaultValue = "true", required = false) boolean distinct,
@@ -70,7 +70,7 @@ public class JobsController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/internal/jobs", method = GET, produces = "application/json")
+    @RequestMapping(value = "${management.context-path}/jobs", method = GET, produces = "application/json")
     @ResponseBody
     public List<JobRepresentation> getJobsAsJson(@RequestParam(name = "type", required = false) String type,
                                                  @RequestParam(name = "count", defaultValue = "10") int count,
@@ -84,7 +84,7 @@ public class JobsController {
                 .collect(toList());
     }
 
-    @RequestMapping(value = "/internal/jobs", method = DELETE)
+    @RequestMapping(value = "${management.context-path}/jobs", method = DELETE)
     public void deleteJobs(@RequestParam(value = "type", required = false) String type) {
         jobService.deleteJobs(Optional.ofNullable(type));
     }
@@ -104,7 +104,7 @@ public class JobsController {
      * @throws IOException in case the job was not able to start properly (ie. conflict)
      */
     @RequestMapping(
-            value = "/internal/jobs/{jobType}",
+            value = "${management.context-path}/jobs/{jobType}",
             method = POST)
     public void startJob(final @PathVariable String jobType,
                          final HttpServletRequest request,
@@ -119,7 +119,7 @@ public class JobsController {
     }
 
     @RequestMapping(
-            value = "/internal/jobs/{jobType}/disable",
+            value = "${management.context-path}/jobs/{jobType}/disable",
             method = POST
     )
     public String disableJobType(final @PathVariable String jobType,
@@ -129,7 +129,7 @@ public class JobsController {
     }
 
     @RequestMapping(
-            value = "/internal/jobs/{jobType}/enable",
+            value = "${management.context-path}/jobs/{jobType}/enable",
             method = POST
     )
     public String enableJobType(final @PathVariable String jobType) {
@@ -137,7 +137,7 @@ public class JobsController {
         return "redirect:/internal/jobdefinitions";
     }
 
-    @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "text/html")
+    @RequestMapping(value = "${management.context-path}/jobs/{id}", method = GET, produces = "text/html")
     public ModelAndView getJobAsHtml(final HttpServletRequest request,
                                      final HttpServletResponse response,
                                      @PathVariable("id") final String jobId) throws IOException {
@@ -159,7 +159,7 @@ public class JobsController {
         }
     }
 
-    @RequestMapping(value = "/internal/jobs/{id}", method = GET, produces = "application/json")
+    @RequestMapping(value = "${management.context-path}/jobs/{id}", method = GET, produces = "application/json")
     @ResponseBody
     public JobRepresentation getJob(final HttpServletRequest request,
                                     final HttpServletResponse response,

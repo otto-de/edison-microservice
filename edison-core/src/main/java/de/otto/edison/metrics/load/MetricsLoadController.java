@@ -21,7 +21,7 @@ public class MetricsLoadController {
     }
 
     @RequestMapping(
-            value = "/internal/load",
+            value = "${management.context-path}/load",
             produces = {"application/json"},
             method = GET
     )

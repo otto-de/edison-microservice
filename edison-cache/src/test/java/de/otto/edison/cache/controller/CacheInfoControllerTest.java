@@ -1,6 +1,5 @@
 package de.otto.edison.cache.controller;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
 import de.otto.edison.cache.configuration.CaffeineCacheConfig;
 import org.junit.Test;
 import org.springframework.boot.actuate.endpoint.CachePublicMetrics;

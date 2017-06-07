@@ -6,6 +6,7 @@ import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import de.otto.edison.cache.configuration.CaffeineCacheConfig;
 import de.otto.edison.navigation.NavBar;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.endpoint.CachePublicMetrics;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cache.caffeine.CaffeineCache;
@@ -39,20 +40,23 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class CacheInfoController {
 
     @Autowired
-    CachePublicMetrics cacheMetrics;
+    protected CachePublicMetrics cacheMetrics;
 
     @Autowired(required = false)
-    List<CaffeineCacheConfig> cacheConfigs;
+    protected List<CaffeineCacheConfig> cacheConfigs;
 
     @Autowired(required = false)
-    List<CaffeineCache> caffeineCaches;
+    protected List<CaffeineCache> caffeineCaches;
 
     @Autowired
-    NavBar rightNavBar;
+    protected NavBar rightNavBar;
+
+    @Value("${management.context-path}")
+    private String managementContextPath;
 
     @PostConstruct
     public void postConstruct() {
-        rightNavBar.register(navBarItem(bottom(), "Cache Statistics", "/internal/cacheinfos"));
+        rightNavBar.register(navBarItem(bottom(), "Cache Statistics", String.format("%s/cacheinfos", managementContextPath)));
         if (cacheConfigs == null) {
             cacheConfigs = emptyList();
         }
@@ -61,13 +65,13 @@ public class CacheInfoController {
         }
     }
 
-    @RequestMapping(value = "/internal/cacheinfos", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "${management.context-path}/cacheinfos", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String,CacheInfo> getCacheMetricsJson() {
         return enrichWithCacheSpecification(toCacheInfos(cacheMetrics));
     }
 
-    @RequestMapping(value = "/internal/cacheinfos", method = GET, produces = MediaType.ALL_VALUE)
+    @RequestMapping(value = "${management.context-path}/cacheinfos", method = GET, produces = MediaType.ALL_VALUE)
     @ResponseBody
     public ModelAndView getCacheMetricsHtml() {
         final Map<String, CacheInfo> metrics = getCacheMetricsJson();

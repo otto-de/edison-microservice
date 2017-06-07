@@ -22,8 +22,8 @@ public class InternalController {
     @Value("${server.context-path}")
     private String serverContextPath;
 
-    @RequestMapping(value = "/internal")
+    @RequestMapping(value = "${management.context-path}")
     public void redirectToStatus(final HttpServletResponse response) throws IOException {
-        response.sendRedirect(serverContextPath + "/internal/status");
+        response.sendRedirect(String.format("%s/internal/status", serverContextPath));
     }
 }

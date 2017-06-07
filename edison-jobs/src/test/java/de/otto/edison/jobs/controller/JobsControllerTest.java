@@ -30,6 +30,7 @@ import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.boot.test.util.EnvironmentTestUtils.addEnvironment;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class JobsControllerTest {
@@ -47,6 +48,7 @@ public class JobsControllerTest {
         jobsController = new JobsController(jobService, jobMetaService, mock(NavBar.class));
         mockMvc = MockMvcBuilders
                 .standaloneSetup(jobsController)
+                .addPlaceholderValue("management.context-path", "/internal")
                 .defaultRequest(MockMvcRequestBuilders.get("/").contextPath("/some-microservice"))
                 .build();
     }

@@ -46,7 +46,7 @@ public class LoggersHtmlEndpoint {
     }
 
     @RequestMapping(
-            value = "/internal/loggers",
+            value = "${management.context-path}/loggers",
             produces = {
                     TEXT_HTML_VALUE,
                     ALL_VALUE},
@@ -59,7 +59,7 @@ public class LoggersHtmlEndpoint {
     }
 
     @RequestMapping(
-            value = "/internal/loggers",
+            value = "${management.context-path}/loggers",
             produces = {
                     APPLICATION_ACTUATOR_V1_JSON_VALUE,
                     APPLICATION_JSON_VALUE},
@@ -71,7 +71,7 @@ public class LoggersHtmlEndpoint {
     }
 
     @RequestMapping(
-            value = "/internal/loggers/{name:.*}",
+            value = "${management.context-path}/loggers/{name:.*}",
             produces = {
                     APPLICATION_ACTUATOR_V1_JSON_VALUE,
                     APPLICATION_JSON_VALUE},
@@ -83,7 +83,7 @@ public class LoggersHtmlEndpoint {
     }
 
     @RequestMapping(
-            value = "/internal/loggers",
+            value = "${management.context-path}/loggers",
             consumes = APPLICATION_FORM_URLENCODED_VALUE,
             produces = TEXT_HTML_VALUE,
             method = POST)
@@ -95,7 +95,7 @@ public class LoggersHtmlEndpoint {
     }
 
     @RequestMapping(
-            value = "/internal/loggers/{name:.*}",
+            value = "${management.context-path}/loggers/{name:.*}",
             consumes = {
                     APPLICATION_ACTUATOR_V1_JSON_VALUE,
                     APPLICATION_JSON_VALUE},
