@@ -19,7 +19,7 @@ public class FeatureTogglesController {
     }
 
     @RequestMapping(
-            value = "/internal/toggles",
+            value = "${management.context-path}/toggles",
             produces = {
                     "application/vnd.otto.monitoring.status+json",
                     "application/json"},
