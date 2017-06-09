@@ -11,13 +11,13 @@ buildscript {
         classpath gradle_plugins.values()
     }
 }
+apply plugin: 'java'
 
 repositories {
     mavenCentral()
     maven { url 'http://repo.spring.io/libs-snapshot' }
 }
 
-apply from: "${rootDir}/gradle/root/propdeps.gradle"
 apply from: "${rootDir}/gradle/root/versions.gradle"
 apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
@@ -49,10 +49,6 @@ subprojects {
 
     ext['thymeleaf.version'] = versions.thymeleaf
     ext['thymeleaf-layout-dialect.version'] = versions.thymeleaf_layout_dialect
-
-    dependencies {
-        optional libraries.spring_boot_configuration_processor
-    }
 
     task allDeps(type: DependencyReportTask) {}
 

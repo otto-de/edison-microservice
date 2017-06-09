@@ -30,7 +30,6 @@ ext {
     plugin_versions = [
             versions: '0.14.0',
             jacoco  : '0.7.9',
-            propdeps: '0.0.7',
             nexus_staging: '0.9.0'
     ]
 
@@ -77,7 +76,6 @@ ext {
     ]
     gradle_plugins = [
             versions   :    "com.github.ben-manes:gradle-versions-plugin:${plugin_versions.versions}",
-            propdeps   :    "org.springframework.build.gradle:propdeps-plugin:${plugin_versions.propdeps}",
             spring_boot:    "org.springframework.boot:spring-boot-gradle-plugin:${versions.spring_boot}",
             nexus_staging:  "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:${plugin_versions.nexus_staging}"
     ]
