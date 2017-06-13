@@ -6,6 +6,9 @@ import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -35,17 +38,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class JobsControllerTest {
 
-
+    @Mock
     private JobService jobService;
+
+    @Mock
     private JobMetaService jobMetaService;
+
+    @Mock
+    private NavBar navBar;
+
+    @Mock
+    private ManagementServerProperties managementServerProperties;
+
     private MockMvc mockMvc;
     private JobsController jobsController;
 
     @Before
     public void setUp() throws Exception {
-        jobService = mock(JobService.class);
-        jobMetaService = mock(JobMetaService.class);
-        jobsController = new JobsController(jobService, jobMetaService, mock(NavBar.class));
+        MockitoAnnotations.initMocks(this);
+        jobsController = new JobsController(jobService, jobMetaService, navBar, managementServerProperties);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(jobsController)
                 .addPlaceholderValue("management.context-path", "/internal")
@@ -71,6 +82,7 @@ public class JobsControllerTest {
         OffsetDateTime now = OffsetDateTime.now(cet);
         JobInfo expectedJob = newJobInfo("42", "TEST", fixed(now.toInstant(), cet), "localhost");
         when(jobService.findJob("42")).thenReturn(Optional.of(expectedJob));
+        when(managementServerProperties.getContextPath()).thenReturn("/internal");
 
         String nowAsString = ISO_OFFSET_DATE_TIME.format(now);
         mockMvc.perform(MockMvcRequestBuilders
@@ -106,7 +118,7 @@ public class JobsControllerTest {
         Object job = jobsController.getJobsAsJson(null, 100, false, mock(HttpServletRequest.class));
 
         // then
-        assertThat(job, is(asList(representationOf(firstJob, null, false, ""), representationOf(secondJob, null, false, ""))));
+        assertThat(job, is(asList(representationOf(firstJob, null, false, "", ""), representationOf(secondJob, null, false, "", ""))));
     }
 
     @Test
@@ -123,7 +135,7 @@ public class JobsControllerTest {
         Object job = jobsController.getJobsAsJson("jobType2", 100, true, mock(HttpServletRequest.class));
 
         // then
-        assertThat(job, is(asList(representationOf(secondJob, null, false, ""), representationOf(fourthJob, null, false, ""))));
+        assertThat(job, is(asList(representationOf(secondJob, null, false, "", ""), representationOf(fourthJob, null, false, "", ""))));
 
         verify(jobService, times(1)).findJobs(Optional.of("jobType2"), 100);
         verifyNoMoreInteractions(jobService);
@@ -142,9 +154,9 @@ public class JobsControllerTest {
         Object job = jobsController.getJobsAsJson(null, 100, true, mock(HttpServletRequest.class));
 
         // then
-        assertThat(job, is(asList(representationOf(firstJob, null, false, ""),
-                representationOf(secondJob, null, false, ""),
-                representationOf(thirdJob, null, false, ""))));
+        assertThat(job, is(asList(representationOf(firstJob, null, false, "", ""),
+                representationOf(secondJob, null, false, "", ""),
+                representationOf(thirdJob, null, false, "", ""))));
 
         verify(jobService, times(1)).findJobsDistinct();
         verifyNoMoreInteractions(jobService);
@@ -158,12 +170,13 @@ public class JobsControllerTest {
 
         ModelAndView modelAndView = jobsController.getJobsAsHtml("SOME_TYPE", 100, false, mock(HttpServletRequest.class));
         List<JobRepresentation> jobs = (List<JobRepresentation>) modelAndView.getModel().get("jobs");
-        assertThat(jobs, is(asList(representationOf(firstJob, null, false, ""))));
+        assertThat(jobs, is(asList(representationOf(firstJob, null, false, "", ""))));
     }
 
     @Test
     public void shouldTriggerJobAndReturnItsURL() throws Exception {
         when(jobService.startAsyncJob("someJobType")).thenReturn(Optional.of("theJobId"));
+        when(managementServerProperties.getContextPath()).thenReturn("/internal");
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/some-microservice/internal/jobs/someJobType")
@@ -176,6 +189,8 @@ public class JobsControllerTest {
 
     @Test
     public void shouldDisableJob() throws Exception {
+        when(managementServerProperties.getContextPath()).thenReturn("/internal");
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/some-microservice/internal/jobs/someJobType/disable"))
                 .andExpect(status().is(SC_MOVED_TEMPORARILY))

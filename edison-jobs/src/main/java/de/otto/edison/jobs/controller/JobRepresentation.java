@@ -25,25 +25,30 @@ public class JobRepresentation {
     private final String baseUri;
     private final boolean humanReadable;
     private final JobMeta jobMeta;
+    private final String managementContextPath;
 
     private JobRepresentation(final JobInfo job,
                               final JobMeta jobMeta,
                               final boolean humanReadable,
-                              final String baseUri) {
+                              final String baseUri,
+                              final String managementContextPath) {
         this.job = job;
         this.humanReadable=humanReadable;
         this.baseUri = baseUri;
         this.jobMeta = jobMeta;
+        this.managementContextPath = managementContextPath;
     }
 
     public static JobRepresentation representationOf(final JobInfo job,
                                                      final JobMeta jobMeta,
-                                                     final boolean humanReadable, final String baseUri) {
-        return new JobRepresentation(job, jobMeta, humanReadable, baseUri);
+                                                     final boolean humanReadable,
+                                                     final String baseUri,
+                                                     final String managementContextPath) {
+        return new JobRepresentation(job, jobMeta, humanReadable, baseUri, managementContextPath);
     }
 
     public String getJobUri() {
-        return baseUri + "/internal/jobs/" + job.getJobId();
+        return String.format("%s%s/jobs/%s", baseUri, managementContextPath, job.getJobId());
     }
 
     public String getJobType() {
@@ -98,10 +103,10 @@ public class JobRepresentation {
     }
 
     public List<Link> getLinks() {
-        final String jobUri = baseUri + "/internal/jobs/" + job.getJobId();
+        final String jobUri = String.format("%s%s/jobs/%s", baseUri, managementContextPath, job.getJobId());
         return asList(
                 link("self", jobUri, "Self"),
-                link("http://github.com/otto-de/edison/link-relations/job/definition", baseUri + "/internal/jobdefinitions/" + job.getJobType(), "Job Definition"),
+                link("http://github.com/otto-de/edison/link-relations/job/definition", String.format("%s%s/jobdefinitions/%s", baseUri, managementContextPath, job.getJobType()), "Job Definition"),
                 link("collection", jobUri.substring(0, jobUri.lastIndexOf("/")), "All Jobs"),
                 link("collection/" + getJobType(), jobUri.substring(0, jobUri.lastIndexOf("/")) + "?type=" + getJobType(), "All " + getJobType() + " Jobs")
         );

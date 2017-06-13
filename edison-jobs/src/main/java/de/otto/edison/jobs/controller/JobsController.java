@@ -8,7 +8,9 @@ import de.otto.edison.navigation.NavBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,21 +37,24 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @ConditionalOnProperty(prefix = "edison.jobs", name = "external-trigger", havingValue = "true", matchIfMissing = true)
+@EnableConfigurationProperties(ManagementServerProperties.class)
 public class JobsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsController.class);
 
     private final JobService jobService;
     private final JobMetaService jobMetaService;
-
+    private final ManagementServerProperties managementServerProperties;
 
     @Autowired
     JobsController(final JobService jobService,
                    final JobMetaService jobMetaService,
-                   final NavBar rightNavBar) {
+                   final NavBar rightNavBar,
+                   final ManagementServerProperties managementServerProperties) {
         this.jobService = jobService;
         this.jobMetaService = jobMetaService;
-        rightNavBar.register(navBarItem(10, "Job Overview", "/internal/jobs"));
+        this.managementServerProperties = managementServerProperties;
+        rightNavBar.register(navBarItem(10, "Job Overview", managementServerProperties.getContextPath() + "/jobs"));
     }
 
     @RequestMapping(value = "${management.context-path}/jobs", method = GET, produces = "text/html")
@@ -58,7 +63,7 @@ public class JobsController {
                                       @RequestParam(value = "distinct", defaultValue = "true", required = false) boolean distinct,
                                       HttpServletRequest request) {
         final List<JobRepresentation> jobRepresentations = getJobInfos(type, count, distinct).stream()
-                .map((j) -> representationOf(j, getJobMeta(j.getJobType()), true, baseUriOf(request)))
+                .map((j) -> representationOf(j, getJobMeta(j.getJobType()), true, baseUriOf(request), managementServerProperties.getContextPath()))
                 .collect(toList());
 
         final ModelAndView modelAndView = new ModelAndView("jobs");
@@ -78,9 +83,7 @@ public class JobsController {
                                                  HttpServletRequest request) {
         return getJobInfos(type, count, distinct)
                 .stream()
-                .map((j) -> {
-                    return representationOf(j, getJobMeta(type), false, baseUriOf(request));
-                })
+                .map((j) -> representationOf(j, getJobMeta(type), false, baseUriOf(request), managementServerProperties.getContextPath()))
                 .collect(toList());
     }
 
@@ -111,7 +114,7 @@ public class JobsController {
                          final HttpServletResponse response) throws IOException {
         final Optional<String> jobId = jobService.startAsyncJob(jobType);
         if (jobId.isPresent()) {
-            response.setHeader("Location", baseUriOf(request) + "/internal/jobs/" + jobId.get());
+            response.setHeader("Location", String.format("%s%s/jobs/%s", baseUriOf(request), managementServerProperties.getContextPath(), jobId.get()));
             response.setStatus(SC_NO_CONTENT);
         } else {
             response.sendError(SC_CONFLICT);
@@ -125,7 +128,7 @@ public class JobsController {
     public String disableJobType(final @PathVariable String jobType,
                                  final @RequestParam(required = false) String disabledComment) {
         jobMetaService.disable(jobType, disabledComment);
-        return "redirect:/internal/jobdefinitions";
+        return String.format("redirect:%s/jobdefinitions", managementServerProperties.getContextPath());
     }
 
     @RequestMapping(
@@ -134,7 +137,7 @@ public class JobsController {
     )
     public String enableJobType(final @PathVariable String jobType) {
         jobMetaService.enable(jobType);
-        return "redirect:/internal/jobdefinitions";
+        return "redirect:" + managementServerProperties.getContextPath() + "/jobdefinitions";
     }
 
     @RequestMapping(value = "${management.context-path}/jobs/{id}", method = GET, produces = "text/html")
@@ -150,7 +153,7 @@ public class JobsController {
             final JobMeta jobMeta = getJobMeta(jobInfo.getJobType());
             final ModelAndView modelAndView = new ModelAndView("job");
             modelAndView
-                    .addObject("job", representationOf(jobInfo, jobMeta, true, baseUriOf(request)))
+                    .addObject("job", representationOf(jobInfo, jobMeta, true, baseUriOf(request), managementServerProperties.getContextPath()))
                     .addObject("baseUri", baseUriOf(request));
             return modelAndView;
         } else {
@@ -170,7 +173,7 @@ public class JobsController {
         final Optional<JobInfo> optionalJob = jobService.findJob(jobId);
         if (optionalJob.isPresent()) {
             final JobInfo jobInfo = optionalJob.get();
-            return representationOf(optionalJob.get(), getJobMeta(jobInfo.getJobType()), false, baseUriOf(request));
+            return representationOf(optionalJob.get(), getJobMeta(jobInfo.getJobType()), false, baseUriOf(request), managementServerProperties.getContextPath());
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
             return null;
