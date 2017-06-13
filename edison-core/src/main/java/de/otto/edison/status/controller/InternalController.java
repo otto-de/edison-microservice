@@ -1,7 +1,10 @@
 package de.otto.edison.status.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,13 +20,20 @@ import java.io.IOException;
  */
 @Controller
 @ConditionalOnProperty(name = "edison.status.redirect-internal.enabled", havingValue = "true", matchIfMissing = true)
+@EnableConfigurationProperties({ServerProperties.class, ManagementServerProperties.class})
 public class InternalController {
 
-    @Value("${server.context-path}")
-    private String serverContextPath;
+    private final ManagementServerProperties managementServerProperties;
+    private final ServerProperties serverProperties;
+
+    public InternalController(final ManagementServerProperties managementServerProperties,
+                              final ServerProperties serverProperties) {
+        this.managementServerProperties = managementServerProperties;
+        this.serverProperties = serverProperties;
+    }
 
     @RequestMapping(value = "${management.context-path}")
     public void redirectToStatus(final HttpServletResponse response) throws IOException {
-        response.sendRedirect(String.format("%s/internal/status", serverContextPath));
+        response.sendRedirect(String.format("%s%s/status", serverProperties.getContextPath(), managementServerProperties.getContextPath()));
     }
 }

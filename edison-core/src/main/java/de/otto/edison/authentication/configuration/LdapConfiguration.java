@@ -30,11 +30,10 @@ public class LdapConfiguration {
      * @return FilterRegistrationBean
      */
     @Bean
-    public FilterRegistrationBean ldapAuthenticationFilter(final @Value("${edison.ldap.prefix:/internal}") String prefix,
-                                                           final LdapProperties ldapProperties) {
+    public FilterRegistrationBean ldapAuthenticationFilter(final LdapProperties ldapProperties) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
         filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties));
-        filterRegistration.addUrlPatterns(String.format("%s/*", prefix));
+        filterRegistration.addUrlPatterns(String.format("%s/*", ldapProperties.getPrefix()));
         return filterRegistration;
     }
 }
