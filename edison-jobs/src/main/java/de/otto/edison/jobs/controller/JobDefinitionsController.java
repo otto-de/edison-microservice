@@ -7,7 +7,9 @@ import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.navigation.NavBar;
 import de.otto.edison.status.domain.Link;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,23 +34,28 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @ConditionalOnProperty(prefix = "edison.jobs", name = "external-trigger", havingValue = "true", matchIfMissing = true)
+@EnableConfigurationProperties(ManagementServerProperties.class)
 public class JobDefinitionsController {
 
-    public static final String INTERNAL_JOBDEFINITIONS = "/internal/jobdefinitions";
+    private final String jobDefinitionsUri;
 
     private final JobDefinitionService jobDefinitionService;
     private final JobMetaService jobMetaService;
+    private final ManagementServerProperties managementServerProperties;
 
     @Autowired
     public JobDefinitionsController(final JobDefinitionService definitionService,
                                     final JobMetaService jobMetaService,
-                                    final NavBar rightNavBar) {
+                                    final NavBar rightNavBar,
+                                    final ManagementServerProperties managementServerProperties) {
         this.jobDefinitionService = definitionService;
         this.jobMetaService = jobMetaService;
-        rightNavBar.register(navBarItem(10, "Job Definitions", INTERNAL_JOBDEFINITIONS));
+        this.managementServerProperties = managementServerProperties;
+        jobDefinitionsUri = String.format("%s/jobdefinitions", managementServerProperties.getContextPath());
+        rightNavBar.register(navBarItem(10, "Job Definitions", jobDefinitionsUri));
     }
 
-    @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "application/json")
+    @RequestMapping(value = "${management.context-path}/jobdefinitions", method = GET, produces = "application/json")
     @ResponseBody
     public Map<String, List<Link>> getJobDefinitionsAsJson(final HttpServletRequest request) {
         final String baseUri = baseUriOf(request);
@@ -57,14 +64,14 @@ public class JobDefinitionsController {
                     .stream()
                     .map((def) -> link(
                             "http://github.com/otto-de/edison/link-relations/job/definition",
-                            baseUri + INTERNAL_JOBDEFINITIONS + "/" + def.jobType(),
+                            baseUri + jobDefinitionsUri + "/" + def.jobType(),
                             def.jobName()))
                     .collect(toList()));
-            add(link("self", baseUriOf(request) + INTERNAL_JOBDEFINITIONS, "Self"));
+            add(link("self", baseUriOf(request) + jobDefinitionsUri, "Self"));
         }});
     }
 
-    @RequestMapping(value = INTERNAL_JOBDEFINITIONS, method = GET, produces = "*/*")
+    @RequestMapping(value = "${management.context-path}/jobdefinitions", method = GET, produces = "*/*")
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
@@ -87,7 +94,7 @@ public class JobDefinitionsController {
         }});
     }
 
-    @RequestMapping(value = INTERNAL_JOBDEFINITIONS + "/{jobType}", method = GET, produces = "application/json")
+    @RequestMapping(value = "${management.context-path}/jobdefinitions/{jobType}", method = GET, produces = "application/json")
     @ResponseBody
     public JobDefinitionRepresentation getJobDefinition(final @PathVariable String jobType,
                                                         final HttpServletRequest request,
@@ -102,7 +109,7 @@ public class JobDefinitionsController {
         }
     }
 
-    @RequestMapping(value = INTERNAL_JOBDEFINITIONS + "/{jobType}", method = GET, produces = "*/*")
+    @RequestMapping(value = "${management.context-path}/jobdefinitions/{jobType}", method = GET, produces = "*/*")
     public ModelAndView getJobDefinitionAsHtml(final @PathVariable String jobType,
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) throws IOException {

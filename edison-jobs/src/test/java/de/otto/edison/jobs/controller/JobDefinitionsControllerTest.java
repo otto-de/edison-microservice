@@ -7,6 +7,7 @@ import de.otto.edison.navigation.NavBar;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -27,6 +28,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.springframework.boot.test.util.EnvironmentTestUtils.addEnvironment;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,6 +36,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class JobDefinitionsControllerTest {
 
     private JobDefinitionsController controller;
+
+    @Mock
+    private ManagementServerProperties managementServerProperties;
+
+    @Mock
+    private NavBar navBar;
 
     @Mock
     private JobDefinitionService jobDefinitionService;
@@ -46,8 +54,11 @@ public class JobDefinitionsControllerTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        controller = new JobDefinitionsController(jobDefinitionService, jobMetaService, mock(NavBar.class));
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        when(managementServerProperties.getContextPath()).thenReturn("/internal");
+        controller = new JobDefinitionsController(jobDefinitionService, jobMetaService, navBar, managementServerProperties);
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .addPlaceholderValue("management.context-path", "/internal")
+                .build();
     }
 
     @Test
