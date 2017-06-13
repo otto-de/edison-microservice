@@ -51,20 +51,22 @@ public class JobDefinitionsControllerTest {
 
     private MockMvc mockMvc;
 
+    private static String MANAGEMENT_CONTEXT = "/someManagementContext";
+
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        when(managementServerProperties.getContextPath()).thenReturn("/internal");
+        when(managementServerProperties.getContextPath()).thenReturn(MANAGEMENT_CONTEXT);
         controller = new JobDefinitionsController(jobDefinitionService, jobMetaService, navBar, managementServerProperties);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .addPlaceholderValue("management.context-path", "/internal")
+                .addPlaceholderValue("management.context-path", MANAGEMENT_CONTEXT)
                 .build();
     }
 
     @Test
     public void shouldReturn404IfJobDefinitionIsUnknown() throws Exception {
         when(jobDefinitionService.getJobDefinition("FooJob")).thenReturn(Optional.empty());
-        mockMvc.perform(get("/internal/jobdefinitions/FooJob"))
+        mockMvc.perform(get(MANAGEMENT_CONTEXT + "/jobdefinitions/FooJob"))
                 .andExpect(status().is(404));
     }
 
@@ -77,18 +79,29 @@ public class JobDefinitionsControllerTest {
 
         // when
         mockMvc.perform(
-                get("/internal/jobdefinitions/FooJob")
+                get(MANAGEMENT_CONTEXT + "/jobdefinitions/FooJob")
                         .accept("application/json")
         )
                 .andExpect(status().is(200))
-                .andExpect(content().json("{\"type\":\"FooJob\"," +
-                        "\"name\":\"Foo\"," +
-                        "\"retries\":0," +
-                        "\"fixedDelay\":3600," +
-                        "\"links\":[" +
-                        "{\"href\":\"/internal/jobsdefinitions/FooJob\",\"rel\":\"self\"},{\"href\":\"/internal/jobdefinitions\",\"rel\":\"collection\"}," +
-                        "{\"href\":\"/internal/jobs/FooJob\",\"rel\":\"http://github.com/otto-de/edison/link-relations/job/trigger\"}" +
-                        "]" +
+                .andExpect(content().json("{\n" +
+                        "  \"type\": \"FooJob\",\n" +
+                        "  \"name\": \"Foo\",\n" +
+                        "  \"retries\": 0,\n" +
+                        "  \"fixedDelay\": 3600,\n" +
+                        "  \"links\": [\n" +
+                        "    {\n" +
+                        "      \"href\": \"" + MANAGEMENT_CONTEXT + "/jobsdefinitions/FooJob\",\n" +
+                        "      \"rel\": \"self\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"href\": \"" + MANAGEMENT_CONTEXT + "/jobdefinitions\",\n" +
+                        "      \"rel\": \"collection\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"href\": \"" + MANAGEMENT_CONTEXT + "/jobs/FooJob\",\n" +
+                        "      \"rel\": \"http://github.com/otto-de/edison/link-relations/job/trigger\"\n" +
+                        "    }\n" +
+                        "  ]\n" +
                         "}"));
     }
 
@@ -101,16 +114,28 @@ public class JobDefinitionsControllerTest {
 
         // when
         mockMvc.perform(
-                get("/internal/jobdefinitions/")
+                get(MANAGEMENT_CONTEXT + "/jobdefinitions/")
                         .accept("application/json")
         )
                 .andExpect(status().is(200))
-                .andExpect(content().json("{" +
-                        "\"links\":[" +
-                        "{\"href\":\"/internal/jobdefinitions/FooJob\",\"rel\":\"http://github.com/otto-de/edison/link-relations/job/definition\",\"title\":\"Foo\"}," +
-                        "{\"href\":\"/internal/jobdefinitions/BarJob\",\"rel\":\"http://github.com/otto-de/edison/link-relations/job/definition\",\"title\":\"Bar\"}," +
-                        "{\"href\":\"/internal/jobdefinitions\",\"rel\":\"self\",\"title\":\"Self\"}" +
-                        "]" +
+                .andExpect(content().json("{\n" +
+                        "  \"links\": [\n" +
+                        "    {\n" +
+                        "      \"href\": \"" + MANAGEMENT_CONTEXT + "/jobdefinitions/FooJob\",\n" +
+                        "      \"rel\": \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
+                        "      \"title\": \"Foo\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"href\": \"" + MANAGEMENT_CONTEXT + "/jobdefinitions/BarJob\",\n" +
+                        "      \"rel\": \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
+                        "      \"title\": \"Bar\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"href\": \"" + MANAGEMENT_CONTEXT + "/jobdefinitions\",\n" +
+                        "      \"rel\": \"self\",\n" +
+                        "      \"title\": \"Self\"\n" +
+                        "    }\n" +
+                        "  ]\n" +
                         "}"));
     }
 
@@ -124,7 +149,7 @@ public class JobDefinitionsControllerTest {
 
         // when
         mockMvc.perform(
-                get("/internal/jobdefinitions/")
+                get(MANAGEMENT_CONTEXT + "/jobdefinitions/")
                         .accept("text/html")
         )
                 .andExpect(status().is(200))
@@ -150,7 +175,7 @@ public class JobDefinitionsControllerTest {
 
         // when
         mockMvc.perform(
-                get("/internal/jobdefinitions/")
+                get(MANAGEMENT_CONTEXT + "/jobdefinitions/")
                         .accept("text/html")
         )
                 .andExpect(status().is(200))
@@ -170,7 +195,7 @@ public class JobDefinitionsControllerTest {
 
         // when
         mockMvc.perform(
-                get("/internal/jobdefinitions/")
+                get(MANAGEMENT_CONTEXT + "/jobdefinitions/")
                         .accept("text/html")
         )
                 .andExpect(status().is(200))
