@@ -27,7 +27,7 @@ public class JobDefinitionRepresentation {
     public final Long fixedDelay;
     public final List<Link> links;
 
-    private JobDefinitionRepresentation(final JobDefinition jobDefinition, String baseUri) {
+    private JobDefinitionRepresentation(final JobDefinition jobDefinition, String baseUri, String managementContextPath) {
         this.type = jobDefinition.jobType();
         this.name = jobDefinition.jobName();
         this.retries = jobDefinition.retries();
@@ -35,11 +35,13 @@ public class JobDefinitionRepresentation {
         this.cron = jobDefinition.cron().orElse(null);
         this.maxAge = valueOf(jobDefinition.maxAge());
         this.fixedDelay = valueOf(jobDefinition.fixedDelay());
-        this.links = linksOf(jobDefinition, baseUri);
+        this.links = linksOf(jobDefinition, baseUri, managementContextPath);
     }
 
-    public static JobDefinitionRepresentation representationOf(final JobDefinition jobDefinition, final String baseUri) {
-        return new JobDefinitionRepresentation(jobDefinition, baseUri);
+    public static JobDefinitionRepresentation representationOf(final JobDefinition jobDefinition,
+                                                               final String baseUri,
+                                                               final String managementContextPath) {
+        return new JobDefinitionRepresentation(jobDefinition, baseUri, managementContextPath);
     }
 
     @Override
@@ -88,11 +90,13 @@ public class JobDefinitionRepresentation {
                 '}';
     }
 
-    private List<Link> linksOf(final JobDefinition jobDefinition, String baseUri) {
+    private List<Link> linksOf(final JobDefinition jobDefinition,
+                               final String baseUri,
+                               final String managementContextPath) {
         return asList(
-                link("self", baseUri + "/internal/jobsdefinitions/" + jobDefinition.jobType(), null),
-                link("collection", baseUri + "/internal/jobdefinitions", null),
-                link("http://github.com/otto-de/edison/link-relations/job/trigger", baseUri + "/internal/jobs/" + jobDefinition.jobType(), null)
+                link("self", String.format("%s%s/jobsdefinitions/%s", baseUri, managementContextPath, jobDefinition.jobType()), null),
+                link("collection", String.format("%s%s/jobdefinitions", baseUri, managementContextPath), null),
+                link("http://github.com/otto-de/edison/link-relations/job/trigger", String.format("%s%s/jobs/%s", baseUri, managementContextPath, jobDefinition.jobType()), null)
         );
     }
 

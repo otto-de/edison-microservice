@@ -102,7 +102,7 @@ public class JobDefinitionsController {
 
         Optional<JobDefinition> jobDefinition = jobDefinitionService.getJobDefinition(jobType);
         if (jobDefinition.isPresent()) {
-            return representationOf(jobDefinition.get(), baseUriOf(request));
+            return representationOf(jobDefinition.get(), baseUriOf(request), managementServerProperties.getContextPath());
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
             return null;
