@@ -2,12 +2,15 @@ package de.otto.edison.navigation;
 
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.test.util.EnvironmentTestUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static de.otto.edison.navigation.NavBarItem.top;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.boot.test.util.EnvironmentTestUtils.addEnvironment;
 
 public class NavBarConfigurationTest {
 
@@ -22,6 +25,7 @@ public class NavBarConfigurationTest {
 
     @Test
     public void shouldHaveRightNavBar() {
+        addEnvironment(context, "management.context-path=/internal");
         context.register(NavBarConfiguration.class);
         context.refresh();
 

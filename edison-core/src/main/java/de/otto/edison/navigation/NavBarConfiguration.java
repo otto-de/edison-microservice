@@ -1,5 +1,7 @@
 package de.otto.edison.navigation;
 
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,6 +31,7 @@ import static java.util.Arrays.asList;
  * @since 1.0.0
  */
 @Configuration
+@EnableConfigurationProperties(ManagementServerProperties.class)
 public class NavBarConfiguration {
 
     @Bean
@@ -37,9 +40,9 @@ public class NavBarConfiguration {
     }
 
     @Bean
-    public NavBar rightNavBar() {
+    public NavBar rightNavBar(final ManagementServerProperties managementServerProperties) {
         return navBar(asList(
-                navBarItem(top(), "Status", "/internal/status")
+                navBarItem(top(), "Status", managementServerProperties.getContextPath() + "/status")
         ));
     }
 }

@@ -2,6 +2,7 @@ package de.otto.edison.logging.ui;
 
 import de.otto.edison.navigation.NavBar;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.boot.actuate.endpoint.LoggersEndpoint;
 import org.springframework.boot.actuate.endpoint.LoggersEndpoint.LoggerLevels;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -37,12 +38,15 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class LoggersHtmlEndpoint {
 
     private final LoggersEndpoint loggersEndpoint;
+    private final ManagementServerProperties managementServerProperties;
 
     @Autowired
     public LoggersHtmlEndpoint(final LoggersEndpoint loggersEndpoint,
-                               final NavBar rightNavBar) {
+                               final NavBar rightNavBar,
+                               final ManagementServerProperties managementServerProperties) {
         this.loggersEndpoint = loggersEndpoint;
-        rightNavBar.register(navBarItem(1, "Loggers", "/internal/loggers"));
+        this.managementServerProperties = managementServerProperties;
+        rightNavBar.register(navBarItem(1, "Loggers", String.format("%s/loggers", managementServerProperties.getContextPath())));
     }
 
     @RequestMapping(
@@ -91,7 +95,7 @@ public class LoggersHtmlEndpoint {
                              @ModelAttribute("level") String level) {
         final LogLevel logLevel = level == null ? null : valueOf(level.toUpperCase());
         loggersEndpoint.setLogLevel(name, logLevel);
-        return new RedirectView("/internal/loggers");
+        return new RedirectView(String.format("%s/loggers", managementServerProperties.getContextPath()));
     }
 
     @RequestMapping(
