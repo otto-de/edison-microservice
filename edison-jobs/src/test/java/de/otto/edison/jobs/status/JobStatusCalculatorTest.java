@@ -7,6 +7,7 @@ import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -49,13 +50,14 @@ public class JobStatusCalculatorTest {
     private JobStatusCalculator warningOnLastJobFailed;
     private JobStatusCalculator errorOnLastJobFailed;
     private JobStatusCalculator errorOnLastTwoJobsFailed;
+    private ManagementServerProperties managementServerProperties;
 
     @Before
     public void setUp() throws Exception {
         jobRepository = mock(JobRepository.class);
-        warningOnLastJobFailed = warningOnLastJobFailed("test", jobRepository);
-        errorOnLastJobFailed = errorOnLastJobFailed("test", jobRepository);
-        errorOnLastTwoJobsFailed = errorOnLastNumJobsFailed("test", 2, jobRepository);
+        warningOnLastJobFailed = warningOnLastJobFailed("test", jobRepository, "/someInternalPath");
+        errorOnLastJobFailed = errorOnLastJobFailed("test", jobRepository, "/someInternalPath");
+        errorOnLastTwoJobsFailed = errorOnLastNumJobsFailed("test", 2, jobRepository, "/someInternalPath");
     }
 
     @Test
@@ -102,7 +104,7 @@ public class JobStatusCalculatorTest {
 
         // then
         assertThat(first.getLinks().size(), is(1));
-        assertThat(first.getLinks().get(0).href, is("/internal/jobs/" + jobInfo.getJobId()));
+        assertThat(first.getLinks().get(0).href, is("/someInternalPath/jobs/" + jobInfo.getJobId()));
     }
 
     @Test
@@ -164,7 +166,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(3))).thenReturn(jobInfos);
 
         // when
-        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository);
+        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, "/someInternalPath");
         StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
 
         // then
@@ -182,7 +184,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(3))).thenReturn(jobInfos);
 
         // when
-        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository);
+        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, "/someInternalPath");
         StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
 
         // then

@@ -1,15 +1,14 @@
 package de.otto.edison.jobs.configuration;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.JobMetaRepository;
+import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.cleanup.DeleteSkippedJobs;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
-import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobMetaRepository;
+import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import de.otto.edison.jobs.service.JobDefinitionService;
-import de.otto.edison.jobs.service.JobMutexGroups;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.jobs.status.JobStatusCalculator;
 import de.otto.edison.jobs.status.JobStatusDetailIndicator;
@@ -19,13 +18,12 @@ import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -37,22 +35,23 @@ import java.util.concurrent.ScheduledExecutorService;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
-import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
 @EnableAsync
 @EnableScheduling
-@EnableConfigurationProperties(JobsProperties.class)
+@EnableConfigurationProperties({ JobsProperties.class, ManagementServerProperties.class })
 public class JobsConfiguration {
 
     public static final Logger LOG = LoggerFactory.getLogger(JobsConfiguration.class);
 
     private final JobsProperties jobsProperties;
+    private final String managementContextPath;
 
     @Autowired
-    public JobsConfiguration(final JobsProperties jobsProperties) {
+    public JobsConfiguration(final JobsProperties jobsProperties,
+                             final ManagementServerProperties managementServerProperties) {
         this.jobsProperties = jobsProperties;
+        this.managementContextPath = managementServerProperties.getContextPath();
         final Map<String, String> calculator = this.jobsProperties.getStatus().getCalculator();
         if (!calculator.containsKey("default")) {
             this.jobsProperties.getStatus().setCalculator(
@@ -104,23 +103,24 @@ public class JobsConfiguration {
     }
 
     @Bean
-    public JobStatusCalculator warningOnLastJobFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.warningOnLastJobFailed("warningOnLastJobFailed", jobRepository);
+    public JobStatusCalculator warningOnLastJobFailed(final JobRepository jobRepository,
+                                                      final ManagementServerProperties managementServerProperties) {
+        return JobStatusCalculator.warningOnLastJobFailed("warningOnLastJobFailed", jobRepository, managementContextPath);
     }
 
     @Bean
     public JobStatusCalculator errorOnLastJobFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastJobFailed("errorOnLastJobFailed", jobRepository);
+        return JobStatusCalculator.errorOnLastJobFailed("errorOnLastJobFailed", jobRepository, managementContextPath);
     }
 
     @Bean
     public JobStatusCalculator errorOnLastThreeJobsFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastThreeJobsFailed", 3, jobRepository);
+        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastThreeJobsFailed", 3, jobRepository, managementContextPath);
     }
 
     @Bean
     public JobStatusCalculator errorOnLastTenJobsFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastTenJobsFailed", 10, jobRepository);
+        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastTenJobsFailed", 10, jobRepository, managementContextPath);
     }
 
     @Bean

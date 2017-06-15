@@ -7,7 +7,10 @@ import de.otto.edison.jobs.status.JobStatusCalculator;
 import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 
 import java.util.HashMap;
 
@@ -22,20 +25,26 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class JobsConfigurationTest {
 
-    private JobsProperties jobsProperties = new JobsProperties();;
+    @Mock
+    private ManagementServerProperties managementServerProperties;
+    private JobsProperties jobsProperties;
+    private JobsConfiguration testee;
+
+    @Before
+    public void setUp() throws Exception {
+        managementServerProperties = mock(ManagementServerProperties.class);
+        when(managementServerProperties.getContextPath()).thenReturn("/someInternalPath");
+        jobsProperties = new JobsProperties();
+        testee = new JobsConfiguration(jobsProperties, managementServerProperties);
+    }
 
     @Test
     public void shouldIndicateOkIfNoJobDefinitionsAvailable() {
         // given
-
-        final JobsConfiguration jobsConfiguration = new JobsConfiguration(jobsProperties);
-
         final JobStatusCalculator defaultCalculator = mock(JobStatusCalculator.class);
         when(defaultCalculator.getKey()).thenReturn("warningOnLastJobFailed");
 
@@ -43,7 +52,7 @@ public class JobsConfigurationTest {
         when(noJobDefinitions.getJobDefinitions()).thenReturn(emptyList());
 
         // when
-        final StatusDetail statusDetail = jobsConfiguration.jobStatusDetailIndicator(
+        final StatusDetail statusDetail = testee.jobStatusDetailIndicator(
                 noJobDefinitions,
                 singletonList(defaultCalculator)).statusDetail();
         // then
@@ -55,13 +64,11 @@ public class JobsConfigurationTest {
     @Test
     public void shouldConstructCompositeStatusDetailIndicator() {
         // given
-        final JobsConfiguration jobsConfiguration = new JobsConfiguration(jobsProperties);
-
         final JobStatusCalculator defaultCalculator = mock(JobStatusCalculator.class);
         when(defaultCalculator.getKey()).thenReturn("warningOnLastJobFailed");
 
         // when
-        final StatusDetailIndicator indicator = jobsConfiguration.jobStatusDetailIndicator(
+        final StatusDetailIndicator indicator = testee.jobStatusDetailIndicator(
                 someJobDefinitionService(),
                 singletonList(defaultCalculator)
         );
@@ -72,13 +79,11 @@ public class JobsConfigurationTest {
     @Test
     public void shouldUseDefaultJobStatusDetailIndicator() {
         // given
-        final JobsConfiguration jobsConfiguration = new JobsConfiguration(jobsProperties);
-
         final JobStatusCalculator defaultCalculator = mock(JobStatusCalculator.class);
         when(defaultCalculator.getKey()).thenReturn("warningOnLastJobFailed");
 
         // when
-        jobsConfiguration.jobStatusDetailIndicator(
+        testee.jobStatusDetailIndicator(
                 someJobDefinitionService(), singletonList(defaultCalculator)).statusDetail();
 
         // then
@@ -93,7 +98,7 @@ public class JobsConfigurationTest {
             put("test", "errorOnLastJobFailed");
         }});
 
-        final JobsConfiguration jobConfiguration = new JobsConfiguration(jobsProperties);
+        testee = new JobsConfiguration(jobsProperties, managementServerProperties);
 
         final JobStatusCalculator defaultCalculator = mock(JobStatusCalculator.class);
         when(defaultCalculator.getKey()).thenReturn("warningOnLastJobFailed");
@@ -102,7 +107,7 @@ public class JobsConfigurationTest {
         when(testCalculator.getKey()).thenReturn("errorOnLastJobFailed");
 
         // when
-        jobConfiguration.jobStatusDetailIndicator(
+        testee.jobStatusDetailIndicator(
                 someJobDefinitionService(), asList(defaultCalculator, testCalculator)).statusDetail();
 
         // then
@@ -117,7 +122,7 @@ public class JobsConfigurationTest {
             put("soMe-TeSt job", "errorOnLastJobFailed");
         }});
 
-        final JobsConfiguration jobConfiguration = new JobsConfiguration(jobsProperties);
+        testee = new JobsConfiguration(jobsProperties, managementServerProperties);
 
         final JobStatusCalculator defaultCalculator = mock(JobStatusCalculator.class);
         when(defaultCalculator.getKey()).thenReturn("warningOnLastJobFailed");
@@ -131,7 +136,7 @@ public class JobsConfigurationTest {
         );
 
         // when
-        jobConfiguration.jobStatusDetailIndicator(
+        testee.jobStatusDetailIndicator(
                 jobDefinitionService, asList(defaultCalculator, testCalculator)).statusDetail();
 
         // then

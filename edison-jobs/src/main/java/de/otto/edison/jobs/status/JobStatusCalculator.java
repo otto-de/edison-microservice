@@ -85,6 +85,7 @@ public class JobStatusCalculator {
     private final int numberOfJobs;
     private final int maxFailedJobs;
     private final JobRepository jobRepository;
+    private final String managementContextPath;
 
     /**
      * Creates a JobStatusCalculator.
@@ -97,7 +98,8 @@ public class JobStatusCalculator {
     public JobStatusCalculator(final String key,
                                final int numberOfJobs,
                                final int maxFailedJobs,
-                               final JobRepository jobRepository) {
+                               final JobRepository jobRepository,
+                               final String managementContextPath) {
         checkArgument(!key.isEmpty(), "Key must not be empty");
         checkArgument(maxFailedJobs <= numberOfJobs, "Parameter maxFailedJobs must not be greater numberOfJobs");
         checkArgument(numberOfJobs > 0, "Parameter numberOfJobs must be greater 0");
@@ -106,6 +108,7 @@ public class JobStatusCalculator {
         this.numberOfJobs = numberOfJobs;
         this.maxFailedJobs = maxFailedJobs;
         this.jobRepository = jobRepository;
+        this.managementContextPath = managementContextPath;
     }
 
     /**
@@ -115,9 +118,11 @@ public class JobStatusCalculator {
      * @param jobRepository the repository
      * @return JobStatusCalculator
      */
-    public static JobStatusCalculator warningOnLastJobFailed(final String key, final JobRepository jobRepository) {
+    public static JobStatusCalculator warningOnLastJobFailed(final String key,
+                                                             final JobRepository jobRepository,
+                                                             final String managementContextPath) {
         return new JobStatusCalculator(
-                key, 1, 1, jobRepository
+                key, 1, 1, jobRepository, managementContextPath
         );
     }
 
@@ -128,9 +133,11 @@ public class JobStatusCalculator {
      * @param jobRepository the repository
      * @return JobStatusCalculator
      */
-    public static JobStatusCalculator errorOnLastJobFailed(final String key, final JobRepository jobRepository) {
+    public static JobStatusCalculator errorOnLastJobFailed(final String key,
+                                                           final JobRepository jobRepository,
+                                                           final String managementContextPath) {
         return new JobStatusCalculator(
-                key, 1, 0, jobRepository
+                key, 1, 0, jobRepository, managementContextPath
         );
     }
 
@@ -142,9 +149,13 @@ public class JobStatusCalculator {
      * @param jobRepository the repository
      * @return JobStatusCalculator
      */
-    public static JobStatusCalculator errorOnLastNumJobsFailed(final String key, final int numJobs, final JobRepository jobRepository) {
+    public static JobStatusCalculator errorOnLastNumJobsFailed(final String key,
+                                                               final int numJobs,
+                                                               final JobRepository jobRepository,
+                                                               final String managementContextPath
+    ) {
         return new JobStatusCalculator(
-                key, numJobs, numJobs-1, jobRepository
+                key, numJobs, numJobs-1, jobRepository, managementContextPath
         );
     }
 
@@ -234,7 +245,7 @@ public class JobStatusCalculator {
                 status,
                 message,
                 asList(
-                        link(REL_JOB, "/internal/jobs/" + lastJob.getJobId(), "Details")
+                        link(REL_JOB, String.format("%s/jobs/%s", managementContextPath, lastJob.getJobId()), "Details")
                 ),
                 runningDetailsFor(lastJob)
         );

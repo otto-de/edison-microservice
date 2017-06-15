@@ -17,7 +17,7 @@ public class NavigationConfiguration {
                                    final ManagementServerProperties managementServerProperties) {
         mainNavBar.register(navBarItem(0, "Home", "/"));
         mainNavBar.register(navBarItem(1, "Status", String.format("%s/status", managementServerProperties.getContextPath())));
-        mainNavBar.register(navBarItem(2, "Job Overview", String.format("%s/internal/jobs", managementServerProperties.getContextPath())));
+        mainNavBar.register(navBarItem(2, "Job Overview", String.format("%s/jobs", managementServerProperties.getContextPath())));
         mainNavBar.register(navBarItem(3, "Job Definitions", String.format("%s/jobdefinitions", managementServerProperties.getContextPath())));
     }
 }
