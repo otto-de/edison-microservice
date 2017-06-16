@@ -1,5 +1,10 @@
 package de.otto.edison.jobs.eventbus;
 
+import de.otto.edison.jobs.domain.Level;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * Delegates the calls of {@link JobEventPublisher#info(String)},
  * {@link JobEventPublisher#warn(String)} and {@link JobEventPublisher#error(String)}
@@ -10,7 +15,8 @@ package de.otto.edison.jobs.eventbus;
  */
 public final class JobEvents {
 
-    private static ThreadLocal<JobEventPublisher> jobEventPublisherThreadLocal = new InheritableThreadLocal<>();
+    private static final ThreadLocal<JobEventPublisher> jobEventPublisherThreadLocal = new InheritableThreadLocal<>();
+    private static final Set<JobEventPublisher> jobEventPublishers = new LinkedHashSet<>();
 
     /**
      * Internal method. Should only be called inside edison-jobs.
@@ -25,12 +31,17 @@ public final class JobEvents {
             );
         }
         jobEventPublisherThreadLocal.set(jobEventPublisher);
+        jobEventPublishers.add(jobEventPublisher);
     }
 
     /**
      * Internal method. Should only be called inside edison-jobs.
      */
     public static void deregister() {
+        JobEventPublisher jobEventPublisher = jobEventPublisherThreadLocal.get();
+        if (jobEventPublisher != null) {
+            jobEventPublishers.remove(jobEventPublisher);
+        }
         jobEventPublisherThreadLocal.remove();
     }
 
@@ -62,6 +73,18 @@ public final class JobEvents {
     public static void info(final String message) {
         checkInitialisation();
         jobEventPublisherThreadLocal.get().info(message);
+    }
+
+    /**
+     * Publishes an event with the given level to all currently running jobs
+     *
+     * @param level
+     * @param message
+     */
+    public static void broadcast(final Level level, final String message) {
+        for (JobEventPublisher jobEventPublisher : jobEventPublishers) {
+            jobEventPublisher.message(level, message);
+        }
     }
 
     private static void checkInitialisation() {

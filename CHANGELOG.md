@@ -44,6 +44,7 @@ the default `GraphiteReporterConfiguration.graphiteFilterPredicate` bean definit
 graphite prefix
 * **[edison-mongo]** The new MongoStatusDetailIndicator is autoconfigured and regularly checks the availability of the
 MongoDB. The indicator can be disabled by setting the property `edison.mongo.status.enabled=false`.
+* **[edison-jobs]** JobEvents can broadcast a log message to all running jobs. 
 
 ## 1.0.1.RELEASE
 
