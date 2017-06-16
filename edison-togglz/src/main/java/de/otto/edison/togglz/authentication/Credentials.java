@@ -29,7 +29,9 @@ public class Credentials {
         if (!StringUtils.isEmpty(authenticationHeader)) {
             String credentials = authenticationHeader.substring(6, authenticationHeader.length());
             String[] decodedCredentialParts = new String(Base64Utils.decode(credentials.getBytes())).split(":");
-            return Optional.of(new Credentials(decodedCredentialParts[0], decodedCredentialParts[1]));
+            String username = decodedCredentialParts.length >= 1 ? decodedCredentialParts[0] : "";
+            String password = decodedCredentialParts.length >= 2 ? decodedCredentialParts[1] : "";
+            return Optional.of(new Credentials(username, password));
         } else {
             return Optional.empty();
         }
