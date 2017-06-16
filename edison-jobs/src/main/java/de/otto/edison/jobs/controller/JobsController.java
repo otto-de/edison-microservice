@@ -83,7 +83,7 @@ public class JobsController {
                                                  HttpServletRequest request) {
         return getJobInfos(type, count, distinct)
                 .stream()
-                .map((j) -> representationOf(j, getJobMeta(type), false, baseUriOf(request), managementServerProperties.getContextPath()))
+                .map((j) -> representationOf(j, getJobMeta(j.getJobType()), false, baseUriOf(request), managementServerProperties.getContextPath()))
                 .collect(toList());
     }
 
