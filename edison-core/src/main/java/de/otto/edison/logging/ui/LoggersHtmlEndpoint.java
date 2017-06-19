@@ -92,10 +92,11 @@ public class LoggersHtmlEndpoint {
             produces = TEXT_HTML_VALUE,
             method = POST)
     public RedirectView post(@ModelAttribute("name") String name,
-                             @ModelAttribute("level") String level) {
+                             @ModelAttribute("level") String level,
+                             HttpServletRequest httpServletRequest) {
         final LogLevel logLevel = level == null ? null : valueOf(level.toUpperCase());
         loggersEndpoint.setLogLevel(name, logLevel);
-        return new RedirectView(String.format("%s/loggers", managementServerProperties.getContextPath()));
+        return new RedirectView(String.format("%s%s/loggers", baseUriOf(httpServletRequest), managementServerProperties.getContextPath()));
     }
 
     @RequestMapping(
