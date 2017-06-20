@@ -4,5 +4,4 @@ nexusStaging {
     username=sonatypeUsername
     password=sonatypePassword
     packageGroup='de.otto'
-
 }
