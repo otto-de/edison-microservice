@@ -25,7 +25,6 @@ public class LdapConfiguration {
      * All routes starting with the value of the {@code edison.ldap.prefix} property will be secured by LDAP. If no
      * property is set this will default to all routes starting with '/internal'.
      *
-     * @param prefix the prefix of routes authenticated by the ldap filter. Default is /internal
      * @param ldapProperties the properties used to configure LDAP
      * @return FilterRegistrationBean
      */
