@@ -26,7 +26,7 @@
                             <tr th:each="logger : ${loggers}">
                                 <td th:text="${logger.displayName}">Logger Name</td>
                                 <td>
-                                    <form th:action="${baseUri} + '/internal/loggers'" method="POST">
+                                    <form th:action="${baseUri} + ${managementContextPath} + '/loggers'" method="POST">
                                         <div class="input-group input-group-sm">
                                             <select class="form-control" name="level">
                                                 <option th:selected="${logger.effectiveLevel == 'TRACE'}">TRACE</option>
