@@ -2,7 +2,12 @@
 
 ## 1.1.0 (Current BETA)
 
+**Breaking Changes:**
+
+* **[edison-core]** Rename `management.contextPath` property to `management.context-path`.
+
 **Dependency Updates:**
+
 * Updated to Spring Boot 1.5.3.RELEASE
 * Updated to Spring Framework 4.3.7.RELEASE
 * Updated to Mockito Core 2.8.9
