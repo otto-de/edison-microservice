@@ -45,7 +45,7 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 
 **[1.0.0](https://github.com/otto-de/edison-microservice/milestone/1)**: Edison Microservices for Spring Boot 1.4 &#10004;
 
-**[1.1.0](https://github.com/otto-de/edison-microservice/milestone/2)**: Edison Microservices for Spring Boot 1.5
+**[1.1.0](https://github.com/otto-de/edison-microservice/milestone/2)**: Edison Microservices for Spring Boot 1.5 &#10004;
 
 **[2.0.0](https://github.com/otto-de/edison-microservice/milestone/3)**: Edison Microservices for Spring Boot 2.0
 
