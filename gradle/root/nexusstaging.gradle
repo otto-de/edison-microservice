@@ -3,5 +3,6 @@ apply plugin: 'io.codearte.nexus-staging'
 nexusStaging {
     username=sonatypeUsername
     password=sonatypePassword
+    packageGroup='de.otto'
 
 }
