@@ -1,6 +1,12 @@
 # Release Notes
 
-## 1.1.0 (Current BETA)
+## 1.1.1
+
+**Bugfixes:**
+
+* **[edison-core]** Fix broken navbar on internal pages when using Thymeleaf 2
+
+## 1.1.0
 
 **Dependency Updates:**
 * Updated to Spring Boot 1.5.3.RELEASE
