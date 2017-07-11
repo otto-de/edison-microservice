@@ -22,7 +22,7 @@ public class MongoJobsConfiguration {
     @Bean
     public JobRepository jobRepository(final MongoDatabase mongoDatabase, final @Value("${edison.jobs.collection.jobinfo:jobinfo}") String collectionName) {
         LOG.info("===============================");
-        LOG.info("Using MongoJobRepository with %s MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
+        LOG.info("Using MongoJobRepository with {} MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
         LOG.info("===============================");
         return new MongoJobRepository(mongoDatabase, collectionName);
     }
@@ -30,7 +30,7 @@ public class MongoJobsConfiguration {
     @Bean
     public JobMetaRepository jobMetaRepository(final MongoDatabase mongoDatabase, final @Value("${edison.jobs.collection.jobmeta:jobmeta}") String collectionName) {
         LOG.info("===============================");
-        LOG.info("Using MongoJobMetaRepository with %s MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
+        LOG.info("Using MongoJobMetaRepository with {} MongoDatabase impl.", mongoDatabase.getClass().getSimpleName());
         LOG.info("===============================");
         return new MongoJobMetaRepository(mongoDatabase, collectionName);
     }
