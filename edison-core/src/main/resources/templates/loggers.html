@@ -35,7 +35,7 @@
                                                 <option th:selected="${logger.effectiveLevel == 'WARN'}">WARN</option>
                                                 <option th:selected="${logger.effectiveLevel == 'ERROR'}">ERROR</option>
                                             </select>
-                                            <input type="hidden" hidden name="name" th:value="${logger.name}">
+                                            <input type="hidden" hidden="hidden" name="name" th:value="${logger.name}"/>
                                             <span class="input-group-btn">
                                                 <button type="submit" class="btn btn-primary" th:title="'Log Level'">
                                                     <span class="glyphicon glyphicon-ok"></span>
