@@ -3,8 +3,13 @@
 ## 1.1.2
 
 **Dependency Updates:**
+
 * Updated to Spring Boot 1.5.4.RELEASE
 * Updated to Spring Framework 4.3.8.RELEASE
+
+**Bugfixes:**
+
+* Fixed issue #93: SAXParseException when requesting /internal/loggers
 
 ## 1.1.1
 
