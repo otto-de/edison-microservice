@@ -11,6 +11,10 @@
 
 * Fixed issue #93: SAXParseException when requesting /internal/loggers
 
+**New Features:**
+
+* Add ServiceDependency for service registry
+
 ## 1.1.1
 
 **Bugfixes:**
