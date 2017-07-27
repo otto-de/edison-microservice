@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.1.3
+
+**New Features:**
+
+* **[edison-core]** Add thread information to default metrics reporting
+
 ## 1.1.2
 
 **Dependency Updates:**
