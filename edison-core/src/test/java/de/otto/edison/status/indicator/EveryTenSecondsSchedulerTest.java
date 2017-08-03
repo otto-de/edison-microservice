@@ -1,10 +1,17 @@
 package de.otto.edison.status.indicator;
 
 
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.ApplicationInfo;
+import de.otto.edison.status.domain.ApplicationStatus;
+import de.otto.edison.status.domain.Status;
+import de.otto.edison.status.domain.SystemInfo;
+import de.otto.edison.status.domain.TeamInfo;
+import de.otto.edison.status.domain.VersionInfo;
 import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
 import de.otto.edison.status.scheduler.Scheduler;
 import org.junit.Test;
+
+import java.util.List;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
@@ -16,8 +23,8 @@ import static org.mockito.Mockito.when;
 
 public class EveryTenSecondsSchedulerTest {
 
-    public static final ApplicationStatus SOME_STATUS = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(statusDetail("test", Status.OK, "everything is fine")));
-    public static final ApplicationStatus SOME_OTHER_STATUS = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(statusDetail("test", Status.ERROR, "some error")));
+    public static final ApplicationStatus SOME_STATUS = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(statusDetail("test", Status.OK, "everything is fine")), mock(List.class));
+    public static final ApplicationStatus SOME_OTHER_STATUS = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(statusDetail("test", Status.ERROR, "some error")), mock(List.class));
 
     @Test
     public void shouldDelegateStatusAggregation() throws Exception {

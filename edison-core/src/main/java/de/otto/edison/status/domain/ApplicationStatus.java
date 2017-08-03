@@ -18,13 +18,15 @@ public class ApplicationStatus {
     public final ClusterInfo cluster;
     public final Status status;
     public final List<StatusDetail> statusDetails;
+    public final List<CommonPropertyInfo> commonProperties;
 
     private ApplicationStatus(final ApplicationInfo application,
                               final ClusterInfo cluster,
                               final SystemInfo system,
                               final VersionInfo vcs,
                               final TeamInfo team,
-                              final List<StatusDetail> details) {
+                              final List<StatusDetail> details,
+                              final List<CommonPropertyInfo> commonProperties) {
         this.status = details.stream()
                 .map(StatusDetail::getStatus)
                 .reduce(Status.OK, Status::plus);
@@ -34,6 +36,7 @@ public class ApplicationStatus {
         this.system = system;
         this.vcs = vcs;
         this.team = team;
+        this.commonProperties = commonProperties;
     }
 
     public static ApplicationStatus applicationStatus(final ApplicationInfo applicationInfo,
@@ -41,8 +44,10 @@ public class ApplicationStatus {
                                                       final SystemInfo systemInfo,
                                                       final VersionInfo versionInfo,
                                                       final TeamInfo teamInfo,
-                                                      final List<StatusDetail> details) {
-        return new ApplicationStatus(applicationInfo, clusterInfo, systemInfo, versionInfo, teamInfo, details);
+                                                      final List<StatusDetail> details,
+                                                      final List<CommonPropertyInfo> commonProperties) {
+        return new ApplicationStatus(applicationInfo, clusterInfo, systemInfo, versionInfo, teamInfo, details,
+                commonProperties);
     }
 
     @Override
@@ -56,12 +61,13 @@ public class ApplicationStatus {
                 Objects.equals(team, that.team) &&
                 Objects.equals(cluster, that.cluster) &&
                 status == that.status &&
-                Objects.equals(statusDetails, that.statusDetails);
+                Objects.equals(statusDetails, that.statusDetails) &&
+                Objects.equals(commonProperties, that.commonProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(application, system, vcs, team, cluster, status, statusDetails);
+        return Objects.hash(application, system, vcs, team, cluster, status, statusDetails, commonProperties);
     }
 
     @Override
@@ -74,6 +80,7 @@ public class ApplicationStatus {
                 ", cluster=" + cluster +
                 ", status=" + status +
                 ", statusDetails=" + statusDetails +
+                ", commonProperties=" + commonProperties +
                 '}';
     }
 }

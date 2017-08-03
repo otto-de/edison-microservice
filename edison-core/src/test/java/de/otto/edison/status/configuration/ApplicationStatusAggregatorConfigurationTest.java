@@ -21,7 +21,8 @@ import static org.hamcrest.core.Is.is;
         ApplicationInfoConfiguration.class,
         VersionInfoConfiguration.class,
         TeamInfoConfiguration.class,
-        ApplicationStatusAggregatorConfiguration.class})
+        ApplicationStatusAggregatorConfiguration.class,
+        CommonPropertiesConfiguration.class})
 public class ApplicationStatusAggregatorConfigurationTest {
 
     @Autowired
@@ -43,6 +44,7 @@ public class ApplicationStatusAggregatorConfigurationTest {
         assertThat(status.vcs, is(notNullValue()));
         assertThat(status.team, is(notNullValue()));
         assertThat(status.statusDetails.isEmpty(), is(true));
+        assertThat(status.commonProperties.isEmpty(), is(true));
     }
 
 }

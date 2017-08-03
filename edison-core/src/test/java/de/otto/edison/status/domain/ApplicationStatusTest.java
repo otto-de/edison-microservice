@@ -2,6 +2,8 @@ package de.otto.edison.status.domain;
 
 import org.junit.Test;
 
+import java.util.List;
+
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
@@ -19,7 +21,7 @@ public class ApplicationStatusTest {
     public void shouldHaveStatusOkIfDetailsAreOk() {
         // given
         ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(
-                statusDetail("bar", OK, "a message"))
+                statusDetail("bar", OK, "a message")), mock(List.class)
         );
         // then
         assertThat(applicationStatus.status, is(OK));
@@ -30,7 +32,7 @@ public class ApplicationStatusTest {
         // given
         ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                 statusDetail("bar", OK, "a message"),
-                statusDetail("foobar", WARNING, "another message"))
+                statusDetail("foobar", WARNING, "another message")), mock(List.class)
         );
         // then
         assertThat(applicationStatus.status, is(WARNING));
@@ -42,7 +44,7 @@ public class ApplicationStatusTest {
         ApplicationStatus applicationStatus = applicationStatus(mock(ApplicationInfo.class), null, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                 statusDetail("bar", OK, "a message"),
                 statusDetail("foobar", ERROR, "another message"),
-                statusDetail("foobar", WARNING, "yet another message"))
+                statusDetail("foobar", WARNING, "yet another message")), mock(List.class)
         );
         // then
         assertThat(applicationStatus.status, is(ERROR));

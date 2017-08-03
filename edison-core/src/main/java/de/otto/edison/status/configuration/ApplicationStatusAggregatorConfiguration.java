@@ -48,12 +48,14 @@ public class ApplicationStatusAggregatorConfiguration {
     public ApplicationStatusAggregator applicationStatusAggregator(final ApplicationInfo applicationInfo,
                                                                    final VersionInfo versionInfo,
                                                                    final SystemInfo systemInfo,
-                                                                   final TeamInfo teamInfo) {
+                                                                   final TeamInfo teamInfo,
+                                                                   final List<CommonPropertyInfo> commonProperties) {
         final List<StatusDetailIndicator> indicators = statusDetailIndicators != null
                 ? statusDetailIndicators
                 : emptyList();
         return new CachedApplicationStatusAggregator(
-                applicationStatus(applicationInfo, clusterInfo, systemInfo, versionInfo, teamInfo, emptyList()),
+                applicationStatus(applicationInfo, clusterInfo, systemInfo, versionInfo, teamInfo, emptyList(),
+                        commonProperties),
                 indicators);
     }
 

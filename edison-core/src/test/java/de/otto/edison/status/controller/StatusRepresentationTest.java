@@ -1,11 +1,18 @@
 package de.otto.edison.status.controller;
 
 import de.otto.edison.status.configuration.ApplicationInfoProperties;
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.ApplicationInfo;
+import de.otto.edison.status.domain.ClusterInfo;
+import de.otto.edison.status.domain.CommonPropertyInfo;
+import de.otto.edison.status.domain.SystemInfo;
+import de.otto.edison.status.domain.TeamInfo;
+import de.otto.edison.status.domain.VersionInfo;
 import de.otto.edison.testsupport.util.JsonMap;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static de.otto.edison.status.configuration.ApplicationInfoProperties.applicationInfoProperties;
@@ -34,7 +41,7 @@ public class StatusRepresentationTest {
         // given
         ApplicationInfoProperties applicationInfoProperties = applicationInfoProperties("Some Title", "group", "local-env", "desc");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(applicationInfo("app-name", applicationInfoProperties), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList())
+                applicationStatus(applicationInfo("app-name", applicationInfoProperties), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), mock(List.class))
         );
         // then
         assertThat(json.application.name, is("app-name"));
@@ -47,7 +54,7 @@ public class StatusRepresentationTest {
     public void shouldCreateStatusRepresentationWithVersionInfo() {
         // given
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), mock(ClusterInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo(versionInfoProperties("1.0.0", "0815", "http://example.org/commits/{commit}")), mock(TeamInfo.class), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), mock(ClusterInfo.class), mock(SystemInfo.class), VersionInfo.versionInfo(versionInfoProperties("1.0.0", "0815", "http://example.org/commits/{commit}")), mock(TeamInfo.class), emptyList(), mock(List.class))
         );
         // then
         assertThat(json.application.version, is("1.0.0"));
@@ -60,7 +67,7 @@ public class StatusRepresentationTest {
         // given
         final ClusterInfo cluster = clusterInfo("BLU", "active");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), mock(List.class))
         );
         // then
         assertThat(json.cluster.getColor(), is("BLU"));
@@ -72,10 +79,27 @@ public class StatusRepresentationTest {
         // given
         final ClusterInfo cluster = clusterInfo("", "");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList())
+                applicationStatus(mock(ApplicationInfo.class), cluster, mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), mock(List.class))
         );
         // then
         assertThat(json.cluster, is(nullValue()));
+    }
+
+    @Test
+    public void shouldCreateStatusRepresentationWithList() {
+        // given
+        final LinkedList<CommonPropertyInfo> properties = new LinkedList<CommonPropertyInfo>() {{
+            add(new CommonPropertyInfo("KEY", "VALUE", "DESCRIPTION"));
+        }};
+
+        final StatusRepresentation json = statusRepresentationOf(
+                applicationStatus(mock(ApplicationInfo.class), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList(), properties)
+        );
+        // then
+        final List<CommonPropertyInfo> someDetail = json.application.commonProperties;
+        assertThat(someDetail.get(0).getKey(), is("KEY"));
+        assertThat(someDetail.get(0).getValue(), is("VALUE"));
+        assertThat(someDetail.get(0).getDescription(), is("DESCRIPTION"));
     }
 
     @Test
@@ -83,7 +107,7 @@ public class StatusRepresentationTest {
         // given
         final StatusRepresentation json = statusRepresentationOf(
                 applicationStatus(mock(ApplicationInfo.class), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), singletonList(
-                        statusDetail("someDetail", WARNING, "detailed warning"))
+                        statusDetail("someDetail", WARNING, "detailed warning")), mock(List.class)
                 )
         );
         // then
@@ -107,7 +131,8 @@ public class StatusRepresentationTest {
                         mock(TeamInfo.class),
                         singletonList(
                                 statusDetail("someDetail", OK, "some message", link("item", "http://example.org/some/url", "some title"))
-                        )
+                        ),
+                        mock(List.class)
                 )
         );
         // then
@@ -127,7 +152,8 @@ public class StatusRepresentationTest {
         final StatusRepresentation json = statusRepresentationOf(
                 applicationStatus(mock(ApplicationInfo.class), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), asList(
                         statusDetail("Some Detail", OK, "perfect"),
-                        statusDetail("Some Other Detail", WARNING, "detailed warning", detailMap))
+                        statusDetail("Some Other Detail", WARNING, "detailed warning", detailMap)),
+                        mock(List.class)
                 )
         );
         // then

@@ -41,7 +41,8 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
                 indicators
                         .stream()
                         .flatMap(i -> i.statusDetails().stream())
-                        .collect(toList()));
+                        .collect(toList()),
+                cachedStatus.commonProperties);
     }
 
 }
