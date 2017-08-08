@@ -5,14 +5,11 @@ import de.otto.edison.authentication.configuration.LdapProperties;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
 
 import static com.unboundid.ldap.sdk.ResultCode.CANCELED;
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -54,7 +51,7 @@ public class LdapRoleCheckingRequestTest {
     }
 
     private LdapProperties someLdapProperties() {
-        return ldapProperties("", 389, "someBaseDn", "someRoleBaseDn", "someRdnIdentifier", "/internal");
+        return ldapProperties("", 389, singletonList("someBaseDn"), "someRoleBaseDn", "someRdnIdentifier", "/internal");
     }
 
     private LDAPInterface someLdapInterfaceReturning(String... roles) throws LDAPSearchException {

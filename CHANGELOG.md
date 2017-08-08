@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.1.4
+
+**New Features**
+
+* **[edison-core]** Allow to configure multiple BaseDN names to bind against LDAP for authentication
+
 ## 1.1.3
 
 **New Features:**

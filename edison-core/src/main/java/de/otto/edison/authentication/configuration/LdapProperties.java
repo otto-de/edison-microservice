@@ -6,10 +6,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -41,10 +43,11 @@ public class LdapProperties {
     @Min(1)
     private int port = 389;
     /**
-     * Base distinguished name (base DN)
+     * Base distinguished name (base DN).
+     * If more than one is given, all will be tried to authenticate again LDAP
      */
     @NotEmpty
-    private String baseDn;
+    private List<String> baseDn;
     /**
      * Distinguished name used to select user roles
      */
@@ -79,7 +82,7 @@ public class LdapProperties {
      */
     public static LdapProperties ldapProperties(final String host,
                                                 final int port,
-                                                final String baseDn,
+                                                final List<String> baseDn,
                                                 final String roleBaseDn,
                                                 final String rdnIdentifier,
                                                 final String prefix,
@@ -92,7 +95,7 @@ public class LdapProperties {
         ldap.setRoleBaseDn(roleBaseDn);
         ldap.setRdnIdentifier(rdnIdentifier);
         ldap.setPrefix(prefix);
-        ldap.setWhitelistedPaths(Arrays.asList(whitelistedPaths));
+        ldap.setWhitelistedPaths(asList(whitelistedPaths));
         return ldap;
     }
 
@@ -103,7 +106,7 @@ public class LdapProperties {
     public boolean isValid() {
         if (isEmpty(host)) {
             LOG.error("host is undefined");
-        } else if (isEmpty(baseDn)) {
+        } else if (baseDn == null || baseDn.isEmpty() || hasEmptyElements(baseDn)) {
             LOG.error("baseDn is undefined");
         } else if (isEmpty(rdnIdentifier)) {
             LOG.error("rdnIdentifier is undefined");
@@ -113,6 +116,10 @@ public class LdapProperties {
         return false;
     }
 
+    private boolean hasEmptyElements(List<String> listOfStrings) {
+        List<String> listCopy =  new ArrayList<>(listOfStrings);
+        return listCopy.removeAll(asList("", null));
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -138,11 +145,11 @@ public class LdapProperties {
         this.port = port;
     }
 
-    public String getBaseDn() {
+    public List<String> getBaseDn() {
         return baseDn;
     }
 
-    public void setBaseDn(String baseDn) {
+    public void setBaseDn(List<String> baseDn) {
         this.baseDn = baseDn;
     }
 

@@ -1,9 +1,6 @@
 package de.otto.edison.authentication;
 
-import com.unboundid.ldap.sdk.BindResult;
-import com.unboundid.ldap.sdk.LDAPConnection;
-import com.unboundid.ldap.sdk.LDAPException;
-import com.unboundid.ldap.sdk.ResultCode;
+import com.unboundid.ldap.sdk.*;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,20 +10,19 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import static com.unboundid.ldap.sdk.ResultCode.AUTHORIZATION_DENIED;
 import static com.unboundid.ldap.sdk.ResultCode.SUCCESS;
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -40,23 +36,23 @@ public class LdapAuthenticationFilterTest {
 
     @Before
     public void setUp() throws Exception {
-        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, "someBaseDn", null, "someRdnIdentifier", "/internal", WHITELISTED_PATH));
+        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal", WHITELISTED_PATH));
         response = mock(HttpServletResponse.class);
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailToStartIfHostIsNotConfigured() throws Exception {
-        new LdapAuthenticationFilter(ldapProperties("", 389, "someBaseDn", null, "someRdnIdentifier", "/internal"));
+        new LdapAuthenticationFilter(ldapProperties("", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal"));
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailToStartIfBaseDnIsNotConfigured() throws Exception {
-        new LdapAuthenticationFilter(ldapProperties("someHost", 389, "", null, "someRdnIdentifier", "/internal"));
+        new LdapAuthenticationFilter(ldapProperties("someHost", 389, singletonList(""), null, "someRdnIdentifier", "/internal"));
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailToStartIfRdnIdentifierIsNotConfigured() throws Exception {
-        new LdapAuthenticationFilter(ldapProperties("someHost", 389, "someBaseDn", null, "", "/internal"));
+        new LdapAuthenticationFilter(ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "", "/internal"));
     }
 
     @Test
@@ -95,7 +91,7 @@ public class LdapAuthenticationFilterTest {
 
     @Test
     public void shouldApplyFilterToAuthenticatedUser() throws IOException, ServletException, GeneralSecurityException, LDAPException {
-        final LdapProperties ldapProperties = ldapProperties("someHost", 389, "someBaseDn", null, "someRdnIdentifier", "/internal", WHITELISTED_PATH);
+        final LdapProperties ldapProperties = ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal", WHITELISTED_PATH);
         final LdapConnectionFactory connectionFactory = mock(LdapConnectionFactory.class);
         final LDAPConnection ldapConnection = someLdapConnectionReturning(SUCCESS);
         when(connectionFactory.buildLdapConnection()).thenReturn(ldapConnection);
@@ -108,8 +104,27 @@ public class LdapAuthenticationFilterTest {
     }
 
     @Test
+    public void shouldApplyFilterToAuthenticatedUserWithAdditionallyConfiguredBaseDn() throws IOException, ServletException, GeneralSecurityException, LDAPException {
+        // given
+        final LdapProperties ldapProperties = ldapProperties("someHost", 389, asList("exceptionBaseDn", "successBaseDn"), null, "someRdnIdentifier", "/internal", WHITELISTED_PATH);
+        final LdapConnectionFactory connectionFactory = mock(LdapConnectionFactory.class);
+        final LDAPConnection ldapConnection = someLdapConnectionReturningSuccessOrThrowingBindException("successBaseDn", "exceptionBaseDn");
+        when(connectionFactory.buildLdapConnection()).thenReturn(ldapConnection);
+        testee = new LdapAuthenticationFilter(ldapProperties, connectionFactory);
+        // when
+        final HttpServletRequest request = requestWithAuthorizationHeader();
+        when(request.getServletPath()).thenReturn("/foo");
+        FilterChain filterChain = mock(FilterChain.class);
+        testee.doFilter(request, response, filterChain);
+        // then
+        verify(ldapConnection).bind(contains("exceptionBaseDn"), anyString());
+        verify(ldapConnection).bind(contains("successBaseDn"), anyString());
+        verify(filterChain).doFilter(any(HttpServletRequest.class), any(HttpServletResponse.class));
+    }
+
+    @Test
     public void shouldNotApplyFilterToNotAuthenticatedUser() throws IOException, ServletException, GeneralSecurityException, LDAPException {
-        final LdapProperties ldapProperties = ldapProperties("someHost", 389, "someBaseDn", null, "someRdnIdentifier", "/internal", WHITELISTED_PATH);
+        final LdapProperties ldapProperties = ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal", WHITELISTED_PATH);
         final LdapConnectionFactory connectionFactory = mock(LdapConnectionFactory.class);
         final LDAPConnection ldapConnection = someLdapConnectionReturning(AUTHORIZATION_DENIED);
         when(connectionFactory.buildLdapConnection()).thenReturn(ldapConnection);
@@ -135,7 +150,7 @@ public class LdapAuthenticationFilterTest {
 
     @Test
     public void shouldBuildUserDnFromCredentials() {
-        final String userDn = testee.userDnFrom(new Credentials("user", "password"));
+        final String userDn = testee.userDnFrom(new Credentials("user", "password"), "someBaseDn");
         assertThat(userDn).isEqualTo("someRdnIdentifier=user,someBaseDn");
     }
 
@@ -164,4 +179,20 @@ public class LdapAuthenticationFilterTest {
         when(ldap.bind(anyString(), anyString())).thenReturn(mockBindResult);
         return ldap;
     }
+
+    private LDAPConnection someLdapConnectionReturningSuccessOrThrowingBindException(String bindDnSuccess, String bindDnException) throws LDAPException {
+        final LDAPConnection ldap = mock(LDAPConnection.class);
+
+        final BindResult mockBindResultSuccess = mock(BindResult.class);
+        when(mockBindResultSuccess.getResultCode()).thenReturn(ResultCode.SUCCESS);
+        when(ldap.bind(contains(bindDnSuccess), anyString())).thenReturn(mockBindResultSuccess);
+
+        final BindResult mockBindResultInvalid = mock(BindResult.class);
+        when(mockBindResultInvalid.getResultCode()).thenReturn(ResultCode.INVALID_CREDENTIALS);
+        final LDAPBindException mockBindException = mock(LDAPBindException.class);
+        when(mockBindException.getBindResult()).thenReturn(mockBindResultInvalid);
+        when(ldap.bind(contains(bindDnException), anyString())).thenThrow(mockBindException);
+        return ldap;
+    }
+
 }

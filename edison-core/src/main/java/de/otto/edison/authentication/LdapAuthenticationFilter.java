@@ -1,8 +1,6 @@
 package de.otto.edison.authentication;
 
 import com.unboundid.ldap.sdk.*;
-import com.unboundid.ldap.sdk.extensions.StartTLSExtendedRequest;
-import com.unboundid.util.ssl.SSLUtil;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +16,6 @@ import java.util.Optional;
 
 import static de.otto.edison.authentication.Credentials.readFrom;
 import static java.lang.String.format;
-import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -64,25 +61,37 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
                                     final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {
         Optional<Credentials> optionalCredentials = readFrom(request);
-        if (!optionalCredentials.isPresent()) {
-            unauthorized(response);
-        } else {
-            final Credentials credentials = optionalCredentials.get();
-            final String userDN = userDnFrom(credentials);
-            try(final LDAPConnection ldap = connectionFactory.buildLdapConnection()) {
-                if (!authenticate(ldap, userDN, credentials.getPassword())) {
-                    unauthorized(response);
-                } else {
-                    final HttpServletRequest filterRequest = ldapProperties.getRoleBaseDn() != null
-                            ? new LdapRoleCheckingRequest(request, ldap, userDN, ldapProperties)
-                            : request;
-                    filterChain.doFilter(filterRequest, response);
-                }
-            } catch (LDAPException | GeneralSecurityException e) {
-                LOG.info("Authentication error: ", e);
+        if (optionalCredentials.isPresent()) {
+            Optional<HttpServletRequest> authRequest = tryToGetAuthenticatedRequest(request, optionalCredentials.get());
+            if (authRequest.isPresent()) {
+                filterChain.doFilter(authRequest.get(), response);
+            } else {
                 unauthorized(response);
             }
+        } else {
+            unauthorized(response);
         }
+    }
+
+    private Optional<HttpServletRequest> tryToGetAuthenticatedRequest(HttpServletRequest request, Credentials credentials) {
+        try (final LDAPConnection ldap = connectionFactory.buildLdapConnection()) {
+
+            for (String baseDN : ldapProperties.getBaseDn()) {
+                final String userDN = userDnFrom(credentials, baseDN);
+                try {
+                    if (authenticate(ldap, userDN, credentials.getPassword())) {
+                        return ldapProperties.getRoleBaseDn() != null
+                                ? Optional.of(new LdapRoleCheckingRequest(request, ldap, userDN, ldapProperties))
+                                : Optional.of(request);
+                    }
+                } catch (LDAPBindException e) {
+                    LOG.info("Could not bind to LDAP: " + userDN);
+                }
+            }
+        }  catch (LDAPException | GeneralSecurityException e) {
+            LOG.info("Authentication error: ", e);
+        }
+        return Optional.empty();
     }
 
     void unauthorized(final HttpServletResponse httpResponse) {
@@ -90,8 +99,8 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
         httpResponse.setStatus(UNAUTHORIZED.value());
     }
 
-    String userDnFrom(final Credentials credentials) {
-        return format("%s=%s,%s", ldapProperties.getRdnIdentifier(), credentials.getUsername(), ldapProperties.getBaseDn());
+    String userDnFrom(final Credentials credentials, String baseDN) {
+        return format("%s=%s,%s", ldapProperties.getRdnIdentifier(), credentials.getUsername(), baseDN);
     }
 
     boolean authenticate(final LDAPConnection ldap, final String userDN, final String password) throws LDAPException {
