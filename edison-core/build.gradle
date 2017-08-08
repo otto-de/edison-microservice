@@ -46,6 +46,7 @@ uploadArchives {
                 description 'Core library for all Edison libraries.'
                 url 'http://github.com/otto-de/edison-microservice'
 
+
                 scm {
                     url 'scm:git@github.com:otto-de/edison-microservice.git'
                     connection 'scm:git@github.com:otto-de/edison-microservice.git'
