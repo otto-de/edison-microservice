@@ -26,11 +26,7 @@ edison:
             business-contact: edison-team@example.org
             name: Edison Team
             technical-contact: edison-dev@example.org
-    commonProperties:
-        - key: key
-          value: value
-          description: description
-        - key: key1
-          value: value1
-          description: description1
+        properties:
+            key1: value1
+            key2: value2
 

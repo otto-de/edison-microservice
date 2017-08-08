@@ -42,7 +42,7 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
                         .stream()
                         .flatMap(i -> i.statusDetails().stream())
                         .collect(toList()),
-                cachedStatus.commonProperties);
+                cachedStatus.statusPropertiesInfo);
     }
 
 }

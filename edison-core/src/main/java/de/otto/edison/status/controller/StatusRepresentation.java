@@ -31,7 +31,7 @@ public class StatusRepresentation {
     public TeamInfo team;
     public Criticality criticality;
     public List<DependencyRepresentation> dependencies;
-    public List<CommonPropertyInfo> commonProperties;
+    public Map<String,?> properties;
 
     private StatusRepresentation(final ApplicationStatus applicationStatus,
                                  final Criticality criticality,
@@ -48,7 +48,7 @@ public class StatusRepresentation {
                         .map(DependencyRepresentation::new)
                         .collect(toList())
                 : emptyList();
-        this.commonProperties = applicationStatus.commonProperties;
+        this.properties = applicationStatus.statusPropertiesInfo.getProperties();
     }
 
     public static StatusRepresentation statusRepresentationOf(final ApplicationStatus status) {
@@ -114,7 +114,6 @@ public class StatusRepresentation {
         public String vcsUrl;
         public Status status;
         public Map<String,?> statusDetails;
-        public List<CommonPropertyInfo> commonProperties;
 
         public ApplicationRepresentation() {
         }
@@ -130,7 +129,6 @@ public class StatusRepresentation {
             this.vcsUrl = applicationStatus.vcs.url;
             this.status = applicationStatus.status;
             this.statusDetails = statusDetailsOf(applicationStatus.statusDetails);
-            this.commonProperties = applicationStatus.commonProperties;
         }
 
         private Map<String, ?> statusDetailsOf(final List<StatusDetail> statusDetails) {
@@ -145,7 +143,6 @@ public class StatusRepresentation {
                 }});
             }
             return map;
-
         }
 
         private List<Map<String, String>> toLinks(final List<Link> links) {

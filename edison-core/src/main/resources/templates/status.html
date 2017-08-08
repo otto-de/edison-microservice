@@ -135,6 +135,23 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Extended Properties</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                            <div th:each="property : ${status.statusPropertiesInfo.entrySet()}">
+                                <dt th:inline="text"> [[${property.getKey()}]]:</dt>
+                                <dd th:text="${property.getValue()}"></dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -212,29 +229,6 @@
                                     <p>Availability:<br/> <span th:text="${dep.expectations.availability}" /></p>
                                     <p>Performance:<br/>  <span th:text="${dep.expectations.performance}" /></p>
                                 </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div><div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Common Properties</h3>
-                    </div>
-                    <div class="panel-body">
-
-                        <table class="table table-striped table-hover">
-                            <tr>
-                                <th>Key</th>
-                                <th>Value</th>
-                                <th>Description</th>
-                            </tr>
-                            <tr th:each="property : ${status.commonProperties}">
-                                <td th:text="${property.key}">Name</td>
-                                <td th:text="${property.value}">Name</td>
-                                <td th:text="${property.description}">Name</td>
                             </tr>
                         </table>
                     </div>
