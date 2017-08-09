@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.1.5
+
+* **[edison-core]** log ldap auth errors as warning  
+
 ## 1.1.4
 
 **New Features**

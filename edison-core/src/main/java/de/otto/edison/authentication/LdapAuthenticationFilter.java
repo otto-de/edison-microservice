@@ -85,11 +85,11 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
                                 : Optional.of(request);
                     }
                 } catch (LDAPBindException e) {
-                    LOG.info("Could not bind to LDAP: " + userDN);
+                    LOG.error("Could not bind to LDAP: " + userDN);
                 }
             }
         }  catch (LDAPException | GeneralSecurityException e) {
-            LOG.info("Authentication error: ", e);
+            LOG.warn("Authentication error: ", e);
         }
         return Optional.empty();
     }
@@ -109,9 +109,8 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
             LOG.info("Login successful: " + userDN);
             return true;
         } else {
-            LOG.info("Access denied: " + userDN);
+            LOG.warn("Access denied: " + userDN);
             return false;
         }
     }
-
 }
