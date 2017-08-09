@@ -8,7 +8,14 @@
 
 **New Features**
 
-* **[edison-core]** Allow to configure multiple BaseDN names to bind against LDAP for authentication
+* **[edison-core]** Allow to configure multiple BaseDN names to bind against LDAP for authentication.
+
+    If you use the property file format, you need to add one entry for each BaseDN name.
+    E.g.:
+    ```
+        edison.ldap.baseDn[0]=ou=otto,ou=people..
+        edison.ldap.baseDn[1]=ou=tools,ou=people..
+    ```
 
 ## 1.1.3
 
@@ -219,7 +226,7 @@ _Because a couple of modules have been removed in this release, you should proba
 **Breaking Changes:**
 
 * **[edison-*]** Refactored module structure: 
-  * moved `edison-status`, `edison-health`, `edison-metrics`, `edison-microservice` and `èdison-servicediscovery-client`
+  * moved `edison-status`, `edison-health`, `edison-metrics`, `edison-microservice` and `?dison-servicediscovery-client`
     into `edison-core`.
   * moved `edison-jobs-mongo` into `edison-mongo`
   * moved `edison-togglz-mongo` into `edison-mongo`
@@ -581,7 +588,7 @@ can be removed from application.properties/.yml
 ## 0.46.2
 * Removed StateChangeEvent.State.CREATE, replaced it by START
 * Renamed State.STILL_ALIVE to KEEP_ALIVE
-* Job HTML templates are now using the Thymeleaf navigation fragments so µServices have a common menu on all pages.
+* Job HTML templates are now using the Thymeleaf navigation fragments so ?Services have a common menu on all pages.
 
 ## 0.46.1
 * Minor refactorings in handling of job events.
