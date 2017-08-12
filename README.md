@@ -58,6 +58,8 @@ Edison Modules:
 * [`edison-jobs`](edison-jobs/README.md): Optional module providing a simple job library.
 * [`edison-mongo`](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and
  Togglz StateRepository.
+* [`edison-dynamodb`](edison-dynamodb/README.md): Auto-configuration for DynamoDB repositories plus implementation of DynamoJobRepository and
+ Togglz StateRepository.
 * [`edison-togglz`](edison-togglz/README.md): Optional support for feature toggles for Edison microservices based on [Togglz](https://www.togglz.org/).
 * `edison-testsupport`: Test support for feature toggles plus utilities.
 
