@@ -1,7 +1,13 @@
 # Release Notes
 
-## 1.1.5
+## 1.1.5-SNAPSHOT
 
+**New Features:**
+
+* **[edison-dynamodb]** __(Beta)__ DynamoDB persistence.
+
+**Maintenance:**
+  
 * **[edison-core]** log ldap auth errors as warning  
 
 ## 1.1.4
