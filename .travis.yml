@@ -1,3 +1,8 @@
+sudo: required
+
+services:
+  - docker
+
 language: java
 
 jdk:
@@ -10,4 +15,3 @@ script: bin/go check
 after_success:
   - bin/go jacocoRootReport
   - bash <(curl -s https://codecov.io/bash)
-

@@ -13,6 +13,17 @@ dependencies {
     testCompile test_libraries.fongo
 }
 
+task startDB (type:Exec) {
+    commandLine "bash", "-c", "docker run -p 8000:8000 -d tray/dynamodb-local -inMemory -sharedDb -port 8000"
+}
+
+task stopDB (type:Exec) {
+    commandLine "bash", "-c", "id=\$(docker ps | grep \"tray/dynamodb-local\" | awk '{print \$1}');if [[ \${id} ]]; then docker stop \$id; fi"
+}
+
+test.dependsOn startDB
+test.finalizedBy stopDB
+
 artifacts {
     archives jar
     archives javadocJar
