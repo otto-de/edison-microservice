@@ -13,7 +13,7 @@ disabled by setting the property `edison.dynamodb.status.enabled=false`.
 
 ## DynamodbJobRepository
 
-If edison-dynamodb is configured appropriately and edison-jobs is in the classpath, a dynamoDB implementation
+If edison-dynamodb is configured appropriately and edison-jobs is in the classpath, a dynamoDatabase implementation
 of the JobRepository is automatically configured.
 
 This provides persistence for Jobs, so job information can be gathered in clustered environments.

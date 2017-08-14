@@ -5,7 +5,7 @@ dependencies {
     compile project(":edison-core")
     compile libraries.spring_boot
     compile libraries.spring_boot_autoconfigure
-    compile libraries.amazonDynamoDB
+    compile libraries.aws_sdk_dynamodb
 
     testCompile project(":edison-testsupport")
     testCompile project(":edison-jobs")
@@ -13,11 +13,11 @@ dependencies {
     testCompile test_libraries.fongo
 }
 
-task startDB (type:Exec) {
+task startDB(type: Exec) {
     commandLine "bash", "-c", "docker run -p 8000:8000 -d tray/dynamodb-local -inMemory -sharedDb -port 8000"
 }
 
-task stopDB (type:Exec) {
+task stopDB(type: Exec) {
     commandLine "bash", "-c", "id=\$(docker ps | grep \"tray/dynamodb-local\" | awk '{print \$1}');if [[ \${id} ]]; then docker stop \$id; fi"
 }
 
