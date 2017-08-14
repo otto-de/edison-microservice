@@ -1,8 +1,9 @@
 package de.otto.edison.dynamodb.configuration;
 
-import de.otto.edison.annotations.Beta;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
+
+import de.otto.edison.annotations.Beta;
 
 /**
  * Properties used to configure MongoDB clients.
@@ -14,31 +15,31 @@ import org.springframework.validation.annotation.Validated;
 @Beta
 public class DynamoProperties {
 
-    private String endpoint = "http://localhost:8000/";
-    private String accessKeyId = "test1";
-    private String secretKeyId = "test2";
+  private String endpoint = "http://localhost:8000/";
+  private String accessKey = "test1";
+  private String secretKey = "test2";
 
-    public String getAccessKeyId() {
-        return accessKeyId;
-    }
+  public String getAccessKey() {
+    return accessKey;
+  }
 
-    public void setAccessKeyId(final String accessKeyId) {
-        this.accessKeyId = accessKeyId;
-    }
+  public void setAccessKey(final String accessKey) {
+    this.accessKey = accessKey;
+  }
 
-    public String getSecretKeyId() {
-        return secretKeyId;
-    }
+  public String getSecretKey() {
+    return secretKey;
+  }
 
-    public void setSecretKeyId(final String secretKeyId) {
-        this.secretKeyId = secretKeyId;
-    }
+  public void setSecretKey(final String secretKey) {
+    this.secretKey = secretKey;
+  }
 
-    public String getEndpoint() {
-        return endpoint;
-    }
+  public String getEndpoint() {
+    return endpoint;
+  }
 
-    public void setEndpoint(final String endpoint) {
-        this.endpoint = endpoint;
-    }
+  public void setEndpoint(final String endpoint) {
+    this.endpoint = endpoint;
+  }
 }

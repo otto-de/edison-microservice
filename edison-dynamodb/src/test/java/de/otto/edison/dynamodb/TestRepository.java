@@ -1,73 +1,75 @@
 package de.otto.edison.dynamodb;
 
-import org.springframework.stereotype.Repository;
-import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.document.DynamoDb;
-import software.amazon.awssdk.services.dynamodb.document.Item;
-import software.amazon.awssdk.services.dynamodb.document.Table;
-import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
-import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
-import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import static java.util.Collections.singletonList;
+
+import static com.amazonaws.services.dynamodbv2.model.KeyType.HASH;
+import static com.amazonaws.services.dynamodbv2.model.ScalarAttributeType.S;
 
 import java.util.UUID;
 
-import static software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperFieldModel.DynamoDbAttributeType.S;
-import static software.amazon.awssdk.services.dynamodb.model.KeyType.HASH;
+import org.springframework.stereotype.Repository;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
+import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 
 @Repository
 public class TestRepository extends AbstractDynamoRepository<TestObject> {
 
-    private final DynamoDBClient dynamoClient;
-    private final Table table;
+  private final AmazonDynamoDB dynamoDB;
+  private final Table table;
 
-    public TestRepository(final DynamoDBClient dynamoClient) {
-        this.dynamoClient = dynamoClient;
-        table = new DynamoDb(dynamoClient).getTable("test");
-    }
+  public TestRepository(final AmazonDynamoDB dynamoDB) {
+    this.dynamoDB = dynamoDB;
+    this.table = new DynamoDB(dynamoDB).getTable("test");
+  }
 
-    void createTable() {
-        if (!dynamoClient.listTables().tableNames().contains(table().getTableName())) {
-            dynamoClient.createTable(CreateTableRequest.builder()
-                    .tableName(table().getTableName())
-                    .keySchema(KeySchemaElement.builder().attributeName(getKeyFieldName()).keyType(HASH).build())
-                    .provisionedThroughput(ProvisionedThroughput.builder()
-                            .readCapacityUnits(1000L)
-                            .writeCapacityUnits(1000L)
-                            .build())
-                    .attributeDefinitions(AttributeDefinition.builder()
-                            .attributeName(getKeyFieldName())
-                            .attributeType(S.name())
-                            .build())
-                    .build());
-        }
+  public void createTable() {
+    if (!dynamoDB.listTables().getTableNames().contains(table().getTableName())) {
+      final ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput();
+      provisionedThroughput.setReadCapacityUnits(1000L);
+      provisionedThroughput.setWriteCapacityUnits(1000L);
+      dynamoDB.createTable(singletonList(new AttributeDefinition(getKeyFieldName(), S)), table().getTableName(),
+        singletonList(new KeySchemaElement(getKeyFieldName(), HASH)),
+        provisionedThroughput);
     }
+  }
 
-    @Override
-    protected Table table() {
-        return table;
+  public void deleteTable() {
+    if (dynamoDB.listTables().getTableNames().contains(table().getTableName())) {
+      dynamoDB.deleteTable(table().getTableName());
     }
+  }
 
-    @Override
-    protected String keyOf(final TestObject value) {
-        return value.getId();
-    }
+  @Override
+  protected Table table() {
+    return this.table;
+  }
 
-    @Override
-    protected Item encode(final TestObject testObject) {
-        return new Item()
-                .withPrimaryKey("id", testObject.getId())
-                .withString("eTag", UUID.randomUUID().toString())
-                .with("value", testObject.getValue());
-    }
+  @Override
+  protected String keyOf(final TestObject value) {
+    return value.getId();
+  }
 
-    @Override
-    protected TestObject decode(final Item item) {
-        return new TestObject(item.getString("id"), item.getString("value"), item.getString("eTag"));
-    }
+  @Override
+  protected Item encode(final TestObject testObject) {
+    return new Item()
+      .withPrimaryKey("id", testObject.getId())
+      .withString("eTag", UUID.randomUUID().toString())
+      .with("value", testObject.getValue());
+  }
 
-    @Override
-    protected String getKeyFieldName() {
-        return "id";
-    }
+  @Override
+  protected TestObject decode(final Item item) {
+    return new TestObject(item.getString("id"), item.getString("value"), item.getString("eTag"));
+  }
+
+  @Override
+  protected String getKeyFieldName() {
+    return "id";
+  }
 }
