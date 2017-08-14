@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Properties used to configure MongoDB clients.
+ * Properties used to configure DynamoDB clients.
  *
  * @since 1.0.0
  */

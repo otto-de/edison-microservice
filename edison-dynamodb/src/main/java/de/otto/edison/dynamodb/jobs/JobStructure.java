@@ -30,5 +30,4 @@ enum JobStructure {
     public String toString() {
         return key;
     }
-
 }

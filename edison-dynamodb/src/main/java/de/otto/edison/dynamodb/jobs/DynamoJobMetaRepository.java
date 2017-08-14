@@ -25,7 +25,7 @@ import static java.util.Collections.*;
 /**
  * {@inheritDoc}
  * <p>
- * MongoDB implementation of the JobMetaRepository.
+ * DynamoDB implementation of the JobMetaRepository.
  * </p>
  */
 @Beta
