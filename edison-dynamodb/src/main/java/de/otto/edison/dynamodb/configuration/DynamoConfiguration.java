@@ -1,32 +1,32 @@
 package de.otto.edison.dynamodb.configuration;
 
-import static com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 
+import de.otto.edison.annotations.Beta;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import de.otto.edison.annotations.Beta;
+import static software.amazon.awssdk.regions.Region.EU_CENTRAL_1;
 
 @Configuration
 @EnableConfigurationProperties(DynamoProperties.class)
 @Beta
 public class DynamoConfiguration {
 
-  @Bean
-  @ConditionalOnMissingBean(name = "dynamoDB", value = AmazonDynamoDB.class)
-  AmazonDynamoDB amazonDynamoDB(final DynamoProperties dynamoProperties) {
-    return AmazonDynamoDBClientBuilder.standard()
-      .withEndpointConfiguration(new EndpointConfiguration(dynamoProperties.getEndpoint(), Regions.EU_CENTRAL_1.getName()))
-      .withCredentials(new AWSStaticCredentialsProvider(
-        new BasicAWSCredentials(dynamoProperties.getAccessKey(), dynamoProperties.getSecretKey())))
-      .build();
-  }
+    @Bean
+    @ConditionalOnMissingBean(name = "dynamoClient", value = DynamoDBClient.class)
+    DynamoDBClient dynamoClient(final DynamoProperties dynamoProperties) throws URISyntaxException {
+        return DynamoDBClient.builder()
+                .endpointOverride(new URI(dynamoProperties.getEndpoint()))
+                .region(EU_CENTRAL_1)
+                .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials(dynamoProperties.getAccessKeyId(), dynamoProperties.getSecretKeyId())))
+                .build();
+    }
 }

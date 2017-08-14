@@ -6,7 +6,7 @@ ext {
     versions = [
             spring_boot                      : '1.5.6.RELEASE',
             spring                           : '4.3.8.RELEASE',
-            amazonDynamoDB                   : '1.11.176',
+            awssdk_dynamodb                  : '2.0.0-preview-2',
             async_http_client                : '1.9.40',
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.3',
@@ -29,8 +29,8 @@ ext {
             fongo       : '2.1.0'
     ]
     plugin_versions = [
-            versions: '0.15.0',
-            jacoco  : '0.7.9',
+            versions     : '0.15.0',
+            jacoco       : '0.7.9',
             nexus_staging: '0.9.0'
     ]
 
@@ -42,7 +42,7 @@ ext {
             spring_boot_starter_web            : "org.springframework.boot:spring-boot-starter-web:${versions.spring_boot}",
             spring_boot_starter_actuator       : "org.springframework.boot:spring-boot-starter-actuator:${versions.spring_boot}",
             spring_boot_starter_thymeleaf      : "org.springframework.boot:spring-boot-starter-thymeleaf:${versions.spring_boot}",
-            amazonDynamoDB                     : "com.amazonaws:aws-java-sdk-dynamodb:${versions.amazonDynamoDB}",
+            awssdk_dynamodb                    : "software.amazon.awssdk:dynamodb:${versions.awssdk_dynamodb}",
             async_http_client                  : "com.ning:async-http-client:${versions.async_http_client}",
             jcip_annotations                   : "net.jcip:jcip-annotations:${versions.jcip_annotations}",
             logback_classic                    : "ch.qos.logback:logback-classic:${versions.logback_classic}",
@@ -77,8 +77,8 @@ ext {
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
     ]
     gradle_plugins = [
-            versions   :    "com.github.ben-manes:gradle-versions-plugin:${plugin_versions.versions}",
-            spring_boot:    "org.springframework.boot:spring-boot-gradle-plugin:${versions.spring_boot}",
-            nexus_staging:  "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:${plugin_versions.nexus_staging}"
+            versions     : "com.github.ben-manes:gradle-versions-plugin:${plugin_versions.versions}",
+            spring_boot  : "org.springframework.boot:spring-boot-gradle-plugin:${versions.spring_boot}",
+            nexus_staging: "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:${plugin_versions.nexus_staging}"
     ]
 }

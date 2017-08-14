@@ -1,31 +1,31 @@
 package de.otto.edison.dynamodb;
 
-public class TestObject {
+class TestObject {
 
     private final String id;
     private final String value;
 
     private final String eTag;
 
-    protected TestObject(final String id, final String value, final String eTag) {
+    TestObject(final String id, final String value, final String eTag) {
         this.eTag = eTag;
         this.id = id;
         this.value = value;
     }
 
-    protected TestObject(final String id, final String value) {
+    TestObject(final String id, final String value) {
         this(id, value, null);
     }
 
-    public String getValue() {
+    String getValue() {
         return value;
     }
 
-    public String getId() {
+    String getId() {
         return id;
     }
 
-    public String geteTag() {
+    String geteTag() {
         return eTag;
     }
 }
