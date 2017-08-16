@@ -1,8 +1,6 @@
 package de.otto.edison.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.ItemCollection;
-import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.spec.PutItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
@@ -50,12 +48,13 @@ public abstract class AbstractDynamoRepository<V> {
     }
 
     public Stream<V> findAllAsStream(final String lastKey) {
-        final ItemCollection<ScanOutcome> scanResult = table().scan(new ScanSpec().withExclusiveStartKey(getKeyFieldName(), lastKey));
-        return toStream(scanResult).map(this::decode);
+        return toStream(table().scan(new ScanSpec().withExclusiveStartKey(getKeyFieldName(), lastKey)))
+                .map(this::decode);
     }
 
     public Stream<V> findAllAsStream() {
-        return toStream(table().scan()).map(this::decode);
+        return toStream(table().scan())
+                .map(this::decode);
     }
 
     public V createOrUpdate(final V value) {
@@ -64,12 +63,10 @@ public abstract class AbstractDynamoRepository<V> {
     }
 
     public boolean update(final V value) {
-        final PutItemSpec putItemSpec = new PutItemSpec()
-                .withItem(encode(value))
-                .withConditionExpression("attribute_exists(" + getKeyFieldName() + ")");
-
         try {
-            table().putItem(putItemSpec);
+            table().putItem(new PutItemSpec()
+                    .withItem(encode(value))
+                    .withConditionExpression("attribute_exists(" + getKeyFieldName() + ")"));
         } catch (final ConditionalCheckFailedException conditionalCheckFailedException) {
             return false;
         }
@@ -77,11 +74,9 @@ public abstract class AbstractDynamoRepository<V> {
     }
 
     public V create(final V value) {
-        final PutItemSpec putItemSpec = new PutItemSpec()
+        table().putItem(new PutItemSpec()
                 .withItem(encode(value))
-                .withConditionExpression("attribute_not_exists(" + getKeyFieldName() + ")");
-
-        table().putItem(putItemSpec);
+                .withConditionExpression("attribute_not_exists(" + getKeyFieldName() + ")"));
         return value;
     }
 

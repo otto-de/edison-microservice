@@ -216,28 +216,6 @@ public class DynamoJobRepositoryIntegrationTest {
     }
 
     @Test
-    public void shouldFindAllJobTypes() throws Exception {
-        // Given
-        final OffsetDateTime now = now();
-        final JobInfo eins = someRunningJobInfo("jobEins", "someJobTypeEins", now);
-        final JobInfo zwei = someRunningJobInfo("jobZwei", "someJobTypeZwei", now.plusSeconds(1));
-        final JobInfo drei = someRunningJobInfo("jobDrei", "someJobTypeDrei", now.plusSeconds(2));
-        final JobInfo vierWithTypeDrei = someRunningJobInfo("jobVier", "someJobTypeDrei", now.plusSeconds(3));
-
-        dynamoJobRepository.createOrUpdate(eins);
-        dynamoJobRepository.createOrUpdate(zwei);
-        dynamoJobRepository.createOrUpdate(drei);
-        dynamoJobRepository.createOrUpdate(vierWithTypeDrei);
-
-        // When
-        final List<String> allJobIds = dynamoJobRepository.findLatestJobIdsDistinct();
-
-        // Then
-        assertThat(allJobIds, hasSize(3));
-        assertThat(allJobIds, containsInAnyOrder("jobEins", "jobZwei", "jobVier"));
-    }
-
-    @Test
     public void shouldFindLatestDistinct() throws Exception {
         // Given
         final OffsetDateTime now = now();

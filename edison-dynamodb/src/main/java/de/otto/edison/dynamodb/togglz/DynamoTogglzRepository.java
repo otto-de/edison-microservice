@@ -18,7 +18,6 @@ import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.UserProvider;
 
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
@@ -90,31 +89,21 @@ public class DynamoTogglzRepository extends AbstractDynamoRepository<FeatureStat
 
     @Override
     protected Item encode(final FeatureState value) {
-        final Item item = new Item();
-
-        item.withPrimaryKey(getKeyFieldName(), keyOf(value))
+        return new Item().withPrimaryKey(getKeyFieldName(), keyOf(value))
                 .withString(STRATEGY, value.getStrategyId())
                 .withBoolean(ENABLED, value.isEnabled())
                 .withMap(PARAMETERS, value.getParameterMap());
-
-        return item;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected FeatureState decode(final Item item) {
-        final String name = item.getString(getKeyFieldName());
-        final Boolean enabled = item.getBoolean(ENABLED);
-        final String strategy = item.getString(STRATEGY);
-        final Map<String, String> parameters = item.getMap(PARAMETERS);
-
-        final FeatureState featureState = new FeatureState(resolveEnumValue(name));
-        featureState.setEnabled(enabled);
-        featureState.setStrategyId(strategy);
-        for (final Entry<String, String> parameter : parameters.entrySet()) {
+        final FeatureState featureState = new FeatureState(resolveEnumValue(item.getString(getKeyFieldName())));
+        featureState.setEnabled(item.getBoolean(ENABLED));
+        featureState.setStrategyId(item.getString(STRATEGY));
+        for (final Entry<String, String> parameter : item.<String>getMap(PARAMETERS).entrySet()) {
             featureState.setParameter(parameter.getKey(), parameter.getValue());
         }
-
         return featureState;
     }
 

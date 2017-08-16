@@ -2,7 +2,6 @@ package de.otto.edison.dynamodb.jobs;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.document.*;
-import com.amazonaws.services.dynamodbv2.document.spec.BatchGetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
@@ -24,11 +23,12 @@ import java.util.*;
 
 import static com.amazonaws.services.dynamodbv2.model.KeyType.HASH;
 import static com.amazonaws.services.dynamodbv2.model.KeyType.RANGE;
+import static com.amazonaws.services.dynamodbv2.model.ProjectionType.ALL;
 import static com.amazonaws.services.dynamodbv2.model.ScalarAttributeType.N;
 import static com.amazonaws.services.dynamodbv2.model.ScalarAttributeType.S;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static java.lang.String.join;
+import static java.util.Collections.*;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
@@ -51,22 +51,17 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
             FIELD_ID, FIELD_JOBTYPE, FIELD_STATUS, FIELD_LAST_UPDATED,
             FIELD_HOSTNAME, FIELD_STARTED, FIELD_STOPPED);
 
-    private static final String NO_LOG_MESSAGE_FOUND = "No log message found";
-
     private final AmazonDynamoDB dynamoClient;
-    private final DynamoDB dynamoDatabase;
     private final Table table;
 
     public DynamoJobRepository(final AmazonDynamoDB dynamoClient, final DynamoDB dynamoDatabase, final String jobInfoCollectionName) {
         this.dynamoClient = dynamoClient;
-        this.dynamoDatabase = dynamoDatabase;
         table = dynamoDatabase.getTable(jobInfoCollectionName);
     }
 
     @Override
     public JobStatus findStatus(final String jobId) {
-        final JobInfo foundJobInfo = findOne(jobId).get();
-        return foundJobInfo.getStatus();
+        return findOne(jobId).get().getStatus();
     }
 
     @Override
@@ -80,12 +75,9 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
 
     @Override
     public void appendMessage(final String jobId, final JobMessage jobMessage) {
-        table.updateItem(
-                FIELD_ID,
-                jobId,
-                "SET #nam = list_append(#nam, :val)",
-                Collections.singletonMap("#nam", FIELD_MESSAGES),
-                Collections.singletonMap(":val", singletonList(mapToItem(jobMessage))));
+        table.updateItem(FIELD_ID, jobId, "SET #nam = list_append(#nam, :val)",
+                singletonMap("#nam", FIELD_MESSAGES),
+                singletonMap(":val", singletonList(mapToItem(jobMessage))));
     }
 
     @Override
@@ -95,34 +87,26 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
 
     @Override
     public void setLastUpdate(final String jobId, final OffsetDateTime lastUpdate) {
-        table().updateItem(getKeyFieldName(), jobId,
-                new AttributeUpdate(FIELD_LAST_UPDATED).put(lastUpdate.toInstant().toEpochMilli()));
+        table().updateItem(getKeyFieldName(), jobId, new AttributeUpdate(FIELD_LAST_UPDATED)
+                .put(lastUpdate.toInstant().toEpochMilli()));
     }
 
     @Override
     public List<JobInfo> findLatest(final int maxCount) {
-        final Index index = table().getIndex(INDEX_STARTED);
-        final QuerySpec spec = new QuerySpec()
+        return toStream(table().getIndex(INDEX_STARTED).query(new QuerySpec()
                 .withMaxResultSize(maxCount)
                 .withScanIndexForward(false)
                 .withKeyConditionExpression(FIELD_CONSTANT_VALUE + " = :val")
                 .withValueMap(new ValueMap()
-                        .withInt(":val", 1));
-        final ItemCollection<QueryOutcome> items = index.query(spec);
-
-        return findMany(toStream(items)
-                .map(item -> item.getString(getKeyFieldName()))
-                .collect(toList()));
+                        .withInt(":val", 1))))
+                .map(this::decode)
+                .sorted(comparing(JobInfo::getStarted))
+                .collect(toList());
     }
 
     @Override
     public List<JobInfo> findLatestJobsDistinct() {
-        final List<String> latestJobIdyPerType = findLatestJobIdsDistinct();
-        return findMany(latestJobIdyPerType);
-    }
-
-    public List<String> findLatestJobIdsDistinct() {
-        final List<String> result = new ArrayList<>();
+        final List<JobInfo> result = new ArrayList<>();
         final Index index = table().getIndex(INDEX_LATEST_PER_TYPE);
         final ScanSpec scanSpec = new ScanSpec()
                 .withProjectionExpression(FIELD_JOBTYPE);
@@ -142,7 +126,8 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
                     );
             final ItemCollection<QueryOutcome> query = index.query(spec);
             result.addAll(toStream(query)
-                    .map(item -> item.getString(getKeyFieldName()))
+                    .map(this::decode)
+                    .sorted(comparing(JobInfo::getStarted))
                     .collect(toList()));
         }
         return result;
@@ -154,62 +139,29 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
         final ItemCollection<QueryOutcome> items = index.query(new QuerySpec().withHashKey(FIELD_JOBTYPE, type)
                 .withScanIndexForward(false)
                 .withMaxResultSize(maxCount));
-        return findMany(toStream(items)
-                .map(item -> item.getString(getKeyFieldName()))
-                .collect(toList()));
-    }
-
-    @Override
-    public List<JobInfo> findByType(final String type) {
-        final Index index = table().getIndex(INDEX_LATEST_PER_TYPE);
-
-        final ItemCollection<QueryOutcome> items = index.query(new QuerySpec().withHashKey(FIELD_JOBTYPE, type)
-                .withScanIndexForward(false));
-
-        return findMany(toStream(items)
-                .map(item -> item.getString(getKeyFieldName()))
-                .collect(toList()));
-    }
-
-    @Override
-    public List<JobInfo> findRunningWithoutUpdateSince(final OffsetDateTime timeOffset) {
-        final ItemCollection<ScanOutcome> items = table().scan(
-                new ScanSpec().withFilterExpression("attribute_not_exists(stopped) and lastUpdated < :time")
-                        .withValueMap(new ValueMap()
-                                .withLong(":time", timeOffset.toInstant().toEpochMilli())));
-
-        return mapJobInfos(items);
-    }
-
-    private List<JobInfo> findMany(final List<String> jobIds) {
-        if (jobIds.isEmpty()) {
-            // BatchGet braucht mindestens einen Key
-            return emptyList();
-        }
-
-        final BatchGetItemSpec spec = new BatchGetItemSpec()
-                .withTableKeyAndAttributes(new TableKeysAndAttributes(table().getTableName())
-                        .withHashOnlyKeys(getKeyFieldName(), jobIds.toArray()));
-
-        return dynamoDatabase.batchGetItem(spec)
-                .getTableItems()
-                .entrySet()
-                .stream()
-                .flatMap(x -> mapJobInfos(x.getValue()).stream())
-                .sorted(comparing(JobInfo::getStarted))
-                .collect(toList());
-    }
-
-    private List<JobInfo> mapJobInfos(final ItemCollection<ScanOutcome> items) {
         return toStream(items)
                 .map(this::decode)
                 .sorted(comparing(JobInfo::getStarted))
                 .collect(toList());
     }
 
-    private List<JobInfo> mapJobInfos(final List<Item> items) {
-        return items.stream()
+    @Override
+    public List<JobInfo> findByType(final String type) {
+        return toStream(table().getIndex(INDEX_LATEST_PER_TYPE).query(new QuerySpec().withHashKey(FIELD_JOBTYPE, type)
+                .withScanIndexForward(false)))
                 .map(this::decode)
+                .sorted(comparing(JobInfo::getStarted))
+                .collect(toList());
+    }
+
+    @Override
+    public List<JobInfo> findRunningWithoutUpdateSince(final OffsetDateTime timeOffset) {
+        return toStream(table().scan(new ScanSpec()
+                .withFilterExpression("attribute_not_exists(stopped) and lastUpdated < :time")
+                .withValueMap(new ValueMap()
+                        .withLong(":time", timeOffset.toInstant().toEpochMilli()))))
+                .map(this::decode)
+                .sorted(comparing(JobInfo::getStarted))
                 .collect(toList());
     }
 
@@ -226,7 +178,6 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
         if (job.isStopped()) {
             item.with(FIELD_STOPPED, job.getStopped().get().toInstant().toEpochMilli());
         }
-
         return item;
     }
 
@@ -288,11 +239,6 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
         return OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
     }
 
-    private JobMessage toJobMessage(final Item item) {
-        return jobMessage(Level.valueOf(item.get(JobStructure.MSG_LEVEL.key()).toString()), getMessage(item),
-                mapOffsetDateTime(item.getLong(JobStructure.MSG_TS.key())));
-    }
-
     @Override
     protected Table table() {
         return table;
@@ -303,18 +249,14 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
         return value.getJobId();
     }
 
-    private String getMessage(final Item item) {
-        return item.get(JobStructure.MSG_TEXT.key()) == null ?
-                NO_LOG_MESSAGE_FOUND :
-                item.get(JobStructure.MSG_TEXT.key()).toString();
-    }
-
     @Override
     public List<JobInfo> findAllJobInfoWithoutMessages() {
-        final ScanSpec scanSpec = new ScanSpec()
-                .withProjectionExpression(String.join(", ", FIELDS_WITHOUT_MESSAGES));
-        final ItemCollection<ScanOutcome> items = table.scan(scanSpec);
-        return mapJobInfos(items);
+        final ItemCollection<ScanOutcome> items = table.scan(new ScanSpec()
+                .withProjectionExpression(join(", ", FIELDS_WITHOUT_MESSAGES)));
+        return toStream(items)
+                .map(this::decode)
+                .sorted(comparing(JobInfo::getStarted))
+                .collect(toList());
     }
 
     void createTable() {
@@ -335,7 +277,7 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
                         .withIndexName(INDEX_STARTED)
                         .withKeySchema(new KeySchemaElement(FIELD_CONSTANT_VALUE, HASH), new KeySchemaElement(FIELD_STARTED, RANGE))
                         .withProvisionedThroughput(new ProvisionedThroughput(1000L, 1000L))
-                        .withProjection(new Projection().withProjectionType(ProjectionType.ALL)), new AttributeDefinition(FIELD_CONSTANT_VALUE, N),
+                        .withProjection(new Projection().withProjectionType(ALL)), new AttributeDefinition(FIELD_CONSTANT_VALUE, N),
                 new AttributeDefinition(FIELD_STARTED, N));
         try {
             gsi.waitForActive();
@@ -348,7 +290,7 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
                         .withIndexName(INDEX_LATEST_PER_TYPE)
                         .withKeySchema(new KeySchemaElement(FIELD_JOBTYPE, HASH), new KeySchemaElement(FIELD_STARTED, RANGE))
                         .withProvisionedThroughput(new ProvisionedThroughput(1000L, 1000L))
-                        .withProjection(new Projection().withProjectionType(ProjectionType.ALL)), new AttributeDefinition(FIELD_JOBTYPE, S),
+                        .withProjection(new Projection().withProjectionType(ALL)), new AttributeDefinition(FIELD_JOBTYPE, S),
                 new AttributeDefinition(FIELD_STARTED, N));
         try {
             gsi.waitForActive();
