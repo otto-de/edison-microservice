@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.*;
 import de.otto.edison.annotations.Beta;
@@ -28,7 +29,8 @@ import static com.amazonaws.services.dynamodbv2.model.ScalarAttributeType.N;
 import static com.amazonaws.services.dynamodbv2.model.ScalarAttributeType.S;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.lang.String.join;
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
@@ -75,9 +77,11 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
 
     @Override
     public void appendMessage(final String jobId, final JobMessage jobMessage) {
-        table.updateItem(FIELD_ID, jobId, "SET #nam = list_append(#nam, :val)",
-                singletonMap("#nam", FIELD_MESSAGES),
-                singletonMap(":val", singletonList(mapToItem(jobMessage))));
+        table().updateItem(new UpdateItemSpec()
+                .withPrimaryKey(FIELD_ID, jobId)
+                .withUpdateExpression("set " + FIELD_MESSAGES + " = list_append(" + FIELD_MESSAGES + ", :messages)")
+                .withValueMap(new ValueMap()
+                        .withList(":messages", singletonList(mapToItem(jobMessage)))));
     }
 
     @Override
@@ -188,7 +192,7 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
     }
 
     private Map<String, Object> mapToItem(final JobMessage jobMessage) {
-        final HashMap<String, Object> result = new HashMap<>();
+        final Map<String, Object> result = new HashMap<>();
         result.put("level", jobMessage.getLevel().name());
         result.put("message", jobMessage.getMessage());
         result.put("timestamp", jobMessage.getTimestamp().toInstant().toEpochMilli());
@@ -251,7 +255,7 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
 
     @Override
     public List<JobInfo> findAllJobInfoWithoutMessages() {
-        final ItemCollection<ScanOutcome> items = table.scan(new ScanSpec()
+        final ItemCollection<ScanOutcome> items = table().scan(new ScanSpec()
                 .withProjectionExpression(join(", ", FIELDS_WITHOUT_MESSAGES)));
         return toStream(items)
                 .map(this::decode)
