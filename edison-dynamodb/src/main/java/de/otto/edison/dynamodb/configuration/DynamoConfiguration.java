@@ -1,7 +1,10 @@
 package de.otto.edison.dynamodb.configuration;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
@@ -25,10 +28,9 @@ public class DynamoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dynamoClient", value = AmazonDynamoDB.class)
-    AmazonDynamoDB dynamoClient(final DynamoProperties dynamoProperties) {
+    AmazonDynamoDB dynamoClient(final DynamoProperties dynamoProperties, final AWSCredentialsProvider credentialsProvider) {
         LOG.info("Creating DynamoClient");
         final EndpointConfiguration endpointConfiguration = new EndpointConfiguration(dynamoProperties.getEndpoint(), EU_CENTRAL_1.getName());
-        final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(new BasicAWSCredentials(dynamoProperties.getAccessKey(), dynamoProperties.getSecretKey()));
         return AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(endpointConfiguration)
                 .withCredentials(credentialsProvider)
@@ -39,5 +41,17 @@ public class DynamoConfiguration {
     @ConditionalOnMissingBean(name = "dynamoDatabase", value = DynamoDB.class)
     DynamoDB dynamoDatabase(final AmazonDynamoDB dynamoClient) {
         return new DynamoDB(dynamoClient);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "credentialsProvider", value = AWSCredentialsProvider.class)
+    AWSCredentialsProvider credentialsProvider(final DynamoProperties dynamoProperties) {
+        final String profileName = dynamoProperties.getProfileName();
+        if ("instance".equals(profileName)) {
+            return InstanceProfileCredentialsProvider.getInstance();
+        } else if ("test".equals(profileName)) {
+            return new AWSStaticCredentialsProvider(new BasicAWSCredentials("test", "test"));
+        }
+        return new ProfileCredentialsProvider(profileName);
     }
 }

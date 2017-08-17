@@ -15,24 +15,7 @@ import org.springframework.validation.annotation.Validated;
 public class DynamoProperties {
 
     private String endpoint = "http://localhost:8000/";
-    private String accessKey = "test1";
-    private String secretKey = "test2";
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    public void setAccessKey(final String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    public void setSecretKey(final String secretKey) {
-        this.secretKey = secretKey;
-    }
+    private String profileName = "test";
 
     public String getEndpoint() {
         return endpoint;
@@ -40,5 +23,13 @@ public class DynamoProperties {
 
     public void setEndpoint(final String endpoint) {
         this.endpoint = endpoint;
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
+
+    public void setProfileName(final String profileName) {
+        this.profileName = profileName;
     }
 }
