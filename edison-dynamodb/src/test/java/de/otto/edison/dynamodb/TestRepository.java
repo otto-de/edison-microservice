@@ -1,9 +1,7 @@
 package de.otto.edison.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
@@ -19,11 +17,9 @@ import static java.util.Collections.singletonList;
 public class TestRepository extends AbstractDynamoRepository<TestObject> {
 
     private final AmazonDynamoDB dynamoClient;
-    private final Table table;
 
-    public TestRepository(final AmazonDynamoDB dynamoClient, final DynamoDB dynamoDatabase) {
+    public TestRepository(final AmazonDynamoDB dynamoClient) {
         this.dynamoClient = dynamoClient;
-        table = dynamoDatabase.getTable("test");
     }
 
     void createTable() {
@@ -38,8 +34,8 @@ public class TestRepository extends AbstractDynamoRepository<TestObject> {
     }
 
     @Override
-    protected Table table() {
-        return table;
+    protected String tableName() {
+        return "test";
     }
 
     @Override

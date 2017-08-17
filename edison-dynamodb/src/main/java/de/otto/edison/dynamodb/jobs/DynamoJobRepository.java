@@ -54,11 +54,11 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
             FIELD_HOSTNAME, FIELD_STARTED, FIELD_STOPPED);
 
     private final AmazonDynamoDB dynamoClient;
-    private final Table table;
+    private final String jobInfoCollectionName;
 
-    public DynamoJobRepository(final AmazonDynamoDB dynamoClient, final DynamoDB dynamoDatabase, final String jobInfoCollectionName) {
+    public DynamoJobRepository(final AmazonDynamoDB dynamoClient, final String jobInfoCollectionName) {
         this.dynamoClient = dynamoClient;
-        table = dynamoDatabase.getTable(jobInfoCollectionName);
+        this.jobInfoCollectionName = jobInfoCollectionName;
     }
 
     @Override
@@ -244,8 +244,8 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
     }
 
     @Override
-    protected Table table() {
-        return table;
+    protected String tableName() {
+        return jobInfoCollectionName;
     }
 
     @Override

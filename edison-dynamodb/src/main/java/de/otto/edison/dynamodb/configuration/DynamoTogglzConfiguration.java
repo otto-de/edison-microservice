@@ -1,7 +1,6 @@
 package de.otto.edison.dynamodb.configuration;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import de.otto.edison.annotations.Beta;
 import de.otto.edison.dynamodb.togglz.DynamoTogglzRepository;
 import de.otto.edison.togglz.FeatureClassProvider;
@@ -22,10 +21,10 @@ public class DynamoTogglzConfiguration {
     private static final Logger LOG = getLogger(DynamoTogglzConfiguration.class);
 
     @Bean
-    StateRepository stateRepository(final AmazonDynamoDB dynamoClient, final DynamoDB dynamoDatabase, final FeatureClassProvider featureClassProvider, final UserProvider userProvider) {
+    StateRepository stateRepository(final AmazonDynamoDB dynamoClient, final FeatureClassProvider featureClassProvider, final UserProvider userProvider) {
         LOG.info("===============================");
         LOG.info("Using DynamoTogglzRepository with " + dynamoClient.getClass().getSimpleName() + " DynamoDatabase impl.");
         LOG.info("===============================");
-        return new DynamoTogglzRepository(dynamoClient, dynamoDatabase, featureClassProvider, userProvider);
+        return new DynamoTogglzRepository(dynamoClient, featureClassProvider, userProvider);
     }
 }

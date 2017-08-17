@@ -1,11 +1,14 @@
 package de.otto.edison.dynamodb;
 
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.spec.PutItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import de.otto.edison.annotations.Beta;
+import de.otto.edison.dynamodb.configuration.DynamoProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +21,11 @@ import static java.util.stream.Collectors.toList;
 public abstract class AbstractDynamoRepository<V> {
 
     private static final boolean DISABLE_PARALLEL_STREAM_PROCESSING = false;
+
+    @Autowired
+    private DynamoProperties dynamoProperties;
+    @Autowired
+    private DynamoDB dynamoDatabase;
 
     /**
      * Convert given {@link Iterable} to a standard Java8-{@link Stream}.
@@ -100,7 +108,11 @@ public abstract class AbstractDynamoRepository<V> {
         findAllAsStream().forEach(item -> delete(keyOf(item)));
     }
 
-    protected abstract Table table();
+    protected Table table() {
+        return dynamoDatabase.getTable(dynamoProperties.getTableNamePrefix() + dynamoProperties.getTableNameSeparator() + tableName());
+    }
+
+    protected abstract String tableName();
 
     /**
      * Returns the key / identifier from the given value.

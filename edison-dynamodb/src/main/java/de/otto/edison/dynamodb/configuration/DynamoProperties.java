@@ -16,6 +16,8 @@ public class DynamoProperties {
 
     private String endpoint = "http://localhost:8000/";
     private String profileName = "test";
+    private String tableNamePrefix = "test";
+    private String tableNameSeparator = "-";
 
     public String getEndpoint() {
         return endpoint;
@@ -31,5 +33,21 @@ public class DynamoProperties {
 
     public void setProfileName(final String profileName) {
         this.profileName = profileName;
+    }
+
+    public String getTableNamePrefix() {
+        return tableNamePrefix;
+    }
+
+    public void setTableNamePrefix(final String tableNamePrefix) {
+        this.tableNamePrefix = tableNamePrefix;
+    }
+
+    public String getTableNameSeparator() {
+        return tableNameSeparator;
+    }
+
+    public void setTableNameSeparator(final String tableNameSeparator) {
+        this.tableNameSeparator = tableNameSeparator;
     }
 }

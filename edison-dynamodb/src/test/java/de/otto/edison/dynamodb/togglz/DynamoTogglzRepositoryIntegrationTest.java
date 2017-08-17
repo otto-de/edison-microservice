@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
-@ComponentScan(basePackages = {"de.otto.edison.dynamodb"})
+@ComponentScan(basePackages = "de.otto.edison.dynamodb")
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 public class DynamoTogglzRepositoryIntegrationTest {

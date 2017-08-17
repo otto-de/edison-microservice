@@ -1,9 +1,7 @@
 package de.otto.edison.dynamodb.togglz;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
@@ -37,13 +35,11 @@ public class DynamoTogglzRepository extends AbstractDynamoRepository<FeatureStat
     private static final String PARAMETERS = "parameters";
 
     private final AmazonDynamoDB dynamoClient;
-    private final Table table;
     private final FeatureClassProvider featureClassProvider;
     private final UserProvider userProvider;
 
-    public DynamoTogglzRepository(final AmazonDynamoDB dynamoClient, final DynamoDB dynamoDatabase, final FeatureClassProvider featureClassProvider, final UserProvider userProvider) {
+    public DynamoTogglzRepository(final AmazonDynamoDB dynamoClient, final FeatureClassProvider featureClassProvider, final UserProvider userProvider) {
         this.dynamoClient = dynamoClient;
-        table = dynamoDatabase.getTable("togglz");
         this.featureClassProvider = featureClassProvider;
         this.userProvider = userProvider;
     }
@@ -78,8 +74,8 @@ public class DynamoTogglzRepository extends AbstractDynamoRepository<FeatureStat
     }
 
     @Override
-    protected Table table() {
-        return table;
+    protected String tableName() {
+        return "togglz";
     }
 
     @Override

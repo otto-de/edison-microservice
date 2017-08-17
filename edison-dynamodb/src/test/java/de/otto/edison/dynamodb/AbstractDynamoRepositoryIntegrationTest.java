@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsNot.not;
 
 @RunWith(SpringRunner.class)
-@ComponentScan(basePackages = {"de.otto.edison.dynamodb"})
+@ComponentScan(basePackages = "de.otto.edison.dynamodb")
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 public class AbstractDynamoRepositoryIntegrationTest {

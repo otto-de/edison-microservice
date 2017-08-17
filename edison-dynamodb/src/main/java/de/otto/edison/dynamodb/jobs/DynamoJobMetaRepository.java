@@ -1,7 +1,9 @@
 package de.otto.edison.dynamodb.jobs;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
@@ -38,11 +40,11 @@ public class DynamoJobMetaRepository extends AbstractDynamoRepository<JobMeta> i
     private static final String FIELD_META = "meta";
 
     private final AmazonDynamoDB dynamoClient;
-    private final Table table;
+    private final String jobMetaCollectionName;
 
-    public DynamoJobMetaRepository(final AmazonDynamoDB dynamoClient, final DynamoDB dynamoDatabase, final String jobMetaCollectionName) {
+    public DynamoJobMetaRepository(final AmazonDynamoDB dynamoClient, final String jobMetaCollectionName) {
         this.dynamoClient = dynamoClient;
-        table = dynamoDatabase.getTable(jobMetaCollectionName);
+        this.jobMetaCollectionName = jobMetaCollectionName;
     }
 
     @Override
@@ -158,8 +160,8 @@ public class DynamoJobMetaRepository extends AbstractDynamoRepository<JobMeta> i
     }
 
     @Override
-    protected Table table() {
-        return table;
+    protected String tableName() {
+        return jobMetaCollectionName;
     }
 
     @Override

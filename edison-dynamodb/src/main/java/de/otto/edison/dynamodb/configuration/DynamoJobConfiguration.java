@@ -1,7 +1,6 @@
 package de.otto.edison.dynamodb.configuration;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import de.otto.edison.annotations.Beta;
 import de.otto.edison.dynamodb.jobs.DynamoJobMetaRepository;
 import de.otto.edison.dynamodb.jobs.DynamoJobRepository;
@@ -23,18 +22,18 @@ public class DynamoJobConfiguration {
     private static final Logger LOG = getLogger(DynamoJobConfiguration.class);
 
     @Bean
-    public JobRepository jobRepository(final AmazonDynamoDB dynamoClient, final DynamoDB dynamoDatabase, @Value("${edison.jobs.collection.jobinfo:jobinfo}") final String collectionName) {
+    public JobRepository jobRepository(final AmazonDynamoDB dynamoClient, @Value("${edison.jobs.collection.jobinfo:jobinfo}") final String collectionName) {
         LOG.info("===============================");
         LOG.info("Using DynamoJobRepository with {} DynamoDatabase impl.", dynamoClient.getClass().getSimpleName());
         LOG.info("===============================");
-        return new DynamoJobRepository(dynamoClient, dynamoDatabase, collectionName);
+        return new DynamoJobRepository(dynamoClient, collectionName);
     }
 
     @Bean
-    public JobMetaRepository jobMetaRepository(final AmazonDynamoDB dynamoClient, final DynamoDB dynamoDatabase, @Value("${edison.jobs.collection.jobmeta:jobmeta}") final String collectionName) {
+    public JobMetaRepository jobMetaRepository(final AmazonDynamoDB dynamoClient, @Value("${edison.jobs.collection.jobmeta:jobmeta}") final String collectionName) {
         LOG.info("===============================");
         LOG.info("Using DynamoJobMetaRepository with {} DynamoDatabase impl.", dynamoClient.getClass().getSimpleName());
         LOG.info("===============================");
-        return new DynamoJobMetaRepository(dynamoClient, dynamoDatabase, collectionName);
+        return new DynamoJobMetaRepository(dynamoClient, collectionName);
     }
 }
