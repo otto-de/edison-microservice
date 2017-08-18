@@ -85,10 +85,15 @@ public class DynamoTogglzRepository extends AbstractDynamoRepository<FeatureStat
 
     @Override
     protected Item encode(final FeatureState value) {
-        return new Item().withPrimaryKey(getKeyFieldName(), keyOf(value))
-                .withString(STRATEGY, value.getStrategyId())
-                .withBoolean(ENABLED, value.isEnabled())
-                .withMap(PARAMETERS, value.getParameterMap());
+        final Item item = new Item().withPrimaryKey(getKeyFieldName(), keyOf(value))
+                .withBoolean(ENABLED, value.isEnabled());
+        if (value.getStrategyId() != null) {
+            item.withString(STRATEGY, value.getStrategyId());
+        }
+        if (value.getParameterMap() != null) {
+            item.withMap(PARAMETERS, value.getParameterMap());
+        }
+        return item;
     }
 
     @Override
