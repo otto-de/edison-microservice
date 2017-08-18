@@ -266,8 +266,8 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
     void createTable() {
         if (!dynamoClient.listTables().getTableNames().contains(table().getTableName())) {
             final ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput();
-            provisionedThroughput.setReadCapacityUnits(1000L);
-            provisionedThroughput.setWriteCapacityUnits(1000L);
+            provisionedThroughput.setReadCapacityUnits(1L);
+            provisionedThroughput.setWriteCapacityUnits(1L);
             dynamoClient.createTable(singletonList(new AttributeDefinition(getKeyFieldName(), S)), table().getTableName(),
                     singletonList(new KeySchemaElement(getKeyFieldName(), HASH)),
                     provisionedThroughput);
@@ -280,7 +280,7 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
         final Index gsi = table().createGSI(new CreateGlobalSecondaryIndexAction()
                         .withIndexName(INDEX_STARTED)
                         .withKeySchema(new KeySchemaElement(FIELD_CONSTANT_VALUE, HASH), new KeySchemaElement(FIELD_STARTED, RANGE))
-                        .withProvisionedThroughput(new ProvisionedThroughput(1000L, 1000L))
+                        .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L))
                         .withProjection(new Projection().withProjectionType(ALL)), new AttributeDefinition(FIELD_CONSTANT_VALUE, N),
                 new AttributeDefinition(FIELD_STARTED, N));
         try {
@@ -293,7 +293,7 @@ public class DynamoJobRepository extends AbstractDynamoRepository<JobInfo> imple
         final Index gsi = table().createGSI(new CreateGlobalSecondaryIndexAction()
                         .withIndexName(INDEX_LATEST_PER_TYPE)
                         .withKeySchema(new KeySchemaElement(FIELD_JOBTYPE, HASH), new KeySchemaElement(FIELD_STARTED, RANGE))
-                        .withProvisionedThroughput(new ProvisionedThroughput(1000L, 1000L))
+                        .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L))
                         .withProjection(new Projection().withProjectionType(ALL)), new AttributeDefinition(FIELD_JOBTYPE, S),
                 new AttributeDefinition(FIELD_STARTED, N));
         try {

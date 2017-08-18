@@ -25,8 +25,8 @@ public class TestRepository extends AbstractDynamoRepository<TestObject> {
     void createTable() {
         if (!dynamoClient.listTables().getTableNames().contains(table().getTableName())) {
             final ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput();
-            provisionedThroughput.setReadCapacityUnits(1000L);
-            provisionedThroughput.setWriteCapacityUnits(1000L);
+            provisionedThroughput.setReadCapacityUnits(1L);
+            provisionedThroughput.setWriteCapacityUnits(1L);
             dynamoClient.createTable(singletonList(new AttributeDefinition(getKeyFieldName(), S)), table().getTableName(),
                     singletonList(new KeySchemaElement(getKeyFieldName(), HASH)),
                     provisionedThroughput);
