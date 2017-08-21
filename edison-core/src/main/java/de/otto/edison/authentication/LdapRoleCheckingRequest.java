@@ -43,8 +43,7 @@ class LdapRoleCheckingRequest extends HttpServletRequestWrapper {
         super(request);
         this.ldapInterface = ldapInterface;
         this.userDN = userDN;
-        this.roleBaseDN = ldapProperties.getRoleBaseDn(); //"ou=mesos,ou=groups,dc=lhotse,dc=otto,dc=de";
-
+        this.roleBaseDN = ldapProperties.getRoleBaseDn();
     }
 
     /**
