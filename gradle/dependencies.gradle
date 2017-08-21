@@ -17,7 +17,7 @@ ext {
             javax_servlet_api                : '3.1.0',
             togglz                           : '2.4.1.Final',
             mongodb_driver                   : '3.5.0',
-            caffeine                         : '2.5.4',
+            caffeine                         : '2.5.5',
             json_path                        : '2.4.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1'
     ]
@@ -31,7 +31,7 @@ ext {
     plugin_versions = [
             versions     : '0.15.0',
             jacoco       : '0.7.9',
-            nexus_staging: '0.9.0'
+            nexus_staging: '0.11.0'
     ]
 
     libraries = [
