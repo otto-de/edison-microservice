@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
 
+import com.mongodb.client.model.DeleteOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 

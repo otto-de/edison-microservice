@@ -6,6 +6,31 @@
 
 * **[edison-dynamodb]** __(Beta)__ DynamoDB persistence.
 
+* **[edison-mongo]** edison-mongo can create a second mongodb client with different socket timeout now.
+
+    This can be useful outside of controllers with small response time limits. One use case is a maintenance job
+    with a query that takes some seconds.
+    
+    The second client is only created if `edison.mongo.socket-timeout-for-high-timeout-client` is defined in your
+    application properties.
+    
+    You can wire the beans like this in your code: 
+    
+    ```
+    @Autowired
+    public ExampleRepository(final @Qualifier("mongoDatabaseWithHighSocketTimeout") MongoDatabase mongoDatabaseWithHighSocketTimeout) {...
+    ```
+    or 
+    ```
+    @Autowired
+    public ExampleRepository(final @Qualifier("mongoClientWithHighSocketTimeout") MongoClient mongoClientWithHighSocketTimeout) {...
+    ```
+    
+    Side note: The concept of a small socket timeout for the mongodb client to set small query limits is deprecated. We
+    should go for timeouts on DBCursors that result from find operations and for timeouts on WriteConcerns for writing
+    operations. The "second client concept" is more of a workaround for existing services that rely on the current
+    concept of edison-mongo.
+         
 **Maintenance:**
   
 * **[edison-core]** log ldap auth errors as warning  

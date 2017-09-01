@@ -12,9 +12,11 @@ import java.util.List;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -45,6 +47,7 @@ public class MongoConfiguration {
     }
 
     @Bean
+    @Primary
     @ConditionalOnMissingBean(name = "mongoClient", value = MongoClient.class)
     public MongoClient mongoClient(final MongoProperties mongoProperties) {
         LOG.info("Creating MongoClient");
@@ -53,8 +56,24 @@ public class MongoConfiguration {
     }
 
     @Bean
+    @Primary
     @ConditionalOnMissingBean(name = "mongoDatabase", value = MongoDatabase.class)
     public MongoDatabase mongoDatabase(final MongoClient mongoClient, final MongoProperties mongoProperties) {
         return mongoClient.getDatabase(mongoProperties.getDb());
+    }
+
+
+    @Bean
+    @ConditionalOnProperty(prefix = "edison.mongo", name = "socket-timeout-for-high-timeout-client")
+    public MongoClient mongoClientWithHighSocketTimeout(final MongoProperties mongoProperties) {
+        LOG.info("Creating MongoClient with high socket timeout");
+        return new MongoClient(mongoProperties.getServers(), getMongoCredentials(mongoProperties),
+                mongoProperties.toMongoClientOptionsWithHighTimeout(codecRegistry()));
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "edison.mongo", name = "socket-timeout-for-high-timeout-client")
+    public MongoDatabase mongoDatabaseWithHighSocketTimeout(final MongoClient mongoClientWithHighSocketTimeout, final MongoProperties mongoProperties) {
+        return mongoClientWithHighSocketTimeout.getDatabase(mongoProperties.getDb());
     }
 }

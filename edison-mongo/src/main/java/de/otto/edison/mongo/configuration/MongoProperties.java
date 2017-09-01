@@ -76,6 +76,12 @@ public class MongoProperties {
     @Min(10)
     private int socketTimeout = 2000;
     /**
+     * Optional increased socket timeout for long running database queries (useful in jobs)
+     * Setting this creates a mongoClientWithHighTimeout bean and a mongoDatabaseWithHighTimeout
+     */
+    @Min(10)
+    private int socketTimeoutForHighTimeoutClient = 5*60*1000;
+    /**
      * Sets the server selection timeout in milliseconds, which defines how long the driver will wait for server selection to
      * succeed before throwing an exception.
      */
@@ -97,11 +103,11 @@ public class MongoProperties {
      * Creates a StatusDetailIndicator that checks the MongoDB connection through a ping command
      */
     public static class Status {
+
         /**
          * Enable / disable the MongoDB StatusDetailIndicator
          */
         private boolean enabled = true;
-
         public boolean isEnabled() {
             return enabled;
         }
@@ -109,8 +115,8 @@ public class MongoProperties {
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
-    }
 
+    }
     /**
      * Connection pool properties.
      */
@@ -213,6 +219,14 @@ public class MongoProperties {
         this.socketTimeout = socketTimeout;
     }
 
+    public int getSocketTimeoutForHighTimeoutClient() {
+        return socketTimeoutForHighTimeoutClient;
+    }
+
+    public void setSocketTimeoutForHighTimeoutClient(int socketTimeoutForHighTimeoutClient) {
+        this.socketTimeoutForHighTimeoutClient = socketTimeoutForHighTimeoutClient;
+    }
+
     public int getServerSelectionTimeout() {
         return serverSelectionTimeout;
     }
@@ -230,6 +244,17 @@ public class MongoProperties {
     }
 
     public MongoClientOptions toMongoClientOptions(final CodecRegistry codecRegistry) {
+        return getMongoClientOptionsBuilder(codecRegistry)
+                .build();
+    }
+
+    public MongoClientOptions toMongoClientOptionsWithHighTimeout(CodecRegistry codecRegistry) {
+        return getMongoClientOptionsBuilder(codecRegistry)
+                .socketTimeout(socketTimeoutForHighTimeoutClient)
+                .build();
+    }
+
+    private MongoClientOptions.Builder getMongoClientOptionsBuilder(CodecRegistry codecRegistry) {
         return builder()
                 .codecRegistry(codecRegistry)
                 .readPreference(ReadPreference.valueOf(readPreference))
@@ -242,8 +267,7 @@ public class MongoProperties {
                 .threadsAllowedToBlockForConnectionMultiplier(connectionpool.getBlockedConnectionMultiplier())
                 .maxConnectionIdleTime(connectionpool.getMaxIdleTime())
                 .minConnectionsPerHost(connectionpool.getMinSize())
-                .connectionsPerHost(connectionpool.getMaxSize())
-                .build();
+                .connectionsPerHost(connectionpool.getMaxSize());
     }
 
     private ServerAddress toServerAddress(String server) {
@@ -259,8 +283,8 @@ public class MongoProperties {
             return null;
         }
     }
-
     public static class Connectionpool {
+
         /**
          * Maximum number of connections allowed per host.
          */
