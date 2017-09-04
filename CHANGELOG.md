@@ -5,7 +5,10 @@
 **New Features:**
 
 * **[edison-dynamodb]** __(Beta)__ DynamoDB persistence.
+* **[edison-mongo]** Add new property: `edison.mongo.authenticationDb`
 
+    Set this property to use different db for user authentication then for data.
+    This is needed when using Mongodb Atlas. Use "admin" db.
 * **[edison-mongo]** edison-mongo can create a second mongodb client with different socket timeout now.
 
     This can be useful outside of controllers with small response time limits. One use case is a maintenance job

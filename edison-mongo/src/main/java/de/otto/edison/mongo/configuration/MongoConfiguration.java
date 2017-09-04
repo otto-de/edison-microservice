@@ -1,14 +1,8 @@
 package de.otto.edison.mongo.configuration;
 
-import static java.util.Collections.singletonList;
-
-import static org.slf4j.LoggerFactory.getLogger;
-
-import static com.mongodb.MongoCredential.createCredential;
-
-import java.util.Collections;
-import java.util.List;
-
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,9 +12,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.client.MongoDatabase;
+import java.util.Collections;
+import java.util.List;
+
+import static com.mongodb.MongoCredential.createCredential;
+import static java.util.Collections.singletonList;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
 @EnableConfigurationProperties(MongoProperties.class)
@@ -32,12 +29,20 @@ public class MongoConfiguration {
         if (useUnauthorizedConnection(mongoProperties)) {
             return Collections.emptyList();
         }
-        return singletonList(
-                createCredential(mongoProperties.getUser(), mongoProperties.getDb(), mongoProperties.getPassword().toCharArray()));
+        return singletonList(createCredential(mongoProperties.getUser(),
+                getAuthenticationDb(mongoProperties), mongoProperties.getPassword().toCharArray()));
     }
 
     private static boolean useUnauthorizedConnection(final MongoProperties mongoProperties) {
         return mongoProperties.getUser().isEmpty() || mongoProperties.getPassword().isEmpty();
+    }
+
+    private static String getAuthenticationDb(final MongoProperties mongoProperties) {
+        final String authenticationDb = mongoProperties.getAuthenticationDb();
+        if (authenticationDb != null && !authenticationDb.isEmpty()) {
+            return authenticationDb;
+        }
+        return mongoProperties.getDb();
     }
 
     @Bean
@@ -61,7 +66,6 @@ public class MongoConfiguration {
     public MongoDatabase mongoDatabase(final MongoClient mongoClient, final MongoProperties mongoProperties) {
         return mongoClient.getDatabase(mongoProperties.getDb());
     }
-
 
     @Bean
     @ConditionalOnProperty(prefix = "edison.mongo", name = "socket-timeout-for-high-timeout-client")

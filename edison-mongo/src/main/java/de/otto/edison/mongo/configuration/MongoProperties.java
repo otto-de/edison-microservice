@@ -40,6 +40,11 @@ public class MongoProperties {
      * The MongoDB database.
      */
     @NotEmpty
+    private String authenticationDb = "";
+    /**
+     * The MongoDB database.
+     */
+    @NotEmpty
     private String db;
     /**
      * database user name
@@ -95,7 +100,7 @@ public class MongoProperties {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = status;
     }
 
@@ -112,7 +117,7 @@ public class MongoProperties {
             return enabled;
         }
 
-        public void setEnabled(boolean enabled) {
+        public void setEnabled(final boolean enabled) {
             this.enabled = enabled;
         }
 
@@ -141,15 +146,23 @@ public class MongoProperties {
         return host;
     }
 
-    public void setHost(String[] host) {
+    public void setHost(final String[] host) {
         this.host = host;
+    }
+
+    public String getAuthenticationDb() {
+        return authenticationDb;
+    }
+
+    public void setAuthenticationDb(final String authenticationDb) {
+        this.authenticationDb = authenticationDb;
     }
 
     public String getDb() {
         return db;
     }
 
-    public void setDb(String db) {
+    public void setDb(final String db) {
         this.db = db;
     }
 
@@ -157,7 +170,7 @@ public class MongoProperties {
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(final String user) {
         this.user = user;
     }
 
@@ -175,7 +188,7 @@ public class MongoProperties {
      * @deprecated use #setPassword(String); otherwise password will not be sanitized
      */
     @Deprecated
-    public void setPasswd(String passwd) {
+    public void setPasswd(final String passwd) {
         this.passwd = passwd;
     }
 
@@ -183,7 +196,7 @@ public class MongoProperties {
         return password != null && !password.isEmpty() ? password : passwd;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -191,7 +204,7 @@ public class MongoProperties {
         return readPreference;
     }
 
-    public void setReadPreference(String readPreference) {
+    public void setReadPreference(final String readPreference) {
         this.readPreference = readPreference;
     }
 
@@ -199,7 +212,7 @@ public class MongoProperties {
         return maxWaitTime;
     }
 
-    public void setMaxWaitTime(int maxWaitTime) {
+    public void setMaxWaitTime(final int maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
     }
 
@@ -207,7 +220,7 @@ public class MongoProperties {
         return connectTimeout;
     }
 
-    public void setConnectTimeout(int connectTimeout) {
+    public void setConnectTimeout(final int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
@@ -215,7 +228,7 @@ public class MongoProperties {
         return socketTimeout;
     }
 
-    public void setSocketTimeout(int socketTimeout) {
+    public void setSocketTimeout(final int socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
 
@@ -223,7 +236,7 @@ public class MongoProperties {
         return socketTimeoutForHighTimeoutClient;
     }
 
-    public void setSocketTimeoutForHighTimeoutClient(int socketTimeoutForHighTimeoutClient) {
+    public void setSocketTimeoutForHighTimeoutClient(final int socketTimeoutForHighTimeoutClient) {
         this.socketTimeoutForHighTimeoutClient = socketTimeoutForHighTimeoutClient;
     }
 
@@ -231,7 +244,7 @@ public class MongoProperties {
         return serverSelectionTimeout;
     }
 
-    public void setServerSelectionTimeout(int serverSelectionTimeout) {
+    public void setServerSelectionTimeout(final int serverSelectionTimeout) {
         this.serverSelectionTimeout = serverSelectionTimeout;
     }
 
@@ -239,7 +252,7 @@ public class MongoProperties {
         return connectionpool;
     }
 
-    public void setConnectionpool(Connectionpool connectionpool) {
+    public void setConnectionpool(final Connectionpool connectionpool) {
         this.connectionpool = connectionpool;
     }
 
@@ -248,13 +261,13 @@ public class MongoProperties {
                 .build();
     }
 
-    public MongoClientOptions toMongoClientOptionsWithHighTimeout(CodecRegistry codecRegistry) {
+    public MongoClientOptions toMongoClientOptionsWithHighTimeout(final CodecRegistry codecRegistry) {
         return getMongoClientOptionsBuilder(codecRegistry)
                 .socketTimeout(socketTimeoutForHighTimeoutClient)
                 .build();
     }
 
-    private MongoClientOptions.Builder getMongoClientOptionsBuilder(CodecRegistry codecRegistry) {
+    private MongoClientOptions.Builder getMongoClientOptionsBuilder(final CodecRegistry codecRegistry) {
         return builder()
                 .codecRegistry(codecRegistry)
                 .readPreference(ReadPreference.valueOf(readPreference))
@@ -270,10 +283,10 @@ public class MongoProperties {
                 .connectionsPerHost(connectionpool.getMaxSize());
     }
 
-    private ServerAddress toServerAddress(String server) {
+    private ServerAddress toServerAddress(final String server) {
         try {
             if (server.contains(":")) {
-                String[] hostNamePortPair = server.split(":");
+                final String[] hostNamePortPair = server.split(":");
                 return new ServerAddress(hostNamePortPair[0], Integer.parseInt(hostNamePortPair[1]));
             } else {
                 return new ServerAddress(server);
@@ -316,7 +329,7 @@ public class MongoProperties {
             return maxSize;
         }
 
-        public void setMaxSize(int maxSize) {
+        public void setMaxSize(final int maxSize) {
             this.maxSize = maxSize;
         }
 
@@ -324,7 +337,7 @@ public class MongoProperties {
             return minSize;
         }
 
-        public void setMinSize(int minSize) {
+        public void setMinSize(final int minSize) {
             this.minSize = minSize;
         }
 
@@ -332,7 +345,7 @@ public class MongoProperties {
             return blockedConnectionMultiplier;
         }
 
-        public void setBlockedConnectionMultiplier(int blockedConnectionMultiplier) {
+        public void setBlockedConnectionMultiplier(final int blockedConnectionMultiplier) {
             this.blockedConnectionMultiplier = blockedConnectionMultiplier;
         }
 
@@ -340,7 +353,7 @@ public class MongoProperties {
             return maxLifeTime;
         }
 
-        public void setMaxLifeTime(int maxLifeTime) {
+        public void setMaxLifeTime(final int maxLifeTime) {
             this.maxLifeTime = maxLifeTime;
         }
 
@@ -348,7 +361,7 @@ public class MongoProperties {
             return maxIdleTime;
         }
 
-        public void setMaxIdleTime(int maxIdleTime) {
+        public void setMaxIdleTime(final int maxIdleTime) {
             this.maxIdleTime = maxIdleTime;
         }
     }
