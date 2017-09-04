@@ -1,6 +1,7 @@
 package de.otto.edison.mongo.configuration;
 
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientOptions.Builder;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import de.otto.edison.status.domain.Datasource;
@@ -59,6 +60,10 @@ public class MongoProperties {
      * database user password
      */
     private String password = "";
+    /**
+     * database user password
+     */
+    private boolean sslEnabled;
     /**
      * Represents preferred replica set members to which a query or command can be sent.
      */
@@ -199,6 +204,14 @@ public class MongoProperties {
         this.password = password;
     }
 
+    public boolean isSslEnabled() {
+        return sslEnabled;
+    }
+
+    public void setSslEnabled(final boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
+    }
+
     public String getReadPreference() {
         return readPreference;
     }
@@ -266,8 +279,9 @@ public class MongoProperties {
                 .build();
     }
 
-    private MongoClientOptions.Builder getMongoClientOptionsBuilder(final CodecRegistry codecRegistry) {
+    private Builder getMongoClientOptionsBuilder(final CodecRegistry codecRegistry) {
         return builder()
+                .sslEnabled(sslEnabled)
                 .codecRegistry(codecRegistry)
                 .readPreference(ReadPreference.valueOf(readPreference))
                 .connectTimeout(connectTimeout)
