@@ -61,6 +61,13 @@ uploadArchives {
                         distribution 'repo'
                     }
                 }
+
+                developers {
+                    developer {
+                        id 'gsteinacker'
+                        name 'Guido Steinacker'
+                    }
+                }
             }
         }
     }
