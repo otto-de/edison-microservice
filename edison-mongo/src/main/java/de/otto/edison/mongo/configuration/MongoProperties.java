@@ -39,7 +39,6 @@ public class MongoProperties {
     /**
      * The MongoDB database.
      */
-    @NotEmpty
     private String authenticationDb = "";
     /**
      * The MongoDB database.
