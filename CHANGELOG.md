@@ -1,6 +1,6 @@
 # Release Notes
 
-## 1.1.5-SNAPSHOT
+## 1.1.5
 
 **New Features:**
 
