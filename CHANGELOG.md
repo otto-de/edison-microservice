@@ -1,14 +1,19 @@
 # Release Notes
 
+## 1.1.6-SNAPSHOT
+
+**New Features:**
+
+* **[edison-mongo]** Add new property: `edison.mongo.sslEnabled`
+
+    Set this property to true to use ssl for connection.
+    This is needed when using Mongodb Atlas.
+
 ## 1.1.5
 
 **New Features:**
 
 * **[edison-dynamodb]** __(Beta)__ DynamoDB persistence.
-* **[edison-mongo]** Add new property: `edison.mongo.sslEnabled`
-
-    Set this property to true to use ssl for connection.
-    This is needed when using Mongodb Atlas.
 * **[edison-mongo]** Add new property: `edison.mongo.authenticationDb`
 
     Set this property to use different db for user authentication then for data.
