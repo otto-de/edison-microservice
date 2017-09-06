@@ -2,7 +2,6 @@ package de.otto.edison.authentication;
 
 import com.unboundid.ldap.sdk.*;
 import de.otto.edison.authentication.configuration.LdapProperties;
-import org.slf4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -11,7 +10,6 @@ import java.util.List;
 import static com.unboundid.ldap.sdk.SearchScope.SUB;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A HttpServletRequest that is {@link HttpServletRequest#isUserInRole(String) checking the user role}
@@ -23,12 +21,12 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 class LdapRoleCheckingRequest extends HttpServletRequestWrapper {
 
-    private static final Logger LOG = getLogger(LdapRoleCheckingRequest.class);
     private static final String CN = "cn";
 
     private final LDAPInterface ldapInterface;
     private final String userDN;
     private final String roleBaseDN;
+    private final List<String> userRoles;
 
     /**
      * Constructs a request object wrapping the given request.
@@ -39,11 +37,12 @@ class LdapRoleCheckingRequest extends HttpServletRequestWrapper {
     public LdapRoleCheckingRequest(final HttpServletRequest request,
                                    final LDAPInterface ldapInterface,
                                    final String userDN,
-                                   final LdapProperties ldapProperties) {
+                                   final LdapProperties ldapProperties) throws LDAPException {
         super(request);
         this.ldapInterface = ldapInterface;
         this.userDN = userDN;
         this.roleBaseDN = ldapProperties.getRoleBaseDn();
+        this.userRoles = getRoles();
     }
 
     /**
@@ -53,12 +52,7 @@ class LdapRoleCheckingRequest extends HttpServletRequestWrapper {
      */
     @Override
     public boolean isUserInRole(String role) {
-        try {
-            return getRoles().contains(role);
-        } catch (LDAPException e) {
-            LOG.error("Unable to retrieve user groups: " + e.getMessage(), e);
-            return false;
-        }
+        return userRoles.contains(role);
     }
 
     List<String> getRoles() throws LDAPException {
@@ -74,4 +68,5 @@ class LdapRoleCheckingRequest extends HttpServletRequestWrapper {
                 .flatMap(entry -> stream(entry.getAttributeValues("CN")))
                 .collect(toList());
     }
+
 }

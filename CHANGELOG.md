@@ -8,6 +8,10 @@
 
     Set this property to true to use ssl for connection.
     This is needed when using Mongodb Atlas.
+    
+**Bugfixes:**
+
+* **[edison-core]** Fix user role determination in LDAP authentication filter.
 
 ## 1.1.5
 

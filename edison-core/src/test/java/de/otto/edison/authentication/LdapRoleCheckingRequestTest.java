@@ -7,7 +7,6 @@ import org.junit.Test;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static com.unboundid.ldap.sdk.ResultCode.CANCELED;
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,17 +36,6 @@ public class LdapRoleCheckingRequestTest {
 
         assertThat(request.isUserInRole("foo")).isEqualTo(true);
         assertThat(request.isUserInRole("foobar")).isEqualTo(false);
-    }
-
-    @Test
-    public void shouldHandleExceptions() throws LDAPException {
-        final HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-        final LDAPInterface ldap = mock(LDAPInterface.class);
-        when(ldap.search(any(SearchRequest.class))).thenThrow(new LDAPSearchException(CANCELED, "Sad, very sad!"));
-
-        final LdapRoleCheckingRequest request = new LdapRoleCheckingRequest(mockRequest, ldap, "uid=test", someLdapProperties());
-
-        assertThat(request.isUserInRole("foo")).isEqualTo(false);
     }
 
     private LdapProperties someLdapProperties() {
