@@ -20,4 +20,9 @@ public class EventBusConfiguration {
     public JobEventListener persistenceJobEventListener() {
         return new PersistenceJobEventListener(jobService);
     }
+
+    @Bean
+    public JobEventsShutdownListener jobEventsShutdownListener() {
+        return new JobEventsShutdownListener();
+    }
 }
