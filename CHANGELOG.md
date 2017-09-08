@@ -1,6 +1,13 @@
 # Release Notes
 
-## 1.1.6-SNAPSHOT
+## 1.1.7-SNAPSHOT
+
+**New Features:**
+
+* **[edison-jobs]** When a service is shutting down gracefully, it writes a
+notification into all currently running job logs.
+
+## 1.1.6
 
 **New Features:**
 

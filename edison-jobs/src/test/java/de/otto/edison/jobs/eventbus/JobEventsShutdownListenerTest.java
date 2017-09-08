@@ -23,7 +23,7 @@ public class JobEventsShutdownListenerTest {
             jobEventsShutdownListener.stop(runnable);
 
             //then
-            verify(jobEventPublisherMock).message(Level.ERROR, "Service is shutting down, this job will (likely) be cancelled.");
+            verify(jobEventPublisherMock).message(Level.WARNING, "Service is shutting down, this job will (likely) be cancelled.");
             verify(runnable).run();
         } finally {
             JobEvents.deregister();

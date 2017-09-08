@@ -12,7 +12,7 @@ public class JobEventsShutdownListener implements SmartLifecycle {
 
     @Override
     public void stop(Runnable callback) {
-        JobEvents.broadcast(Level.ERROR, "Service is shutting down, this job will (likely) be cancelled.");
+        JobEvents.broadcast(Level.WARNING, "Service is shutting down, this job will (likely) be cancelled.");
         callback.run();
     }
 
