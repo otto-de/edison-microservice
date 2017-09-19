@@ -3,6 +3,7 @@ package de.otto.edison.mongo.togglz;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.mongo.AbstractMongoRepository;
+import de.otto.edison.mongo.configuration.MongoProperties;
 import de.otto.edison.togglz.FeatureClassProvider;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -34,7 +35,9 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
 
     public MongoTogglzRepository(final MongoDatabase mongoDatabase,
                                  final FeatureClassProvider featureClassProvider,
-                                 final UserProvider userProvider) {
+                                 final UserProvider userProvider,
+                                 final MongoProperties mongoProperties) {
+        super(mongoProperties);
         this.featureClassProvider = featureClassProvider;
         this.collection = mongoDatabase.getCollection("togglz");
         this.userProvider = userProvider;

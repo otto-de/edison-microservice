@@ -13,7 +13,9 @@ import static com.mongodb.client.model.Updates.unset;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import de.otto.edison.mongo.configuration.MongoProperties;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -40,14 +42,24 @@ public class MongoJobMetaRepository implements JobMetaRepository {
     private static final String KEY_RUNNING = "_e_running";
 
     private final MongoCollection<Document> collection;
+    private final MongoProperties mongoProperties;
 
-    public MongoJobMetaRepository(final MongoDatabase mongoDatabase, final String jobMetaCollectionName) {
-        this.collection = mongoDatabase.getCollection(jobMetaCollectionName);
+    public MongoJobMetaRepository(final MongoDatabase mongoDatabase,
+                                  final String jobMetaCollectionName,
+                                  final MongoProperties mongoProperties) {
+        this.mongoProperties = mongoProperties;
+        MongoCollection<Document> tmpCollection = mongoDatabase.getCollection(jobMetaCollectionName);
+        collection = tmpCollection.withWriteConcern(tmpCollection
+                .getWriteConcern()
+                .withWTimeout(mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS));
     }
 
     @Override
     public JobMeta getJobMeta(final String jobType) {
-        final Document document = collection.find(eq(ID, jobType)).first();
+        final Document document = collection
+                .find(eq(ID, jobType))
+                .maxTime(mongoProperties.getDefaultReadTimeout(), TimeUnit.MILLISECONDS)
+                .first();
         if (document != null) {
             final Map<String, String> meta = document.keySet()
                     .stream()
@@ -125,7 +137,10 @@ public class MongoJobMetaRepository implements JobMetaRepository {
     @Override
     public String getValue(final String jobType,
                            final String key) {
-        final Document first = collection.find(eq(ID, jobType)).first();
+        final Document first = collection
+                .find(eq(ID, jobType))
+                .maxTime(mongoProperties.getDefaultReadTimeout(), TimeUnit.MILLISECONDS)
+                .first();
         return first != null ? first.getString(key) : null;
     }
 

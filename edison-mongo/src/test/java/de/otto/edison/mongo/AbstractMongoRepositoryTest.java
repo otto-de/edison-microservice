@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import de.otto.edison.mongo.configuration.MongoProperties;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 public class AbstractMongoRepositoryTest {
-
     private TestRepository testee;
 
     @Before
@@ -219,6 +219,7 @@ public class AbstractMongoRepositoryTest {
         private final MongoCollection<Document> collection;
 
         public TestRepository(final MongoDatabase mongoDatabase) {
+            super(new MongoProperties());
             this.collection = mongoDatabase.getCollection("test");
         }
 

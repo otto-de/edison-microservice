@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import de.otto.edison.mongo.configuration.MongoProperties;
 import org.assertj.core.util.Lists;
 import org.bson.Document;
 import org.hamcrest.Matchers;
@@ -55,7 +56,7 @@ public class MongoJobRepositoryTest {
     public void setup() {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         final MongoDatabase mongoDatabase = fongo.getDatabase("jobsinfo");
-        repo = new MongoJobRepository(mongoDatabase, "jobsinfo");
+        repo = new MongoJobRepository(mongoDatabase, "jobsinfo", new MongoProperties());
     }
 
     @Test

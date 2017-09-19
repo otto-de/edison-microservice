@@ -4,6 +4,7 @@ import com.github.fakemongo.Fongo;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobMetaRepository;
+import de.otto.edison.mongo.configuration.MongoProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,9 @@ public class JobMetaRepositoryTest {
     @Parameters(name = "{0}")
     public static Collection<JobMetaRepository> data() {
         return asList(
-                new MongoJobMetaRepository(new Fongo("inMemoryDb").getDatabase("jobmeta"), "jobmeta"),
+                new MongoJobMetaRepository(new Fongo("inMemoryDb").getDatabase("jobmeta"),
+                        "jobmeta",
+                        new MongoProperties()),
                 new InMemJobMetaRepository());
     }
 

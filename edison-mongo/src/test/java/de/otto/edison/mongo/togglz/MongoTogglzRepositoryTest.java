@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
+import de.otto.edison.mongo.configuration.MongoProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.togglz.core.repository.FeatureState;
@@ -30,7 +31,7 @@ public class MongoTogglzRepositoryTest {
         final FeatureClassProvider featureClassProvider = new TestFeatureClassProvider();
         final UserProvider userProvider = mock(UserProvider.class);
         when(userProvider.getCurrentUser()).thenReturn(new SimpleFeatureUser("someUser"));
-        testee = new MongoTogglzRepository(mongoDatabase, featureClassProvider, userProvider);
+        testee = new MongoTogglzRepository(mongoDatabase, featureClassProvider, userProvider, new MongoProperties());
     }
 
     @Test

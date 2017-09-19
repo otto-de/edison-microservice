@@ -5,6 +5,7 @@ import de.otto.edison.mongo.togglz.MongoTogglzRepository;
 import de.otto.edison.togglz.FeatureClassProvider;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.togglz.core.repository.StateRepository;
@@ -14,16 +15,17 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
 @ConditionalOnClass(name = "de.otto.edison.togglz.configuration.TogglzConfiguration")
+@EnableConfigurationProperties(MongoProperties.class)
 public class MongoTogglzConfiguration {
 
     private static final Logger LOG = getLogger(MongoTogglzConfiguration.class);
 
     @Bean
     StateRepository stateRepository(final MongoDatabase mongoDatabase, final FeatureClassProvider featureClassProvider,
-                                    final UserProvider userProvider) {
+                                    final UserProvider userProvider, final MongoProperties mongoProperties) {
         LOG.info("===============================");
         LOG.info("Using MongoTogglzRepository with " + mongoDatabase.getClass().getSimpleName() + " MongoDatabase impl.");
         LOG.info("===============================");
-        return new MongoTogglzRepository(mongoDatabase, featureClassProvider, userProvider);
+        return new MongoTogglzRepository(mongoDatabase, featureClassProvider, userProvider, mongoProperties);
     }
 }

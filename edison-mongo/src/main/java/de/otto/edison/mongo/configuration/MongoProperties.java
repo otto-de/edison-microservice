@@ -82,23 +82,41 @@ public class MongoProperties {
     /**
      * Socket timeout.
      */
+    @Min(0)
+    private int socketTimeout = 0;
+
+    /**
+     * The default timeout to use for reading operations.
+     */
     @Min(10)
-    private int socketTimeout = 2000;
+    private int defaultReadTimeout = 250;
+
+    /**
+     * The default timeout to use for writing operations.
+     */
+    @Min(10)
+    private int defaultWriteTimeout = 250;
+
     /**
      * Optional increased socket timeout for long running database queries (useful in jobs)
      * Setting this creates a mongoClientWithHighTimeout bean and a mongoDatabaseWithHighTimeout
      */
     @Min(10)
     private int socketTimeoutForHighTimeoutClient = 5*60*1000;
+
     /**
      * Sets the server selection timeout in milliseconds, which defines how long the driver will wait for server selection to
      * succeed before throwing an exception.
      */
     @Min(1)
     private int serverSelectionTimeout = 30000;
-
     @Valid
     private Status status = new Status();
+    /**
+     * Connection pool properties.
+     */
+    @Valid
+    private Connectionpool connectionpool = new Connectionpool();
 
     public Status getStatus() {
         return status;
@@ -108,29 +126,21 @@ public class MongoProperties {
         this.status = status;
     }
 
-    /**
-     * Creates a StatusDetailIndicator that checks the MongoDB connection through a ping command
-     */
-    public static class Status {
-
-        /**
-         * Enable / disable the MongoDB StatusDetailIndicator
-         */
-        private boolean enabled = true;
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-
+    public int getDefaultReadTimeout() {
+        return defaultReadTimeout;
     }
-    /**
-     * Connection pool properties.
-     */
-    @Valid
-    private Connectionpool connectionpool = new Connectionpool();
+
+    public void setDefaultReadTimeout(int defaultReadTimeout) {
+        this.defaultReadTimeout = defaultReadTimeout;
+    }
+
+    public int getDefaultWriteTimeout() {
+        return defaultWriteTimeout;
+    }
+
+    public void setDefaultWriteTimeout(int defaultWriteTimeout) {
+        this.defaultWriteTimeout = defaultWriteTimeout;
+    }
 
     public List<Datasource> toDatasources() {
         return Stream.of(getHost())
@@ -236,18 +246,34 @@ public class MongoProperties {
         this.connectTimeout = connectTimeout;
     }
 
+    /**
+     * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
+     */
+    @Deprecated
     public int getSocketTimeout() {
         return socketTimeout;
     }
 
+    /**
+     * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
+     */
+    @Deprecated
     public void setSocketTimeout(final int socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
 
+    /**
+     * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
+     */
+    @Deprecated
     public int getSocketTimeoutForHighTimeoutClient() {
         return socketTimeoutForHighTimeoutClient;
     }
 
+    /**
+     * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
+     */
+    @Deprecated
     public void setSocketTimeoutForHighTimeoutClient(final int socketTimeoutForHighTimeoutClient) {
         this.socketTimeoutForHighTimeoutClient = socketTimeoutForHighTimeoutClient;
     }
@@ -309,6 +335,27 @@ public class MongoProperties {
             return null;
         }
     }
+
+    /**
+     * Creates a StatusDetailIndicator that checks the MongoDB connection through a ping command
+     */
+    public static class Status {
+
+        /**
+         * Enable / disable the MongoDB StatusDetailIndicator
+         */
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+
+    }
+
     public static class Connectionpool {
 
         /**

@@ -23,7 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
+import de.otto.edison.mongo.configuration.MongoProperties;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +54,12 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     private final MongoCollection<Document> jobInfoCollection;
     private final Clock clock;
 
-    public MongoJobRepository(final MongoDatabase mongoDatabase, final String jobInfoCollectionName) {
-        this.jobInfoCollection = mongoDatabase.getCollection(jobInfoCollectionName).withReadPreference(primaryPreferred());
+    public MongoJobRepository(final MongoDatabase mongoDatabase,
+                              final String jobInfoCollectionName,
+                              final MongoProperties mongoProperties) {
+        super(mongoProperties);
+        MongoCollection<Document> tmpCollection = mongoDatabase.getCollection(jobInfoCollectionName).withReadPreference(primaryPreferred());
+        this.jobInfoCollection = tmpCollection.withWriteConcern(tmpCollection.getWriteConcern().withWTimeout(500, TimeUnit.MILLISECONDS));
         this.clock = systemDefaultZone();
     }
 
@@ -62,6 +68,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
         return JobStatus.valueOf(collection()
                 .find(eq(ID, jobId))
                 .projection(new Document(JobStructure.STATUS.key(), true))
+                .maxTime(50, TimeUnit.MILLISECONDS)
                 .first().getString(JobStructure.STATUS.key()));
     }
 
@@ -93,6 +100,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public List<JobInfo> findLatest(final int maxCount) {
         return collection()
                 .find()
+                .maxTime(500, TimeUnit.MILLISECONDS)
                 .sort(orderByStarted(DESCENDING))
                 .limit(maxCount)
                 .map(this::decode)
@@ -104,6 +112,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
         final List<String> allJobIds = findAllJobIdsDistinct();
         return collection()
                 .find(Filters.in(ID, allJobIds))
+                .maxTime(500, TimeUnit.MILLISECONDS)
                 .map(this::decode)
                 .into(new ArrayList<>());
     }
@@ -116,6 +125,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                             put("_id", "$type");
                             put("latestJobId", new Document("$first", "$_id"));
                         }})))
+                .maxTime(500, TimeUnit.MILLISECONDS)
                 .map(doc -> doc.getString("latestJobId"))
                 .into(new ArrayList<>()).stream()
                 .filter(Objects::nonNull)
@@ -126,6 +136,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public List<JobInfo> findLatestBy(final String type, final int maxCount) {
         return collection()
                 .find(byType(type))
+                .maxTime(250, TimeUnit.MILLISECONDS)
                 .sort(orderByStarted(DESCENDING))
                 .limit(maxCount)
                 .map(this::decode)
@@ -136,6 +147,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public List<JobInfo> findByType(final String type) {
         return collection()
                 .find(byType(type))
+                .maxTime(250, TimeUnit.MILLISECONDS)
                 .sort(orderByStarted(DESCENDING))
                 .map(this::decode)
                 .into(new ArrayList<>());
@@ -147,6 +159,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                 .find(new Document()
                         .append(JobStructure.STOPPED.key(), singletonMap("$exists", false))
                         .append(JobStructure.LAST_UPDATED.key(), singletonMap("$lt", from(timeOffset.toInstant()))))
+                .maxTime(500, TimeUnit.MILLISECONDS)
                 .map(this::decode)
                 .into(new ArrayList<>());
     }
@@ -247,6 +260,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 	public List<JobInfo> findAllJobInfoWithoutMessages() {
         return collection()
                 .find()
+                .maxTime(500, TimeUnit.MILLISECONDS)
                 .projection(new Document(getJobInfoWithoutMessagesProjection()))
                 .map(this::decode)
                 .into(new ArrayList<>());

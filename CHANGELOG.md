@@ -1,11 +1,18 @@
 # Release Notes
 
-## 1.1.7-SNAPSHOT
+## 1.2.0
 
 **New Features:**
 
 * **[edison-jobs]** When a service is shutting down gracefully, it writes a
 notification into all currently running job logs.
+
+* **[edison-mongo]** Instead of using a socket timeout for all reads and writes,
+you can now use specific timeouts for each operation. Also you can specify a
+`defaultReadTimeout` and a `defaultWriteTimeout`. These will be used for all
+operations in `AbstractMongoRepository` when you do not specify a timeout explicitly.
+
+**Important:** With this release, you should remove a `socketTimeout` option in your configs.
 
 ## 1.1.6
 

@@ -14,12 +14,16 @@ import static de.otto.edison.mongo.UpdateIfMatchResult.OK;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
 
-import com.mongodb.client.model.DeleteOptions;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.CountOptions;
+import de.otto.edison.mongo.configuration.MongoProperties;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -33,15 +37,49 @@ public abstract class AbstractMongoRepository<K, V> {
     public static final String ETAG = "etag";
 
     private static final boolean DISABLE_PARALLEL_STREAM_PROCESSING = false;
+    private final MongoProperties mongoProperties;
+
+    /**
+     * @deprecated Use {@link #AbstractMongoRepository(MongoProperties)} instead.
+     */
+    @Deprecated
+    public AbstractMongoRepository() {
+        mongoProperties = new MongoProperties();
+        mongoProperties.setDefaultReadTimeout(250);
+        mongoProperties.setDefaultWriteTimeout(250);
+    }
+
+    public AbstractMongoRepository(final MongoProperties mongoProperties) {
+        this.mongoProperties = mongoProperties;
+    }
 
     @PostConstruct
     public void postConstruct() {
         ensureIndexes();
     }
 
+    /**
+     * Find a single value with the specified key, if existing.
+     *
+     * @param key the key to search for
+     * @return an Optional containing the requested value, or {@code Optional.empty()} if no value with this key exists
+     */
     public Optional<V> findOne(final K key) {
+        return findOne(key, mongoProperties.getDefaultReadTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Find a single value with the specified key, if existing.
+     *
+     * @param key      the key to search for
+     * @param maxTime  the maximum time for this request
+     * @param timeUnit the time unit in which {@code maxTime} is specified
+     * @return an Optional containing the requested value, or {@code Optional.empty()} if no value with this key exists
+     */
+    public Optional<V> findOne(final K key, final long maxTime, final TimeUnit timeUnit) {
         return ofNullable(collection()
                 .find(byId(key))
+                .maxTime(maxTime, timeUnit)
                 .map(this::decode)
                 .first());
     }
@@ -63,38 +101,75 @@ public abstract class AbstractMongoRepository<K, V> {
     }
 
     public Stream<V> findAllAsStream() {
-        return toStream(collection().find())
+        return findAllAsStream(mongoProperties.getDefaultReadTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    public Stream<V> findAllAsStream(final long maxTime, final TimeUnit timeUnit) {
+        return toStream(
+                collection().find()
+                        .maxTime(maxTime, timeUnit))
                 .map(this::decode);
     }
 
     public List<V> findAll() {
-        return findAllAsStream().collect(toList());
+        return findAll(mongoProperties.getDefaultReadTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    public List<V> findAll(final long maxTime, final TimeUnit timeUnit) {
+        return findAllAsStream(maxTime, timeUnit).collect(toList());
     }
 
     public Stream<V> findAllAsStream(final int skip, final int limit) {
+        return findAllAsStream(skip, limit, mongoProperties.getDefaultReadTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    public Stream<V> findAllAsStream(final int skip, final int limit, final long maxTime, final TimeUnit timeUnit) {
         return toStream(
-                collection()
-                        .find()
-                        .skip(skip)
-                        .limit(limit))
+                getFindIterable(skip, limit)
+                        .maxTime(maxTime, timeUnit))
                 .map(this::decode);
     }
 
+    private FindIterable<Document> getFindIterable(int skip, int limit) {
+        return collection()
+                .find()
+                .skip(skip)
+                .limit(limit);
+    }
+
     public List<V> findAll(final int skip, final int limit) {
-        return findAllAsStream(skip, limit).collect(toList());
+        return findAll(skip, limit, mongoProperties.getDefaultReadTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    public List<V> findAll(final int skip, final int limit, final long maxTime, final TimeUnit timeUnit) {
+        return findAllAsStream(skip, limit, maxTime, timeUnit).collect(toList());
     }
 
     public V createOrUpdate(final V value) {
+        return createOrUpdate(value, mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    public V createOrUpdate(final V value, final long maxTime, final TimeUnit timeUnit) {
         final Document doc = encode(value);
-        collection().replaceOne(byId(keyOf(value)), doc, new UpdateOptions().upsert(true));
+        collectionWithWriteTimeout(maxTime, timeUnit)
+                .replaceOne(byId(keyOf(value)), doc, new UpdateOptions().upsert(true));
         return decode(doc);
     }
 
+    protected MongoCollection<Document> collectionWithWriteTimeout(long maxTime, TimeUnit timeUnit) {
+        return collection()
+                .withWriteConcern(collection().getWriteConcern().withWTimeout(maxTime, timeUnit));
+    }
+
     public V create(final V value) {
+        return create(value, mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    public V create(final V value, final long maxTime, final TimeUnit timeUnit) {
         final K key = keyOf(value);
         if (key != null) {
             final Document doc = encode(value);
-            collection().insertOne(doc);
+            collectionWithWriteTimeout(maxTime, timeUnit).insertOne(doc);
             return decode(doc);
         } else {
             throw new NullPointerException("Key must not be null");
@@ -108,9 +183,19 @@ public abstract class AbstractMongoRepository<K, V> {
      * @return true, if the document was updated, false otherwise.
      */
     public boolean update(final V value) {
+        return update(value, mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Updates the document if it is already present in the repository.
+     *
+     * @param value the new value
+     * @return true, if the document was updated, false otherwise.
+     */
+    public boolean update(final V value, final long maxTime, final TimeUnit timeUnit) {
         final K key = keyOf(value);
         if (key != null) {
-            return collection()
+            return collectionWithWriteTimeout(maxTime, timeUnit)
                     .replaceOne(byId(key), encode(value))
                     .getModifiedCount() == 1;
         } else {
@@ -130,11 +215,29 @@ public abstract class AbstractMongoRepository<K, V> {
      * @return {@link UpdateIfMatchResult}
      */
     public UpdateIfMatchResult updateIfMatch(final V value, final String eTag) {
+        return updateIfMatch(value, eTag, mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Updates the document if the document's ETAG is matching the given etag (conditional put).
+     * <p>
+     * Using this method requires that the document contains an "etag" field that is updated if
+     * the document is changed.
+     * </p>
+     *
+     * @param value the new value
+     * @param eTag  the etag used for conditional update
+     * @return {@link UpdateIfMatchResult}
+     */
+    public UpdateIfMatchResult updateIfMatch(final V value,
+                                             final String eTag,
+                                             final long maxTime,
+                                             final TimeUnit timeUnit) {
         final K key = keyOf(value);
         if (key != null) {
             final Bson query = and(eq(AbstractMongoRepository.ID, key), eq(ETAG, eTag));
 
-            final Document updatedETaggable = collection().findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
+            final Document updatedETaggable = collectionWithWriteTimeout(maxTime, timeUnit).findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
             if (isNull(updatedETaggable)) {
                 final boolean documentExists = collection().count(eq(AbstractMongoRepository.ID, key)) != 0;
                 if (documentExists) {
@@ -151,7 +254,11 @@ public abstract class AbstractMongoRepository<K, V> {
     }
 
     public long size() {
-        return collection().count();
+        return size(mongoProperties.getDefaultReadTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    public long size(final long maxTime, final TimeUnit timeUnit) {
+        return collection().count(new BsonDocument(), new CountOptions().maxTime(maxTime, timeUnit));
     }
 
     /**
@@ -160,14 +267,30 @@ public abstract class AbstractMongoRepository<K, V> {
      * @param key the identifier of the deleted document
      */
     public void delete(final K key) {
-        collection().deleteOne(byId(key));
+        delete(key, mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Deletes the document identified by key.
+     *
+     * @param key the identifier of the deleted document
+     */
+    public void delete(final K key, final long maxTime, final TimeUnit timeUnit) {
+        collectionWithWriteTimeout(maxTime, timeUnit).deleteOne(byId(key));
     }
 
     /**
      * Deletes all documents from this repository.
      */
     public void deleteAll() {
-        collection().deleteMany(matchAll());
+        deleteAll(mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Deletes all documents from this repository.
+     */
+    public void deleteAll(final long maxTime, final TimeUnit timeUnit) {
+        collectionWithWriteTimeout(maxTime, timeUnit).deleteMany(matchAll());
     }
 
     /**
