@@ -45,8 +45,8 @@ public abstract class AbstractMongoRepository<K, V> {
     @Deprecated
     public AbstractMongoRepository() {
         mongoProperties = new MongoProperties();
-        mongoProperties.setDefaultReadTimeout(250);
-        mongoProperties.setDefaultWriteTimeout(250);
+        mongoProperties.setDefaultReadTimeout(2000);
+        mongoProperties.setDefaultWriteTimeout(2000);
     }
 
     public AbstractMongoRepository(final MongoProperties mongoProperties) {

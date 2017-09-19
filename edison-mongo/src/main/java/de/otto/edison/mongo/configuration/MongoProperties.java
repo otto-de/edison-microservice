@@ -37,48 +37,58 @@ public class MongoProperties {
      */
     @NotEmpty
     private String[] host = {"localhost"};
+
     /**
      * The MongoDB database.
      */
     private String authenticationDb = "";
+
     /**
      * The MongoDB database.
      */
     @NotEmpty
     private String db;
+
     /**
      * database user name
      */
     private String user = "";
+
     /**
      * database user password
      * @deprecated use password instead
      */
     @Deprecated
     private String passwd = "";
+
     /**
      * database user password
      */
     private String password = "";
+
     /**
      * database user password
      */
     private boolean sslEnabled;
+
     /**
      * Represents preferred replica set members to which a query or command can be sent.
      */
     @NotEmpty
     private String readPreference = "primaryPreferred";
+
     /**
      * Maximum time that a thread will block waiting for a connection.
      */
     @Min(10)
     private int maxWaitTime = 5000;
+
     /**
      * Connection timeout in milliseconds. Must be &gt; 0
      */
     @Min(10)
     private int connectTimeout = 5000;
+
     /**
      * Socket timeout.
      */
@@ -89,13 +99,13 @@ public class MongoProperties {
      * The default timeout to use for reading operations.
      */
     @Min(10)
-    private int defaultReadTimeout = 250;
+    private int defaultReadTimeout = 2000;
 
     /**
      * The default timeout to use for writing operations.
      */
     @Min(10)
-    private int defaultWriteTimeout = 250;
+    private int defaultWriteTimeout = 2000;
 
     /**
      * Optional increased socket timeout for long running database queries (useful in jobs)
@@ -263,7 +273,7 @@ public class MongoProperties {
     }
 
     /**
-     * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
+     * @deprecated Use custom timeouts on read and write operations instead.
      */
     @Deprecated
     public int getSocketTimeoutForHighTimeoutClient() {
@@ -271,7 +281,7 @@ public class MongoProperties {
     }
 
     /**
-     * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
+     * @deprecated Use custom timeouts on read and write operations instead.
      */
     @Deprecated
     public void setSocketTimeoutForHighTimeoutClient(final int socketTimeoutForHighTimeoutClient) {
