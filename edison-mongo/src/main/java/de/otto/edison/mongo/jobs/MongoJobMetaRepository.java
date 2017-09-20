@@ -36,7 +36,9 @@ import de.otto.edison.jobs.repository.JobMetaRepository;
  */
 public class MongoJobMetaRepository implements JobMetaRepository {
 
-    private static final FindOneAndUpdateOptions UPSERT = new FindOneAndUpdateOptions().upsert(true);
+    private static final FindOneAndUpdateOptions UPSERT = new FindOneAndUpdateOptions()
+            .upsert(true)
+            .maxTime(250, TimeUnit.MILLISECONDS);
     private static final String ID = "_id";
     private static final String KEY_DISABLED = "_e_disabled";
     private static final String KEY_RUNNING = "_e_running";
@@ -153,7 +155,7 @@ public class MongoJobMetaRepository implements JobMetaRepository {
 
         final Bson update = set(key, value);
         try {
-            final Document previous = collection.findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().upsert(true));
+            final Document previous = collection.findOneAndUpdate(filter, update, UPSERT);
             return previous == null || previous.getString(key) == null;
         } catch (final Exception e) {
             return false;
@@ -167,7 +169,7 @@ public class MongoJobMetaRepository implements JobMetaRepository {
      */
     @Override
     public Set<String> findAllJobTypes() {
-        return stream(collection.find().spliterator(), false)
+        return stream(collection.find().maxTime(500, TimeUnit.MILLISECONDS).spliterator(), false)
                 .map(doc -> doc.getString(ID))
                 .collect(toSet());
     }

@@ -3,6 +3,7 @@ package de.otto.edison.mongo.jobs;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.model.Filters;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
@@ -63,24 +64,24 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     public void removeIfStopped(final String id) {
         findOne(id).ifPresent(jobInfo -> {
             if (jobInfo.isStopped()) {
-                collection().deleteOne(eq(ID, id));
+                collectionWithWriteTimeout(50, TimeUnit.MILLISECONDS).deleteOne(eq(ID, id));
             }
         });
     }
 
     @Override
     public void appendMessage(final String jobId, final JobMessage jobMessage) {
-        collection().updateOne(eq(ID, jobId), push(JobStructure.MESSAGES.key(), encodeJobMessage(jobMessage)));
+        collectionWithWriteTimeout(250, TimeUnit.MILLISECONDS).updateOne(eq(ID, jobId), push(JobStructure.MESSAGES.key(), encodeJobMessage(jobMessage)));
     }
 
     @Override
     public void setJobStatus(final String jobId, final JobStatus jobStatus) {
-        collection().updateOne(eq(ID, jobId), set(JobStructure.STATUS.key(), jobStatus.name()));
+        collectionWithWriteTimeout(250, TimeUnit.MILLISECONDS).updateOne(eq(ID, jobId), set(JobStructure.STATUS.key(), jobStatus.name()));
     }
 
     @Override
     public void setLastUpdate(final String jobId, final OffsetDateTime lastUpdate) {
-        collection().updateOne(eq(ID, jobId), set(JobStructure.LAST_UPDATED.key(), DateTimeConverters.toDate(lastUpdate)));
+        collectionWithWriteTimeout(250, TimeUnit.MILLISECONDS).updateOne(eq(ID, jobId), set(JobStructure.LAST_UPDATED.key(), DateTimeConverters.toDate(lastUpdate)));
     }
 
     @Override
