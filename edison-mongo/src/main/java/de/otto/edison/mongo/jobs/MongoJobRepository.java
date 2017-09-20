@@ -1,5 +1,29 @@
 package de.otto.edison.mongo.jobs;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobInfo.JobStatus;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.mongo.AbstractMongoRepository;
+import de.otto.edison.mongo.configuration.MongoProperties;
+import org.bson.Document;
+
+import java.time.Clock;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static com.mongodb.ReadPreference.primaryPreferred;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.push;
+import static com.mongodb.client.model.Updates.set;
+import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
+import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.time.Clock.systemDefaultZone;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
@@ -7,44 +31,7 @@ import static java.util.Date.from;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
-import static com.mongodb.ReadPreference.primaryPreferred;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.push;
-import static com.mongodb.client.model.Updates.set;
-
-import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
-import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-
-import java.time.Clock;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
-import de.otto.edison.mongo.configuration.MongoProperties;
-import org.bson.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobInfo.JobStatus;
-import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.mongo.AbstractMongoRepository;
-
 public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo> implements JobRepository {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
 
     private static final int DESCENDING = -1;
     private static final String NO_LOG_MESSAGE_FOUND = "No log message found";
