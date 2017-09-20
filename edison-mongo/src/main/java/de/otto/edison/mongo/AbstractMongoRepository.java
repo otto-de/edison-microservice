@@ -239,7 +239,8 @@ public abstract class AbstractMongoRepository<K, V> {
 
             final Document updatedETaggable = collectionWithWriteTimeout(maxTime, timeUnit).findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
             if (isNull(updatedETaggable)) {
-                final boolean documentExists = collection().count(eq(AbstractMongoRepository.ID, key)) != 0;
+                final boolean documentExists = collection()
+                        .count(eq(AbstractMongoRepository.ID, key), new CountOptions().maxTime(maxTime, timeUnit)) != 0;
                 if (documentExists) {
                     return CONCURRENTLY_MODIFIED;
                 }
