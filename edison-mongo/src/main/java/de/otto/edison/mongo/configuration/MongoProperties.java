@@ -90,19 +90,19 @@ public class MongoProperties {
     private int connectTimeout = 5000;
 
     /**
-     * Socket timeout.
+     * Socket timeout in milliseconds.
      */
     @Min(0)
     private int socketTimeout = 0;
 
     /**
-     * The default timeout to use for reading operations.
+     * The default timeout in milliseconds to use for reading operations.
      */
     @Min(10)
     private int defaultReadTimeout = 2000;
 
     /**
-     * The default timeout to use for writing operations.
+     * The default timeout in milliseconds to use for writing operations.
      */
     @Min(10)
     private int defaultWriteTimeout = 2000;
@@ -258,6 +258,8 @@ public class MongoProperties {
 
     /**
      * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
+     *
+     * @return the socket timeout in milliseconds
      */
     @Deprecated
     public int getSocketTimeout() {
@@ -266,6 +268,8 @@ public class MongoProperties {
 
     /**
      * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
+     *
+     * @param socketTimeout the socket timeout in milliseconds
      */
     @Deprecated
     public void setSocketTimeout(final int socketTimeout) {
@@ -274,6 +278,8 @@ public class MongoProperties {
 
     /**
      * @deprecated Use custom timeouts on read and write operations instead.
+     *
+     * @return the socket timeout in milliseconds for the high timeout client
      */
     @Deprecated
     public int getSocketTimeoutForHighTimeoutClient() {
@@ -282,6 +288,8 @@ public class MongoProperties {
 
     /**
      * @deprecated Use custom timeouts on read and write operations instead.
+     *
+     * @param socketTimeoutForHighTimeoutClient the socket timeout in milliseconds for the high timeout client
      */
     @Deprecated
     public void setSocketTimeoutForHighTimeoutClient(final int socketTimeoutForHighTimeoutClient) {

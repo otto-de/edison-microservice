@@ -38,7 +38,6 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     private static final String NO_LOG_MESSAGE_FOUND = "No log message found";
     public static final String ID = "_id";
 
-
     private final MongoCollection<Document> jobInfoCollection;
     private final Clock clock;
 
@@ -47,7 +46,22 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                               final MongoProperties mongoProperties) {
         super(mongoProperties);
         MongoCollection<Document> tmpCollection = mongoDatabase.getCollection(jobInfoCollectionName).withReadPreference(primaryPreferred());
-        this.jobInfoCollection = tmpCollection.withWriteConcern(tmpCollection.getWriteConcern().withWTimeout(500, TimeUnit.MILLISECONDS));
+        this.jobInfoCollection = tmpCollection.withWriteConcern(tmpCollection.getWriteConcern().withWTimeout(mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS));
+        this.clock = systemDefaultZone();
+    }
+
+    /**
+     * @deprecated Use {@link #MongoJobRepository(MongoDatabase, String, MongoProperties)} instead.
+     *
+     * @param mongoDatabase the mongo database
+     * @param jobInfoCollectionName the jobinfo collection
+     */
+    @Deprecated
+    public MongoJobRepository(final MongoDatabase mongoDatabase,
+                              final String jobInfoCollectionName) {
+        super();
+        MongoCollection<Document> tmpCollection = mongoDatabase.getCollection(jobInfoCollectionName).withReadPreference(primaryPreferred());
+        this.jobInfoCollection = tmpCollection.withWriteConcern(tmpCollection.getWriteConcern().withWTimeout(mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS));
         this.clock = systemDefaultZone();
     }
 

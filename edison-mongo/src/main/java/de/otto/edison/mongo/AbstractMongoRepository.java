@@ -37,7 +37,7 @@ public abstract class AbstractMongoRepository<K, V> {
     public static final String ETAG = "etag";
 
     private static final boolean DISABLE_PARALLEL_STREAM_PROCESSING = false;
-    private final MongoProperties mongoProperties;
+    protected final MongoProperties mongoProperties;
 
     /**
      * @deprecated Use {@link #AbstractMongoRepository(MongoProperties)} instead.
@@ -189,7 +189,9 @@ public abstract class AbstractMongoRepository<K, V> {
     /**
      * Updates the document if it is already present in the repository.
      *
-     * @param value the new value
+     * @param value    the new value
+     * @param maxTime  max time for the update
+     * @param timeUnit the time unit for the maxTime value
      * @return true, if the document was updated, false otherwise.
      */
     public boolean update(final V value, final long maxTime, final TimeUnit timeUnit) {
@@ -225,8 +227,10 @@ public abstract class AbstractMongoRepository<K, V> {
      * the document is changed.
      * </p>
      *
-     * @param value the new value
-     * @param eTag  the etag used for conditional update
+     * @param value    the new value
+     * @param eTag     the etag used for conditional update
+     * @param maxTime  max time for the update
+     * @param timeUnit the time unit for the maxTime value
      * @return {@link UpdateIfMatchResult}
      */
     public UpdateIfMatchResult updateIfMatch(final V value,
@@ -274,7 +278,9 @@ public abstract class AbstractMongoRepository<K, V> {
     /**
      * Deletes the document identified by key.
      *
-     * @param key the identifier of the deleted document
+     * @param key      the identifier of the deleted document
+     * @param maxTime  max time for the operation
+     * @param timeUnit the time unit for the maxTime value
      */
     public void delete(final K key, final long maxTime, final TimeUnit timeUnit) {
         collectionWithWriteTimeout(maxTime, timeUnit).deleteOne(byId(key));
@@ -289,6 +295,8 @@ public abstract class AbstractMongoRepository<K, V> {
 
     /**
      * Deletes all documents from this repository.
+     * @param maxTime  max time for the operation
+     * @param timeUnit the time unit for the maxTime value
      */
     public void deleteAll(final long maxTime, final TimeUnit timeUnit) {
         collectionWithWriteTimeout(maxTime, timeUnit).deleteMany(matchAll());
@@ -325,8 +333,9 @@ public abstract class AbstractMongoRepository<K, V> {
     /**
      * Returns the key / identifier from the given value.
      * <p>
-     *     The key of a document must never be null.
+     * The key of a document must never be null.
      * </p>
+     *
      * @param value the value
      * @return key
      */
