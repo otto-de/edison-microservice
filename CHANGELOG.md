@@ -4,9 +4,6 @@
 
 **New Features:**
 
-* **[edison-jobs]** When a service is shutting down gracefully, it writes a
-notification into all currently running job logs.
-
 * **[edison-mongo]** Instead of using a socket timeout for all reads and writes,
     you can now use specific timeouts for each operation. Also you can specify a
     `defaultReadTimeout` and a `defaultWriteTimeout`. These will be used for all
@@ -15,7 +12,11 @@ notification into all currently running job logs.
     **Important:** When upgrading to this release, you should remove the `socketTimeout`
     option in your configs or set it to a very high value. It should be higher than 
     any expected long running query or batch write will take. The new default socket
-    timeout is 0, which means that there is no socket timeout.  
+    timeout is 0, which means that there is no socket timeout. This is the default in 
+    the mongo driver. 
+
+* **[edison-jobs]** When a service is shutting down gracefully, it writes a
+    notification into all currently running job logs.
 
 ## 1.1.6
 
