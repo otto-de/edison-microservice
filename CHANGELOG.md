@@ -1,5 +1,12 @@
 # Release Notes
 
+## 1.2.1
+
+**Bugfixes:**
+
+* **[edison-core]** `LdapAuthenticationFilter` only throws a warning when authentication
+    against *all* baseDN's fails. 
+
 ## 1.2.0
 
 **New Features:**
