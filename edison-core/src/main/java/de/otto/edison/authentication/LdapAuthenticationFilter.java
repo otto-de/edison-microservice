@@ -85,9 +85,10 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
                                 : Optional.of(request);
                     }
                 } catch (LDAPBindException e) {
-                    LOG.error("Could not bind to LDAP: " + userDN);
+                    LOG.info(format("LDAPBindException for baseDN %s", baseDN), e);
                 }
             }
+            LOG.warn("Could not bind to LDAP: " + credentials.getUsername());
         }  catch (LDAPException | GeneralSecurityException e) {
             LOG.warn("Authentication error: ", e);
         }
