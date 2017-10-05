@@ -1,8 +1,8 @@
 package de.otto.edison.registry.client;
 
-import com.ning.http.client.AsyncCompletionHandler;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.Response;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.Response;
 import de.otto.edison.annotations.Beta;
 import de.otto.edison.registry.configuration.ServiceRegistryProperties;
 import de.otto.edison.status.configuration.ApplicationInfoProperties;

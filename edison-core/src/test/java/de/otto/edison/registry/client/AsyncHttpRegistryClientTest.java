@@ -1,7 +1,8 @@
 package de.otto.edison.registry.client;
 
-import com.ning.http.client.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClient;
 import de.otto.edison.status.configuration.ApplicationInfoConfiguration;
+import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class AsyncHttpRegistryClientTest {
     public void shouldDoNothingIfNotEnabled() throws Exception {
         // given
         addEnvironment(context, "edison.serviceregistry.enabled=false");
-        context.register(AsyncHttpClient.class);
+        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -48,7 +49,7 @@ public class AsyncHttpRegistryClientTest {
         // given
         addEnvironment(context, "edison.serviceregistry.servers=http://foo");
         addEnvironment(context, "edison.serviceregistry.service=http://test");
-        context.register(AsyncHttpClient.class);
+        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -61,7 +62,7 @@ public class AsyncHttpRegistryClientTest {
         // given
         addEnvironment(context, "edison.serviceregistry.enabled=true");
         addEnvironment(context, "edison.serviceregistry.servers=");
-        context.register(AsyncHttpClient.class);
+        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -76,7 +77,7 @@ public class AsyncHttpRegistryClientTest {
         // given
         addEnvironment(context, "edison.serviceregistry.enabled=true");
         addEnvironment(context, "edison.serviceregistry.service=");
-        context.register(AsyncHttpClient.class);
+        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -92,7 +93,7 @@ public class AsyncHttpRegistryClientTest {
         addEnvironment(context, "edison.serviceregistry.enabled=false");
         addEnvironment(context, "edison.serviceregistry.servers=http://foo");
         addEnvironment(context, "edison.serviceregistry.service=http://test");
-        context.register(AsyncHttpClient.class);
+        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -105,7 +106,7 @@ public class AsyncHttpRegistryClientTest {
     @Test
     public void shouldDoNothingIfNothingConfigured() throws Exception {
         // given
-        context.register(AsyncHttpClient.class);
+        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();

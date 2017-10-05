@@ -1,13 +1,15 @@
 package de.otto.edison.example.configuration;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
 
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.service.JobMutexGroup;
 import de.otto.edison.jobs.service.JobService;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +26,7 @@ public class ExampleJobsConfiguration {
 
     @Bean
     public AsyncHttpClient httpClient() {
-        return new AsyncHttpClient(new AsyncHttpClientConfig.Builder()
-                .build());
+        return new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder().build());
     }
 
     @Bean

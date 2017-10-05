@@ -2,6 +2,15 @@
 
 ## 1.2.1
 
+**Maintenance:**
+
+* **[edison-core][edison-jobs]** Update of AsyncHttpClient from 1.9.x to 2.0.x.
+    To not break existing services when upgrading, it was changed to a `compile` dependency instead of a `compileOnly`
+    dependency.
+    **Important:** Please upgrade or remove the AsyncHttpClient dependency in your project. The group name has also
+    changed from `com.ning` to `org.asynchttpclient`.
+
+
 **Bugfixes:**
 
 * **[edison-core]** `LdapAuthenticationFilter` only throws a warning when authentication

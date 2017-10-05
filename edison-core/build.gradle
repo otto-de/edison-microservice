@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly libraries.async_http_client
+    compile libraries.async_http_client
 
     compile libraries.spring_boot_starter_web
     compile libraries.spring_boot_starter_actuator

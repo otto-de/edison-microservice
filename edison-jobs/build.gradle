@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly libraries.async_http_client
+    compile libraries.async_http_client
 
     compile project(":edison-core")
 
