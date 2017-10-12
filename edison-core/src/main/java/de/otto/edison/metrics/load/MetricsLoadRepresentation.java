@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.otto.edison.annotations.Beta;
 import de.otto.edison.metrics.load.LoadDetector.Status;
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import net.jcip.annotations.Immutable;
 
 @Beta
 @Immutable
