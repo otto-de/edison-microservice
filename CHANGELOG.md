@@ -1,11 +1,16 @@
 # Release Notes
 
-## 1.2.2-SNAPSHOT
+## 1.2.2
 
 **Bugfixes:**
   
 * **[edison-core]** Fix accidential usage of a jdk.nashorn @Immutable annotation, which prevents the usage of edison
                     with Java 9
+                    
+**Maintenance:**
+
+* **[edison-jobs]** Timestamps in JobStatus and JobMessage are truncated to milliseconds. This adds compatibility of
+                    our current persistence with Java 9, which has a new default clock precision of nanoseconds.
 
 ## 1.2.1
 
