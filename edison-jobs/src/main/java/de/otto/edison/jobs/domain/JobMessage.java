@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.domain;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * @author Guido Steinacker
@@ -15,7 +16,8 @@ public final class JobMessage {
     private JobMessage(final Level level, final String message, final OffsetDateTime timestamp) {
         this.level = level;
         this.message = message;
-        this.timestamp = timestamp;
+        //Truncate to milliseconds precision because current persistence implementations only support milliseconds
+        this.timestamp = timestamp != null ? timestamp.truncatedTo(ChronoUnit.MILLIS) : null;
     }
 
     public static JobMessage jobMessage(final Level level, final String message, final OffsetDateTime ts) {

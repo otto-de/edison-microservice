@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,7 +80,7 @@ public class JobsControllerTest {
     public void shouldReturnJobIfJobExists() throws Exception {
         // given
         ZoneId cet = ZoneId.of("CET");
-        OffsetDateTime now = OffsetDateTime.now(cet);
+        OffsetDateTime now = OffsetDateTime.now(cet).truncatedTo(ChronoUnit.MILLIS);
         JobInfo expectedJob = newJobInfo("42", "TEST", fixed(now.toInstant(), cet), "localhost");
         when(jobService.findJob("42")).thenReturn(Optional.of(expectedJob));
         when(managementServerProperties.getContextPath()).thenReturn("/internal");

@@ -4,6 +4,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import static java.time.OffsetDateTime.now;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -59,7 +61,8 @@ public class JobInfo {
     private JobInfo(final String jobType, final String jobId, final Clock clock, final String hostname) {
         this.jobId = jobId;
         this.jobType = jobType;
-        this.started = now(clock);
+        //Truncate to milliseconds precision because current persistence implementations only support milliseconds
+        this.started = now(clock).truncatedTo(ChronoUnit.MILLIS);
         this.clock = clock;
         this.stopped = empty();
         this.status = OK;
@@ -78,9 +81,10 @@ public class JobInfo {
                     Clock clock, final String hostname) {
         this.jobId = jobId;
         this.jobType = jobType;
-        this.started = started;
-        this.lastUpdated = lastUpdated;
-        this.stopped = stopped;
+        //Truncate to milliseconds precision because current persistence implementations only support milliseconds
+        this.started = started != null ? started.truncatedTo(ChronoUnit.MILLIS) : null;
+        this.lastUpdated = lastUpdated != null ? lastUpdated.truncatedTo(ChronoUnit.MILLIS) : null;
+        this.stopped = stopped.map(offsetDateTime -> offsetDateTime.truncatedTo(ChronoUnit.MILLIS));
         this.status = status;
         this.messages = unmodifiableList(messages);
         this.hostname = hostname;

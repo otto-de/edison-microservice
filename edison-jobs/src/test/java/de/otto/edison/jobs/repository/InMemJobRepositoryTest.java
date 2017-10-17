@@ -278,7 +278,7 @@ public class InMemJobRepositoryTest {
         final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO");
         repository.createOrUpdate(foo);
 
-        OffsetDateTime myTestTime = OffsetDateTime.of(1979, 2, 5, 1, 2, 3, 4, ZoneOffset.UTC);
+        OffsetDateTime myTestTime = OffsetDateTime.of(1979, 2, 5, 1, 2, 3, 1_000_000, ZoneOffset.UTC);
 
         //When
         repository.setLastUpdate(foo.getJobId(), myTestTime);
