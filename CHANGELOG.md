@@ -1,5 +1,12 @@
 # Release Notes
 
+## 1.2.2-SNAPSHOT
+
+**Bugfixes:**
+  
+* **[edison-core]** Fix accidential usage of a jdk.nashorn @Immutable annotation, which prevents the usage of edison
+                    with Java 9
+
 ## 1.2.1
 
 **Maintenance:**
