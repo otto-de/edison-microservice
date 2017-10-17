@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
@@ -66,7 +68,14 @@ public class JobsConfiguration {
     @Bean
     @ConditionalOnMissingBean(ScheduledExecutorService.class)
     public ScheduledExecutorService scheduledExecutorService() {
-        return newScheduledThreadPool(jobsProperties.getThreadCount());
+        return newScheduledThreadPool(jobsProperties.getThreadCount(), new ThreadFactory() {
+            private final AtomicInteger num = new AtomicInteger();
+
+            @Override
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "edison-ScheduledExecutorService-" + num.getAndAdd(1));
+            }
+        });
     }
 
     @Bean
