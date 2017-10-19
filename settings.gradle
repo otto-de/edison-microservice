@@ -2,7 +2,6 @@ rootProject.name = 'edison-microservice'
 
 include "edison-testsupport"
 include "edison-mongo"
-include "edison-dynamodb"
 include "edison-jobs"
 include "edison-togglz"
 include "edison-cache"

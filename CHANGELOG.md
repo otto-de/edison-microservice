@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.2.2-SNAPSHOT
+
+**Breaking Changes:**
+
+* **[edison-dynamodb]** __(Beta)__ Moved to edison-aws repository.
+
 ## 1.2.2
 
 **Bugfixes:**
@@ -21,7 +27,6 @@
     dependency.
     **Important:** Please upgrade or remove the AsyncHttpClient dependency in your project. The group name has also
     changed from `com.ning` to `org.asynchttpclient`.
-
 
 **Bugfixes:**
 
