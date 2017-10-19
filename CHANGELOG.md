@@ -1,10 +1,10 @@
 # Release Notes
 
-## 1.2.2-SNAPSHOT
+## 1.2.3-SNAPSHOT
 
 **Breaking Changes:**
 
-* **[edison-dynamodb]** __(Beta)__ Moved to edison-aws repository.
+* **[edison-dynamodb]** __(Beta)__ Moved to [edison-aws](https://github.com/otto-de/edison-aws) repository.
 
 ## 1.2.2
 
