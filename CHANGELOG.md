@@ -5,8 +5,9 @@
 **Breaking Changes:**
 
 * Removed @deprecated stuff:
-  * **[edison-togglz]** LDAP support from edison-togglz is replaced by edison-core
+  * **[edison-cache]** Removed CacheRegistry. Caches can be exposed as Spring Beans instead.
   * **[edison-mongo]** Default constructor from AbstractMongoRepository is replaced with AbstractMongoRepository(MongoProperties)
+  * **[edison-togglz]** LDAP support from edison-togglz is replaced by edison-core
 
 ## 1.2.3
 

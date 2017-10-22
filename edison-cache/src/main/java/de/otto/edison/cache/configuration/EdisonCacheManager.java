@@ -14,7 +14,7 @@ import static com.github.benmanes.caffeine.cache.Caffeine.from;
 
 @Beta
 @SuppressWarnings("deprecation")
-public class EdisonCacheManager implements CacheManager, CacheRegistry {
+public class EdisonCacheManager implements CacheManager {
 
     private ConcurrentMap<String, Cache> caches;
 
@@ -31,16 +31,6 @@ public class EdisonCacheManager implements CacheManager, CacheRegistry {
             caffeineCaches
                     .forEach(cache -> caches.put(cache.getName(), cache));
         }
-    }
-
-    /**
-     * @deprecated will be removed in 2.0.0. You can just expose an instance of CaffeineCache as a Spring Bean instead.
-     */
-    @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Deprecated
-    public void registerCache(CaffeineCacheConfig config, com.github.benmanes.caffeine.cache.Cache cache) {
-        caches.put(config.cacheName, new CaffeineCache(config.cacheName, cache));
     }
 
     @Override
