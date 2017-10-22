@@ -56,13 +56,6 @@ public class MongoProperties {
 
     /**
      * database user password
-     * @deprecated use password instead
-     */
-    @Deprecated
-    private String passwd = "";
-
-    /**
-     * database user password
      */
     private String password = "";
 
@@ -198,26 +191,8 @@ public class MongoProperties {
         this.user = user;
     }
 
-    /**
-     * @return the MongoDB password
-     * @deprecated use #getPassword();
-     */
-    @Deprecated
-    public String getPasswd() {
-        return passwd;
-    }
-
-    /**
-     * @param passwd database user password
-     * @deprecated use #setPassword(String); otherwise password will not be sanitized
-     */
-    @Deprecated
-    public void setPasswd(final String passwd) {
-        this.passwd = passwd;
-    }
-
     public String getPassword() {
-        return password != null && !password.isEmpty() ? password : passwd;
+        return password;
     }
 
     public void setPassword(final String password) {

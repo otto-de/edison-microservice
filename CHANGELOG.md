@@ -8,6 +8,8 @@
   * **[edison-core]** Removed ServiceSpec. Replaced by ServiceDependency.
   * **[edison-cache]** Removed CacheRegistry. Caches can be exposed as Spring Beans instead.
   * **[edison-mongo]** Default constructor from AbstractMongoRepository is replaced with AbstractMongoRepository(MongoProperties)
+  * **[edison-mongo]** Removed property `passwd` from MongoProperties which was replaced with `password` in order to prevent exposure
+  of passwords in /internal/env etc.
   * **[edison-togglz]** LDAP support from edison-togglz is replaced by edison-core
 
 ## 1.2.3
