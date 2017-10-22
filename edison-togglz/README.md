@@ -57,15 +57,15 @@ You can disable the console by setting `edison.togglz.console.enabled=false` in 
 ### LDAP Authentication for Togglz Console
 
 Authentication can be enabled for the console by configuring an LDAP server:
-* `edison.togglz.console.ldap.enabled=true` Enables LDAP authentication. Default value is `false`.
+* `edison.ldap.enabled=true` Enables LDAP authentication. Default value is `false`.
 
 If enabled, the following properties must be provided:
-* `edison.togglz.console.ldap.host=<host>` Host name of the LDAP server.
-* `edison.togglz.console.ldap.base-dn=<base dn>` The base distinguished name (base DN)
-* `edison.togglz.console.ldap.rdn-identifier=<rdn>` The relative DN (RDN)
+* `edison.ldap.host=<host>` Host name of the LDAP server.
+* `edison.ldap.base-dn=<base dn>` The base distinguished name (base DN)
+* `edison.ldap.rdn-identifier=<rdn>` The relative DN (RDN)
 
 The port can be changed, too:
-* `edison.togglz.console.ldap.port=<port>` Port of the LDAP server. Default value is `389`.
+* `edison.ldap.port=<port>` Port of the LDAP server. Default value is `389`.
 
 If this is not sufficient, Spring Security might be an alternative.
 

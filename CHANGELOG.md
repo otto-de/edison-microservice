@@ -1,5 +1,12 @@
 # Release Notes
 
+## 2.0.0-SNAPSHOT
+
+**Breaking Changes:**
+
+* Removed @deprecated stuff:
+  * LDAP support from edison-togglz is replaced by edison-core
+
 ## 1.2.3
 
 **New Features:**

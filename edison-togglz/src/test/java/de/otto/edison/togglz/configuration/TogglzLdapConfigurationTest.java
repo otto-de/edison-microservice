@@ -1,5 +1,6 @@
 package de.otto.edison.togglz.configuration;
 
+import de.otto.edison.authentication.configuration.LdapConfiguration;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
@@ -14,7 +15,7 @@ public class TogglzLdapConfigurationTest {
 
     private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
-    @ImportAutoConfiguration({TogglzLdapConfiguration.class})
+    @ImportAutoConfiguration({LdapConfiguration.class})
     static class EnableAutoConfig {
     }
 
@@ -30,13 +31,13 @@ public class TogglzLdapConfigurationTest {
         this.context.register(EnableAutoConfig.class);
         addEnvironment(this.context,
                 "management.context-path=/internal",
-                "edison.togglz.console.ldap.enabled=true",
-                "edison.togglz.console.ldap.host=localhost",
-                "edison.togglz.console.ldap.base-dn=test-dn",
-                "edison.togglz.console.ldap.rdn-identifier=test-rdn");
+                "edison.ldap.enabled=true",
+                "edison.ldap.host=localhost",
+                "edison.ldap.base-dn=test-dn",
+                "edison.ldap.rdn-identifier=test-rdn");
         this.context.refresh();
 
-        assertThat(this.context.containsBean("togglzAuthenticationFilter"), is(true));
+        assertThat(this.context.containsBean("ldapAuthenticationFilter"), is(true));
     }
 
     @Test
@@ -44,10 +45,10 @@ public class TogglzLdapConfigurationTest {
         this.context.register(EnableAutoConfig.class);
         addEnvironment(this.context,
                 "management.context-path=/internal",
-                "edison.togglz.console.ldap.enabled=false");
+                "edison.ldap.enabled=false");
         this.context.refresh();
 
-        assertThat(this.context.containsBean("togglzAuthenticationFilter"), is(false));
+        assertThat(this.context.containsBean("ldapAuthenticationFilter"), is(false));
     }
 
     @Test(expected = UnsatisfiedDependencyException.class)
@@ -55,7 +56,7 @@ public class TogglzLdapConfigurationTest {
         this.context.register(EnableAutoConfig.class);
         addEnvironment(this.context,
                 "management.context-path=/internal",
-                "edison.togglz.console.ldap.enabled=true");
+                "edison.ldap.enabled=true");
 
         this.context.refresh();
     }

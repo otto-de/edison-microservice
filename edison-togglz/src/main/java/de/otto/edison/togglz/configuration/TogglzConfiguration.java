@@ -1,8 +1,8 @@
 package de.otto.edison.togglz.configuration;
 
+import de.otto.edison.authentication.Credentials;
 import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
-import de.otto.edison.togglz.authentication.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
