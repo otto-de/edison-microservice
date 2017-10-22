@@ -39,16 +39,6 @@ public abstract class AbstractMongoRepository<K, V> {
     private static final boolean DISABLE_PARALLEL_STREAM_PROCESSING = false;
     protected final MongoProperties mongoProperties;
 
-    /**
-     * @deprecated Use {@link #AbstractMongoRepository(MongoProperties)} instead.
-     */
-    @Deprecated
-    public AbstractMongoRepository() {
-        mongoProperties = new MongoProperties();
-        mongoProperties.setDefaultReadTimeout(2000);
-        mongoProperties.setDefaultWriteTimeout(2000);
-    }
-
     public AbstractMongoRepository(final MongoProperties mongoProperties) {
         this.mongoProperties = mongoProperties;
     }

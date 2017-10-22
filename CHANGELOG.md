@@ -5,7 +5,8 @@
 **Breaking Changes:**
 
 * Removed @deprecated stuff:
-  * LDAP support from edison-togglz is replaced by edison-core
+  * **[edison-togglz]** LDAP support from edison-togglz is replaced by edison-core
+  * **[edison-mongo]** Default constructor from AbstractMongoRepository is replaced with AbstractMongoRepository(MongoProperties)
 
 ## 1.2.3
 

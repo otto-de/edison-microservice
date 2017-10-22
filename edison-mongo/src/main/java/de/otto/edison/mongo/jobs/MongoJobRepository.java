@@ -50,21 +50,6 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
         this.clock = systemDefaultZone();
     }
 
-    /**
-     * @deprecated Use {@link #MongoJobRepository(MongoDatabase, String, MongoProperties)} instead.
-     *
-     * @param mongoDatabase the mongo database
-     * @param jobInfoCollectionName the jobinfo collection
-     */
-    @Deprecated
-    public MongoJobRepository(final MongoDatabase mongoDatabase,
-                              final String jobInfoCollectionName) {
-        super();
-        MongoCollection<Document> tmpCollection = mongoDatabase.getCollection(jobInfoCollectionName).withReadPreference(primaryPreferred());
-        this.jobInfoCollection = tmpCollection.withWriteConcern(tmpCollection.getWriteConcern().withWTimeout(mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS));
-        this.clock = systemDefaultZone();
-    }
-
     @Override
     public JobStatus findStatus(final String jobId) {
         return JobStatus.valueOf(collection()
