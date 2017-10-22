@@ -5,6 +5,7 @@
 **Breaking Changes:**
 
 * Removed @deprecated stuff:
+  * **[edison-core]** Removed ServiceSpec. Replaced by ServiceDependency.
   * **[edison-cache]** Removed CacheRegistry. Caches can be exposed as Spring Beans instead.
   * **[edison-mongo]** Default constructor from AbstractMongoRepository is replaced with AbstractMongoRepository(MongoProperties)
   * **[edison-togglz]** LDAP support from edison-togglz is replaced by edison-core
@@ -25,9 +26,6 @@
   
 * **[edison-core]** Fix accidential usage of a jdk.nashorn @Immutable annotation, which prevents the usage of edison
                     with Java 9
-                    
-**Maintenance:**
-
 * **[edison-jobs]** Timestamps in JobStatus and JobMessage are truncated to milliseconds. This adds compatibility of
                     our current persistence with Java 9, which has a new default clock precision of nanoseconds.
 
