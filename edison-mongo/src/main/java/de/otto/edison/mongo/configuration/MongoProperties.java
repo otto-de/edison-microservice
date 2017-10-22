@@ -1,7 +1,6 @@
 package de.otto.edison.mongo.configuration;
 
 import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientOptions.Builder;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import de.otto.edison.status.domain.Datasource;
@@ -83,12 +82,6 @@ public class MongoProperties {
     private int connectTimeout = 5000;
 
     /**
-     * Socket timeout in milliseconds.
-     */
-    @Min(0)
-    private int socketTimeout = 0;
-
-    /**
      * The default timeout in milliseconds to use for reading operations.
      */
     @Min(10)
@@ -99,13 +92,6 @@ public class MongoProperties {
      */
     @Min(10)
     private int defaultWriteTimeout = 2000;
-
-    /**
-     * Optional increased socket timeout for long running database queries (useful in jobs)
-     * Setting this creates a mongoClientWithHighTimeout bean and a mongoDatabaseWithHighTimeout
-     */
-    @Min(10)
-    private int socketTimeoutForHighTimeoutClient = 5*60*1000;
 
     /**
      * Sets the server selection timeout in milliseconds, which defines how long the driver will wait for server selection to
@@ -231,46 +217,6 @@ public class MongoProperties {
         this.connectTimeout = connectTimeout;
     }
 
-    /**
-     * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
-     *
-     * @return the socket timeout in milliseconds
-     */
-    @Deprecated
-    public int getSocketTimeout() {
-        return socketTimeout;
-    }
-
-    /**
-     * @deprecated Use defaultReadTimeout and defaultWriteTimeout instead.
-     *
-     * @param socketTimeout the socket timeout in milliseconds
-     */
-    @Deprecated
-    public void setSocketTimeout(final int socketTimeout) {
-        this.socketTimeout = socketTimeout;
-    }
-
-    /**
-     * @deprecated Use custom timeouts on read and write operations instead.
-     *
-     * @return the socket timeout in milliseconds for the high timeout client
-     */
-    @Deprecated
-    public int getSocketTimeoutForHighTimeoutClient() {
-        return socketTimeoutForHighTimeoutClient;
-    }
-
-    /**
-     * @deprecated Use custom timeouts on read and write operations instead.
-     *
-     * @param socketTimeoutForHighTimeoutClient the socket timeout in milliseconds for the high timeout client
-     */
-    @Deprecated
-    public void setSocketTimeoutForHighTimeoutClient(final int socketTimeoutForHighTimeoutClient) {
-        this.socketTimeoutForHighTimeoutClient = socketTimeoutForHighTimeoutClient;
-    }
-
     public int getServerSelectionTimeout() {
         return serverSelectionTimeout;
     }
@@ -288,23 +234,11 @@ public class MongoProperties {
     }
 
     public MongoClientOptions toMongoClientOptions(final CodecRegistry codecRegistry) {
-        return getMongoClientOptionsBuilder(codecRegistry)
-                .build();
-    }
-
-    public MongoClientOptions toMongoClientOptionsWithHighTimeout(final CodecRegistry codecRegistry) {
-        return getMongoClientOptionsBuilder(codecRegistry)
-                .socketTimeout(socketTimeoutForHighTimeoutClient)
-                .build();
-    }
-
-    private Builder getMongoClientOptionsBuilder(final CodecRegistry codecRegistry) {
         return builder()
                 .sslEnabled(sslEnabled)
                 .codecRegistry(codecRegistry)
                 .readPreference(ReadPreference.valueOf(readPreference))
                 .connectTimeout(connectTimeout)
-                .socketTimeout(socketTimeout)
                 .serverSelectionTimeout(serverSelectionTimeout)
                 .cursorFinalizerEnabled(true)
                 .maxWaitTime(maxWaitTime)
@@ -312,7 +246,8 @@ public class MongoProperties {
                 .threadsAllowedToBlockForConnectionMultiplier(connectionpool.getBlockedConnectionMultiplier())
                 .maxConnectionIdleTime(connectionpool.getMaxIdleTime())
                 .minConnectionsPerHost(connectionpool.getMinSize())
-                .connectionsPerHost(connectionpool.getMaxSize());
+                .connectionsPerHost(connectionpool.getMaxSize())
+                .build();
     }
 
     private ServerAddress toServerAddress(final String server) {

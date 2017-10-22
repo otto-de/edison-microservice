@@ -67,17 +67,4 @@ public class MongoConfiguration {
         return mongoClient.getDatabase(mongoProperties.getDb());
     }
 
-    @Bean
-    @ConditionalOnProperty(prefix = "edison.mongo", name = "socket-timeout-for-high-timeout-client")
-    public MongoClient mongoClientWithHighSocketTimeout(final MongoProperties mongoProperties) {
-        LOG.info("Creating MongoClient with high socket timeout");
-        return new MongoClient(mongoProperties.getServers(), getMongoCredentials(mongoProperties),
-                mongoProperties.toMongoClientOptionsWithHighTimeout(codecRegistry()));
-    }
-
-    @Bean
-    @ConditionalOnProperty(prefix = "edison.mongo", name = "socket-timeout-for-high-timeout-client")
-    public MongoDatabase mongoDatabaseWithHighSocketTimeout(final MongoClient mongoClientWithHighSocketTimeout, final MongoProperties mongoProperties) {
-        return mongoClientWithHighSocketTimeout.getDatabase(mongoProperties.getDb());
-    }
 }
