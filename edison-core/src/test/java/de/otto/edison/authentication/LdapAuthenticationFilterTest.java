@@ -2,6 +2,7 @@ package de.otto.edison.authentication;
 
 import com.unboundid.ldap.sdk.*;
 import de.otto.edison.authentication.configuration.LdapProperties;
+import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.Base64Utils;

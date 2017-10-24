@@ -1,4 +1,4 @@
-package de.otto.edison.authentication;
+package de.otto.edison.authentication.connection;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
@@ -11,12 +11,12 @@ import java.security.GeneralSecurityException;
 /**
  * A Factory used to create LDAPConnections usering LdapProperties.
  */
-public class LdapConnectionFactory {
+public class StartTlsLdapConnectionFactory implements LdapConnectionFactory {
 
     private static final SSLUtil SSL_UTIL = new SSLUtil();
     private final LdapProperties ldapProperties;
 
-    public LdapConnectionFactory(final LdapProperties ldapProperties) {
+    public StartTlsLdapConnectionFactory(final LdapProperties ldapProperties) {
         this.ldapProperties = ldapProperties;
     }
 

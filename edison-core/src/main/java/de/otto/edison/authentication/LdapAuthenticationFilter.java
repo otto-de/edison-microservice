@@ -2,6 +2,7 @@ package de.otto.edison.authentication;
 
 import com.unboundid.ldap.sdk.*;
 import de.otto.edison.authentication.configuration.LdapProperties;
+import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -30,14 +31,14 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
     private static Logger LOG = LoggerFactory.getLogger(LdapAuthenticationFilter.class);
 
     private final LdapProperties ldapProperties;
-    private final LdapConnectionFactory connectionFactory;
+    private final LdapConnectionFactory ldapConnectionFactory;
 
-    public LdapAuthenticationFilter(final LdapProperties ldapProperties, final LdapConnectionFactory connectionFactory) {
+    public LdapAuthenticationFilter(final LdapProperties ldapProperties, final LdapConnectionFactory ldapConnectionFactory) {
         if (!ldapProperties.isValid()) {
             throw new IllegalStateException("Invalid LdapProperties");
         }
         this.ldapProperties = ldapProperties;
-        this.connectionFactory = connectionFactory;
+        this.ldapConnectionFactory = ldapConnectionFactory;
     }
 
     @Override
@@ -66,8 +67,8 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private Optional<HttpServletRequest> tryToGetAuthenticatedRequest(HttpServletRequest request, Credentials credentials) {
-        try (final LDAPConnection ldap = connectionFactory.buildLdapConnection()) {
+    private Optional<HttpServletRequest> tryToGetAuthenticatedRequest(final HttpServletRequest request, final Credentials credentials) {
+        try (final LDAPConnection ldap = ldapConnectionFactory.buildLdapConnection()) {
 
             for (String baseDN : ldapProperties.getBaseDn()) {
                 final String userDN = userDnFrom(credentials, baseDN);
@@ -82,7 +83,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
             LOG.warn("Could not bind to LDAP: {}", credentials.getUsername());
-        }  catch (LDAPException | GeneralSecurityException e) {
+        } catch (LDAPException | GeneralSecurityException e) {
             LOG.warn("Authentication error: ", e);
         }
         return Optional.empty();
