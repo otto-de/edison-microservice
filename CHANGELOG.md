@@ -2,6 +2,10 @@
 
 ## 1.2.3-SNAPSHOT
 
+**New Features:**
+
+* **[edison-core]** Add support for ldaps with SSLLdapConnectionFactory
+
 **Breaking Changes:**
 
 * **[edison-dynamodb]** __(Beta)__ Moved to [edison-aws](https://github.com/otto-de/edison-aws) repository.
