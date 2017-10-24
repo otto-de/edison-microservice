@@ -66,6 +66,7 @@ public class LdapProperties {
     /**
      * List of paths that should be whitelisted from LDAP authentication (sub-paths will also be whitelisted)
      */
+    // TODO remove default internal/health
     private List<String> whitelistedPaths = Collections.singletonList("/internal/health");
 
     /**

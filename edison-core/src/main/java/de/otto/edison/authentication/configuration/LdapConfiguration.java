@@ -1,7 +1,7 @@
 package de.otto.edison.authentication.configuration;
 
 import de.otto.edison.authentication.LdapAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Value;
+import de.otto.edison.authentication.LdapConnectionFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +31,7 @@ public class LdapConfiguration {
     @Bean
     public FilterRegistrationBean ldapAuthenticationFilter(final LdapProperties ldapProperties) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
-        filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties));
+        filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties, new LdapConnectionFactory(ldapProperties)));
         filterRegistration.addUrlPatterns(String.format("%s/*", ldapProperties.getPrefix()));
         return filterRegistration;
     }

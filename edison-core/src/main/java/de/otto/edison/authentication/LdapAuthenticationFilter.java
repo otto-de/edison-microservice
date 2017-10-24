@@ -32,14 +32,6 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
     private final LdapProperties ldapProperties;
     private final LdapConnectionFactory connectionFactory;
 
-    public LdapAuthenticationFilter(final LdapProperties ldapProperties) {
-        if (!ldapProperties.isValid()) {
-            throw new IllegalStateException("Invalid LdapProperties");
-        }
-        this.ldapProperties = ldapProperties;
-        this.connectionFactory = new LdapConnectionFactory(ldapProperties);
-    }
-
     public LdapAuthenticationFilter(final LdapProperties ldapProperties, final LdapConnectionFactory connectionFactory) {
         if (!ldapProperties.isValid()) {
             throw new IllegalStateException("Invalid LdapProperties");
@@ -51,6 +43,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(final HttpServletRequest request) throws ServletException {
         final String servletPath = request.getServletPath();
+        // TODO remove INTERNAL_JS_PATH and add to whitelist
         return servletPath.startsWith(INTERNAL_JS_PATH) || ldapProperties.getWhitelistedPaths()
                 .stream()
                 .anyMatch(servletPath::startsWith);
@@ -62,7 +55,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
                                     final FilterChain filterChain) throws ServletException, IOException {
         Optional<Credentials> optionalCredentials = readFrom(request);
         if (optionalCredentials.isPresent()) {
-            Optional<HttpServletRequest> authRequest = tryToGetAuthenticatedRequest(request, optionalCredentials.get());
+            final Optional<HttpServletRequest> authRequest = tryToGetAuthenticatedRequest(request, optionalCredentials.get());
             if (authRequest.isPresent()) {
                 filterChain.doFilter(authRequest.get(), response);
             } else {

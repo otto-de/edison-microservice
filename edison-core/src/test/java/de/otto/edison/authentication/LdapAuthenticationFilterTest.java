@@ -13,8 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import static com.unboundid.ldap.sdk.ResultCode.AUTHORIZATION_DENIED;
-import static com.unboundid.ldap.sdk.ResultCode.SUCCESS;
+import static com.unboundid.ldap.sdk.ResultCode.*;
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -33,26 +32,41 @@ public class LdapAuthenticationFilterTest {
 
     private LdapAuthenticationFilter testee;
     private HttpServletResponse response;
+    private LdapConnectionFactory ldapConnectionFactory;
 
     @Before
     public void setUp() throws Exception {
-        testee = new LdapAuthenticationFilter(ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal", WHITELISTED_PATH));
+        ldapConnectionFactory = mock(LdapConnectionFactory.class);
         response = mock(HttpServletResponse.class);
+
+        testee = new LdapAuthenticationFilter(
+                ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal", WHITELISTED_PATH),
+                ldapConnectionFactory
+        );
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailToStartIfHostIsNotConfigured() throws Exception {
-        new LdapAuthenticationFilter(ldapProperties("", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal"));
+        new LdapAuthenticationFilter(
+                ldapProperties("", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal"),
+                ldapConnectionFactory
+        );
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailToStartIfBaseDnIsNotConfigured() throws Exception {
-        new LdapAuthenticationFilter(ldapProperties("someHost", 389, singletonList(""), null, "someRdnIdentifier", "/internal"));
+        new LdapAuthenticationFilter(
+                ldapProperties("someHost", 389, singletonList(""), null, "someRdnIdentifier", "/internal"),
+                ldapConnectionFactory
+        );
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailToStartIfRdnIdentifierIsNotConfigured() throws Exception {
-        new LdapAuthenticationFilter(ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "", "/internal"));
+        new LdapAuthenticationFilter(
+                ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "", "/internal"),
+                ldapConnectionFactory
+        );
     }
 
     @Test
@@ -63,6 +77,9 @@ public class LdapAuthenticationFilterTest {
 
     @Test
     public void shouldBeUnauthenticatedIfLdapConnectionFails() throws Exception {
+        LDAPConnection ldapConnection = someLdapConnectionReturning(SERVER_DOWN);
+        when(ldapConnectionFactory.buildLdapConnection()).thenReturn(ldapConnection);
+
         testee.doFilter(requestWithAuthorizationHeader(), response, mock(FilterChain.class));
         assertUnauthorized();
     }
