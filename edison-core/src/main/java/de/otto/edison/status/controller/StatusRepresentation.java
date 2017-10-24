@@ -31,6 +31,7 @@ public class StatusRepresentation {
     public TeamInfo team;
     public Criticality criticality;
     public List<DependencyRepresentation> dependencies;
+    public Map<String,?> properties;
 
     private StatusRepresentation(final ApplicationStatus applicationStatus,
                                  final Criticality criticality,
@@ -47,6 +48,7 @@ public class StatusRepresentation {
                         .map(DependencyRepresentation::new)
                         .collect(toList())
                 : emptyList();
+        this.properties = applicationStatus.statusPropertiesInfo.getProperties();
     }
 
     public static StatusRepresentation statusRepresentationOf(final ApplicationStatus status) {
@@ -141,7 +143,6 @@ public class StatusRepresentation {
                 }});
             }
             return map;
-
         }
 
         private List<Map<String, String>> toLinks(final List<Link> links) {

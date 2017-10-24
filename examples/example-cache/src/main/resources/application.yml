@@ -26,3 +26,7 @@ edison:
             business-contact: edison-team@example.org
             name: Edison Team
             technical-contact: edison-dev@example.org
+        properties:
+            key1: value1
+            key2: value2
+
