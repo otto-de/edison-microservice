@@ -1,6 +1,6 @@
 # Release Notes
 
-## 1.2.3-SNAPSHOT
+## 1.2.3
 
 **New Features:**
 
