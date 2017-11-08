@@ -3,7 +3,8 @@ package de.otto.edison.status.controller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,8 +33,6 @@ public class ExternalDependenciesTest {
 
     @MockBean
     private ExternalDependencies externalDependencies;
-    @MockBean
-    private ManagementServerProperties managementServerProperties;
 
     @Autowired
     private MockMvc mockMvc;
@@ -131,7 +130,7 @@ public class ExternalDependenciesTest {
                 );
     }
 
-    @SpringBootApplication(scanBasePackages = "de.otto.edison.dependencies")
+    @SpringBootApplication(scanBasePackages = "de.otto.edison.status")
     public static class TestServer {
 
         public static void main(String[] args) {

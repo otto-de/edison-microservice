@@ -28,7 +28,7 @@ public class StatusController {
     private Criticality criticality;
 
     @RequestMapping(
-            value = "${management.context-path}/status",
+            value = "${management.endpoints.web.base-path}/status",
             produces = {
                     "application/hal+json",
                     "application/vnd.otto.monitoring.status+json",
@@ -43,7 +43,7 @@ public class StatusController {
     }
 
     @RequestMapping(
-            value = "${management.context-path}/status",
+            value = "${management.endpoints.web.base-path}/status",
             produces = "text/html",
             method = GET
     )

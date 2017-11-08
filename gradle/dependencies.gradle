@@ -4,8 +4,8 @@
  */
 ext {
     versions = [
-            spring_boot                      : '1.5.8.RELEASE',
-            spring                           : '4.3.8.RELEASE',
+            spring_boot                      : '2.0.0.M6',
+            spring                           : '${spring.version}',
             async_http_client                : '2.0.37',
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.3',
@@ -39,6 +39,7 @@ ext {
             spring_boot_autoconfigure          : "org.springframework.boot:spring-boot-autoconfigure:${versions.spring_boot}",
             spring_boot_devtools               : "org.springframework.boot:spring-boot-devtools:${versions.spring_boot}",
             spring_boot_starter_web            : "org.springframework.boot:spring-boot-starter-web:${versions.spring_boot}",
+            spring_boot_starter_cache          : "org.springframework.boot:spring-boot-starter-cache:${versions.spring_boot}",
             spring_boot_starter_actuator       : "org.springframework.boot:spring-boot-starter-actuator:${versions.spring_boot}",
             spring_boot_starter_thymeleaf      : "org.springframework.boot:spring-boot-starter-thymeleaf:${versions.spring_boot}",
             async_http_client                  : "org.asynchttpclient:async-http-client:${versions.async_http_client}",

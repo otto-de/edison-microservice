@@ -1,7 +1,8 @@
 package de.otto.edison.status.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,16 +10,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @ControllerAdvice
 public class GlobalModelAttributes {
 
-    ManagementServerProperties managementServerProperties;
+    WebEndpointProperties webEndpointProperties;
 
     @Autowired
-    public GlobalModelAttributes(ManagementServerProperties managementServerProperties) {
-        this.managementServerProperties = managementServerProperties;
+    public GlobalModelAttributes(WebEndpointProperties  webEndpointProperties) {
+        this.webEndpointProperties = webEndpointProperties;
     }
 
     @ModelAttribute
     public void addAttributes(Model model) {
-        model.addAttribute("managementContextPath", managementServerProperties.getContextPath());
+        model.addAttribute("managementContextPath", webEndpointProperties.getBasePath());
     }
 
 }

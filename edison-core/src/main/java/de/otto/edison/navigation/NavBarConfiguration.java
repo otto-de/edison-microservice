@@ -1,6 +1,7 @@
 package de.otto.edison.navigation;
 
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ import static java.util.Arrays.asList;
  *    {@literal @}PostConstruct
  *     public void postConstruct() {
  *         rightNavBar.register(
- *                 navBarItem(bottom(), "Cache Statistics", "/internal/cacheinfos")
+ *                 navBarItem(bottom(), "My Page", "/my/page")
  *         );
  *     }
  * </code></pre>
@@ -31,7 +32,7 @@ import static java.util.Arrays.asList;
  * @since 1.0.0
  */
 @Configuration
-@EnableConfigurationProperties(ManagementServerProperties.class)
+@EnableConfigurationProperties(WebEndpointProperties.class)
 public class NavBarConfiguration {
 
     @Bean
@@ -40,9 +41,9 @@ public class NavBarConfiguration {
     }
 
     @Bean
-    public NavBar rightNavBar(final ManagementServerProperties managementServerProperties) {
+    public NavBar rightNavBar(final WebEndpointProperties webEndpointProperties) {
         return navBar(asList(
-                navBarItem(top(), "Status", managementServerProperties.getContextPath() + "/status")
+                navBarItem(top(), "Status", webEndpointProperties.getBasePath() + "/status")
         ));
     }
 }

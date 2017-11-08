@@ -2,9 +2,11 @@ package de.otto.edison.logging.ui;
 
 import de.otto.edison.navigation.NavBar;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
-import org.springframework.boot.actuate.endpoint.LoggersEndpoint;
-import org.springframework.boot.actuate.endpoint.LoggersEndpoint.LoggerLevels;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
+import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
+import org.springframework.boot.actuate.logging.LoggersEndpoint;
+import org.springframework.boot.actuate.logging.LoggersEndpoint.LoggerLevels;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpEntity;
@@ -19,7 +21,6 @@ import java.util.*;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static de.otto.edison.util.UrlHelper.baseUriOf;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.boot.actuate.endpoint.mvc.ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE;
 import static org.springframework.boot.logging.LogLevel.valueOf;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.http.ResponseEntity.notFound;
@@ -28,7 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 
 /**
- * Replacement for {@link org.springframework.boot.actuate.endpoint.mvc.LoggersMvcEndpoint} with additional
+ * Replacement for {@link org.springframework.boot.actuate.logging.LoggersEndpoint} with additional
  * HTML UI to configure the log levels of the microservice.
  *
  * @since 1.1.0
@@ -38,19 +39,19 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class LoggersHtmlEndpoint {
 
     private final LoggersEndpoint loggersEndpoint;
-    private final ManagementServerProperties managementServerProperties;
+    private final WebEndpointProperties webEndpointProperties;
 
     @Autowired
     public LoggersHtmlEndpoint(final LoggersEndpoint loggersEndpoint,
                                final NavBar rightNavBar,
-                               final ManagementServerProperties managementServerProperties) {
+                               final WebEndpointProperties  webEndpointProperties) {
         this.loggersEndpoint = loggersEndpoint;
-        this.managementServerProperties = managementServerProperties;
-        rightNavBar.register(navBarItem(1, "Loggers", String.format("%s/loggers", managementServerProperties.getContextPath())));
+        this.webEndpointProperties = webEndpointProperties;
+        rightNavBar.register(navBarItem(1, "Loggers", String.format("%s/loggers", webEndpointProperties.getBasePath())));
     }
 
     @RequestMapping(
-            value = "${management.context-path}/loggers",
+            value = "${management.endpoints.web.base-path}/loggers",
             produces = {
                     TEXT_HTML_VALUE,
                     ALL_VALUE},
@@ -63,31 +64,31 @@ public class LoggersHtmlEndpoint {
     }
 
     @RequestMapping(
-            value = "${management.context-path}/loggers",
+            value = "${management.endpoints.web.base-path}/loggers",
             produces = {
-                    APPLICATION_ACTUATOR_V1_JSON_VALUE,
+                    ActuatorMediaType.V2_JSON,
                     APPLICATION_JSON_VALUE},
             method = GET)
     @ResponseBody
     public Object get() {
-        final Map<String, Object> levels = loggersEndpoint.invoke();
+        final Map<String, Object> levels = loggersEndpoint.loggers();
         return (levels == null ? notFound().build() : levels);
     }
 
     @RequestMapping(
-            value = "${management.context-path}/loggers/{name:.*}",
+            value = "${management.endpoints.web.base-path}/loggers/{name:.*}",
             produces = {
-                    APPLICATION_ACTUATOR_V1_JSON_VALUE,
+                    ActuatorMediaType.V2_JSON,
                     APPLICATION_JSON_VALUE},
             method = GET)
     @ResponseBody
     public Object get(@PathVariable String name) {
-        final LoggerLevels levels = loggersEndpoint.invoke(name);
+        final LoggerLevels levels = loggersEndpoint.loggerLevels(name);
         return (levels == null ? notFound().build() : levels);
     }
 
     @RequestMapping(
-            value = "${management.context-path}/loggers",
+            value = "${management.endpoints.web.base-path}/loggers",
             consumes = APPLICATION_FORM_URLENCODED_VALUE,
             produces = TEXT_HTML_VALUE,
             method = POST)
@@ -95,17 +96,17 @@ public class LoggersHtmlEndpoint {
                              @ModelAttribute("level") String level,
                              HttpServletRequest httpServletRequest) {
         final LogLevel logLevel = level == null ? null : valueOf(level.toUpperCase());
-        loggersEndpoint.setLogLevel(name, logLevel);
-        return new RedirectView(String.format("%s%s/loggers", baseUriOf(httpServletRequest), managementServerProperties.getContextPath()));
+        loggersEndpoint.configureLogLevel(name, logLevel);
+        return new RedirectView(String.format("%s%s/loggers", baseUriOf(httpServletRequest), webEndpointProperties.getBasePath()));
     }
 
     @RequestMapping(
-            value = "${management.context-path}/loggers/{name:.*}",
+            value = "${management.endpoints.web.base-path}/loggers/{name:.*}",
             consumes = {
-                    APPLICATION_ACTUATOR_V1_JSON_VALUE,
+                    ActuatorMediaType.V2_JSON,
                     APPLICATION_JSON_VALUE},
             produces = {
-                    APPLICATION_ACTUATOR_V1_JSON_VALUE,
+                    ActuatorMediaType.V2_JSON,
                     APPLICATION_JSON_VALUE},
             method = POST)
     @ResponseBody
@@ -113,13 +114,13 @@ public class LoggersHtmlEndpoint {
                        @RequestBody Map<String, String> configuration) {
         final String level = configuration.get("configuredLevel");
         final LogLevel logLevel = level == null ? null : LogLevel.valueOf(level.toUpperCase());
-        loggersEndpoint.setLogLevel(name, logLevel);
+        loggersEndpoint.configureLogLevel(name, logLevel);
         return HttpEntity.EMPTY;
     }
 
     private List<Map<String,?>> getLoggers() {
         @SuppressWarnings({"unchecked", "raw"})
-        final Map<String,?> loggers = (Map) loggersEndpoint.invoke().get("loggers");
+        final Map<String,?> loggers = (Map) loggersEndpoint.loggers().get("loggers");
         return loggers
                 .keySet()
                 .stream()

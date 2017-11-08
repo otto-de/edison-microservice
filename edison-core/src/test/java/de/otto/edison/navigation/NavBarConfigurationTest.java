@@ -2,8 +2,6 @@ package de.otto.edison.navigation;
 
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
-import org.springframework.boot.test.util.EnvironmentTestUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static de.otto.edison.navigation.NavBarItem.top;
@@ -25,7 +23,7 @@ public class NavBarConfigurationTest {
 
     @Test
     public void shouldHaveRightNavBar() {
-        addEnvironment(context, "management.context-path=/internal");
+        addEnvironment(context, "management.endpoints.web.base-path=/internal");
         context.register(NavBarConfiguration.class);
         context.refresh();
 

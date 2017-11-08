@@ -72,7 +72,7 @@ feature toggles.
 
 ## Setup
 
-Make sure you have Java 1.8 and gradle 3.x installed on your computer.
+Make sure you have Java 1.8 or later and gradle 4.x installed on your computer.
 
 ### Testing
 

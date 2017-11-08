@@ -3,9 +3,9 @@ package de.otto.edison.example;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,13 +27,6 @@ public class ExampleMetricsSmokeTest {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/", String.class);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody()).startsWith("<html");
-    }
-
-    @Test
-    public void shouldRenderCacheStatisticsPage() {
-        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/cacheinfos", String.class);
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
-        assertThat(response.getBody()).contains("\"name\" : \"Hello Cache\"");
     }
 
     @Test

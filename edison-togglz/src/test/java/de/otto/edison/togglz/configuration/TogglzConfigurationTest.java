@@ -23,7 +23,7 @@ public class TogglzConfigurationTest {
     public void shouldRegisterTogglzConsoleServlet() {
         this.context.register(TogglzConfiguration.class);
         this.context.register(InMemoryFeatureStateRepositoryConfiguration.class);
-        addEnvironment(this.context, "management.context-path=/internal");
+        addEnvironment(this.context, "management.endpoints.web.base-path=/internal");
         this.context.refresh();
 
         assertThat(this.context.containsBean("togglzFilter"), is(true));

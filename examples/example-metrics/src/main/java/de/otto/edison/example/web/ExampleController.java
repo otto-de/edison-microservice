@@ -32,7 +32,7 @@ public class ExampleController {
     public ModelAndView sayHelloAsHtml() {
         final String name = service.getName();
         return new ModelAndView("example") {{
-            addObject("hello", service.getMessage(name));
+            addObject("hello", "world");
         }};
     }
 

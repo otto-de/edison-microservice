@@ -7,7 +7,6 @@ import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -50,7 +49,6 @@ public class JobStatusCalculatorTest {
     private JobStatusCalculator warningOnLastJobFailed;
     private JobStatusCalculator errorOnLastJobFailed;
     private JobStatusCalculator errorOnLastTwoJobsFailed;
-    private ManagementServerProperties managementServerProperties;
 
     @Before
     public void setUp() throws Exception {

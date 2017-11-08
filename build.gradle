@@ -4,6 +4,8 @@ buildscript {
     repositories {
         maven { url 'http://repo.spring.io/libs-snapshot' }
         maven { url 'http://repo.spring.io/plugins-release' }
+        // TODO: remove this after spring boot 2.0.0 GA
+        maven { url "https://repo.spring.io/milestone" }
         mavenLocal()
     }
 
@@ -37,7 +39,7 @@ subprojects {
     // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-    version = '1.2.3'
+    version = '2.0.0-m1-SNAPSHOT'
     group = 'de.otto.edison'
 
     repositories {
@@ -45,6 +47,8 @@ subprojects {
         mavenLocal()
         maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        // TODO: remove this after spring boot 2.0.0 GA
+        maven { url "https://repo.spring.io/milestone" }
     }
 
     // Override some Spring Boot default versions

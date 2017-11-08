@@ -30,7 +30,7 @@ class MyClass {
     
     @PostConstruct
     public void postConstruct() {
-        mainNavBar.register(navBarItem(bottom(), "Cache Statistics", "/internal/cacheinfos"));
+        mainNavBar.register(navBarItem(bottom(), "My Page", "/my/page"));
     }
 }
 ```

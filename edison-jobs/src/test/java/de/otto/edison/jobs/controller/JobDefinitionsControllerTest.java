@@ -7,7 +7,7 @@ import de.otto.edison.navigation.NavBar;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -25,10 +25,8 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.springframework.boot.test.util.EnvironmentTestUtils.addEnvironment;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +36,7 @@ public class JobDefinitionsControllerTest {
     private JobDefinitionsController controller;
 
     @Mock
-    private ManagementServerProperties managementServerProperties;
+    private WebEndpointProperties webEndpointProperties;
 
     @Mock
     private NavBar navBar;
@@ -56,10 +54,10 @@ public class JobDefinitionsControllerTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        when(managementServerProperties.getContextPath()).thenReturn(MANAGEMENT_CONTEXT);
-        controller = new JobDefinitionsController(jobDefinitionService, jobMetaService, navBar, managementServerProperties);
+        when(webEndpointProperties.getBasePath()).thenReturn(MANAGEMENT_CONTEXT);
+        controller = new JobDefinitionsController(jobDefinitionService, jobMetaService, navBar, webEndpointProperties);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .addPlaceholderValue("management.context-path", MANAGEMENT_CONTEXT)
+                .addPlaceholderValue("management.endpoints.web.base-path", MANAGEMENT_CONTEXT)
                 .build();
     }
 

@@ -30,7 +30,7 @@ public class TogglzLdapConfigurationTest {
     public void shouldRegisterLdapFilter() {
         this.context.register(EnableAutoConfig.class);
         addEnvironment(this.context,
-                "management.context-path=/internal",
+                "management.endpoints.web.base-path=/internal",
                 "edison.ldap.enabled=true",
                 "edison.ldap.host=localhost",
                 "edison.ldap.base-dn=test-dn",
@@ -44,7 +44,7 @@ public class TogglzLdapConfigurationTest {
     public void shouldNotRegisterLdapFilterIfDisabled() {
         this.context.register(EnableAutoConfig.class);
         addEnvironment(this.context,
-                "management.context-path=/internal",
+                "management.endpoints.web.base-path=/internal",
                 "edison.ldap.enabled=false");
         this.context.refresh();
 
@@ -55,7 +55,7 @@ public class TogglzLdapConfigurationTest {
     public void shouldValidateProperties() {
         this.context.register(EnableAutoConfig.class);
         addEnvironment(this.context,
-                "management.context-path=/internal",
+                "management.endpoints.web.base-path=/internal",
                 "edison.ldap.enabled=true");
 
         this.context.refresh();

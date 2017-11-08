@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -34,8 +34,9 @@ import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.boot.test.util.EnvironmentTestUtils.addEnvironment;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class JobsControllerTest {
 
@@ -49,7 +50,7 @@ public class JobsControllerTest {
     private NavBar navBar;
 
     @Mock
-    private ManagementServerProperties managementServerProperties;
+    private WebEndpointProperties webEndpointProperties;
 
     private MockMvc mockMvc;
     private JobsController jobsController;
@@ -57,10 +58,10 @@ public class JobsControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        jobsController = new JobsController(jobService, jobMetaService, navBar, managementServerProperties);
+        jobsController = new JobsController(jobService, jobMetaService, navBar, webEndpointProperties);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(jobsController)
-                .addPlaceholderValue("management.context-path", "/internal")
+                .addPlaceholderValue("management.endpoints.web.base-path", "/internal")
                 .defaultRequest(MockMvcRequestBuilders.get("/").contextPath("/some-microservice"))
                 .build();
     }
@@ -83,7 +84,7 @@ public class JobsControllerTest {
         OffsetDateTime now = OffsetDateTime.now(cet).truncatedTo(ChronoUnit.MILLIS);
         JobInfo expectedJob = newJobInfo("42", "TEST", fixed(now.toInstant(), cet), "localhost");
         when(jobService.findJob("42")).thenReturn(Optional.of(expectedJob));
-        when(managementServerProperties.getContextPath()).thenReturn("/internal");
+        when(webEndpointProperties.getBasePath()).thenReturn("/internal");
 
         String nowAsString = ISO_OFFSET_DATE_TIME.format(now);
         mockMvc.perform(MockMvcRequestBuilders
@@ -177,7 +178,7 @@ public class JobsControllerTest {
     @Test
     public void shouldTriggerJobAndReturnItsURL() throws Exception {
         when(jobService.startAsyncJob("someJobType")).thenReturn(Optional.of("theJobId"));
-        when(managementServerProperties.getContextPath()).thenReturn("/internal");
+        when(webEndpointProperties.getBasePath()).thenReturn("/internal");
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/some-microservice/internal/jobs/someJobType")
@@ -190,7 +191,7 @@ public class JobsControllerTest {
 
     @Test
     public void shouldDisableJob() throws Exception {
-        when(managementServerProperties.getContextPath()).thenReturn("/internal");
+        when(webEndpointProperties.getBasePath()).thenReturn("/internal");
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/some-microservice/internal/jobs/someJobType/disable"))

@@ -11,9 +11,21 @@ server:
     port: 8080
 
 management:
-    context-path: /internal
-    security:
-        # Disable security, so we can see /internal/info etc
+    endpoints:
+        web:
+            base-path: /internal
+endpoints:
+    health:
+        enabled: true
+    env:
+        enabled: true
+    loggers:
+        enabled: true
+    metrics:
+        enabled: true
+    trace:
+        enabled: true
+    status:
         enabled: false
 
 edison:

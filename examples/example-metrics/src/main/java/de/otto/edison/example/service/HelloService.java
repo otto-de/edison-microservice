@@ -12,12 +12,11 @@ import static java.time.format.DateTimeFormatter.ofLocalizedTime;
 import static java.time.format.FormatStyle.SHORT;
 
 /**
- * Example service that is using caches configured in {@link de.otto.edison.example.configuration.ExampleCacheConfiguration}.
+ * Example service that is using caches configured using annotations
  * Beside of metrics exposed by the configured caches, this service is also using @Gauge and @Counted annotations
  * to expose some service-specific metrics.
  *
- * You can see these metrics by calling /example/internal/metrics. Cache metrics are also available as HTML under
- * /example/internal/cacheinfos.
+ * You can see these metrics by calling /example/internal/metrics.
  *
  * @author Guido Steinacker
  * @since 06.03.15
@@ -26,34 +25,7 @@ import static java.time.format.FormatStyle.SHORT;
 public class HelloService {
     private static final Random random = new Random(42);
 
-    /**
-     * A method that is annotated with @Gauge
-     *
-     * @return some random value.
-     */
-    @Gauge(name = "HelloService.testGauge", absolute = true)
-    public int testGauge() {
-        return random.nextInt(42);
-    }
-
-    /**
-     * A @Cacheable method that is returning a "Hello World"-like text
-     *
-     * The @Cacheable annotation is referring to the cache specification provided by
-     * {@link de.otto.edison.example.configuration.ExampleCacheConfiguration} by name
-     *
-     * @param name some name
-     * @return some message containing the name
-     */
-    @Cacheable("Hello Cache")
-    public String getMessage(final String name) {
-        try {
-            Thread.sleep(10 * random.nextInt(100));
-        } catch (InterruptedException e) {
-            /* ignore */
-        }
-        return "Hello " + name;
-    }
+    // TODO: migrate this to micrometer!
 
     /**
      * A @Cacheable method that is providing some random name.

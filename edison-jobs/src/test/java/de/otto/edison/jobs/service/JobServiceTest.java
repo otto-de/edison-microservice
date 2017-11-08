@@ -8,12 +8,12 @@ import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
+import io.micrometer.core.instrument.Metrics;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.Clock;
@@ -35,6 +35,7 @@ import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
@@ -57,8 +58,6 @@ public class JobServiceTest {
     private JobRunnable jobRunnable;
     @Mock
     private JobRepository jobRepository;
-    @Mock
-    private GaugeService gaugeServiceMock;
     @Mock
     private UuidProvider uuidProviderMock;
     @Mock
@@ -87,7 +86,7 @@ public class JobServiceTest {
                 .thenReturn(JOB_ID);
         jobService = new JobService(
                 jobRepository, jobMetaService, singletonList(jobRunnable),
-                gaugeServiceMock, executorService, applicationEventPublisher, clock, systemInfo, uuidProviderMock);
+                executorService, applicationEventPublisher, clock, systemInfo, uuidProviderMock);
         jobService.postConstruct();
     }
 
@@ -140,7 +139,7 @@ public class JobServiceTest {
         // when:
         jobService.startAsyncJob("BAR");
         // then:
-        verify(gaugeServiceMock).submit(eq("gauge.jobs.runtime.bar"), anyDouble());
+        assertThat(Metrics.summary("gauge.jobs.runtime.bar").totalAmount(), is(greaterThan(0.0d)));
     }
 
     @Test

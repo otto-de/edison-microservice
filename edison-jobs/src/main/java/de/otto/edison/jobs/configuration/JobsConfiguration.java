@@ -18,7 +18,8 @@ import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,7 +42,7 @@ import static java.util.stream.Collectors.toList;
 @Configuration
 @EnableAsync
 @EnableScheduling
-@EnableConfigurationProperties({ JobsProperties.class, ManagementServerProperties.class })
+@EnableConfigurationProperties({ JobsProperties.class, WebEndpointProperties.class })
 public class JobsConfiguration {
 
     public static final Logger LOG = LoggerFactory.getLogger(JobsConfiguration.class);
@@ -51,9 +52,9 @@ public class JobsConfiguration {
 
     @Autowired
     public JobsConfiguration(final JobsProperties jobsProperties,
-                             final ManagementServerProperties managementServerProperties) {
+                             final WebEndpointProperties  webEndpointProperties) {
         this.jobsProperties = jobsProperties;
-        this.managementContextPath = managementServerProperties.getContextPath();
+        this.managementContextPath = webEndpointProperties.getBasePath();
         final Map<String, String> calculator = this.jobsProperties.getStatus().getCalculator();
         if (!calculator.containsKey("default")) {
             this.jobsProperties.getStatus().setCalculator(
@@ -112,8 +113,7 @@ public class JobsConfiguration {
     }
 
     @Bean
-    public JobStatusCalculator warningOnLastJobFailed(final JobRepository jobRepository,
-                                                      final ManagementServerProperties managementServerProperties) {
+    public JobStatusCalculator warningOnLastJobFailed(final JobRepository jobRepository) {
         return JobStatusCalculator.warningOnLastJobFailed("warningOnLastJobFailed", jobRepository, managementContextPath);
     }
 

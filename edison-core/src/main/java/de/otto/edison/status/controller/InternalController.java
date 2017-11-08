@@ -1,7 +1,7 @@
 package de.otto.edison.status.controller;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,20 +20,23 @@ import java.io.IOException;
  */
 @Controller
 @ConditionalOnProperty(name = "edison.status.redirect-internal.enabled", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties({ServerProperties.class, ManagementServerProperties.class})
+@EnableConfigurationProperties({ServerProperties.class, WebEndpointProperties.class})
 public class InternalController {
 
-    private final ManagementServerProperties managementServerProperties;
+    private final WebEndpointProperties webEndpointProperties;
     private final ServerProperties serverProperties;
 
-    public InternalController(final ManagementServerProperties managementServerProperties,
+    public InternalController(final WebEndpointProperties webEndpointProperties,
                               final ServerProperties serverProperties) {
-        this.managementServerProperties = managementServerProperties;
+        this.webEndpointProperties = webEndpointProperties;
         this.serverProperties = serverProperties;
     }
 
-    @RequestMapping(value = "${management.context-path}")
+    @RequestMapping(value = "${management.endpoints.web.base-path}")
     public void redirectToStatus(final HttpServletResponse response) throws IOException {
-        response.sendRedirect(String.format("%s%s/status", serverProperties.getContextPath(), managementServerProperties.getContextPath()));
+        response.sendRedirect(String.format("%s%s/status",
+                serverProperties.getServlet().getContextPath(),
+                webEndpointProperties.getBasePath())
+        );
     }
 }

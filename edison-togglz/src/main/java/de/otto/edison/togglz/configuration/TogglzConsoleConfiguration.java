@@ -20,7 +20,7 @@ public class TogglzConsoleConfiguration {
     public static final String TOGGLES_URL_PATTERN = "/toggles/console/*";
 
     @Bean
-    public ServletRegistrationBean togglzServlet(final @Value("${management.context-path:/internal}") String prefix,
+    public ServletRegistrationBean togglzServlet(final @Value("${management.endpoints.web.base-path:/internal}") String prefix,
                                                  final NavBar rightNavBar) {
 
         // Register Togglz Console in the right "Admin" navigation bar:

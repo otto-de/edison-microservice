@@ -6,10 +6,10 @@ import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
+import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +47,6 @@ public class JobService {
     private JobMetaService jobMetaService;
     @Autowired
     private ScheduledExecutorService executor;
-    @Autowired
-    private GaugeService gaugeService;
     @Autowired(required = false)
     private List<JobRunnable> jobRunnables = emptyList();
     @Autowired
@@ -66,7 +64,6 @@ public class JobService {
     JobService(final JobRepository jobRepository,
                final JobMetaService jobMetaService,
                final List<JobRunnable> jobRunnables,
-               final GaugeService gaugeService,
                final ScheduledExecutorService executor,
                final ApplicationEventPublisher applicationEventPublisher,
                final Clock clock,
@@ -75,7 +72,6 @@ public class JobService {
         this.jobRepository = jobRepository;
         this.jobMetaService = jobMetaService;
         this.jobRunnables = jobRunnables;
-        this.gaugeService = gaugeService;
         this.executor = executor;
         this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
@@ -258,7 +254,7 @@ public class JobService {
             public void execute(final JobEventPublisher jobEventPublisher) {
                 long ts = currentTimeMillis();
                 delegate.execute(jobEventPublisher);
-                gaugeService.submit(gaugeName(), (currentTimeMillis() - ts) / 1000L);
+                Metrics.gauge(gaugeName(), (currentTimeMillis() - ts) / 1000L);
             }
 
             private String gaugeName() {

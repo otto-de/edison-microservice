@@ -18,11 +18,11 @@ server:
     port: 8080
 
 management:
-    # context of the management endpoints like metrics, health, and so on
-    context-path: /internal
-    # disable disk space check beacuse we use immutable servers
+    endpoints:
+        web:
+            base-path: /internal
     health:
-        diskspace:
+        status:
             enabled: false
 
 edison:

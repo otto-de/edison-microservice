@@ -1,12 +1,18 @@
 # Release Notes
 
-## 2.0.0-SNAPSHOT
+## 2.0.0-m1-SNAPSHOT
 
 **Breaking Changes:**
 
-* Removed @deprecated stuff:
+* Updated to Spring Boot 2.0.0.M5
+  * This also requires gradle 4.x for building edison-microservice.
+
+* Removed @Beta code:
+  * **[edison-core]** Removed prototype code to support dynamic scaling with load detection.  
+
+* Removed @Deprecated stuff:
   * **[edison-core]** Removed ServiceSpec. Replaced by ServiceDependency.
-  * **[edison-cache]** Removed CacheRegistry. Caches can be exposed as Spring Beans instead.
+  * **[edison-cache]** Removed edison-cache because Spring Boot 2.0 does not support this anymore.
   * **[edison-mongo]** Default constructor from AbstractMongoRepository is replaced with 
   AbstractMongoRepository(MongoProperties)
   * **[edison-mongo]** Removed property `passwd` from MongoProperties which was replaced with `password` in order to 

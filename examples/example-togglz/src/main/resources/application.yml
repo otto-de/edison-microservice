@@ -13,9 +13,11 @@ server:
     port: 8080
 
 management:
-    context-path: /internal
+    endpoints:
+        web:
+            base-path: /internal
     health:
-        diskspace:
+        status:
             enabled: false
 
 edison:
