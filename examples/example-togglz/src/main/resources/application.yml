@@ -9,16 +9,19 @@ spring:
         cache: false
 
 server:
-    context-path: /
+    servlet:
+        context-path: /
     port: 8080
 
 management:
     endpoints:
         web:
-            base-path: /endpoints
+            base-path: /application
+endpoints:
     health:
-        status:
-            enabled: false
+        enabled: true
+    status:
+        enabled: true
 
 edison:
     gracefulshutdown:

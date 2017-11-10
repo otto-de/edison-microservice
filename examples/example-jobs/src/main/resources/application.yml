@@ -14,7 +14,8 @@ spring:
 
 # context + port of the application
 server:
-    context-path: /
+    servlet:
+        context-path: /
     port: 8080
 
 management:

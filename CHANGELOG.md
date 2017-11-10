@@ -26,6 +26,14 @@
 
 ### Migrating from 1.2.3:
 
+The Spring Boot docs on how to upgrade can be found here:
+* [Spring Boot 2.0.0-M1 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M1-Release-Notes)
+* [Spring Boot 2.0.0-M2 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M2-Release-Notes)
+* [Spring Boot 2.0.0-M3 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M3-Release-Notes)
+* [Spring Boot 2.0.0-M4 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M4-Release-Notes)
+* [Spring Boot 2.0.0-M5 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M5-Release-Notes)
+* [Spring Boot 2.0.0-M6 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M6-Release-Notes)
+
 #### a) Management Context-Path
 
 In Spring Boot 1.x, the `management.context-path` property is used to configure the path of endpoints relative to the

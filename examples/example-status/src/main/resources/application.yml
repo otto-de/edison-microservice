@@ -14,7 +14,7 @@ server:
 management:
     endpoints:
         web:
-            base-path: /endpoints
+            base-path: /application
 endpoints:
     env:
         enabled: true
