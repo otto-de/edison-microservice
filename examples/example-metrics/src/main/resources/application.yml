@@ -10,16 +10,19 @@ spring:
 
 server:
     # context + port of the application
-    context-path: /
+    servlet:
+        context-path: /
     port: 8080
 
 management:
     endpoints:
         web:
-            base-path: /internal
+            base-path: /endpoints
+endpoints:
     health:
-        status:
-            enabled: false
+        enabled: true
+    status:
+        enabled: true
 
 edison:
     # disable graceful shutdown

@@ -31,7 +31,6 @@ It's purpose is to provide a common implementation for cross-cutting requirement
 * An optional MongoDB-based implementation of a JobRepository
 * Support for MongoDB-based repositories in case you do not like Spring Data
 * Reporting of metrics to Graphite
-* Support for [Caffeine caches](https://github.com/otto-de/edison-microservice/tree/master/edison-cache)
 * Support for feature toggles based on [Togglz](https://www.togglz.org/)
 
 ... plus all the features of [Spring Boot](http://projects.spring.io/spring-boot/).
@@ -45,7 +44,7 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 
 **[1.0.0](https://github.com/otto-de/edison-microservice/milestone/1)**: Edison Microservices for Spring Boot 1.4 &#10004;
 
-**[1.1.0](https://github.com/otto-de/edison-microservice/milestone/2)**: Edison Microservices for Spring Boot 1.5 &#10004;
+**[1.x.0](https://github.com/otto-de/edison-microservice/milestone/2)**: Edison Microservices for Spring Boot 1.5 &#10004;
 
 **[2.0.0](https://github.com/otto-de/edison-microservice/milestone/3)**: Edison Microservices for Spring Boot 2.0
 
@@ -54,7 +53,6 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 
 Edison Modules:
 * [`edison-core`](edison-core/README.md): Main library of Edison microservices.
-* [`edison-cache`](edison-cache/README.md): Optional support for Caffeine caches in Edison.
 * [`edison-jobs`](edison-jobs/README.md): Optional module providing a simple job library.
 * [`edison-mongo`](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and
  Togglz StateRepository.

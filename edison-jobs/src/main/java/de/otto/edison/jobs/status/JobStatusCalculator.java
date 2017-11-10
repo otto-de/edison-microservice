@@ -85,7 +85,7 @@ public class JobStatusCalculator {
     private final int numberOfJobs;
     private final int maxFailedJobs;
     private final JobRepository jobRepository;
-    private final String managementContextPath;
+    private final String edisonManagementBasePath;
 
     /**
      * Creates a JobStatusCalculator.
@@ -99,7 +99,7 @@ public class JobStatusCalculator {
                                final int numberOfJobs,
                                final int maxFailedJobs,
                                final JobRepository jobRepository,
-                               final String managementContextPath) {
+                               final String edisonManagementBasePath) {
         checkArgument(!key.isEmpty(), "Key must not be empty");
         checkArgument(maxFailedJobs <= numberOfJobs, "Parameter maxFailedJobs must not be greater numberOfJobs");
         checkArgument(numberOfJobs > 0, "Parameter numberOfJobs must be greater 0");
@@ -108,7 +108,7 @@ public class JobStatusCalculator {
         this.numberOfJobs = numberOfJobs;
         this.maxFailedJobs = maxFailedJobs;
         this.jobRepository = jobRepository;
-        this.managementContextPath = managementContextPath;
+        this.edisonManagementBasePath = edisonManagementBasePath;
     }
 
     /**
@@ -120,9 +120,9 @@ public class JobStatusCalculator {
      */
     public static JobStatusCalculator warningOnLastJobFailed(final String key,
                                                              final JobRepository jobRepository,
-                                                             final String managementContextPath) {
+                                                             final String edisonManagementBasePath) {
         return new JobStatusCalculator(
-                key, 1, 1, jobRepository, managementContextPath
+                key, 1, 1, jobRepository, edisonManagementBasePath
         );
     }
 
@@ -135,9 +135,9 @@ public class JobStatusCalculator {
      */
     public static JobStatusCalculator errorOnLastJobFailed(final String key,
                                                            final JobRepository jobRepository,
-                                                           final String managementContextPath) {
+                                                           final String edisonManagementBasePath) {
         return new JobStatusCalculator(
-                key, 1, 0, jobRepository, managementContextPath
+                key, 1, 0, jobRepository, edisonManagementBasePath
         );
     }
 
@@ -152,10 +152,10 @@ public class JobStatusCalculator {
     public static JobStatusCalculator errorOnLastNumJobsFailed(final String key,
                                                                final int numJobs,
                                                                final JobRepository jobRepository,
-                                                               final String managementContextPath
+                                                               final String edisonManagementBasePath
     ) {
         return new JobStatusCalculator(
-                key, numJobs, numJobs-1, jobRepository, managementContextPath
+                key, numJobs, numJobs-1, jobRepository, edisonManagementBasePath
         );
     }
 
@@ -245,7 +245,7 @@ public class JobStatusCalculator {
                 status,
                 message,
                 asList(
-                        link(REL_JOB, String.format("%s/jobs/%s", managementContextPath, lastJob.getJobId()), "Details")
+                        link(REL_JOB, String.format("%s/jobs/%s", edisonManagementBasePath, lastJob.getJobId()), "Details")
                 ),
                 runningDetailsFor(lastJob)
         );

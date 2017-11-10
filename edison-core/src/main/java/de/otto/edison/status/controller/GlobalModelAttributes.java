@@ -1,8 +1,8 @@
 package de.otto.edison.status.controller;
 
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,16 +10,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @ControllerAdvice
 public class GlobalModelAttributes {
 
-    WebEndpointProperties webEndpointProperties;
+    private final WebEndpointProperties webEndpointProperties;
+    private final EdisonApplicationProperties edisonApplicationProperties;
 
     @Autowired
-    public GlobalModelAttributes(WebEndpointProperties  webEndpointProperties) {
+    public GlobalModelAttributes(final WebEndpointProperties  webEndpointProperties,
+                                 final EdisonApplicationProperties edisonApplicationProperties) {
         this.webEndpointProperties = webEndpointProperties;
+        this.edisonApplicationProperties = edisonApplicationProperties;
     }
 
     @ModelAttribute
     public void addAttributes(Model model) {
-        model.addAttribute("managementContextPath", webEndpointProperties.getBasePath());
+        model.addAttribute("webEndpointBasePath", webEndpointProperties.getBasePath());
+        model.addAttribute("edisonManagementBasePath", edisonApplicationProperties.getManagement().getBasePath());
     }
 
 }

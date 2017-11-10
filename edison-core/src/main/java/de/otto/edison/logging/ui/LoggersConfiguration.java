@@ -1,6 +1,8 @@
 package de.otto.edison.logging.ui;
 
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnProperty(prefix = "edison.logging.ui", name = "enabled", matchIfMissing = true)
+@EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class LoggersConfiguration {
 
     @Bean

@@ -3,8 +3,6 @@ spring:
         name: togglztest
 
 server:
-    context-path: /togglztest
+    servlet:
+        context-path: /togglztest
     port: 8085
-
-management:
-    context-path: /internal

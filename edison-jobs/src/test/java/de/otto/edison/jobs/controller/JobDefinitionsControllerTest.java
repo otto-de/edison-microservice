@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.controller;
 
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobMetaService;
@@ -7,7 +8,6 @@ import de.otto.edison.navigation.NavBar;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -35,8 +35,7 @@ public class JobDefinitionsControllerTest {
 
     private JobDefinitionsController controller;
 
-    @Mock
-    private WebEndpointProperties webEndpointProperties;
+    private EdisonApplicationProperties webEndpointProperties = new EdisonApplicationProperties();
 
     @Mock
     private NavBar navBar;
@@ -54,10 +53,10 @@ public class JobDefinitionsControllerTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        when(webEndpointProperties.getBasePath()).thenReturn(MANAGEMENT_CONTEXT);
+        webEndpointProperties.getManagement().setBasePath(MANAGEMENT_CONTEXT);
         controller = new JobDefinitionsController(jobDefinitionService, jobMetaService, navBar, webEndpointProperties);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .addPlaceholderValue("management.endpoints.web.base-path", MANAGEMENT_CONTEXT)
+                .addPlaceholderValue("edison.application.management.base-path", MANAGEMENT_CONTEXT)
                 .build();
     }
 

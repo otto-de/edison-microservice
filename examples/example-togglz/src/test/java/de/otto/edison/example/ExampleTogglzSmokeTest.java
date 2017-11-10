@@ -46,7 +46,7 @@ public class ExampleTogglzSmokeTest {
 
     @Test
     public void shouldHaveHealthCheck() {
-        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/health.json", String.class);
+        final ResponseEntity<String> response = this.restTemplate.getForEntity("/application/health", String.class);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
         assertThat(response.getStatusCodeValue()).isIn(200, 503);
     }

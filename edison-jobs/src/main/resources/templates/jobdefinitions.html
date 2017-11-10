@@ -30,19 +30,19 @@
                 <div class="col-md-4" th:text="${def.description}">Description</div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <a id="openButton" th:href="@{|${managementContextPath}/jobs?type=${def.jobType}|}" class="btn btn-sm btn-default">Job Overview</a>
+                        <a id="openButton" th:href="@{|${edisonManagementBasePath}/jobs?type=${def.jobType}|}" class="btn btn-sm btn-default">Job Overview</a>
                     </div>
                     <div class="form-group">
                         <button type="button"
                                 class="triggerButton btn btn-sm btn-default"
-                                th:attr="data-trigger-url=${baseUri} + ${managementContextPath} + '/jobs/' + ${def.jobType}, disabled=${def.isDisabled ? 'disabled' : null}"
+                                th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType}, disabled=${def.isDisabled ? 'disabled' : null}"
                                 title="Click to start job now"
                                 data-loading-text="Triggering...">
                             <span>Trigger </span><span class="glyphicon glyphicon-play"></span>
                         </button>
                     </div>
 
-                    <form th:action="${baseUri} + ${managementContextPath} + '/jobs/' + ${def.jobType} + '/' + ${def.isDisabled?'enable':'disable'}" method="POST">
+                    <form th:action="${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType} + '/' + ${def.isDisabled?'enable':'disable'}" method="POST">
                         <div class="input-group input-group-sm">
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-default" th:title="${def.isDisabled} ? 'Job is disabled. Click to enable' : 'Job is enabled. Click to disable'">

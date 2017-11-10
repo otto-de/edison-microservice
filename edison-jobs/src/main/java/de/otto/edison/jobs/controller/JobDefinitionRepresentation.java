@@ -27,7 +27,7 @@ public class JobDefinitionRepresentation {
     public final Long fixedDelay;
     public final List<Link> links;
 
-    private JobDefinitionRepresentation(final JobDefinition jobDefinition, String baseUri, String managementContextPath) {
+    private JobDefinitionRepresentation(final JobDefinition jobDefinition, String baseUri, String edisonManagementBasePath) {
         this.type = jobDefinition.jobType();
         this.name = jobDefinition.jobName();
         this.retries = jobDefinition.retries();
@@ -35,13 +35,13 @@ public class JobDefinitionRepresentation {
         this.cron = jobDefinition.cron().orElse(null);
         this.maxAge = valueOf(jobDefinition.maxAge());
         this.fixedDelay = valueOf(jobDefinition.fixedDelay());
-        this.links = linksOf(jobDefinition, baseUri, managementContextPath);
+        this.links = linksOf(jobDefinition, baseUri, edisonManagementBasePath);
     }
 
     public static JobDefinitionRepresentation representationOf(final JobDefinition jobDefinition,
                                                                final String baseUri,
-                                                               final String managementContextPath) {
-        return new JobDefinitionRepresentation(jobDefinition, baseUri, managementContextPath);
+                                                               final String edisonManagementBasePath) {
+        return new JobDefinitionRepresentation(jobDefinition, baseUri, edisonManagementBasePath);
     }
 
     @Override
@@ -92,11 +92,11 @@ public class JobDefinitionRepresentation {
 
     private List<Link> linksOf(final JobDefinition jobDefinition,
                                final String baseUri,
-                               final String managementContextPath) {
+                               final String edisonManagementBasePath) {
         return asList(
-                link("self", String.format("%s%s/jobsdefinitions/%s", baseUri, managementContextPath, jobDefinition.jobType()), null),
-                link("collection", String.format("%s%s/jobdefinitions", baseUri, managementContextPath), null),
-                link("http://github.com/otto-de/edison/link-relations/job/trigger", String.format("%s%s/jobs/%s", baseUri, managementContextPath, jobDefinition.jobType()), null)
+                link("self", String.format("%s%s/jobsdefinitions/%s", baseUri, edisonManagementBasePath, jobDefinition.jobType()), null),
+                link("collection", String.format("%s%s/jobdefinitions", baseUri, edisonManagementBasePath), null),
+                link("http://github.com/otto-de/edison/link-relations/job/trigger", String.format("%s%s/jobs/%s", baseUri, edisonManagementBasePath, jobDefinition.jobType()), null)
         );
     }
 

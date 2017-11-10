@@ -1,5 +1,6 @@
 package de.otto.edison.status.configuration;
 
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.status.domain.ApplicationInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -13,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * This is used for /internal/status
  */
 @Configuration
-@EnableConfigurationProperties(ApplicationInfoProperties.class)
+@EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class ApplicationInfoConfiguration {
 
     @Value("${spring.application.name:unknown}")
@@ -21,8 +22,8 @@ public class ApplicationInfoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(ApplicationInfo.class)
-    public ApplicationInfo applicationInfo(ApplicationInfoProperties applicationInfoProperties) {
-        return ApplicationInfo.applicationInfo(serviceName, applicationInfoProperties);
+    public ApplicationInfo applicationInfo(EdisonApplicationProperties edisonApplicationProperties) {
+        return ApplicationInfo.applicationInfo(serviceName, edisonApplicationProperties);
     }
 
 }

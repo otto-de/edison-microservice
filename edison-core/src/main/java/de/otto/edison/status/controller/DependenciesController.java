@@ -28,7 +28,7 @@ public class DependenciesController {
     }
 
     @GetMapping(
-            value = "${management.endpoints.web.base-path}/dependencies",
+            value = "${edison.application.management.base-path:/internal}/dependencies",
             produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, List<?>>> listDependencies () {
         Map<String, List<?>> dependencies = singletonMap("dependencies", externalDependencies.getDependencies());

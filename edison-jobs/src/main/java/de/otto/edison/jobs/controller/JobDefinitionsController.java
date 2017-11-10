@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.controller;
 
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.service.JobDefinitionService;
@@ -7,7 +8,6 @@ import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.navigation.NavBar;
 import de.otto.edison.status.domain.Link;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Controller;
@@ -34,28 +34,28 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @ConditionalOnProperty(prefix = "edison.jobs", name = "external-trigger", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties(WebEndpointProperties.class)
+@EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class JobDefinitionsController {
 
     private final String jobDefinitionsUri;
 
     private final JobDefinitionService jobDefinitionService;
     private final JobMetaService jobMetaService;
-    private final WebEndpointProperties webEndpointProperties;
+    private final EdisonApplicationProperties applicationProperties;
 
     @Autowired
     public JobDefinitionsController(final JobDefinitionService definitionService,
                                     final JobMetaService jobMetaService,
                                     final NavBar rightNavBar,
-                                    final WebEndpointProperties webEndpointProperties) {
+                                    final EdisonApplicationProperties applicationProperties) {
         this.jobDefinitionService = definitionService;
         this.jobMetaService = jobMetaService;
-        this.webEndpointProperties = webEndpointProperties;
-        jobDefinitionsUri = String.format("%s/jobdefinitions", webEndpointProperties.getBasePath());
+        this.applicationProperties = applicationProperties;
+        jobDefinitionsUri = String.format("%s/jobdefinitions", applicationProperties.getManagement().getBasePath());
         rightNavBar.register(navBarItem(10, "Job Definitions", jobDefinitionsUri));
     }
 
-    @RequestMapping(value = "${management.endpoints.web.base-path}/jobdefinitions", method = GET, produces = "application/json")
+    @RequestMapping(value = "${edison.application.management.base-path:/internal}/jobdefinitions", method = GET, produces = "application/json")
     @ResponseBody
     public Map<String, List<Link>> getJobDefinitionsAsJson(final HttpServletRequest request) {
         final String baseUri = baseUriOf(request);
@@ -71,7 +71,7 @@ public class JobDefinitionsController {
         }});
     }
 
-    @RequestMapping(value = "${management.endpoints.web.base-path}/jobdefinitions", method = GET, produces = "*/*")
+    @RequestMapping(value = "${edison.application.management.base-path:/internal}/jobdefinitions", method = GET, produces = "*/*")
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
         return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
@@ -94,7 +94,7 @@ public class JobDefinitionsController {
         }});
     }
 
-    @RequestMapping(value = "${management.endpoints.web.base-path}/jobdefinitions/{jobType}", method = GET, produces = "application/json")
+    @RequestMapping(value = "${edison.application.management.base-path:/internal}/jobdefinitions/{jobType}", method = GET, produces = "application/json")
     @ResponseBody
     public JobDefinitionRepresentation getJobDefinition(final @PathVariable String jobType,
                                                         final HttpServletRequest request,
@@ -102,14 +102,14 @@ public class JobDefinitionsController {
 
         Optional<JobDefinition> jobDefinition = jobDefinitionService.getJobDefinition(jobType);
         if (jobDefinition.isPresent()) {
-            return representationOf(jobDefinition.get(), baseUriOf(request), webEndpointProperties.getBasePath());
+            return representationOf(jobDefinition.get(), baseUriOf(request), applicationProperties.getManagement().getBasePath());
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
             return null;
         }
     }
 
-    @RequestMapping(value = "${management.endpoints.web.base-path}/jobdefinitions/{jobType}", method = GET, produces = "*/*")
+    @RequestMapping(value = "${edison.application.management.base-path:/internal}/jobdefinitions/{jobType}", method = GET, produces = "*/*")
     public ModelAndView getJobDefinitionAsHtml(final @PathVariable String jobType,
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) throws IOException {

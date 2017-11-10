@@ -7,17 +7,18 @@ spring:
             indent-output: true
 
 server:
-    context-path: /
+    servlet:
+        context-path: /
     port: 8080
 
 management:
     endpoints:
         web:
-            base-path: /internal
+            base-path: /endpoints
 endpoints:
-    health:
-        enabled: true
     env:
+        enabled: true
+    health:
         enabled: true
     loggers:
         enabled: true
@@ -26,17 +27,18 @@ endpoints:
     trace:
         enabled: true
     status:
-        enabled: false
+        enabled: true
 
 edison:
     gracefulshutdown:
         enabled: false
+    application:
+        name: status
+        description: Example service to show how to use edison-core in your microservices
+        environment: local
+        group: example
+        title: Example Status
     status:
-        application:
-            description: Example service to show how to use edison-core in your microservices
-            environment: local
-            group: example
-            title: Example Status
         team:
             business-contact: edison-team@example.org
             name: Edison Team

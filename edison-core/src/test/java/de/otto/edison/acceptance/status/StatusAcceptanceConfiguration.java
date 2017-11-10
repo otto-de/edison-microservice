@@ -6,7 +6,7 @@ import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static de.otto.edison.status.configuration.ApplicationInfoProperties.applicationInfoProperties;
+import static de.otto.edison.configuration.EdisonApplicationProperties.edisonApplicationProperties;
 import static de.otto.edison.status.configuration.TeamInfoProperties.teamInfoProperties;
 import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
 import static de.otto.edison.status.domain.ServiceDependencyBuilder.restServiceDependency;
@@ -23,7 +23,7 @@ public class StatusAcceptanceConfiguration {
 
     @Bean
     ApplicationInfo applicationInfo() {
-        return ApplicationInfo.applicationInfo("test-app", applicationInfoProperties("Some Test", "test-group", "test-env", "desc"));
+        return ApplicationInfo.applicationInfo("test-app", edisonApplicationProperties("Some Test", "test-group", "test-env", "desc"));
     }
 
     @Bean

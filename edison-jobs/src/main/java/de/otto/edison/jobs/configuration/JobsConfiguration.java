@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.configuration;
 
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.JobRepository;
@@ -18,8 +19,6 @@ import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,19 +41,19 @@ import static java.util.stream.Collectors.toList;
 @Configuration
 @EnableAsync
 @EnableScheduling
-@EnableConfigurationProperties({ JobsProperties.class, WebEndpointProperties.class })
+@EnableConfigurationProperties({ JobsProperties.class, EdisonApplicationProperties.class })
 public class JobsConfiguration {
 
     public static final Logger LOG = LoggerFactory.getLogger(JobsConfiguration.class);
 
     private final JobsProperties jobsProperties;
-    private final String managementContextPath;
+    private final String edisonManagementBasePath;
 
     @Autowired
     public JobsConfiguration(final JobsProperties jobsProperties,
-                             final WebEndpointProperties  webEndpointProperties) {
+                             final EdisonApplicationProperties  applicationProperties) {
         this.jobsProperties = jobsProperties;
-        this.managementContextPath = webEndpointProperties.getBasePath();
+        this.edisonManagementBasePath = applicationProperties.getManagement().getBasePath();
         final Map<String, String> calculator = this.jobsProperties.getStatus().getCalculator();
         if (!calculator.containsKey("default")) {
             this.jobsProperties.getStatus().setCalculator(
@@ -114,22 +113,22 @@ public class JobsConfiguration {
 
     @Bean
     public JobStatusCalculator warningOnLastJobFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.warningOnLastJobFailed("warningOnLastJobFailed", jobRepository, managementContextPath);
+        return JobStatusCalculator.warningOnLastJobFailed("warningOnLastJobFailed", jobRepository, edisonManagementBasePath);
     }
 
     @Bean
     public JobStatusCalculator errorOnLastJobFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastJobFailed("errorOnLastJobFailed", jobRepository, managementContextPath);
+        return JobStatusCalculator.errorOnLastJobFailed("errorOnLastJobFailed", jobRepository, edisonManagementBasePath);
     }
 
     @Bean
     public JobStatusCalculator errorOnLastThreeJobsFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastThreeJobsFailed", 3, jobRepository, managementContextPath);
+        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastThreeJobsFailed", 3, jobRepository, edisonManagementBasePath);
     }
 
     @Bean
     public JobStatusCalculator errorOnLastTenJobsFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastTenJobsFailed", 10, jobRepository, managementContextPath);
+        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastTenJobsFailed", 10, jobRepository, edisonManagementBasePath);
     }
 
     @Bean

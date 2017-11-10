@@ -1,7 +1,6 @@
 package de.otto.edison.navigation;
 
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +31,7 @@ import static java.util.Arrays.asList;
  * @since 1.0.0
  */
 @Configuration
-@EnableConfigurationProperties(WebEndpointProperties.class)
+@EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class NavBarConfiguration {
 
     @Bean
@@ -41,9 +40,10 @@ public class NavBarConfiguration {
     }
 
     @Bean
-    public NavBar rightNavBar(final WebEndpointProperties webEndpointProperties) {
+    public NavBar rightNavBar(final EdisonApplicationProperties properties) {
+        final String href = properties.getManagement().getBasePath() + "/status";
         return navBar(asList(
-                navBarItem(top(), "Status", webEndpointProperties.getBasePath() + "/status")
+                navBarItem(top(), "Status", href)
         ));
     }
 }

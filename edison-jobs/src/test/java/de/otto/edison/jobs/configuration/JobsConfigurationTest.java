@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.configuration;
 
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.jobs.definition.DefaultJobDefinition;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.service.JobDefinitionService;
@@ -9,9 +10,6 @@ import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 
 import java.util.HashMap;
 
@@ -26,21 +24,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class JobsConfigurationTest {
 
-    @Mock
-    private WebEndpointProperties webEndpointProperties;
-    private JobsProperties jobsProperties;
+    private EdisonApplicationProperties properties;
     private JobsConfiguration testee;
 
     @Before
     public void setUp() throws Exception {
-        webEndpointProperties = mock(WebEndpointProperties .class);
-        when(webEndpointProperties.getBasePath()).thenReturn("/someInternalPath");
-        jobsProperties = new JobsProperties();
-        testee = new JobsConfiguration(jobsProperties, webEndpointProperties);
+        properties = new EdisonApplicationProperties();
+        testee = new JobsConfiguration(new JobsProperties(), properties);
     }
 
     @Test
@@ -99,7 +95,7 @@ public class JobsConfigurationTest {
             put("test", "errorOnLastJobFailed");
         }});
 
-        testee = new JobsConfiguration(jobsProperties, webEndpointProperties);
+        testee = new JobsConfiguration(jobsProperties, properties);
 
         final JobStatusCalculator defaultCalculator = mock(JobStatusCalculator.class);
         when(defaultCalculator.getKey()).thenReturn("warningOnLastJobFailed");
@@ -123,7 +119,7 @@ public class JobsConfigurationTest {
             put("soMe-TeSt job", "errorOnLastJobFailed");
         }});
 
-        testee = new JobsConfiguration(jobsProperties, webEndpointProperties);
+        testee = new JobsConfiguration(jobsProperties, properties);
 
         final JobStatusCalculator defaultCalculator = mock(JobStatusCalculator.class);
         when(defaultCalculator.getKey()).thenReturn("warningOnLastJobFailed");

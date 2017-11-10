@@ -1,6 +1,6 @@
 package de.otto.edison.status.domain;
 
-import de.otto.edison.status.configuration.ApplicationInfoProperties;
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import net.jcip.annotations.Immutable;
 
 import java.util.Objects;
@@ -34,7 +34,7 @@ public class ApplicationInfo {
 
 
     private ApplicationInfo(final String name,
-                            final ApplicationInfoProperties applicationInfoProperties) {
+                            final EdisonApplicationProperties applicationInfoProperties) {
         if (name.isEmpty()) throw new IllegalArgumentException("name must not be empty");
         this.name = name;
         this.title = applicationInfoProperties.getTitle();
@@ -43,7 +43,7 @@ public class ApplicationInfo {
         this.environment = applicationInfoProperties.getEnvironment();
     }
 
-    public static ApplicationInfo applicationInfo(final String serviceName, final ApplicationInfoProperties statusProps) {
+    public static ApplicationInfo applicationInfo(final String serviceName, final EdisonApplicationProperties statusProps) {
         return new ApplicationInfo(serviceName, statusProps);
     }
 
@@ -52,8 +52,7 @@ public class ApplicationInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ApplicationInfo that = (ApplicationInfo) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(title, that.title) &&
+        return Objects.equals(title, that.title) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(group, that.group) &&
                 Objects.equals(environment, that.environment);
@@ -61,14 +60,13 @@ public class ApplicationInfo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, title, description, group, environment);
+        return Objects.hash(title, description, group, environment);
     }
 
     @Override
     public String toString() {
         return "ApplicationInfo{" +
-                "name='" + name + '\'' +
-                ", title='" + title + '\'' +
+                "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", group='" + group + '\'' +
                 ", environment='" + environment + '\'' +

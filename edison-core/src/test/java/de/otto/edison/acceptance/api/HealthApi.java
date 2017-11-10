@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
-import static java.util.Optional.of;
 import static org.springframework.boot.actuate.health.Health.down;
 import static org.springframework.boot.actuate.health.Health.up;
 import static org.springframework.http.HttpMethod.GET;
@@ -42,13 +41,8 @@ public class HealthApi extends SpringTestBase {
         return Given.INSTANCE;
     }
 
-    public static When the_internal_status_is_retrieved_as(final String mediaType) throws IOException {
-        getResource("http://localhost:8084/testcore/internal/status", of(mediaType));
-        return When.INSTANCE;
-    }
-
     public static When the_internal_health_is_retrieved() throws IOException {
-        getResource("http://localhost:8084/testcore/internal/health", Optional.<String>empty());
+        getResource("http://localhost:8084/testcore/application/health", Optional.<String>empty());
         return When.INSTANCE;
     }
 

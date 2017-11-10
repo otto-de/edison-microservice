@@ -5,12 +5,21 @@ spring:
 
 # context + port of the application
 server:
-    context-path: /testcore
+    servlet:
+        context-path: /testcore
     port: 8084
 
 # context of the management endpoints like metrics, health, and so on
 management:
-    context-path: /internal
+    endpoints:
+        web:
+            base-path: /application
+
+endpoints:
+    health:
+        enabled: true
+    status:
+        enabled: false
 
 # edison-specific configuration
 edison:

@@ -20,10 +20,12 @@ server:
 management:
     endpoints:
         web:
-            base-path: /internal
+            base-path: /application
+endpoints:
     health:
-        status:
-            enabled: false
+        enabled: true
+    status:
+        enabled: true
 
 edison:
     # disable graceful shutdown

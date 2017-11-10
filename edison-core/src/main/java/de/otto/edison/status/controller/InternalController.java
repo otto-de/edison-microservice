@@ -1,7 +1,6 @@
 package de.otto.edison.status.controller;
 
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,23 +19,23 @@ import java.io.IOException;
  */
 @Controller
 @ConditionalOnProperty(name = "edison.status.redirect-internal.enabled", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties({ServerProperties.class, WebEndpointProperties.class})
+@EnableConfigurationProperties({ServerProperties.class, EdisonApplicationProperties.class})
 public class InternalController {
 
-    private final WebEndpointProperties webEndpointProperties;
+    private final EdisonApplicationProperties properties;
     private final ServerProperties serverProperties;
 
-    public InternalController(final WebEndpointProperties webEndpointProperties,
+    public InternalController(final EdisonApplicationProperties properties,
                               final ServerProperties serverProperties) {
-        this.webEndpointProperties = webEndpointProperties;
+        this.properties = properties;
         this.serverProperties = serverProperties;
     }
 
-    @RequestMapping(value = "${management.endpoints.web.base-path}")
+    @RequestMapping(value = "${edison.application.management.base-path:/internal}")
     public void redirectToStatus(final HttpServletResponse response) throws IOException {
         response.sendRedirect(String.format("%s%s/status",
                 serverProperties.getServlet().getContextPath(),
-                webEndpointProperties.getBasePath())
+                properties.getManagement().getBasePath())
         );
     }
 }

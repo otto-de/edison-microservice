@@ -5,7 +5,6 @@ import de.otto.edison.status.domain.Criticality;
 import de.otto.edison.status.domain.ExternalDependency;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,7 +27,7 @@ public class StatusController {
     private Criticality criticality;
 
     @RequestMapping(
-            value = "${management.endpoints.web.base-path}/status",
+            value = "${edison.application.management.base-path:/internal}/status",
             produces = {
                     "application/hal+json",
                     "application/vnd.otto.monitoring.status+json",
@@ -43,7 +42,7 @@ public class StatusController {
     }
 
     @RequestMapping(
-            value = "${management.endpoints.web.base-path}/status",
+            value = "${edison.application.management.base-path:/internal}/status",
             produces = "text/html",
             method = GET
     )

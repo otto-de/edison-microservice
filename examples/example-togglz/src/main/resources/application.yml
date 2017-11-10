@@ -15,7 +15,7 @@ server:
 management:
     endpoints:
         web:
-            base-path: /internal
+            base-path: /endpoints
     health:
         status:
             enabled: false

@@ -36,10 +36,10 @@
                         <dd th:text="${job.lastUpdated}">&nbsp;</dd>
                     </dl>
                     <div class="form-group">
-                        <a th:href="@{|${managementContextPath}/jobdefinitions/${job.jobType}|}" class="btn btn-sm btn-default btn-block">Open Definition</a>
+                        <a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}" class="btn btn-sm btn-default btn-block">Open Definition</a>
                         <button type="button"
                                 class="triggerButton btn btn-sm btn-default btn-block"
-                                th:attr="data-trigger-url=${baseUri} + ${managementContextPath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
+                                th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
                                 title="Click to start job now"
                                 data-loading-text="Triggering...">
                             <span>Trigger </span><span class="glyphicon glyphicon-play"></span>

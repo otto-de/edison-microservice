@@ -1,13 +1,13 @@
 package de.otto.edison.logging.ui;
 
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.navigation.NavBar;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
 import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.boot.actuate.logging.LoggersEndpoint.LoggerLevels;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,10 @@ import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static de.otto.edison.util.UrlHelper.baseUriOf;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.boot.logging.LogLevel.valueOf;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.ALL_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -36,22 +39,23 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  */
 @Controller
 @ConditionalOnProperty(prefix = "edison.logging.ui", name = "enabled", matchIfMissing = true)
+@EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class LoggersHtmlEndpoint {
 
     private final LoggersEndpoint loggersEndpoint;
-    private final WebEndpointProperties webEndpointProperties;
+    private final EdisonApplicationProperties applicationProperties;
 
     @Autowired
     public LoggersHtmlEndpoint(final LoggersEndpoint loggersEndpoint,
                                final NavBar rightNavBar,
-                               final WebEndpointProperties  webEndpointProperties) {
+                               final EdisonApplicationProperties applicationProperties) {
         this.loggersEndpoint = loggersEndpoint;
-        this.webEndpointProperties = webEndpointProperties;
-        rightNavBar.register(navBarItem(1, "Loggers", String.format("%s/loggers", webEndpointProperties.getBasePath())));
+        this.applicationProperties = applicationProperties;
+        rightNavBar.register(navBarItem(1, "Loggers", String.format("%s/loggers", applicationProperties.getManagement().getBasePath())));
     }
 
     @RequestMapping(
-            value = "${management.endpoints.web.base-path}/loggers",
+            value = "${edison.application.management.base-path:/internal}/loggers",
             produces = {
                     TEXT_HTML_VALUE,
                     ALL_VALUE},
@@ -64,7 +68,7 @@ public class LoggersHtmlEndpoint {
     }
 
     @RequestMapping(
-            value = "${management.endpoints.web.base-path}/loggers",
+            value = "${edison.application.management.base-path:/internal}/loggers",
             produces = {
                     ActuatorMediaType.V2_JSON,
                     APPLICATION_JSON_VALUE},
@@ -76,7 +80,7 @@ public class LoggersHtmlEndpoint {
     }
 
     @RequestMapping(
-            value = "${management.endpoints.web.base-path}/loggers/{name:.*}",
+            value = "${edison.application.management.base-path:/internal}/loggers/{name:.*}",
             produces = {
                     ActuatorMediaType.V2_JSON,
                     APPLICATION_JSON_VALUE},
@@ -88,7 +92,7 @@ public class LoggersHtmlEndpoint {
     }
 
     @RequestMapping(
-            value = "${management.endpoints.web.base-path}/loggers",
+            value = "${edison.application.management.base-path:/internal}/loggers",
             consumes = APPLICATION_FORM_URLENCODED_VALUE,
             produces = TEXT_HTML_VALUE,
             method = POST)
@@ -97,11 +101,11 @@ public class LoggersHtmlEndpoint {
                              HttpServletRequest httpServletRequest) {
         final LogLevel logLevel = level == null ? null : valueOf(level.toUpperCase());
         loggersEndpoint.configureLogLevel(name, logLevel);
-        return new RedirectView(String.format("%s%s/loggers", baseUriOf(httpServletRequest), webEndpointProperties.getBasePath()));
+        return new RedirectView(String.format("%s%s/loggers", baseUriOf(httpServletRequest), applicationProperties.getManagement().getBasePath()));
     }
 
     @RequestMapping(
-            value = "${management.endpoints.web.base-path}/loggers/{name:.*}",
+            value = "${edison.application.management.base-path:/internal}/loggers/{name:.*}",
             consumes = {
                     ActuatorMediaType.V2_JSON,
                     APPLICATION_JSON_VALUE},

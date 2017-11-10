@@ -12,15 +12,15 @@
                 <a th:href="@{${item.link}}" th:text="${item.title}" />
             </li>
             <li role="separator" class="divider"></li>
-            <li><a th:href="@{|${managementContextPath}/health|}">health</a></li>
-            <li><a th:href="@{|${managementContextPath}/metrics|}">metrics</a></li>
-            <li><a th:href="@{|${managementContextPath}/trace|}">trace</a></li>
-            <li><a th:href="@{|${managementContextPath}/dump|}">dump</a></li>
-            <li><a th:href="@{|${managementContextPath}/info|}">info</a></li>
-            <li><a th:href="@{|${managementContextPath}/mappings|}">mappings</a></li>
-            <li><a th:href="@{|${managementContextPath}/autoconfig|}">autoconfig</a></li>
-            <li><a th:href="@{|${managementContextPath}/env|}">env</a></li>
-            <li><a th:href="@{|${managementContextPath}/beans|}">beans</a></li>
+            <li><a th:href="@{|${webEndpointBasePath}/health|}">health</a></li>
+            <li><a th:href="@{|${webEndpointBasePath}/metrics|}">metrics</a></li>
+            <li><a th:href="@{|${webEndpointBasePath}/trace|}">trace</a></li>
+            <li><a th:href="@{|${webEndpointBasePath}/dump|}">dump</a></li>
+            <li><a th:href="@{|${webEndpointBasePath}/info|}">info</a></li>
+            <li><a th:href="@{|${webEndpointBasePath}/mappings|}">mappings</a></li>
+            <li><a th:href="@{|${webEndpointBasePath}/autoconfig|}">autoconfig</a></li>
+            <li><a th:href="@{|${webEndpointBasePath}/env|}">env</a></li>
+            <li><a th:href="@{|${webEndpointBasePath}/beans|}">beans</a></li>
         </ul>
     </li>
 </ul>

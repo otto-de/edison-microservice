@@ -1,24 +1,21 @@
 package de.otto.edison.registry.client;
 
+import de.otto.edison.annotations.Beta;
+import de.otto.edison.configuration.EdisonApplicationProperties;
+import de.otto.edison.registry.configuration.ServiceRegistryProperties;
+import de.otto.edison.status.domain.ApplicationInfo;
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.Response;
-import de.otto.edison.annotations.Beta;
-import de.otto.edison.registry.configuration.ServiceRegistryProperties;
-import de.otto.edison.status.configuration.ApplicationInfoProperties;
-import de.otto.edison.status.domain.ApplicationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-
 import java.util.concurrent.ScheduledExecutorService;
 
 import static java.util.Arrays.stream;
@@ -47,7 +44,7 @@ public class AsyncHttpRegistryClient implements RegistryClient {
     private final ApplicationInfo applicationInfo;
     private final AsyncHttpClient httpClient;
     private final ServiceRegistryProperties serviceRegistryProperties;
-    private final ApplicationInfoProperties applicationInfoProperties;
+    private final EdisonApplicationProperties edisonApplicationProperties;
     private final ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor();
     private boolean isRunning = false;
 
@@ -55,11 +52,11 @@ public class AsyncHttpRegistryClient implements RegistryClient {
     public AsyncHttpRegistryClient(final ApplicationInfo applicationInfo,
                                    final AsyncHttpClient httpClient,
                                    final ServiceRegistryProperties serviceRegistryProperties,
-                                   final ApplicationInfoProperties applicationInfoProperties) {
+                                   final EdisonApplicationProperties edisonApplicationProperties) {
         this.applicationInfo = applicationInfo;
         this.httpClient = httpClient;
         this.serviceRegistryProperties = serviceRegistryProperties;
-        this.applicationInfoProperties = applicationInfoProperties;
+        this.edisonApplicationProperties = edisonApplicationProperties;
     }
 
     @PostConstruct
@@ -89,17 +86,17 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                     try {
                         LOG.debug("Updating registration of service at '{}'", discoveryServer);
                         httpClient
-                                .preparePut(discoveryServer + "/environments/" + applicationInfoProperties.getEnvironment() + "/" + applicationInfo.name)
+                                .preparePut(discoveryServer + "/environments/" + edisonApplicationProperties.getEnvironment() + "/" + applicationInfo.name)
                                 .setHeader("Content-Type", "application/vnd.otto.edison.links+json")
                                 .setHeader("Accept", "application/vnd.otto.edison.links+json")
                                 .setBody(
                                         "{\n" +
-                                                "   \"groups\":[\"" + applicationInfoProperties.getGroup() + "\"],\n" +
+                                                "   \"groups\":[\"" + edisonApplicationProperties.getGroup() + "\"],\n" +
                                                 "   \"expire\":" + serviceRegistryProperties.getExpireAfter() + ",\n" +
                                                 "   \"links\":[{\n" +
                                                 "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +
                                                 "      \"href\" : \"" + serviceRegistryProperties.getService() + "\",\n" +
-                                                "      \"title\":\"" + applicationInfo.name + "\"\n" +
+                                                "      \"title\":\"" + applicationInfo.title + "\"\n" +
                                                 "   }]  \n" +
                                                 "}"
                                 )

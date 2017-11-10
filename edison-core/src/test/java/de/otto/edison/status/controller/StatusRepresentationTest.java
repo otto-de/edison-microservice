@@ -1,6 +1,6 @@
 package de.otto.edison.status.controller;
 
-import de.otto.edison.status.configuration.ApplicationInfoProperties;
+import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.status.domain.*;
 import de.otto.edison.testsupport.util.JsonMap;
 import org.junit.Test;
@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.otto.edison.status.configuration.ApplicationInfoProperties.applicationInfoProperties;
+import static de.otto.edison.configuration.EdisonApplicationProperties.edisonApplicationProperties;
 import static de.otto.edison.status.configuration.VersionInfoProperties.versionInfoProperties;
 import static de.otto.edison.status.controller.StatusRepresentation.statusRepresentationOf;
 import static de.otto.edison.status.domain.ApplicationInfo.applicationInfo;
@@ -32,9 +32,9 @@ public class StatusRepresentationTest {
     @Test
     public void shouldCreateStatusRepresentationWithoutDetails() {
         // given
-        ApplicationInfoProperties applicationInfoProperties = applicationInfoProperties("Some Title", "group", "local-env", "desc");
+        EdisonApplicationProperties edisonApplicationProperties = edisonApplicationProperties("Some Title", "group", "local-env", "desc");
         final StatusRepresentation json = statusRepresentationOf(
-                applicationStatus(applicationInfo("app-name", applicationInfoProperties), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList())
+                applicationStatus(applicationInfo("app-name", edisonApplicationProperties), mock(ClusterInfo.class), mock(SystemInfo.class), mock(VersionInfo.class), mock(TeamInfo.class), emptyList())
         );
         // then
         assertThat(json.application.name, is("app-name"));

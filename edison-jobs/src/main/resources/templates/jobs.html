@@ -43,7 +43,7 @@
                         <div class="btn-group">
                             <button type="button"
                                     class="triggerButton btn btn-sm btn-default"
-                                    th:attr="data-trigger-url=${baseUri} + ${managementContextPath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
+                                    th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
                                     title="Click to start job now"
                                     data-loading-text="Triggering...">
                                 <span>Trigger </span><span class="glyphicon glyphicon-play"></span>
@@ -53,9 +53,9 @@
                                     Details <span class="caret"></span></button>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a th:href="${job.jobUri}">Messages</a></li>
-                                    <li th:if="${typeFilter == null}"><a id="openButton" th:href="@{|${managementContextPath}/jobs?type=${job.jobType}|}">Job Overview</a></li>
-                                    <li th:if="${typeFilter != null}"><a id="openButton" th:href="@{|${managementContextPath}/jobs|}">Job Overview</a></li>
-                                    <li><a th:href="@{|${managementContextPath}/jobdefinitions/${job.jobType}|}">Job Definition</a></li>
+                                    <li th:if="${typeFilter == null}"><a id="openButton" th:href="@{|${edisonManagementBasePath}/jobs?type=${job.jobType}|}">Job Overview</a></li>
+                                    <li th:if="${typeFilter != null}"><a id="openButton" th:href="@{|${edisonManagementBasePath}/jobs|}">Job Overview</a></li>
+                                    <li><a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}">Job Definition</a></li>
                                 </ul>
                             </div>
                         </div>

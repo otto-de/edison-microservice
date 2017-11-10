@@ -23,7 +23,7 @@ public class NavBarConfigurationTest {
 
     @Test
     public void shouldHaveRightNavBar() {
-        addEnvironment(context, "management.endpoints.web.base-path=/internal");
+        addEnvironment(context, "edison.application.management.base-path=/internal");
         context.register(NavBarConfiguration.class);
         context.refresh();
 

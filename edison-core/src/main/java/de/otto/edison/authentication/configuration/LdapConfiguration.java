@@ -1,8 +1,8 @@
 package de.otto.edison.authentication.configuration;
 
 import de.otto.edison.authentication.LdapAuthenticationFilter;
-import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
 import de.otto.edison.authentication.connection.LdapConnectionFactory;
+import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,6 +20,14 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnMissingBean(name = {"ldapAuthenticationFilter"})
 public class LdapConfiguration {
 
+    /**
+     * Add an authentication filter to the web application context if edison.ldap property is set to {@code enabled}'.
+     * All routes starting with the value of the {@code edison.ldap.prefix} property will be secured by LDAP. If no
+     * property is set this will default to all routes starting with '/internal'.
+     *
+     * @param ldapProperties the properties used to configure LDAP
+     * @return FilterRegistrationBean
+     */
     @Bean
     @ConditionalOnMissingBean(LdapConnectionFactory.class)
     public LdapConnectionFactory ldapConnectionFactory(final LdapProperties ldapProperties) {
@@ -32,12 +40,13 @@ public class LdapConfiguration {
      * property is set this will default to all routes starting with '/internal'.
      *
      * @param ldapProperties the properties used to configure LDAP
+     * @param ldapConnectionFactory the connection factory used to build the LdapAuthenticationFilter
      * @return FilterRegistrationBean
      */
     @Bean
-    public FilterRegistrationBean ldapAuthenticationFilter(final LdapProperties ldapProperties,
-                                                           final LdapConnectionFactory ldapConnectionFactory) {
-        FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
+    public FilterRegistrationBean<LdapAuthenticationFilter> ldapAuthenticationFilter(final LdapProperties ldapProperties,
+                                                                                     final LdapConnectionFactory ldapConnectionFactory) {
+        FilterRegistrationBean<LdapAuthenticationFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties, ldapConnectionFactory));
         filterRegistration.addUrlPatterns(String.format("%s/*", ldapProperties.getPrefix()));
         return filterRegistration;

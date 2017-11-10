@@ -24,7 +24,7 @@ public class TogglzConsoleConfigurationTest {
     public void shouldRegisterTogglzConsoleServlet() {
         this.context.register(TogglzConsoleConfiguration.class);
         this.context.register(NavBarConfiguration.class);
-        addEnvironment(this.context, "management.endpoints.web.base-path=/internal");
+        addEnvironment(this.context, "edison.application.management.base-path=/internal");
         this.context.refresh();
 
         assertThat(this.context.containsBean("togglzServlet"), is(true));
@@ -34,7 +34,7 @@ public class TogglzConsoleConfigurationTest {
     public void shouldNotRegisterTogglzConsoleServletIfDisabled() {
         this.context.register(TogglzConsoleConfiguration.class);
         this.context.register(NavBarConfiguration.class);
-        addEnvironment(this.context, "management.endpoints.web.base-path=/internal", "edison.togglz.console.enabled=false");
+        addEnvironment(this.context, "edison.application.management.base-path=/internal", "edison.togglz.console.enabled=false");
         this.context.refresh();
 
         assertThat(this.context.containsBean("togglzServlet"), is(false));

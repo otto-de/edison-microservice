@@ -19,7 +19,7 @@ public class FeatureTogglesController {
     }
 
     @RequestMapping(
-            value = "${management.endpoints.web.base-path}/toggles",
+            value = "${edison.application.management.base-path:/internal}/toggles",
             produces = {
                     "application/vnd.otto.monitoring.status+json",
                     "application/json"},
