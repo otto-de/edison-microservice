@@ -23,6 +23,8 @@ endpoints:
         enabled: true
     status:
         enabled: true
+    metrics:
+        enabled: true
 
 edison:
     # disable graceful shutdown
