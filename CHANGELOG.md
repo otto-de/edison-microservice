@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.2.4
+
+**Maintenance:**
+
+* **[edison-core]** Remove logging for failed LDAP authentication as long as they don't fail for all tries
+
 ## 1.2.3
 
 **New Features:**
