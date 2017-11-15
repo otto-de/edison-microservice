@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.2.5
+
+**Maintenance:**
+
+* **[edison-core]** Don't expose user names at successful login as this is a security issue
+
 ## 1.2.4
 
 **Maintenance:**
