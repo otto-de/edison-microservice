@@ -6,6 +6,9 @@
 
 * **[edison-core]** Don't expose user names at successful login as this is a security issue
 
+**Breaking Changes:**
+* upgrade asyncHttpClient version to 2.1.0-RC1
+
 ## 1.2.4
 
 **Maintenance:**
