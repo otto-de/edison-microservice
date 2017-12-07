@@ -6,7 +6,7 @@ ext {
     versions = [
             spring_boot                      : '2.0.0.M6',
             spring                           : '${spring.version}',
-            async_http_client                : '2.0.37',
+            async_http_client                : '2.1.0-RC1',
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.3',
             metrics                          : '3.2.5',

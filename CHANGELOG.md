@@ -6,6 +6,8 @@
 
 * Updated to Spring Boot 2.0.0.M5
   * This also requires gradle 4.x for building edison-microservice.
+ 
+* upgrade asyncHttpClient version to 2.1.0-RC1
 
 * Removed @Beta code:
   * **[edison-core]** Removed prototype code to support dynamic scaling with load detection.  
