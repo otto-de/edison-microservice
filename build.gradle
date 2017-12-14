@@ -53,8 +53,6 @@ subprojects {
 
     // Override some Spring Boot default versions
     // see https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-customize-dependency-versions
-    ext['thymeleaf.version'] = versions.thymeleaf
-    ext['thymeleaf-layout-dialect.version'] = versions.thymeleaf_layout_dialect
     ext['mockito.version'] = test_versions.mockito_core
 
     task allDeps(type: DependencyReportTask) {}

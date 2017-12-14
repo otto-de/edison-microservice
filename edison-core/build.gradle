@@ -4,9 +4,6 @@ dependencies {
     compile libraries.spring_boot_starter_web
     compile libraries.spring_boot_starter_actuator
     compile libraries.spring_boot_starter_thymeleaf
-    compile libraries.thymeleaf
-    compile libraries.thymeleaf_spring4
-    compile libraries.thymeleaf_layout_dialect
     compile libraries.jcip_annotations
     compile libraries.logback_classic
     compile libraries.metrics_annotation
