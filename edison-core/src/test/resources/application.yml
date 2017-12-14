@@ -10,16 +10,12 @@ server:
     port: 8084
 
 # context of the management endpoints like metrics, health, and so on
+# default is /actuator
 management:
     endpoints:
         web:
-            base-path: /application
-
-endpoints:
-    health:
-        enabled: true
-    status:
-        enabled: false
+            base-path: /actuator
+            expose: '*'
 
 # edison-specific configuration
 edison:

@@ -59,8 +59,6 @@ management:
             base-path: /internal
 ```
 
-Definitely an improvement...
-
 #### b) Properties
 
 Edison's ApplicationInfoProperties have been renamed to EdisonApplicationProperties and moved to 
@@ -85,18 +83,11 @@ While Edison is currently by default redirecting /internal to /internal/status (
 Spring Boot is rendering some kind of "Home Document", obviously in application/hal+json format, for requests to 
 ${management.endpoints.web.base-path} (that is, requests to `/internal`). Right now, I can not see how to disable this.
 
-Another conflict with Spring Boot 2.0.0 and Edison is the `StatusController` aka `/internal/status` Spring Boot is 
-currently supporting two kinds of health checks: one w/o information about the details of the different registered
-`HealthIndicator`, and one w/ all these details:  The first is enabled by default and responds to `/internal/health`,
-the latter must be explicitly enabled with `endpoints.status.enabled=true` and responds to `/internal/status`. This 
-will always lead to a conflict with Edison's `StatusController`.
-
 There are two recommended options for Edison Services:
 
-1) Disable /internal Redirection and the Spring Boot `Status` Endpoint:
+1) Disable /internal Redirection and use /internal as a base-path for Spring Boot Actuator endpoints:
 
-Set `endpoints.status.enabled=false` and `edison.status.redirect-internal.enabled=false`: This will disable the new 
-Spring Boot Status Endpoint and redirection of `/internal` requests.
+Configure `edison.status.redirect-internal.enabled=false`: This will disable the redirection of `/internal` requests.
 
 Now you can configure Edison and Actuator to use the same base-path, which is the same behaviour as in 
 Edison 1.x, only that `/internal` is not redirecting to `/status` anymore.
@@ -109,12 +100,9 @@ edison.application.management.base-path=/internal
 2) Separate Spring Boot Actuator Endpoints from Edison:
 
 In order to avoid future hassle with conflicting Actuator endpoints, we should possibly separate endpoints from Edison:
-Configure `management.endpoints.web.base-path=/application` and the new 
-`edison.application.management.base-path=/internal`. This way, all actuator Endpoints will be available under different 
-URLs than Edison admin pages. 
-
-BTW, `/application` and `/internal` are the default values so in order to separate Endpoints from Edison pages, yout do 
-not need to explicitly configure this.
+Configure `management.endpoints.web.base-path=/actuator` (which is the new default for Spring Boot Actuator endpoints) 
+and the new `edison.application.management.base-path=/internal`. This way, all actuator Endpoints will be available 
+under different URLs than Edison admin pages. 
 
 #### d) Actuator Endpoints
 

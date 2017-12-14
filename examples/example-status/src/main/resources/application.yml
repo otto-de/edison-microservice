@@ -14,20 +14,11 @@ server:
 management:
     endpoints:
         web:
-            base-path: /application
-endpoints:
-    env:
-        enabled: true
-    health:
-        enabled: true
-    loggers:
-        enabled: true
-    metrics:
-        enabled: true
-    trace:
-        enabled: true
-    status:
-        enabled: true
+            base-path: /actuator
+            expose: '*'
+    endpoint:
+        health:
+            show-details: true
 
 edison:
     gracefulshutdown:

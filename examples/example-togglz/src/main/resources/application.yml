@@ -16,12 +16,8 @@ server:
 management:
     endpoints:
         web:
-            base-path: /application
-endpoints:
-    health:
-        enabled: true
-    status:
-        enabled: true
+            base-path: /actuator
+            expose: '*'
 
 edison:
     gracefulshutdown:
