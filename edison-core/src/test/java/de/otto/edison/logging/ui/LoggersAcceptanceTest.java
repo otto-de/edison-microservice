@@ -32,11 +32,6 @@ public class LoggersAcceptanceTest {
     private TestRestTemplate template;
 
     @Test
-    public void shouldRemoveLoggersEndpoint() {
-        assertThat(ctx.containsBean("loggersMvcEndpoint"), is(false));
-    }
-
-    @Test
     public void shouldHaveLoggersAsHtml() {
         final ResponseEntity<String> response = template.getForEntity("/internal/loggers.html", String.class);
         assertThat(response.getStatusCodeValue(), is(200));

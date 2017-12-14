@@ -2,12 +2,9 @@ package de.otto.edison.logging.ui;
 
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.navigation.NavBar;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
 import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.boot.actuate.logging.LoggersEndpoint.LoggerLevels;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
@@ -38,14 +35,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @since 1.1.0
  */
 @Controller
-@ConditionalOnProperty(prefix = "edison.logging.ui", name = "enabled", matchIfMissing = true)
-@EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class LoggersHtmlEndpoint {
 
     private final LoggersEndpoint loggersEndpoint;
     private final EdisonApplicationProperties applicationProperties;
 
-    @Autowired
     public LoggersHtmlEndpoint(final LoggersEndpoint loggersEndpoint,
                                final NavBar rightNavBar,
                                final EdisonApplicationProperties applicationProperties) {

@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 
 @Configuration
-@ConditionalOnProperty(prefix = "edison.logging", name = "header.enabled")
 @EnableConfigurationProperties(LoggingProperties.class)
 public class LoggingConfiguration {
 
     @Bean
+    @ConditionalOnProperty(prefix = "edison.logging", name = "header.enabled")
     public LogHeadersToMDCFilter logHeadersToMDCFilter(final LoggingProperties properties) {
         return new LogHeadersToMDCFilter(Arrays.asList(properties.getHeader().getNames().split(",")));
     }

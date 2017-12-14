@@ -35,14 +35,6 @@ public class DisableEndpointPostProcessorTest {
     }
 
     @Test
-    public void shouldUnRegisterBean() {
-        ctx.register(TestEndpointConfiguration.class);
-        ctx.register(RemoveTestEndpointConfiguration.class);
-        ctx.refresh();
-        assertThat(ctx.containsBean("someTestMvcEndpoint"), is(false));
-    }
-
-    @Test
     public void shouldDisableEndpoint() {
         addEnvironment(ctx, "endpoints.someTest.enabled=true");
         ctx.register(TestEndpointConfiguration.class);
