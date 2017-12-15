@@ -40,7 +40,7 @@ public class ExampleJobsSmokeTest {
 
     @Test
     public void shouldHaveHealthCheck() {
-        final ResponseEntity<String> response = this.restTemplate.getForEntity("/application/health", String.class);
+        final ResponseEntity<String> response = this.restTemplate.getForEntity("/actuator/health", String.class);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
     }

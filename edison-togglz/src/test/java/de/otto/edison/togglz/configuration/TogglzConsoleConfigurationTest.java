@@ -3,11 +3,11 @@ package de.otto.edison.togglz.configuration;
 import de.otto.edison.navigation.NavBarConfiguration;
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.boot.test.util.EnvironmentTestUtils.addEnvironment;
 
 public class TogglzConsoleConfigurationTest {
 
@@ -24,7 +24,7 @@ public class TogglzConsoleConfigurationTest {
     public void shouldRegisterTogglzConsoleServlet() {
         this.context.register(TogglzConsoleConfiguration.class);
         this.context.register(NavBarConfiguration.class);
-        addEnvironment(this.context, "edison.application.management.base-path=/internal");
+        TestPropertyValues.of("edison.application.management.base-path=/internal").applyTo(context);
         this.context.refresh();
 
         assertThat(this.context.containsBean("togglzServlet"), is(true));
@@ -34,7 +34,7 @@ public class TogglzConsoleConfigurationTest {
     public void shouldNotRegisterTogglzConsoleServletIfDisabled() {
         this.context.register(TogglzConsoleConfiguration.class);
         this.context.register(NavBarConfiguration.class);
-        addEnvironment(this.context, "edison.application.management.base-path=/internal", "edison.togglz.console.enabled=false");
+        TestPropertyValues.of("edison.application.management.base-path=/internal", "edison.togglz.console.enabled=false").applyTo(context);
         this.context.refresh();
 
         assertThat(this.context.containsBean("togglzServlet"), is(false));

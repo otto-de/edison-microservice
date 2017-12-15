@@ -4,11 +4,11 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.boot.test.util.EnvironmentTestUtils.addEnvironment;
 
 public class LdapConfigurationTest {
 
@@ -28,12 +28,13 @@ public class LdapConfigurationTest {
     @Test
     public void shouldRegisterLdapFilter() {
         this.context.register(EnableAutoConfig.class);
-        addEnvironment(this.context,
-                "edison.application.management.base-path=/internal",
-                "edison.ldap.enabled=true",
-                "edison.ldap.host=localhost",
-                "edison.ldap.base-dn=test-dn",
-                "edison.ldap.rdn-identifier=test-rdn");
+        TestPropertyValues
+                .of("edison.application.management.base-path=/internal")
+                .and("edison.ldap.enabled=true")
+                .and("edison.ldap.host=localhost")
+                .and("edison.ldap.base-dn=test-dn")
+                .and("edison.ldap.rdn-identifier=test-rdn")
+                .applyTo(context);
         this.context.refresh();
 
         assertThat(this.context.containsBean("ldapAuthenticationFilter"), is(true));
@@ -42,9 +43,10 @@ public class LdapConfigurationTest {
     @Test
     public void shouldNotRegisterLdapFilterIfDisabled() {
         this.context.register(EnableAutoConfig.class);
-        addEnvironment(this.context,
-                "edison.application.management.base-path=/internal",
-                "edison.ldap.enabled=false");
+        TestPropertyValues
+                .of("edison.application.management.base-path=/internal")
+                .and("edison.ldap.enabled=false")
+                .applyTo(context);
         this.context.refresh();
 
         assertThat(this.context.containsBean("ldapAuthenticationFilter"), is(false));
@@ -53,9 +55,10 @@ public class LdapConfigurationTest {
     @Test(expected = UnsatisfiedDependencyException.class)
     public void shouldValidateProperties() {
         this.context.register(EnableAutoConfig.class);
-        addEnvironment(this.context,
-                "edison.application.management.base-path=/internal",
-                "edison.ldap.enabled=true");
+        TestPropertyValues
+                .of("edison.application.management.base-path=/internal")
+                .and("edison.ldap.enabled=true")
+                .applyTo(context);
 
         this.context.refresh();
     }

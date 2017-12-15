@@ -26,31 +26,28 @@ public class GracefulShutdownHealthIndicatorTest {
     @Test
     public void shouldIndicateErrorWhileShutdown() throws Exception {
         // given
-        GracefulShutdownHealthIndicator gracefulShutdownHealthIndicator = spy(
-                new GracefulShutdownHealthIndicator(mock(GracefulShutdownProperties.class)));
+        class TestGracefulShutdownHealthIndicator extends GracefulShutdownHealthIndicator {
+            boolean waitForShutdownCalled = false;
+
+            TestGracefulShutdownHealthIndicator(GracefulShutdownProperties properties) {
+                super(properties);
+            }
+
+            @Override
+            void waitForShutdown() throws InterruptedException {
+                assertThat(health(), is(down().build()));
+                waitForShutdownCalled = true;
+                super.waitForShutdown();
+            }
+        }
+        TestGracefulShutdownHealthIndicator gracefulShutdownHealthIndicator =
+                new TestGracefulShutdownHealthIndicator(mock(GracefulShutdownProperties.class));
         Runnable runnable = mock(Runnable.class);
-
-        doAnswer(invocation -> {
-            assertThat(gracefulShutdownHealthIndicator.health(), is(up().build()));
-            return null;
-        }).when(gracefulShutdownHealthIndicator).waitForSettingHealthCheckToDown();
-
-        doAnswer(invocation -> {
-            assertThat(gracefulShutdownHealthIndicator.health(), is(down().build()));
-            return null;
-        }).when(gracefulShutdownHealthIndicator).waitForShutdown();
 
         // when
         gracefulShutdownHealthIndicator.stop(runnable);
 
         // then
-        InOrder order = inOrder(gracefulShutdownHealthIndicator, runnable);
-
-        // on first wait call status should still be OK
-        order.verify(gracefulShutdownHealthIndicator).waitForSettingHealthCheckToDown();
-        // on second wait call status should be switched to ERROR
-        order.verify(gracefulShutdownHealthIndicator).waitForShutdown();
-        // after second wait call shutdown chain should be executed
-        order.verify(runnable).run();
+        assertThat(gracefulShutdownHealthIndicator.waitForShutdownCalled, is(true));
     }
 }

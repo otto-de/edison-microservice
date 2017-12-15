@@ -82,8 +82,8 @@ public final class JobEvents {
     /**
      * Publishes an event with the given level to all currently running jobs
      *
-     * @param level
-     * @param message
+     * @param level the level used to log the message
+     * @param message the message
      * @since 1.1.0
      */
     public static void broadcast(final Level level, final String message) {

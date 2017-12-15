@@ -29,8 +29,8 @@ public class TogglzConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "togglzFilter")
-    public FilterRegistrationBean togglzFilter() {
-        final FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
+    public FilterRegistrationBean<TogglzFilter> togglzFilter() {
+        final FilterRegistrationBean<TogglzFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new TogglzFilter());
         filterRegistration.addUrlPatterns("/*");
         return filterRegistration;

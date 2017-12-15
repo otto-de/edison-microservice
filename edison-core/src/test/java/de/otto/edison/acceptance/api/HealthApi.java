@@ -42,7 +42,7 @@ public class HealthApi extends SpringTestBase {
     }
 
     public static When the_internal_health_is_retrieved() throws IOException {
-        getResource("http://localhost:8084/testcore/application/health", Optional.<String>empty());
+        getResource("http://localhost:8084/testcore/actuator/health", Optional.<String>empty());
         return When.INSTANCE;
     }
 

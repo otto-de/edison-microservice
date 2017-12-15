@@ -3,13 +3,13 @@ package de.otto.edison.logging.ui;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.springframework.boot.test.util.EnvironmentTestUtils.addEnvironment;
 
 public class DisableEndpointPostProcessorTest {
 
@@ -36,7 +36,7 @@ public class DisableEndpointPostProcessorTest {
 
     @Test
     public void shouldDisableEndpoint() {
-        addEnvironment(ctx, "endpoints.someTest.enabled=true");
+        TestPropertyValues.of("endpoints.someTest.enabled=true").applyTo(ctx);
         ctx.register(TestEndpointConfiguration.class);
         ctx.register(RemoveTestEndpointConfiguration.class);
         ctx.refresh();

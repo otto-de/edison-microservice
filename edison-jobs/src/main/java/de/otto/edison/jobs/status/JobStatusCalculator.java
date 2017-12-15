@@ -94,6 +94,7 @@ public class JobStatusCalculator {
      * @param numberOfJobs the total number of jobs to take into calculation.
      * @param maxFailedJobs the maximum number of jobs that that are accepted to fail.
      * @param jobRepository repository to fetch the last {@code numberOfJobs}.
+     * @param edisonManagementBasePath the base-path used to generate links to the job details
      */
     public JobStatusCalculator(final String key,
                                final int numberOfJobs,
@@ -116,6 +117,7 @@ public class JobStatusCalculator {
      *
      * @param key key of the calculator
      * @param jobRepository the repository
+     * @param edisonManagementBasePath the base-path used to generate links to the job details
      * @return JobStatusCalculator
      */
     public static JobStatusCalculator warningOnLastJobFailed(final String key,
@@ -131,6 +133,7 @@ public class JobStatusCalculator {
      *
      * @param key key of the calculator
      * @param jobRepository the repository
+     * @param edisonManagementBasePath the base-path used to generate links to the job details
      * @return JobStatusCalculator
      */
     public static JobStatusCalculator errorOnLastJobFailed(final String key,
@@ -147,6 +150,7 @@ public class JobStatusCalculator {
      * @param key key of the calculator
      * @param numJobs the number of last jobs used to calculate the job status
      * @param jobRepository the repository
+     * @param edisonManagementBasePath the base-path used to generate links to the job details
      * @return JobStatusCalculator
      */
     public static JobStatusCalculator errorOnLastNumJobsFailed(final String key,
