@@ -35,6 +35,7 @@ The Spring Boot docs on how to upgrade can be found here:
 * [Spring Boot 2.0.0-M4 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M4-Release-Notes)
 * [Spring Boot 2.0.0-M5 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M5-Release-Notes)
 * [Spring Boot 2.0.0-M6 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M6-Release-Notes)
+* [Spring Boot 2.0.0-M7 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M7-Release-Notes)
 
 #### a) Management Context-Path
 
