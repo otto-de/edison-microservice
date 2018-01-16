@@ -4,17 +4,24 @@
 
 **Breaking Changes:**
 
-* Updated to Spring Boot 2.0.0.M5
+* Updated to Spring Boot 2.0.0.M7
   * This also requires gradle 4.x for building edison-microservice.
  
 * upgrade asyncHttpClient version to 2.1.0-RC1
 
+* Refactored edison-jobs:
+  * **[edison-jobs]**: The JobEventPublisher from Edison 1.x is removed now. Messages are attached to JobInfo by simply
+  writing a (Logback-) Log message with a `JobMarker` like this: 
+  ```LOG.error(JobMarker.JOB, "Some random error occured"); ```
+  * **[edison-jobs]**: `JobRunnable.execute()` is now returning a boolean that is used to indicate, whether the job
+  was executed (true) or skipped (false).
+  
 * Removed @Beta code:
   * **[edison-core]** Removed prototype code to support dynamic scaling with load detection.  
 
 * Removed @Deprecated stuff:
-  * **[edison-core]** Removed ServiceSpec. Replaced by ServiceDependency.
   * **[edison-cache]** Removed edison-cache because Spring Boot 2.0 does not support this anymore.
+  * **[edison-core]** Removed ServiceSpec. Replaced by ServiceDependency.
   * **[edison-mongo]** Default constructor from AbstractMongoRepository is replaced with 
   AbstractMongoRepository(MongoProperties)
   * **[edison-mongo]** Removed property `passwd` from MongoProperties which was replaced with `password` in order to 
@@ -36,6 +43,7 @@ The Spring Boot docs on how to upgrade can be found here:
 * [Spring Boot 2.0.0-M5 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M5-Release-Notes)
 * [Spring Boot 2.0.0-M6 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M6-Release-Notes)
 * [Spring Boot 2.0.0-M7 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M7-Release-Notes)
+* [Spring Boot 2.0.0-RC1 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-RC1-Release-Notes)
 
 #### a) Management Context-Path
 

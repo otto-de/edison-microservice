@@ -11,7 +11,7 @@ Job information can automatically be persisted in a MongoDB if you use edison-mo
 in memory. In clustered environments (multiple instances of a single service) it is generally a good idea to use some
 kind of persistence. 
 
-It is easy to persist job information in different data stores. In this case, a `JobRepository` must be implemented 
+It is possible to persist job information in different data stores. In this case, a `JobRepository` must be implemented 
 and exposed as a Spring Bean.
 
 Beside of starting a job programmatically via the `Jobservice` you can also use the graphical user interface which 

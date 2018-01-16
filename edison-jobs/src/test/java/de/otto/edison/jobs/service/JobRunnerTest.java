@@ -1,14 +1,13 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.eventbus.JobEventPublisher;
-import de.otto.edison.jobs.eventbus.JobEvents;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.slf4j.MDC;
+import org.springframework.context.ApplicationEventPublisher;
 
-import java.net.URISyntaxException;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -17,69 +16,102 @@ import java.util.concurrent.TimeUnit;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.manuallyTriggerableJobDefinition;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
-import static de.otto.edison.jobs.service.JobRunner.PING_PERIOD;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.time.Duration.ofSeconds;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class JobRunnerTest {
-
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
     @Mock
     private ScheduledExecutorService executor;
     @Mock
     private ScheduledFuture<?> scheduledJob;
-    @Mock
-    private JobEventPublisher jobEventPublisher;
-    private JobRunner jobRunner;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
 
-        jobRunner = newJobRunner(
-                "42",
-                "NAME",
-                executor,
-                jobEventPublisher
-        );
-
         doReturn(scheduledJob)
-                .when(executor).scheduleAtFixedRate(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class));
+                .when(executor)
+                .scheduleAtFixedRate(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class));
     }
 
     @Test
     public void shouldExecuteJob() {
         // given
         JobRunnable jobRunnable = mock(JobRunnable.class);
-        when(jobRunnable.getJobDefinition()).thenReturn(fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty()));
+        when(jobRunnable.getJobDefinition()).thenReturn(
+                fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty())
+        );
+        JobRunner jobRunner = jobRunner(jobRunnable);
 
         // when
-        jobRunner.start(jobRunnable);
+        jobRunner.run();
 
         // then
-        verify(jobRunnable).execute(jobEventPublisher);
+        verify(jobRunnable).execute();
     }
 
     @Test
-    public void shouldPublishErrorMessageWithStackTraceOnFail() throws URISyntaxException {
+    public void shouldSetMDC() {
         // given
         JobRunnable jobRunnable = mock(JobRunnable.class);
-        when(jobRunnable.getJobDefinition()).thenReturn(fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty()));
-        doThrow(new RuntimeException("some error")).when(jobRunnable).execute(jobEventPublisher);
+        when(jobRunnable.getJobDefinition()).thenReturn(
+                fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty())
+        );
+        JobRunner jobRunner = jobRunner(jobRunnable);
 
         // when
-        jobRunner.start(jobRunnable);
+        jobRunner.start();
 
         // then
-        verify(jobEventPublisher).error(startsWith("Fatal error in job NAME (42)\n" +
-                "java.lang.RuntimeException: some error\n"));
+        assertThat(MDC.get("job_id"), is("42"));
+        assertThat(MDC.get("job_type"), is("TYPE"));
+    }
+
+    @Test
+    public void shouldSendLifecycleEvents() {
+        // given
+        JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobDefinition()).thenReturn(
+                fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty())
+        );
+        JobRunner jobRunner = jobRunner(jobRunnable);
+
+        // when
+        jobRunner.run();
+
+        // then
+        verify(eventPublisher).publishEvent(newStateChangeEvent(jobRunnable, "42", START));
+        verify(eventPublisher).publishEvent(newStateChangeEvent(jobRunnable, "42", STOP));
+    }
+
+    @Test
+    public void shouldMarkJobSkipped() {
+        // given
+        JobRunnable jobRunnable = mock(JobRunnable.class);
+        when(jobRunnable.getJobDefinition()).thenReturn(
+                fixedDelayJobDefinition("TYPE", "", "", ofSeconds(2), 0, empty())
+        );
+        when(jobRunnable.execute()).thenReturn(false);
+        JobRunner jobRunner = jobRunner(jobRunnable);
+
+        // when
+        jobRunner.run();
+
+        // then
+        verify(eventPublisher).publishEvent(newStateChangeEvent(jobRunnable, "42", SKIPPED));
     }
 
     @Test
@@ -90,53 +122,59 @@ public class JobRunnerTest {
         when(jobRunnable.getJobDefinition())
                 .thenReturn(manuallyTriggerableJobDefinition("someJobType", "someJobname", "Me is testjob", 2, Optional.empty()));
         doThrow(new RuntimeException("some error"))
-                .when(jobRunnable).execute(eq(jobEventPublisher));
+                .when(jobRunnable).execute();
+        JobRunner jobRunner = jobRunner(jobRunnable);
 
         // when
-        jobRunner.start(jobRunnable);
+        jobRunner.run();
 
         // then
-        verify(jobEventPublisher).stateChanged(START);
-        verify(jobRunnable, times(3)).execute(jobEventPublisher);
-        verify(jobEventPublisher, times(2)).stateChanged(RESTART);
-        verify(jobEventPublisher).stateChanged(STOP);
+        verify(eventPublisher)
+                .publishEvent(newStateChangeEvent(jobRunnable, "42", START));
+        verify(jobRunnable, times(3))
+                .execute();
+        verify(eventPublisher, times(2))
+                .publishEvent(newStateChangeEvent(jobRunnable, "42", RESTART));
+        verify(eventPublisher)
+                .publishEvent(newStateChangeEvent(jobRunnable, "42", STOP));
     }
 
     @Test
     public void shouldSendKeepAliveEventWithinPingJob() {
+        // given
+        final JobRunnable jobRunnable = getMockedRunnable();
+        JobRunner jobRunner = jobRunner(jobRunnable);
+
         // when
-        jobRunner.start(getMockedRunnable());
+        jobRunner.run();
 
         //then
-        ArgumentCaptor<Runnable> pingRunnableArgumentCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(executor).scheduleAtFixedRate(pingRunnableArgumentCaptor.capture(), eq(PING_PERIOD), eq(PING_PERIOD), eq(SECONDS));
+        ArgumentCaptor<Runnable> pingRunnableArgumentCaptor = forClass(Runnable.class);
+        verify(executor).scheduleAtFixedRate(
+                pingRunnableArgumentCaptor.capture(),
+                eq(20L),
+                eq(20L),
+                eq(SECONDS)
+        );
 
         pingRunnableArgumentCaptor.getValue().run();
 
-        verify(jobEventPublisher).stateChanged(KEEP_ALIVE);
+        verify(eventPublisher).publishEvent(
+                newStateChangeEvent(jobRunnable, "42", KEEP_ALIVE)
+        );
     }
 
     @Test
     public void shouldStopPingJobWhenJobIsFinished() {
+        // given
+        final JobRunnable jobRunnable = getMockedRunnable();
+        JobRunner jobRunner = jobRunner(jobRunnable);
+
         // when
-        jobRunner.start(getMockedRunnable());
+        jobRunner.run();
 
         //then
         verify(scheduledJob).cancel(false);
-    }
-
-    @Test
-    public void shouldInitJobEventsOnJobStart() {
-        jobRunner.start(new StubRunnable(()-> JobEvents.info("test")));
-
-        verify(jobEventPublisher).info("test");
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void shouldDestroyReferenceToJobEventPublisherWhenJobFinishes() {
-        jobRunner.start(getMockedRunnable());
-
-        JobEvents.info("I should produce an error");
     }
 
     private JobRunnable getMockedRunnable() {
@@ -147,24 +185,12 @@ public class JobRunnerTest {
         return jobRunnable;
     }
 
-    private static class StubRunnable implements JobRunnable {
-
-        private final Runnable runnable;
-
-        StubRunnable(Runnable runnable) {
-            this.runnable = runnable;
-        }
-
-        @Override
-        public JobDefinition getJobDefinition() {
-            JobDefinition jobDefinition = mock(JobDefinition.class);
-            when(jobDefinition.jobType()).thenReturn("TYPE");
-            return jobDefinition;
-        }
-
-        @Override
-        public void execute(JobEventPublisher jobEventPublisher) {
-            runnable.run();
-        }
+    private JobRunner jobRunner(final JobRunnable jobRunnable) {
+        return newJobRunner(
+                "42",
+                jobRunnable,
+                eventPublisher,
+                executor
+        );
     }
 }

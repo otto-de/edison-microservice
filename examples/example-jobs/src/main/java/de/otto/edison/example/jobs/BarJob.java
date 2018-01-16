@@ -1,21 +1,22 @@
 package de.otto.edison.example.jobs;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.eventbus.JobEventPublisher;
-import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
+import de.otto.edison.jobs.domain.JobMarker;
 import de.otto.edison.jobs.service.JobRunnable;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.Random;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.retryableFixedDelayJobDefinition;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.SKIPPED;
-import static java.lang.Thread.sleep;
 import static java.time.Duration.ofMinutes;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 public class BarJob implements JobRunnable {
+
+    private static final Logger LOG = getLogger(BarJob.class);
 
     @Override
     public JobDefinition getJobDefinition() {
@@ -32,25 +33,25 @@ public class BarJob implements JobRunnable {
     }
 
     @Override
-    public void execute(final JobEventPublisher jobEventPublisher) {
+    public boolean execute() {
         if (hasNothingToDo()) {
-            jobEventPublisher.skipped();
+            return false;
         } else {
             if (hasSomeErrorCondition()) {
-                jobEventPublisher.error("Some random error occured");
+                LOG.error(JobMarker.JOB, "Some random error occured");
             }
             for (int i = 0; i < 10; ++i) {
-                doSomeHardWork(jobEventPublisher);
+                doSomeHardWork();
             }
+            return true;
         }
     }
 
-    private void doSomeHardWork(final JobEventPublisher jobEventPublisher) {
+    private void doSomeHardWork() {
         try {
-            jobEventPublisher.info("Still doing some hard work...");
-            jobEventPublisher.skipped();
+            LOG.info(JobMarker.JOB, "Still doing some hard work...");
         } catch (final Exception e) {
-            jobEventPublisher.error(e.getMessage());
+            LOG.error(JobMarker.JOB, e.getMessage());
         }
     }
 

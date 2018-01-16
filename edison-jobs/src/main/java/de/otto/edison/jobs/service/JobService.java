@@ -1,8 +1,10 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.domain.*;
-import de.otto.edison.jobs.eventbus.JobEventPublisher;
+import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
@@ -18,7 +20,6 @@ import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ import static de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
+import static de.otto.edison.jobs.domain.Level.WARNING;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -135,14 +136,14 @@ public class JobService {
     }
 
     public void stopJob(final String jobId) {
-        this.stopJob(jobId, Optional.empty());
+        stopJob(jobId, null);
     }
 
     public void killJobsDeadSince(final int seconds) {
         final OffsetDateTime timeToMarkJobAsStopped = now(clock).minusSeconds(seconds);
         LOG.info(format("JobCleanup: Looking for jobs older than %s ", timeToMarkJobAsStopped));
         final List<JobInfo> deadJobs = jobRepository.findRunningWithoutUpdateSince(timeToMarkJobAsStopped);
-        deadJobs.forEach(deadJob -> killJob(deadJob.getJobId(), deadJob.getJobType()));
+        deadJobs.forEach(deadJob -> killJob(deadJob.getJobId()));
         clearRunLocks();
     }
 
@@ -165,24 +166,31 @@ public class JobService {
         });
     }
 
-    public void killJob(final String jobId, final String jobType) {
-        stopJob(jobId, Optional.of(JobStatus.DEAD));
-        jobRepository.appendMessage(jobId, jobMessage(Level.WARNING, "Job didn't receive updates for a while, considering it dead", now(clock)));
+    public void killJob(final String jobId) {
+        stopJob(jobId, JobStatus.DEAD);
+        jobRepository.appendMessage(
+                jobId,
+                jobMessage(WARNING, "Job didn't receive updates for a while, considering it dead", now(clock))
+        );
     }
 
-    private void stopJob(final String jobId, final Optional<JobStatus> status) {
+    private void stopJob(final String jobId,
+                         final JobStatus status) {
         jobRepository.findOne(jobId).ifPresent((JobInfo jobInfo) -> {
             jobMetaService.releaseRunLock(jobInfo.getJobType());
             final OffsetDateTime now = now(clock);
             final Builder builder = jobInfo.copy()
                     .setStopped(now)
                     .setLastUpdated(now);
-            status.ifPresent(builder::setStatus);
+            if (status != null) {
+                builder.setStatus(status);
+            }
             jobRepository.createOrUpdate(builder.build());
         });
     }
 
-    public void appendMessage(String jobId, JobMessage jobMessage) {
+    public void appendMessage(final String jobId,
+                              final JobMessage jobMessage) {
         // TODO: Refactor JobRepository so only a single update is required
         jobRepository.appendMessage(jobId, jobMessage);
         if (jobMessage.getLevel() == Level.ERROR) {
@@ -196,11 +204,11 @@ public class JobService {
         }
     }
 
-    public void keepAlive(String jobId) {
+    public void keepAlive(final String jobId) {
         jobRepository.setLastUpdate(jobId, now(clock));
     }
 
-    public void markSkipped(String jobId) {
+    public void markSkipped(final String jobId) {
         // TODO: Refactor JobRepository so only a single update is required
         OffsetDateTime currentTimestamp = now(clock);
         jobRepository.appendMessage(jobId, jobMessage(Level.INFO, "Skipped job ..", currentTimestamp));
@@ -208,38 +216,33 @@ public class JobService {
         jobRepository.setJobStatus(jobId, JobStatus.SKIPPED);
     }
 
-    public void markRestarted(String jobId) {
+    public void markRestarted(final String jobId) {
         // TODO: Refactor JobRepository so only a single update is required
         OffsetDateTime currentTimestamp = now(clock);
-        jobRepository.appendMessage(jobId, jobMessage(Level.WARNING, "Restarting job ..", currentTimestamp));
+        jobRepository.appendMessage(jobId, jobMessage(WARNING, "Restarting job ..", currentTimestamp));
         jobRepository.setLastUpdate(jobId, currentTimestamp);
         jobRepository.setJobStatus(jobId, JobStatus.OK);
     }
 
-    private JobInfo createJobInfo(String jobType) {
+    private JobInfo createJobInfo(final String jobType) {
         return newJobInfo(uuidProvider.getUuid(), jobType, clock,
                 systemInfo.getHostname());
     }
 
-    private JobRunnable findJobRunnable(String jobType) {
+    private JobRunnable findJobRunnable(final String jobType) {
         final Optional<JobRunnable> optionalRunnable = jobRunnables.stream().filter(r -> r.getJobDefinition().jobType().equalsIgnoreCase(jobType)).findFirst();
         return optionalRunnable.orElseThrow(() -> new IllegalArgumentException("No JobRunnable for " + jobType));
     }
 
-    private String startAsync(final JobRunnable jobRunnable, final String jobId) {
-        final JobRunner jobRunner = createJobRunner(jobRunnable, jobId);
-        executor.execute(() -> jobRunner.start(jobRunnable));
-        return jobId;
-    }
-
-    private JobRunner createJobRunner(JobRunnable jobRunnable, String jobId) {
-        final String jobType = jobRunnable.getJobDefinition().jobType();
-        return newJobRunner(
+    private String startAsync(final JobRunnable jobRunnable,
+                              final String jobId) {
+        executor.execute(newJobRunner(
                 jobId,
-                jobType,
-                executor,
-                newJobEventPublisher(applicationEventPublisher, jobRunnable, jobId)
-        );
+                jobRunnable,
+                applicationEventPublisher,
+                executor
+        ));
+        return jobId;
     }
 
     private JobRunnable metered(final JobRunnable delegate) {
@@ -251,10 +254,11 @@ public class JobService {
             }
 
             @Override
-            public void execute(final JobEventPublisher jobEventPublisher) {
+            public boolean execute() {
                 long ts = currentTimeMillis();
-                delegate.execute(jobEventPublisher);
+                boolean executed = delegate.execute();
                 Metrics.gauge(gaugeName(), (currentTimeMillis() - ts) / 1000L);
+                return executed;
             }
 
             private String gaugeName() {

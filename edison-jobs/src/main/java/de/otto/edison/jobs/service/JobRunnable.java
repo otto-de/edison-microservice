@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.eventbus.JobEventPublisher;
 
 /**
  * The executable part of a Job that is executing background tasks in Edison microservices.
@@ -21,7 +20,8 @@ public interface JobRunnable {
     /**
      * Executes the background task of the job and updates the JobInfo during execution.
      *
-     * @param jobEventPublisher publishes events to the event bus.
+     * @return false, if the job was skipped without doing anything, true otherwise
      */
-    void execute(JobEventPublisher jobEventPublisher);
+    boolean execute();
+
 }

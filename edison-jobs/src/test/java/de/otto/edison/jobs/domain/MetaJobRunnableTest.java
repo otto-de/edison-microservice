@@ -1,8 +1,6 @@
 package de.otto.edison.jobs.domain;
 
-import de.otto.edison.jobs.definition.DefaultJobDefinition;
 import de.otto.edison.jobs.definition.JobDefinition;
-import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +8,7 @@ import org.junit.Test;
 import java.time.Instant;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.definition.DefaultJobDefinition.*;
+import static de.otto.edison.jobs.definition.DefaultJobDefinition.cronJobDefinition;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
@@ -32,7 +30,8 @@ public class MetaJobRunnableTest {
             }
 
             @Override
-            public void execute(final JobEventPublisher jobEventPublisher) {
+            public boolean execute() {
+                return true;
             }
         };
     }

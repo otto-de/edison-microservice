@@ -4,7 +4,6 @@ import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
@@ -116,7 +115,7 @@ public class JobServiceTest {
         final JobInfo expectedJobInfo = JobInfo.newJobInfo(optionalJobId.get(), jobType, clock, systemInfo.hostname);
         verify(executorService).execute(any(Runnable.class));
         verify(jobRepository).createOrUpdate(expectedJobInfo);
-        verify(jobRunnable).execute(any(JobEventPublisher.class));
+        verify(jobRunnable).execute();
         verify(jobMetaService).aquireRunLock(expectedJobInfo.getJobId(), expectedJobInfo.getJobType());
     }
 
@@ -162,7 +161,7 @@ public class JobServiceTest {
         JobInfo jobInfo = JobInfo.newJobInfo("superId", "superType", clock, HOSTNAME);
         when(jobRepository.findOne("superId")).thenReturn(Optional.of(jobInfo));
 
-        jobService.killJob("superId", "superType");
+        jobService.killJob("superId");
 
         JobInfo expected = jobInfo.copy().setStatus(JobInfo.JobStatus.DEAD).setStopped(now).setLastUpdated(now).build();
         verify(jobMetaService).releaseRunLock("superType");

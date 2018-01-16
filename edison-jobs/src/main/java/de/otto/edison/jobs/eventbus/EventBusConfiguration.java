@@ -12,17 +12,13 @@ public class EventBusConfiguration {
     private JobService jobService;
 
     @Bean
-    public JobEventListener logJobEventListener() {
-        return new LogJobEventListener();
+    public JobStateChangeListener logJobEventListener() {
+        return new LogJobStateChangeListener();
     }
 
     @Bean
-    public JobEventListener persistenceJobEventListener() {
-        return new PersistenceJobEventListener(jobService);
+    public JobStateChangeListener persistenceJobEventListener() {
+        return new PersistenceJobStateChangeListener(jobService);
     }
 
-    @Bean
-    public JobEventsShutdownListener jobEventsShutdownListener() {
-        return new JobEventsShutdownListener();
-    }
 }
