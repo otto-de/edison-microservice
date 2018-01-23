@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.6
+* upgrade asyncHttpClient version to 2.2.0 for edison-aws (conflict netty-client with amazon sdk 2.0.0)
+
 ## 1.2.5
 
 **Maintenance:**
