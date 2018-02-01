@@ -1,6 +1,6 @@
 # Release Notes
 
-## 1.2.8-SNAPSHOT
+## 1.2.8
 
 **New Features:**
 * **[edison-core]** Add property `edison.ldap.encryptionType` which can be configured to `StartTLS` (default) or `SSL` 
