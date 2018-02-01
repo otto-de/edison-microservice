@@ -1,5 +1,7 @@
 package de.otto.edison.authentication.configuration;
 
+import de.otto.edison.authentication.connection.SSLLdapConnectionFactory;
+import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
@@ -58,5 +60,49 @@ public class LdapConfigurationTest {
                 "edison.ldap.enabled=true");
 
         this.context.refresh();
+    }
+
+    @Test
+    public void shouldUseSSLEncryptionIfConfigured() {
+        this.context.register(EnableAutoConfig.class);
+        addEnvironment(this.context,
+                "management.context-path=/internal",
+                "edison.ldap.enabled=true",
+                "edison.ldap.encryptionType=SSL",
+                "edison.ldap.host=localhost",
+                "edison.ldap.base-dn=test-dn",
+                "edison.ldap.rdn-identifier=test-rdn");
+        this.context.refresh();
+
+        assertThat(this.context.getBean("ldapConnectionFactory").getClass().getSimpleName(), is(SSLLdapConnectionFactory.class.getSimpleName()));
+    }
+
+    @Test
+    public void shouldUseStartTLSEncryptionIfConfigured() {
+        this.context.register(EnableAutoConfig.class);
+        addEnvironment(this.context,
+                "management.context-path=/internal",
+                "edison.ldap.enabled=true",
+                "edison.ldap.encryptionType=StartTLS",
+                "edison.ldap.host=localhost",
+                "edison.ldap.base-dn=test-dn",
+                "edison.ldap.rdn-identifier=test-rdn");
+        this.context.refresh();
+
+        assertThat(this.context.getBean("ldapConnectionFactory").getClass().getSimpleName(), is(StartTlsLdapConnectionFactory.class.getSimpleName()));
+    }
+
+    @Test
+    public void shouldUseStartTLSEncryptionAsDefault() {
+        this.context.register(EnableAutoConfig.class);
+        addEnvironment(this.context,
+                "management.context-path=/internal",
+                "edison.ldap.enabled=true",
+                "edison.ldap.host=localhost",
+                "edison.ldap.base-dn=test-dn",
+                "edison.ldap.rdn-identifier=test-rdn");
+        this.context.refresh();
+
+        assertThat(this.context.getBean("ldapConnectionFactory").getClass().getSimpleName(), is(StartTlsLdapConnectionFactory.class.getSimpleName()));
     }
 }

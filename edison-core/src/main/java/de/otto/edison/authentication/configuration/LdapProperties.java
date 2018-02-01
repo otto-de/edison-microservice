@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,6 +69,11 @@ public class LdapProperties {
     private List<String> whitelistedPaths = Collections.singletonList("/internal/health");
 
     /**
+     * You can choose between StartTLS and SSL encryption for the LDAP server connection
+     */
+    private EncryptionType encryptionType = EncryptionType.StartTLS;
+
+    /**
      * Creates Ldap properties. Primarily used in tests.
      *
      * @param host LDAP server
@@ -78,6 +82,7 @@ public class LdapProperties {
      * @param roleBaseDn Base distinguished name used to select user roles
      * @param rdnIdentifier Relative distinguished name
      * @param prefix Prefix for paths that should require LDAP authentication
+     * @param encryptionType StartTLS or SSL for the connection to the LDAP server
      * @param whitelistedPaths Paths that should be excluded from LDAP authentication (includes sub-paths)
      * @return Ldap properties
      */
@@ -87,6 +92,7 @@ public class LdapProperties {
                                                 final String roleBaseDn,
                                                 final String rdnIdentifier,
                                                 final String prefix,
+                                                final EncryptionType encryptionType,
                                                 final String... whitelistedPaths) {
         final LdapProperties ldap = new LdapProperties();
         ldap.setEnabled(true);
@@ -96,6 +102,7 @@ public class LdapProperties {
         ldap.setRoleBaseDn(roleBaseDn);
         ldap.setRdnIdentifier(rdnIdentifier);
         ldap.setPrefix(prefix);
+        ldap.setEncryptionType(encryptionType);
         ldap.setWhitelistedPaths(asList(whitelistedPaths));
         return ldap;
     }
@@ -184,5 +191,13 @@ public class LdapProperties {
 
     public void setWhitelistedPaths(List<String> whitelistedPaths) {
         this.whitelistedPaths = whitelistedPaths;
+    }
+
+    public EncryptionType getEncryptionType() {
+        return encryptionType;
+    }
+
+    public void setEncryptionType(EncryptionType encryptionType) {
+        this.encryptionType = encryptionType;
     }
 }

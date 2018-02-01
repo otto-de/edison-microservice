@@ -1,6 +1,7 @@
 package de.otto.edison.authentication.configuration;
 
 import de.otto.edison.authentication.LdapAuthenticationFilter;
+import de.otto.edison.authentication.connection.SSLLdapConnectionFactory;
 import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
 import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,7 +24,11 @@ public class LdapConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(LdapConnectionFactory.class)
+    @ConditionalOnProperty(prefix = "edison.ldap", name = "enabled", havingValue = "true")
     public LdapConnectionFactory ldapConnectionFactory(final LdapProperties ldapProperties) {
+        if (ldapProperties.getEncryptionType() == EncryptionType.SSL) {
+            return new SSLLdapConnectionFactory(ldapProperties);
+        }
         return new StartTlsLdapConnectionFactory(ldapProperties);
     }
 

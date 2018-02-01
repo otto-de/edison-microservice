@@ -9,7 +9,7 @@ import de.otto.edison.authentication.configuration.LdapProperties;
 import java.security.GeneralSecurityException;
 
 /**
- * A Factory used to create LDAPConnections usering LdapProperties.
+ * A Factory used to create LDAPConnections with StartTLS using LdapProperties .
  */
 public class StartTlsLdapConnectionFactory implements LdapConnectionFactory {
 
