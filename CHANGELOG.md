@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.2.7
+
+**Maintenance:**
+* **[edison-core]** Limit global model attributes to edison packages
+
 ## 1.2.6
 * upgrade asyncHttpClient version to 2.2.0 for edison-aws (conflict netty-client with amazon sdk 2.0.0)
 
