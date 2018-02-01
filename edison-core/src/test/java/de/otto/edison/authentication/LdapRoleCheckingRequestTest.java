@@ -1,12 +1,14 @@
 package de.otto.edison.authentication;
 
 import com.unboundid.ldap.sdk.*;
+import de.otto.edison.authentication.configuration.EncryptionType;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static de.otto.edison.authentication.configuration.EncryptionType.*;
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,7 +41,7 @@ public class LdapRoleCheckingRequestTest {
     }
 
     private LdapProperties someLdapProperties() {
-        return ldapProperties("", 389, singletonList("someBaseDn"), "someRoleBaseDn", "someRdnIdentifier", "/internal");
+        return ldapProperties("", 389, singletonList("someBaseDn"), "someRoleBaseDn", "someRdnIdentifier", "/internal", StartTLS);
     }
 
     private LDAPInterface someLdapInterfaceReturning(String... roles) throws LDAPSearchException {

@@ -8,6 +8,9 @@ import de.otto.edison.authentication.configuration.LdapProperties;
 import javax.net.ssl.SSLSocketFactory;
 import java.security.GeneralSecurityException;
 
+/**
+ * A Factory used to create LDAPConnections with SSL using LdapProperties .
+ */
 public class SSLLdapConnectionFactory implements LdapConnectionFactory {
 
     private static final SSLUtil SSL_UTIL = new SSLUtil();
