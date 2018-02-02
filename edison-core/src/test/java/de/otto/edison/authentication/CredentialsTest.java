@@ -16,7 +16,7 @@ import static org.springframework.util.Base64Utils.encodeToString;
 public class CredentialsTest {
 
     @Mock
-    HttpServletRequest httpServletRequest;
+    private HttpServletRequest httpServletRequest;
 
     private void mockHttpServletRequestWithAuthentication(String authString) {
         when(httpServletRequest.getHeader("Authorization"))
