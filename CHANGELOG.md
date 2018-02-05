@@ -133,6 +133,28 @@ endpoints:
     status:
         enabled: false
 ```
+## 1.2.9
+**Bug fixes**
+* **[edison-core]** Fix server error for empty username/password and allow colons in passwords.
+
+## 1.2.8
+
+**New Features:**
+* **[edison-core]** Add property `edison.ldap.encryptionType` which can be configured to `StartTLS` (default) or `SSL` 
+
+## 1.2.7
+
+**Maintenance:**
+* **[edison-core]** Limit global model attributes to edison packages
+
+## 1.2.6
+* upgrade asyncHttpClient version to 2.2.0 for edison-aws (conflict netty-client with amazon sdk 2.0.0)
+
+## 1.2.5
+
+**Maintenance:**
+
+* **[edison-core]** Don't expose user names at successful login as this is a security issue
 
 ## 1.2.3
 
