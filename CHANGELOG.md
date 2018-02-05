@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.2.9
+**Bug fixes**
+* **[edison-core]** Fix server error for empty username/password and allow colons in passwords.
+
 ## 1.2.8
 
 **New Features:**
