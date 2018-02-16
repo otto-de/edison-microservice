@@ -16,7 +16,8 @@ ext {
             mongodb_driver                   : '3.5.0',
             caffeine                         : '2.5.6',
             json_path                        : '2.4.0',
-            unboundid_ldapsdk_minimal_edition: '3.2.1'
+            unboundid_ldapsdk_minimal_edition: '3.2.1',
+            hibernate_validator              : '6.0.7.Final'
     ]
     test_versions = [
             junit       : '4.12',
@@ -56,7 +57,8 @@ ext {
             togglz_spring_web                  : "org.togglz:togglz-spring-web:${versions.togglz}",
             mongodb_driver                     : "org.mongodb:mongodb-driver:${versions.mongodb_driver}",
             caffeine                           : "com.github.ben-manes.caffeine:caffeine:${versions.caffeine}",
-            unboundid_ldapsdk_minimal_edition  : "com.unboundid:unboundid-ldapsdk-minimal-edition:${versions.unboundid_ldapsdk_minimal_edition}"
+            unboundid_ldapsdk_minimal_edition  : "com.unboundid:unboundid-ldapsdk-minimal-edition:${versions.unboundid_ldapsdk_minimal_edition}",
+            hibernate_validator                : "org.hibernate.validator:hibernate-validator:${versions.hibernate_validator}"
     ]
     test_libraries = [
             junit                   : "junit:junit:${test_versions.junit}",
