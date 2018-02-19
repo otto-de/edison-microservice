@@ -17,14 +17,17 @@ ext {
             caffeine                         : '2.5.6',
             json_path                        : '2.4.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
-            hibernate_validator              : '6.0.7.Final'
+            hibernate_validator              : '6.0.7.Final',
+            edison_hal                       : '1.0.0',
+            validator_collection             : '2.2.0'
     ]
     test_versions = [
-            junit       : '4.12',
-            hamcrest    : '1.3',
-            mockito_core: '2.10.0',
-            jsonassert  : '1.5.0',
-            fongo       : '2.1.0'
+            junit        : '4.12',
+            hamcrest     : '1.3',
+            mockito_core : '2.10.0',
+            jsonassert   : '1.5.0',
+            fongo        : '2.1.0',
+            rest_assured : '2.9.0'
     ]
     plugin_versions = [
             versions     : '0.15.0',
@@ -58,7 +61,9 @@ ext {
             mongodb_driver                     : "org.mongodb:mongodb-driver:${versions.mongodb_driver}",
             caffeine                           : "com.github.ben-manes.caffeine:caffeine:${versions.caffeine}",
             unboundid_ldapsdk_minimal_edition  : "com.unboundid:unboundid-ldapsdk-minimal-edition:${versions.unboundid_ldapsdk_minimal_edition}",
-            hibernate_validator                : "org.hibernate.validator:hibernate-validator:${versions.hibernate_validator}"
+            hibernate_validator                : "org.hibernate.validator:hibernate-validator:${versions.hibernate_validator}",
+            edison_hal                         : "de.otto.edison:edison-hal:${versions.edison_hal}",
+            validator_collection               : "cz.jirutka.validator:validator-collection:${versions.validator_collection}"
     ]
     test_libraries = [
             junit                   : "junit:junit:${test_versions.junit}",
@@ -71,6 +76,7 @@ ext {
             togglz_testing          : "org.togglz:togglz-testing:${versions.togglz}",
             fongo                   : "com.github.fakemongo:fongo:${test_versions.fongo}",
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
+            rest_assured             : "com.jayway.restassured:rest-assured:${test_versions.rest_assured}"
     ]
     gradle_plugins = [
             versions     : "com.github.ben-manes:gradle-versions-plugin:${plugin_versions.versions}",

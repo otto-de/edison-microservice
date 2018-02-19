@@ -133,6 +133,11 @@ endpoints:
     status:
         enabled: false
 ```
+
+## 1.2.10
+**New Features:**
+* **[edison-validation]** Add this new module for common validation concerns.
+
 ## 1.2.9
 **Bug fixes**
 * **[edison-core]** Fix server error for empty username/password and allow colons in passwords.
