@@ -15,7 +15,7 @@ public class InstantValidator implements ConstraintValidator<IsInstant, String> 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) {
-            return false;
+            return true;
         }
         try {
             Instant.parse(value);
