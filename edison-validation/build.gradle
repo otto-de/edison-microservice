@@ -1,7 +1,11 @@
 dependencies {
-    compile libraries.hibernate_validator
+    implementation project(":edison-core")
+    implementation libraries.hibernate_validator
+    implementation libraries.edison_hal
+    implementation libraries.validator_collection
 
-    testCompile project(":edison-testsupport")
+    testImplementation project(":edison-testsupport")
+    testImplementation test_libraries.rest_assured
 }
 
 
