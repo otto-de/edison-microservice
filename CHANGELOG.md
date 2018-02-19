@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.11
+* **[edison-validation]** InstantValidator accepts null values. 
+
 ## 1.2.10
 **New Features:**
 * **[edison-validation]** Add this new module for common validation concerns.
