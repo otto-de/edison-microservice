@@ -19,7 +19,8 @@ ext {
             unboundid_ldapsdk_minimal_edition: '3.2.1',
             hibernate_validator              : '6.0.7.Final',
             edison_hal                       : '1.0.0',
-            validator_collection             : '2.2.0'
+            validator_collection             : '2.2.0',
+            java_validation_api              : '2.0.0.Final'
     ]
     test_versions = [
             junit        : '4.12',
@@ -62,6 +63,7 @@ ext {
             caffeine                           : "com.github.ben-manes.caffeine:caffeine:${versions.caffeine}",
             unboundid_ldapsdk_minimal_edition  : "com.unboundid:unboundid-ldapsdk-minimal-edition:${versions.unboundid_ldapsdk_minimal_edition}",
             hibernate_validator                : "org.hibernate.validator:hibernate-validator:${versions.hibernate_validator}",
+            java_validation_api                : "javax.validation:validation-api:${versions.java_validation_api}",
             edison_hal                         : "de.otto.edison:edison-hal:${versions.edison_hal}",
             validator_collection               : "cz.jirutka.validator:validator-collection:${versions.validator_collection}"
     ]
