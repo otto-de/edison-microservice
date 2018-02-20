@@ -7,10 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -53,7 +52,6 @@ public class ValidationExceptionHandlerAcceptanceTest {
     @Test
     public void shouldValidateAndProduceErrorRepresentation() {
         given()
-                .accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .body("{\"id\":\"_!NON_SAFE_ID!!?**\"}")
         .when()
