@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.12
+* **[edison-validation]** Fix validation helper to use correct message interpolator.
+
 ## 1.2.11
 * **[edison-validation]** InstantValidator accepts null values. 
 
