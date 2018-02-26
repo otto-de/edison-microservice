@@ -1,5 +1,7 @@
 package de.otto.edison.validation.web;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.otto.edison.hal.HalRepresentation;
 
 import java.util.*;
@@ -7,8 +9,11 @@ import java.util.*;
 import static de.otto.edison.hal.Link.profile;
 import static de.otto.edison.hal.Links.linkingTo;
 
+@JsonDeserialize(builder = ErrorHalRepresentation.Builder.class)
 public class ErrorHalRepresentation extends HalRepresentation {
+
     private static final String PROFILE_ERROR = "http://spec.otto.de/profiles/error";
+
     private final String errorMessage;
     private final Map<String, List<Map<String, String>>> errors;
 
@@ -57,6 +62,7 @@ public class ErrorHalRepresentation extends HalRepresentation {
         return errorMessage;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
         private Map<String, List<Map<String, String>>> errors = new HashMap<>();
         private String errorMessage;
