@@ -58,6 +58,7 @@ Edison Modules:
  Togglz StateRepository.
 * [`edison-togglz`](edison-togglz/README.md): Optional support for feature toggles for Edison microservices based on [Togglz](https://www.togglz.org/).
 * `edison-testsupport`: Test support for feature toggles plus utilities.
+* [`edison-validation`](edison-validation/README.md): Optional module for validation in Spring with a specific response format.
 
 Examples:
 * [`example-status`](examples/example-status): Service only relying on `edison-core` to show the usage of health and status features. 
