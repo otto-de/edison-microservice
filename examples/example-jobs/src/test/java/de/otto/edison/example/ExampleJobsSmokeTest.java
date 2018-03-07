@@ -1,7 +1,9 @@
 package de.otto.edison.example;
 
+import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -46,11 +48,11 @@ public class ExampleJobsSmokeTest {
     }
 
     @Test
-    public void shouldHaveJobDefinitions() {
+    public void shouldHaveJobDefinitions() throws JSONException {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions.json", String.class);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
-        assertThat(response.getBody()).isEqualTo("{\n" +
+        JSONAssert.assertEquals("{\n" +
                 "  \"links\" : [ {\n" +
                 "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/Bar\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
@@ -72,15 +74,15 @@ public class ExampleJobsSmokeTest {
                 "    \"rel\" : \"self\",\n" +
                 "    \"title\" : \"Self\"\n" +
                 "  } ]\n" +
-                "}");
+                "}", response.getBody(), true);
     }
 
     @Test
-    public void shouldHaveFooJobDefinition() {
+    public void shouldHaveFooJobDefinition() throws JSONException {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions/foo.json", String.class);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
-        assertThat(response.getBody()).isEqualTo("{\n" +
+        JSONAssert.assertEquals("{\n" +
                 "  \"type\" : \"Foo\",\n" +
                 "  \"name\" : \"Foo Job\",\n" +
                 "  \"retries\" : 0,\n" +
@@ -96,7 +98,7 @@ public class ExampleJobsSmokeTest {
                 "    \"href\" : \"http://localhost:" + port + "/internal/jobs/Foo\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/trigger\"\n" +
                 "  } ]\n" +
-                "}");
+                "}", response.getBody(), true);
     }
 
     @Test
@@ -105,8 +107,8 @@ public class ExampleJobsSmokeTest {
         assertThat(postResponse.getStatusCodeValue()).isEqualTo(204);
         final ResponseEntity<String> jobResponse = restTemplate.getForEntity(postResponse.getHeaders().getLocation(), String.class);
         assertThat(jobResponse.getStatusCodeValue()).isEqualTo(200);
-        assertThat(jobResponse.getBody()).contains("\"state\" : \"Running\"");
-        assertThat(jobResponse.getBody()).contains("\"jobType\" : \"Foo\"");
+        assertThat(jobResponse.getBody()).contains("\"state\":\"Running\"");
+        assertThat(jobResponse.getBody()).contains("\"jobType\":\"Foo\"");
     }
 
 }

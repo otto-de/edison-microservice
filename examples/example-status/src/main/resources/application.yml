@@ -16,9 +16,6 @@ management:
         web:
             base-path: /actuator
             expose: '*'
-    endpoint:
-        health:
-            show-details: true
 
 edison:
     gracefulshutdown:
