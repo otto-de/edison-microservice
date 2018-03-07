@@ -4,8 +4,6 @@ buildscript {
     repositories {
         maven { url 'http://repo.spring.io/libs-snapshot' }
         maven { url 'http://repo.spring.io/plugins-release' }
-        // TODO: remove this after spring boot 2.0.0 GA
-        maven { url "https://repo.spring.io/milestone" }
         mavenLocal()
     }
 
@@ -47,8 +45,6 @@ subprojects {
         mavenLocal()
         maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-        // TODO: remove this after spring boot 2.0.0 GA
-        maven { url "https://repo.spring.io/milestone" }
     }
 
     // Override some Spring Boot default versions
