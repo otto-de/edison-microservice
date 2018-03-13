@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.ResponseEntity.unprocessableEntity;
 
 @ControllerAdvice
 public class ValidationExceptionHandler {
 
-    private static final MediaType APPLICATION_HAL_JSON_ERROR = MediaType.parseMediaType("application/hal+json; profiles=\"http://spec.otto.de/profiles/error\"");
+    private static final MediaType APPLICATION_HAL_JSON_ERROR = MediaType.parseMediaType("application/hal+json; " +
+            "profiles=\"http://spec.otto.de/profiles/error\"; charset=utf-8");
     private final ErrorHalRepresentationFactory errorHalRepresentationFactory;
 
     @Autowired
