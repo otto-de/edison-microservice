@@ -3,6 +3,7 @@ package de.otto.edison.validation.web;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import de.otto.edison.validation.validators.SafeId;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +60,7 @@ public class ValidationExceptionHandlerAcceptanceTest {
         .then()
                 .assertThat()
                 .statusCode(422).and()
+                .header("Content-type", Matchers.containsString(";charset=utf-8"))
                 .content("errors.id[0].key", Collections.emptyList(), is("id.invalid"))
                 .content("errors.id[0].message", Collections.emptyList(), is("Ungueltiger Id-Wert."))
                 .content("errors.id[0].rejected", Collections.emptyList(), is("_!NON_SAFE_ID!!?**"));
