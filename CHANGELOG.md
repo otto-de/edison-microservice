@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.14
+* **[edison-validation]** Use UTF-8 character set in Content type header for error messages
+
 ## 1.2.13
 * **[edison-validation]** Fix deserialization of ErrorHalRepresentation
 
