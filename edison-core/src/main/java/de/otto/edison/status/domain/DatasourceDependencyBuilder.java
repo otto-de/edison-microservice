@@ -156,6 +156,29 @@ public class DatasourceDependencyBuilder {
     }
 
     /**
+     * Creates a ServiceDependencyBuilder with type="stream" and subtype="Kinesis".
+     *
+     * @param datasources the datasources of the accessed queue.
+     * @return builder used to configure Kinesis datasource dependencies
+     */
+    public static DatasourceDependencyBuilder kinesisDependency(final Datasource... datasources) {
+        return kinesisDependency(asList(datasources));
+    }
+
+    /**
+     * Creates a ServiceDependencyBuilder with type="stream" and subtype="Kinesis".
+     *
+     * @param datasources the datasources of the accessed queue.
+     * @return builder used to configure Kinesis datasource dependencies
+     */
+    public static DatasourceDependencyBuilder kinesisDependency(final List<Datasource> datasources) {
+        return new DatasourceDependencyBuilder()
+                .withDatasources(datasources)
+                .withType(DatasourceDependency.TYPE_STREAM)
+                .withSubtype(DatasourceDependency.SUBTYPE_KINESIS);
+    }
+
+    /**
      * Creates a generic DataSourceDependencyBuilder.
      *
      * @param datasources the datasources of the accessed database.

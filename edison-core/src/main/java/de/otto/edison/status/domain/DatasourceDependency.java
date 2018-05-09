@@ -14,12 +14,14 @@ import static java.util.Objects.requireNonNull;
 public class DatasourceDependency extends ExternalDependency {
     public static final String TYPE_DB = "db";
     public static final String TYPE_QUEUE = "queue";
+    public static final String TYPE_STREAM = "stream";
 
     public static final String SUBTYPE_CASSANDRA = "Cassandra";
     public static final String SUBTYPE_MONGODB = "MongoDB";
     public static final String SUBTYPE_REDIS = "Redis";
     public static final String SUBTYPE_ELASTICSEARCH = "ElasticSearch";
     public static final String SUBTYPE_KAFKA = "Kafka";
+    public static final String SUBTYPE_KINESIS = "Kinesis";
 
     private final List<Datasource> datasources;
 

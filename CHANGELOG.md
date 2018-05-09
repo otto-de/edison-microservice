@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.15
+* **[edison-core]** Add Kinesis as DatasourceDependency
+
 ## 1.2.14
 * **[edison-validation]** Use UTF-8 character set in Content type header for error messages
 
