@@ -24,9 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class JobsConfigurationTest {
 
@@ -51,7 +49,8 @@ public class JobsConfigurationTest {
         // when
         final StatusDetail statusDetail = testee.jobStatusDetailIndicator(
                 noJobDefinitions,
-                singletonList(defaultCalculator)).statusDetail();
+                singletonList(defaultCalculator)).statusDetails()
+                .get(0);
         // then
         assertThat(statusDetail.getStatus(), is(OK));
         assertThat(statusDetail.getName(), is("Jobs"));
@@ -81,7 +80,7 @@ public class JobsConfigurationTest {
 
         // when
         testee.jobStatusDetailIndicator(
-                someJobDefinitionService(), singletonList(defaultCalculator)).statusDetail();
+                someJobDefinitionService(), singletonList(defaultCalculator)).statusDetails();
 
         // then
         verify(defaultCalculator).statusDetail(any(JobDefinition.class));
@@ -105,7 +104,7 @@ public class JobsConfigurationTest {
 
         // when
         testee.jobStatusDetailIndicator(
-                someJobDefinitionService(), asList(defaultCalculator, testCalculator)).statusDetail();
+                someJobDefinitionService(), asList(defaultCalculator, testCalculator)).statusDetails();
 
         // then
         verify(testCalculator).statusDetail(any(JobDefinition.class));
@@ -134,7 +133,7 @@ public class JobsConfigurationTest {
 
         // when
         testee.jobStatusDetailIndicator(
-                jobDefinitionService, asList(defaultCalculator, testCalculator)).statusDetail();
+                jobDefinitionService, asList(defaultCalculator, testCalculator)).statusDetails();
 
         // then
         verify(testCalculator).statusDetail(any(JobDefinition.class));

@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
+import static java.util.Collections.*;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.stream.Collectors.toList;
 
@@ -138,9 +140,9 @@ public class JobsConfiguration {
         final List<JobDefinition> jobDefinitions = service.getJobDefinitions();
 
         if (jobDefinitions.isEmpty()) {
-            return () -> statusDetail("Jobs", Status.OK, "No job definitions configured in application.");
+            return () -> singletonList(statusDetail("Jobs", Status.OK, "No job definitions configured in application."));
         } else {
-            return new CompositeStatusDetailIndicator("Jobs",
+            return new CompositeStatusDetailIndicator(
                     jobDefinitions
                             .stream()
                             .map(d -> new JobStatusDetailIndicator(d, findJobStatusCalculator(d.jobType(), calculators)))

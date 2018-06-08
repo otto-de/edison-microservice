@@ -9,8 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
+import static de.otto.edison.status.domain.StatusDetail.*;
+import static java.util.Collections.*;
 
 @Component
 @ConditionalOnProperty(prefix = "edison.mongo.status", name = "enabled", havingValue = "true", matchIfMissing = true)
@@ -24,22 +29,30 @@ public class MongoStatusDetailIndicator implements StatusDetailIndicator {
     }
 
     @Override
-    public StatusDetail statusDetail() {
+    public List<StatusDetail> statusDetails() {
         String databaseStatusName = "MongoDB Status";
         Document document = new Document().append("ping", 1);
         Document answer;
         try {
             answer = mongoDatabase.runCommand(document);
         } catch (MongoTimeoutException e) {
-            return StatusDetail.statusDetail(databaseStatusName, ERROR, "Mongo database check ran into timeout (" + e.getMessage() + ").");
+            return singletonList(
+                    statusDetail(databaseStatusName, ERROR, "Mongo database check ran into timeout (" + e.getMessage() + ").")
+            );
         } catch (Exception other) {
-            return StatusDetail.statusDetail(databaseStatusName, ERROR, "Exception during database check (" + other.getMessage() + ").");
+            return singletonList(
+                    statusDetail(databaseStatusName, ERROR, "Exception during database check (" + other.getMessage() + ").")
+            );
         }
 
         if (answer != null && answer.get("ok") != null && (Double)answer.get("ok") == 1.0d) {
-            return StatusDetail.statusDetail(databaseStatusName, OK, "Mongo database is reachable.");
+            return singletonList(
+                    statusDetail(databaseStatusName, OK, "Mongo database is reachable.")
+            );
         }
 
-        return StatusDetail.statusDetail(databaseStatusName, ERROR, "Mongo database unreachable or ping command failed.");
+        return singletonList(
+                statusDetail(databaseStatusName, ERROR, "Mongo database unreachable or ping command failed.")
+        );
     }
 }

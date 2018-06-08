@@ -36,7 +36,7 @@ public class MongoStatusDetailIndicatorTest {
         //given
         when(mongoDatabase.runCommand(new Document().append("ping", 1))).thenReturn(new Document().append("ok", 1.0d));
         //when
-        StatusDetail statusDetail = testee.statusDetail();
+        StatusDetail statusDetail = testee.statusDetails().get(0);
         //then
         assertThat(statusDetail.getStatus(), is(OK));
     }
@@ -46,7 +46,7 @@ public class MongoStatusDetailIndicatorTest {
         //given
         when(mongoDatabase.runCommand(new Document().append("ping", 1))).thenReturn(new Document().append("error", 1.0d));
         //when
-        StatusDetail statusDetail = testee.statusDetail();
+        StatusDetail statusDetail = testee.statusDetails().get(0);
         //then
         assertThat(statusDetail.getStatus(), is(ERROR));
         assertThat(statusDetail.getMessage(), containsString("Mongo database unreachable or ping command failed."));
@@ -57,7 +57,7 @@ public class MongoStatusDetailIndicatorTest {
         //given
         when(mongoDatabase.runCommand(new Document().append("ping", 1))).thenThrow(new MongoTimeoutException("Timeout"));
         //when
-        StatusDetail statusDetail = testee.statusDetail();
+        StatusDetail statusDetail = testee.statusDetails().get(0);
         //then
         assertThat(statusDetail.getStatus(), is(ERROR));
         assertThat(statusDetail.getMessage(), containsString("Mongo database check ran into timeout"));
@@ -68,7 +68,7 @@ public class MongoStatusDetailIndicatorTest {
         //given
         when(mongoDatabase.runCommand(new Document().append("ping", 1))).thenThrow(new MongoException("SomeException"));
         //when
-        StatusDetail statusDetail = testee.statusDetail();
+        StatusDetail statusDetail = testee.statusDetails().get(0);
         //then
         assertThat(statusDetail.getStatus(), is(ERROR));
         assertThat(statusDetail.getMessage(), containsString("Exception during database check"));

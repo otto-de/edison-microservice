@@ -3,6 +3,9 @@ package de.otto.edison.status.indicator;
 import de.otto.edison.status.domain.StatusDetail;
 import net.jcip.annotations.ThreadSafe;
 
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 @ThreadSafe
@@ -15,8 +18,8 @@ public class MutableStatusDetailIndicator implements StatusDetailIndicator {
     }
 
     @Override
-    public StatusDetail statusDetail() {
-        return statusDetail;
+    public List<StatusDetail> statusDetails() {
+        return singletonList(statusDetail);
     }
 
     public void update(final StatusDetail statusDetail) {

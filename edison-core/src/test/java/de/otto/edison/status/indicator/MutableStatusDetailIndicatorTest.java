@@ -18,9 +18,10 @@ public class MutableStatusDetailIndicatorTest {
         // given
         final MutableStatusDetailIndicator indicator = new MutableStatusDetailIndicator(statusDetail("foo", OK, "message"));
         // then
-        assertThat(indicator.statusDetail().getName(), is("foo"));
-        assertThat(indicator.statusDetail().getStatus(), is(OK));
-        assertThat(indicator.statusDetail().getMessage(), is("message"));
+        final StatusDetail statusDetail = indicator.statusDetails().get(0);
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getStatus(), is(OK));
+        assertThat(statusDetail.getMessage(), is("message"));
     }
 
     @Test
@@ -31,9 +32,10 @@ public class MutableStatusDetailIndicatorTest {
         // when
         indicator.update(initial.toOk("ok now"));
         // then
-        assertThat(indicator.statusDetail().getName(), is("foo"));
-        assertThat(indicator.statusDetail().getMessage(), is("ok now"));
-        assertThat(indicator.statusDetail().getStatus(), is(OK));
+        final StatusDetail statusDetail = indicator.statusDetails().get(0);
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getMessage(), is("ok now"));
+        assertThat(statusDetail.getStatus(), is(OK));
     }
 
     @Test
@@ -44,9 +46,10 @@ public class MutableStatusDetailIndicatorTest {
         // when
         indicator.toOk("ok now");
         // then
-        assertThat(indicator.statusDetail().getName(), is("foo"));
-        assertThat(indicator.statusDetail().getMessage(), is("ok now"));
-        assertThat(indicator.statusDetail().getStatus(), is(OK));
+        final StatusDetail statusDetail = indicator.statusDetails().get(0);
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getMessage(), is("ok now"));
+        assertThat(statusDetail.getStatus(), is(OK));
     }
 
     @Test
@@ -57,9 +60,10 @@ public class MutableStatusDetailIndicatorTest {
         // when
         indicator.toWarning("something strange");
         // then
-        assertThat(indicator.statusDetail().getName(), is("foo"));
-        assertThat(indicator.statusDetail().getMessage(), is("something strange"));
-        assertThat(indicator.statusDetail().getStatus(), is(WARNING));
+        final StatusDetail statusDetail = indicator.statusDetails().get(0);
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getMessage(), is("something strange"));
+        assertThat(statusDetail.getStatus(), is(WARNING));
     }
 
     @Test
@@ -70,9 +74,10 @@ public class MutableStatusDetailIndicatorTest {
         // when
         indicator.toError("broken");
         // then
-        assertThat(indicator.statusDetail().getName(), is("foo"));
-        assertThat(indicator.statusDetail().getMessage(), is("broken"));
-        assertThat(indicator.statusDetail().getStatus(), is(ERROR));
+        final StatusDetail statusDetail = indicator.statusDetails().get(0);
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getMessage(), is("broken"));
+        assertThat(statusDetail.getStatus(), is(ERROR));
     }
 
     @Test
@@ -83,10 +88,11 @@ public class MutableStatusDetailIndicatorTest {
         // when
         indicator.withDetail("foo", "bar");
         // then
-        assertThat(indicator.statusDetail().getName(), is("foo"));
-        assertThat(indicator.statusDetail().getMessage(), is("message"));
-        assertThat(indicator.statusDetail().getStatus(), is(WARNING));
-        assertThat(indicator.statusDetail().getDetails(), hasEntry("foo", "bar"));
+        final StatusDetail statusDetail = indicator.statusDetails().get(0);
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getMessage(), is("message"));
+        assertThat(statusDetail.getStatus(), is(WARNING));
+        assertThat(statusDetail.getDetails(), hasEntry("foo", "bar"));
     }
 
     @Test
@@ -97,10 +103,11 @@ public class MutableStatusDetailIndicatorTest {
         // when
         indicator.withoutDetail("bar");
         // then
-        assertThat(indicator.statusDetail().getName(), is("foo"));
-        assertThat(indicator.statusDetail().getMessage(), is("message"));
-        assertThat(indicator.statusDetail().getStatus(), is(WARNING));
-        assertThat(indicator.statusDetail().getDetails(), not(hasEntry("bar", "baz")));
+        final StatusDetail statusDetail = indicator.statusDetails().get(0);
+        assertThat(statusDetail.getName(), is("foo"));
+        assertThat(statusDetail.getMessage(), is("message"));
+        assertThat(statusDetail.getStatus(), is(WARNING));
+        assertThat(statusDetail.getDetails(), not(hasEntry("bar", "baz")));
     }
 
     @Test(expected = IllegalArgumentException.class)

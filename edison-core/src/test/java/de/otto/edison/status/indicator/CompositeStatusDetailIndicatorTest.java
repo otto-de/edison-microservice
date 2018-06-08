@@ -1,5 +1,6 @@
 package de.otto.edison.status.indicator;
 
+import de.otto.edison.status.domain.StatusDetail;
 import org.junit.Test;
 
 import static de.otto.edison.status.domain.Status.ERROR;
@@ -15,29 +16,31 @@ public class CompositeStatusDetailIndicatorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotAcceptEmptyListOfDelegates() {
-        new CompositeStatusDetailIndicator("foo", emptyList());
+        new CompositeStatusDetailIndicator(emptyList());
     }
 
     @Test
     public void shouldReturnStatusDetailOfSingleIndicator() {
         final StatusDetailIndicator indicator = new MutableStatusDetailIndicator(statusDetail("bar", ERROR, "a message"));
-        final CompositeStatusDetailIndicator composite = new CompositeStatusDetailIndicator("foo", asList(indicator));
-        assertThat(composite.statusDetail(), is(statusDetail("bar", ERROR, "a message")));
+        final CompositeStatusDetailIndicator composite = new CompositeStatusDetailIndicator(asList(indicator));
+        final StatusDetail statusDetail = composite.statusDetails().get(0);
+        assertThat(statusDetail, is(statusDetail("bar", ERROR, "a message")));
     }
 
     @Test
     public void shouldAggregateStatusDetails() {
         final StatusDetailIndicator first = new MutableStatusDetailIndicator(statusDetail("firstIndicator", OK, "a message"));
         final StatusDetailIndicator second = new MutableStatusDetailIndicator(statusDetail("secondIndicator", ERROR, "a message"));
-        final CompositeStatusDetailIndicator composite = new CompositeStatusDetailIndicator("foo", asList(first, second));
-        assertThat(composite.statusDetail(), is(statusDetail("foo", ERROR, "Aggregated status of 2 delegate indicators")));
+        final CompositeStatusDetailIndicator composite = new CompositeStatusDetailIndicator(asList(first, second));
+        assertThat(composite.statusDetails().get(0), is(statusDetail("firstIndicator", OK, "a message")));
+        assertThat(composite.statusDetails().get(1), is(statusDetail("secondIndicator", ERROR, "a message")));
     }
 
     @Test
     public void shouldProvideStatusDetails() {
         final StatusDetailIndicator first = new MutableStatusDetailIndicator(statusDetail("firstIndicator", OK, "a message"));
         final StatusDetailIndicator second = new MutableStatusDetailIndicator(statusDetail("secondIndicator", ERROR, "a message"));
-        final CompositeStatusDetailIndicator composite = new CompositeStatusDetailIndicator("foo", asList(first, second));
+        final CompositeStatusDetailIndicator composite = new CompositeStatusDetailIndicator(asList(first, second));
         assertThat(composite.statusDetails(), contains(
                 statusDetail("firstIndicator", OK, "a message"),
                 statusDetail("secondIndicator", ERROR, "a message"))

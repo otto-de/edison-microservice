@@ -18,21 +18,10 @@ import static java.util.Arrays.asList;
 public interface StatusDetailIndicator {
 
     /**
-     * Return the current StatusDetail state.
-     * @return StatusDetail
-     */
-    StatusDetail statusDetail();
-
-    /**
      * Return multiple StatusDetails about different parts of the application.
-     *
-     * By default, this method returns a list containing only one StatusDetail, the one returned by
-     * {@link #statusDetail()}
      *
      * @return list of StatusDetails
      */
-    default List<StatusDetail> statusDetails() {
-        return asList(statusDetail());
-    }
+    List<StatusDetail> statusDetails();
 
 }

@@ -5,6 +5,10 @@ import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static de.otto.edison.status.domain.StatusDetail.*;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 
 /**
@@ -23,7 +27,9 @@ public class HelloService implements StatusDetailIndicator {
     }
 
     @Override
-    public StatusDetail statusDetail() {
-        return StatusDetail.statusDetail("HelloService", Status.OK, "up and running", singletonMap("foo", "bar"));
+    public List<StatusDetail> statusDetails() {
+        return singletonList(
+                statusDetail("HelloService", Status.OK, "up and running", singletonMap("foo", "bar"))
+        );
     }
 }
