@@ -34,7 +34,7 @@ public class ExampleJobsSmokeTest {
 
     @Test
     public void shouldHaveStatusEndpoint() {
-        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/status.json", String.class);
+        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/status?format=json", String.class);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
         assertThat(response.getBody()).startsWith("{");
@@ -49,7 +49,7 @@ public class ExampleJobsSmokeTest {
 
     @Test
     public void shouldHaveJobDefinitions() throws JSONException {
-        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions.json", String.class);
+        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions?format=json", String.class);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         JSONAssert.assertEquals("{\n" +
@@ -79,7 +79,7 @@ public class ExampleJobsSmokeTest {
 
     @Test
     public void shouldHaveFooJobDefinition() throws JSONException {
-        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions/foo.json", String.class);
+        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions/foo?format=json", String.class);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         JSONAssert.assertEquals("{\n" +

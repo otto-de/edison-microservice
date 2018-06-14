@@ -1,6 +1,8 @@
 package de.otto.edison.logging.ui;
 
 import de.otto.edison.navigation.NavBar;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,26 +33,61 @@ public class LoggersAcceptanceTest {
     @Autowired
     private TestRestTemplate template;
 
+    private HttpHeaders htmlHeaders;
+    private HttpHeaders jsonHeaders;
+
+    @Before
+    public void setup() {
+        htmlHeaders = new HttpHeaders();
+        htmlHeaders.setAccept(singletonList(TEXT_HTML));
+        jsonHeaders = new HttpHeaders();
+        jsonHeaders.setAccept(singletonList(APPLICATION_JSON));
+    }
+
+
     @Test
     public void shouldHaveLoggersAsHtml() {
-        final ResponseEntity<String> response = template.getForEntity("/internal/loggers.html", String.class);
+        final ResponseEntity<String> response = template.getForEntity("/internal/loggers?format=html", String.class);
+        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getHeaders().getContentType().isCompatibleWith(TEXT_HTML), is(true));
+    }
+
+    @Test
+    public void shouldHaveLoggersAsHtmlThroughHeader() {
+        HttpEntity<String> httpEntity = new HttpEntity<>("", htmlHeaders);
+        final ResponseEntity<String> response = template.exchange("/internal/loggers", GET, httpEntity, String.class);
         assertThat(response.getStatusCodeValue(), is(200));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(TEXT_HTML), is(true));
     }
 
     @Test
     public void shouldHaveLoggersAsJson() {
-        final ResponseEntity<String> response = template.getForEntity("/internal/loggers.json", String.class);
+        final ResponseEntity<String> response = template.getForEntity("/internal/loggers?format=json", String.class);
+        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
+    }
+
+    @Test
+    public void shouldHaveLoggersAsJsonThroughHeader() {
+        HttpEntity<String> httpEntity = new HttpEntity<>("", jsonHeaders);
+        final ResponseEntity<String> response = template.exchange("/internal/loggers", GET, httpEntity, String.class);
+        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
+    }
+
+    @Test
+    public void shouldHaveLoggersAsJsonAsDefault() {
+        final ResponseEntity<String> response = template.getForEntity("/internal/loggers", String.class);
         assertThat(response.getStatusCodeValue(), is(200));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
     }
 
     @Test
     public void shouldGetLoggerAsJson() {
-        final ResponseEntity<String> response = template.getForEntity("/internal/loggers/ROOT.json", String.class);
+        final ResponseEntity<String> response = template.getForEntity("/internal/loggers/ROOT", String.class);
         assertThat(response.getStatusCodeValue(), is(200));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
-        assertThat(response.getBody(), is("{\"configuredLevel\":null,\"effectiveLevel\":\"INFO\"}"));
+        assertThat(response.getBody(), is("{\"configuredLevel\":\"INFO\",\"effectiveLevel\":\"INFO\"}"));
     }
 
     @Test

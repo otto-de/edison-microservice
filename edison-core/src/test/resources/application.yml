@@ -2,6 +2,11 @@
 spring:
     application:
         name: testcore
+    mvc:
+        contentnegotiation:
+            favor-parameter: true
+            media-types:
+                html: text/html
 
 # context + port of the application
 server:
