@@ -19,21 +19,21 @@
                         <dt>Status:</dt>
                         <dd>
                             <th:block th:if="${job.state} != 'Running'">
-                                <span th:if="${job.status} == 'OK'"  class="label label-success" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
-                                <span th:if="${job.status} == 'SKIPPED'"  class="label label-default" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
-                                <span th:if="${job.status} == 'ERROR'"  class="label label-danger" style="width:10em; height:2em;"><span th:text="${job.status}"></span></span>
-                                <span th:if="${job.status} == 'DEAD'"  class="label label-warning" style="width:10em; height:2em; background: rgba(230, 110, 30, 1);"><span th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'OK'"  class="label label-success" style="width:10em; height:2em;" id="job-status"><span th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'SKIPPED'"  class="label label-default" style="width:10em; height:2em;" id="job-status"><span th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'ERROR'"  class="label label-danger" style="width:10em; height:2em;" id="job-status"><span th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'DEAD'"  class="label label-warning" style="width:10em; height:2em; background: rgba(230, 110, 30, 1);" id="job-status"><span th:text="${job.status}"></span></span>
                             </th:block>
-                            <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:10em; height:2em;">RUNNING</span></th:block>
+                            <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:10em; height:2em;" id="job-status">RUNNING</span></th:block>
                         </dd>
                         <dt><br/>Executed by:</dt>
                         <dd th:text="${job.hostname}">&nbsp;</dd>
                         <dt>Started:</dt>
                         <dd th:text="${job.started}">&nbsp;</dd>
                         <dt>Stopped:</dt>
-                        <dd th:text="${job.stopped}">&nbsp;</dd>
+                        <dd id="job-stopped" th:text="${job.stopped}">&nbsp;</dd>
                         <dt>Last Update:</dt>
-                        <dd th:text="${job.lastUpdated}">&nbsp;</dd>
+                        <dd id="job-last-updated" th:text="${job.lastUpdated}">&nbsp;</dd>
                     </dl>
                     <div class="form-group">
                         <a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}" class="btn btn-sm btn-default btn-block">Open Definition</a>
@@ -47,7 +47,11 @@
                     </div>
                 </div>
                 <div class="col-md-10">
-                    <pre class="pre-scrollable"><div th:each="message : ${job.messages}" th:text="${message}" ></div></pre>
+                    <div class="form-check text-right">
+                        <input type="checkbox" class="form-check-input" id="follow-log" checked="checked">
+                        <label class="form-check-label" for="follow-log">Follow log</label>
+                    </div>
+                    <pre class="logWindow pre-scrollable" th:attr="data-job-url=${job.jobUri} + '?humanReadable=true'"><div th:each="message : ${job.messages}" th:text="${message}" ></div></pre>
                 </div>
             </div>
         </div>
@@ -57,6 +61,7 @@
 <span th:replace="fragments/footer :: footer" />
 
 <script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
+<script th:src="${baseUri} + '/internal/js/logLoader.js'"></script>
 
 </body>
 </html>

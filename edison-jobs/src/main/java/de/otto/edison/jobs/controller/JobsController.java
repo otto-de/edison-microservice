@@ -80,10 +80,11 @@ public class JobsController {
     public List<JobRepresentation> getJobsAsJson(@RequestParam(name = "type", required = false) String type,
                                                  @RequestParam(name = "count", defaultValue = "10") int count,
                                                  @RequestParam(name = "distinct", defaultValue = "true", required = false) boolean distinct,
+                                                 @RequestParam(name = "humanReadable", defaultValue = "false", required = false) boolean humanReadable,
                                                  HttpServletRequest request) {
         return getJobInfos(type, count, distinct)
                 .stream()
-                .map((j) -> representationOf(j, getJobMeta(j.getJobType()), false, baseUriOf(request), applicationProperties.getManagement().getBasePath()))
+                .map((j) -> representationOf(j, getJobMeta(j.getJobType()), humanReadable, baseUriOf(request), applicationProperties.getManagement().getBasePath()))
                 .collect(toList());
     }
 
@@ -166,14 +167,16 @@ public class JobsController {
     @ResponseBody
     public JobRepresentation getJob(final HttpServletRequest request,
                                     final HttpServletResponse response,
-                                    @PathVariable("id") final String jobId) throws IOException {
+                                    @PathVariable("id") final String jobId,
+                                    @RequestParam(name = "humanReadable", defaultValue = "false", required = false) boolean humanReadable
+    ) throws IOException {
 
         setCorsHeaders(response);
 
         final Optional<JobInfo> optionalJob = jobService.findJob(jobId);
         if (optionalJob.isPresent()) {
             final JobInfo jobInfo = optionalJob.get();
-            return representationOf(optionalJob.get(), getJobMeta(jobInfo.getJobType()), false, baseUriOf(request), applicationProperties.getManagement().getBasePath());
+            return representationOf(optionalJob.get(), getJobMeta(jobInfo.getJobType()), humanReadable, baseUriOf(request), applicationProperties.getManagement().getBasePath());
         } else {
             response.sendError(SC_NOT_FOUND, "Job not found");
             return null;

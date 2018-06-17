@@ -17,5 +17,3 @@ $('.triggerButton').on('click', function () {
         }
     });
 });
-
-console.log("init triggerbutton...");
