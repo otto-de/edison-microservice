@@ -28,7 +28,7 @@ public class ExampleStatusSmokeTest {
 
     @Test
     public void shouldHaveStatusEndpoint() {
-        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/status.json", String.class);
+        final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/status", String.class);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
         assertThat(response.getBody()).startsWith("{");
