@@ -17,7 +17,7 @@ function update() {
         data: {},
         dataType: "json",
         error: function (data, status, error) {
-            console.log("Error polling job status: " + status + " - " + error);
+            console.log("Error polling job status");
             setTimeout(update, 10000);
         },
         success: function (data, textStatus, xhr) {
