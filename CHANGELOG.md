@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.16
+* **[edison-jobs]** Fix jobs polling url when context path exists
+
 ## 1.2.15
 * **[edison-core]** Add Kinesis as DatasourceDependency
 * **[edison-jobs]** Add job status polling on jobs and job pages, also add follow log function
