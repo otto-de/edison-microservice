@@ -2,6 +2,7 @@
 
 ## 1.2.15
 * **[edison-core]** Add Kinesis as DatasourceDependency
+* **[edison-jobs]** Add job status polling on jobs and job pages, also add follow log function
 
 ## 1.2.14
 * **[edison-validation]** Use UTF-8 character set in Content type header for error messages
