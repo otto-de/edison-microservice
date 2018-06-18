@@ -2,11 +2,14 @@ function update() {
 
     var jobsContainer = $('#jobsContainer');
     var typeFilter = jobsContainer.data("type-filter");
+    if (!typeFilter) {
+        typeFilter='';
+    }
     var jobsUrl = jobsContainer.data("jobs-url");
 
     $.ajax({
         type: "GET",
-        url: jobsUrl + (typeFilter === null ? '' : "?typeFilter=" + typeFilter + "&humanReadable=true"),
+        url: jobsUrl + "?humanReadable=true" + (typeFilter === '' ? '' : "&type=" + typeFilter),
         headers: {
             Accept: "application/json; charset=utf-8",
             "Content-Type": "application/json; charset=utf-8"
@@ -21,8 +24,8 @@ function update() {
             for (var i in data) {
                 var dataRow = null;
                 dataRow = data[i];
-                var jobStatus = $('#job-status-' + dataRow.id);
 
+                var jobStatus = $('#job-status-' + dataRow.id);
                 //There is a new job that is not in this list -> reload page!
                 if (!jobStatus.length) {
                     location.reload();
@@ -50,7 +53,6 @@ function update() {
                 }
                 $("#job-stopped-" + dataRow.id).text(dataRow.stopped);
                 $("#job-runtime-" + dataRow.id).text(dataRow.runtime);
-                //$(".triggerButton").prop('disabled', false);
                 $("#job-last-updated-" + dataRow.id).text(dataRow.lastUpdated);
             }
             setTimeout(update, 4000);

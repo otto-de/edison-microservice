@@ -7,7 +7,7 @@
 
 <div th:replace="fragments/navigation  :: navigation" />
 
-<div class="container" id="jobsContainer" th:data-type-filter="${typeFilter}" th:data-jobs-url="${edisonManagementBasePath} + '/jobs'">
+<div class="container" id="jobsContainer" th:data-type-filter="${typeFilter}" th:data-jobs-url="${baseUri} + ${edisonManagementBasePath} + '/jobs'">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Job Overview</h3>
