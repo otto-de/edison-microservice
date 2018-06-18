@@ -103,7 +103,7 @@ public class JobsControllerTest {
                 .andExpect(jsonPath("$.links[1].href").value("http://localhost/some-microservice/internal/jobdefinitions/TEST"))
                 .andExpect(jsonPath("$.links[2].href").value("http://localhost/some-microservice/internal/jobs"))
                 .andExpect(jsonPath("$.links[3].href").value("http://localhost/some-microservice/internal/jobs?type=TEST"))
-                .andExpect(jsonPath("$.runtime").value(""))
+                .andExpect(jsonPath("$.runtime").value("00:00:00"))
                 .andExpect(jsonPath("$.state").value("Running"));
         verify(jobService).findJob("42");
     }
@@ -116,7 +116,7 @@ public class JobsControllerTest {
         when(jobService.findJobs(Optional.<String>empty(), 100)).thenReturn(asList(firstJob, secondJob));
 
         // when
-        Object job = jobsController.getJobsAsJson(null, 100, false, mock(HttpServletRequest.class));
+        Object job = jobsController.getJobsAsJson(null, 100, false, false, mock(HttpServletRequest.class));
 
         // then
         assertThat(job, is(asList(representationOf(firstJob, null, false, "", ""), representationOf(secondJob, null, false, "", ""))));
@@ -133,7 +133,7 @@ public class JobsControllerTest {
         when(jobService.findJobs(Optional.of("jobType2"), 100)).thenReturn(asList(secondJob, fourthJob));
 
         // when
-        Object job = jobsController.getJobsAsJson("jobType2", 100, true, mock(HttpServletRequest.class));
+        Object job = jobsController.getJobsAsJson("jobType2", 100, true, false, mock(HttpServletRequest.class));
 
         // then
         assertThat(job, is(asList(representationOf(secondJob, null, false, "", ""), representationOf(fourthJob, null, false, "", ""))));
@@ -152,7 +152,7 @@ public class JobsControllerTest {
         when(jobService.findJobsDistinct()).thenReturn(asList(firstJob, secondJob, thirdJob));
 
         // when
-        Object job = jobsController.getJobsAsJson(null, 100, true, mock(HttpServletRequest.class));
+        Object job = jobsController.getJobsAsJson(null, 100, true, false, mock(HttpServletRequest.class));
 
         // then
         assertThat(job, is(asList(representationOf(firstJob, null, false, "", ""),

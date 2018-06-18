@@ -77,7 +77,7 @@ public class JobRepresentation {
     public String getRuntime() {
         return job.isStopped()
                 ? formatRuntime(job.getStarted(), job.getStopped().get())
-                : "";
+                : formatRuntime(job.getStarted(), OffsetDateTime.now());
     }
 
 	public String getLastUpdated() {
@@ -94,6 +94,10 @@ public class JobRepresentation {
 
     public String getComment() {
         return jobMeta != null ? jobMeta.getDisabledComment() : "";
+    }
+
+    public String getId() {
+        return job.getJobId();
     }
 
     public List<String> getMessages() {
