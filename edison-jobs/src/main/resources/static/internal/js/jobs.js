@@ -2,11 +2,14 @@ function update() {
 
     var jobsContainer = $('#jobsContainer');
     var typeFilter = jobsContainer.data("type-filter");
+    if (!typeFilter) {
+        typeFilter='';
+    }
     var jobsUrl = jobsContainer.data("jobs-url");
 
     $.ajax({
         type: "GET",
-        url: jobsUrl + (typeFilter === null ? '' : "?typeFilter=" + typeFilter + "&humanReadable=true"),
+        url: jobsUrl + "?typeFilter=" + typeFilter + "&humanReadable=true",
         headers: {
             Accept: "application/json; charset=utf-8",
             "Content-Type": "application/json; charset=utf-8"
