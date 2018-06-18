@@ -102,7 +102,7 @@ public class JobsControllerTest {
                 .andExpect(jsonPath("$.links[1].href").value("http://localhost/some-microservice/internal/jobdefinitions/TEST"))
                 .andExpect(jsonPath("$.links[2].href").value("http://localhost/some-microservice/internal/jobs"))
                 .andExpect(jsonPath("$.links[3].href").value("http://localhost/some-microservice/internal/jobs?type=TEST"))
-                .andExpect(jsonPath("$.runtime").value(""))
+                .andExpect(jsonPath("$.runtime").value("00:00:00"))
                 .andExpect(jsonPath("$.state").value("Running"));
         verify(jobService).findJob("42");
     }

@@ -7,7 +7,7 @@
 
 <div th:replace="fragments/navigation  :: navigation" />
 
-<div class="container">
+<div class="container" id="jobsContainer" th:data-type-filter="${typeFilter}" th:data-jobs-url="${edisonManagementBasePath} + '/jobs'">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Job Overview</h3>
@@ -29,19 +29,20 @@
                     <td th:text="${job.jobType}">&nbsp;</td>
                     <td>
                         <th:block th:if="${job.state} != 'Running'">
-                            <span th:if="${job.status} == 'OK'"  class="label label-success"><span th:text="${job.status}"></span></span>
-                            <span th:if="${job.status} == 'SKIPPED'"  class="label label-default"><span th:text="${job.status}"></span></span>
-                            <span th:if="${job.status} == 'ERROR'"  class="label label-danger" ><span th:text="${job.status}"></span></span>
-                            <span th:if="${job.status} == 'DEAD'"  class="label label-warning" ><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'OK'"  class="label label-success" th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'SKIPPED'"  class="label label-default" th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'ERROR'"  class="label label-danger" th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'DEAD'"  class="label label-warning" th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
                         </th:block>
-                        <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:80%; height:2em;">RUNNING</span></th:block>
+                        <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:80%; height:2em;" th:id="'job-status-' + ${job.id}">RUNNING</span></th:block>
                     </td>
-                    <td th:text="${job.started}">&nbsp;</td>
-                    <td th:text="${job.stopped}">&nbsp;</td>
-                    <td th:text="${job.runtime}">&nbsp;</td>
+                    <td th:text="${job.started}" th:id="'job-started-' + ${job.id}">&nbsp;</td>
+                    <td th:text="${job.stopped}" th:id="'job-stopped-' + ${job.id}">&nbsp;</td>
+                    <td th:text="${job.runtime}" th:id="'job-runtime-' + ${job.id}">&nbsp;</td>
                     <td>
                         <div class="btn-group">
                             <button type="button"
+                                    th:id="'trigger-button-' + ${job.id}"
                                     class="triggerButton btn btn-sm btn-default"
                                     th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
                                     title="Click to start job now"
@@ -53,8 +54,8 @@
                                     Details <span class="caret"></span></button>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a th:href="${job.jobUri}">Messages</a></li>
-                                    <li th:if="${typeFilter == null}"><a id="openButton" th:href="@{|${edisonManagementBasePath}/jobs?type=${job.jobType}|}">Job Overview</a></li>
-                                    <li th:if="${typeFilter != null}"><a id="openButton" th:href="@{|${edisonManagementBasePath}/jobs|}">Job Overview</a></li>
+                                    <li th:if="${typeFilter == null}"><a th:id="'openButton-' + ${job.id}" th:href="@{|${edisonManagementBasePath}/jobs?type=${job.jobType}|}">Job Overview</a></li>
+                                    <li th:if="${typeFilter != null}"><a th:id="'openButton-' + ${job.id}" th:href="@{|${edisonManagementBasePath}/jobs|}">Job Overview</a></li>
                                     <li><a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}">Job Definition</a></li>
                                 </ul>
                             </div>
@@ -73,6 +74,7 @@
 <span th:replace="fragments/footer :: footer" />
 
 <script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
+<script th:src="${baseUri} + '/internal/js/jobs.js'"></script>
 
 </body>
 </html>

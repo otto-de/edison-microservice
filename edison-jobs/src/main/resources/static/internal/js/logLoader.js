@@ -9,7 +9,11 @@ function getLog(logIndex) {
         data: {},
         dataType: "json",
         error: function (data, status, error) {
-            alert(error);
+            console.log("Error polling job status.");
+            var jobStatus = $('#job-status');
+            jobStatus.attr("class", "label label-danger");
+            jobStatus.attr("style", "width:10em; height:2em;");
+            jobStatus.html("<span>UNKNOWN</span>");
         },
         success: function (data, textStatus, xhr) {
             var newLogIndex = data.messages.length - 1;
