@@ -12,6 +12,7 @@ import static de.otto.edison.mongo.UpdateIfMatchResult.CONCURRENTLY_MODIFIED;
 import static de.otto.edison.mongo.UpdateIfMatchResult.NOT_FOUND;
 import static de.otto.edison.mongo.UpdateIfMatchResult.OK;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -21,23 +22,24 @@ import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
 
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.model.CountOptions;
+import com.mongodb.client.model.*;
 import de.otto.edison.mongo.configuration.MongoProperties;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.FindOneAndReplaceOptions;
-import com.mongodb.client.model.UpdateOptions;
 
 public abstract class AbstractMongoRepository<K, V> {
 
     public static final String ID = "_id";
     public static final String ETAG = "etag";
 
-    private static final boolean DISABLE_PARALLEL_STREAM_PROCESSING = false;
     protected final MongoProperties mongoProperties;
+
+    private static final boolean DISABLE_PARALLEL_STREAM_PROCESSING = false;
+    private static final UpdateOptions BULK_UPSERT_OPERATION = new UpdateOptions().upsert(true);
+    private static final BulkWriteOptions BULK_WRITE_OPTIONS = new BulkWriteOptions().ordered(false);
 
     public AbstractMongoRepository(final MongoProperties mongoProperties) {
         this.mongoProperties = mongoProperties;
@@ -144,6 +146,24 @@ public abstract class AbstractMongoRepository<K, V> {
         collectionWithWriteTimeout(maxTime, timeUnit)
                 .replaceOne(byId(keyOf(value)), doc, new UpdateOptions().upsert(true));
         return decode(doc);
+    }
+
+    public void createOrUpdateBulk(final Collection<V> values) {
+        createOrUpdateBulk(values, mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    public void createOrUpdateBulk(final Collection<V> values, final long maxTime, final TimeUnit timeUnit) {
+        if (values.isEmpty()) {
+            return;
+        }
+        final List<ReplaceOneModel<Document>> bulkOperations = values.stream()
+                .map(value -> new ReplaceOneModel<>(
+                        eq(ID, keyOf(value)),
+                        encode(value),
+                        BULK_UPSERT_OPERATION))
+                .collect(toList());
+        collectionWithWriteTimeout(maxTime, timeUnit)
+                .bulkWrite(bulkOperations, BULK_WRITE_OPTIONS);
     }
 
     protected MongoCollection<Document> collectionWithWriteTimeout(long maxTime, TimeUnit timeUnit) {

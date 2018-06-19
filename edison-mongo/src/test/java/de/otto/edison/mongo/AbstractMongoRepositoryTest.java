@@ -1,31 +1,32 @@
 package de.otto.edison.mongo;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsNot.not;
+import static org.mockito.Mockito.*;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import de.otto.edison.mongo.configuration.MongoProperties;
 import org.bson.Document;
+import org.hamcrest.CustomMatcher;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.mockito.Mockito;
 
 public class AbstractMongoRepositoryTest {
     private TestRepository testee;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final Fongo fongo = new Fongo("inmemory-mongodb");
         final MongoDatabase mongoDatabase = fongo.getDatabase("db");
 
@@ -33,7 +34,38 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test
-    public void shouldUpdateExistingDocument() throws Exception {
+    public void shouldCreateOrUpdateBulk() {
+        // given
+        final TestObject testObjectA = new TestObject("someIdA", "someValueA");
+        final TestObject testObjectB = new TestObject("someIdB", "someValueB");
+
+        // when
+        testee.createOrUpdateBulk(asList(testObjectA, testObjectB));
+
+        // then
+        List<TestObject> foundObjects = testee.findAll();
+        Assert.assertThat(foundObjects.size(), is(2));
+        Assert.assertThat(foundObjects, containsInAnyOrder(
+                new TestObjectMatcher(testObjectA),
+                new TestObjectMatcher(testObjectB)));
+    }
+
+    @Test
+    public void shouldHaveNoDbInteractionForEmptyListsUsingCreateOrUpdateBulk() {
+        testee = spy(new TestRepository(Mockito.mock(MongoDatabase.class)));
+
+        // given
+        List<TestObject> emptyList = Collections.emptyList();
+
+        // when
+        testee.createOrUpdateBulk(emptyList);
+
+        // then
+        verify(testee, never()).collection();
+    }
+
+    @Test
+    public void shouldUpdateExistingDocument() {
         // given
         final TestObject testObject = new TestObject("someId", "someValue");
         testee.create(testObject);
@@ -53,7 +85,7 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test
-    public void shouldNotUpdateMissingDocument() throws Exception {
+    public void shouldNotUpdateMissingDocument() {
         // given
 
         final TestObject testObjectToUpdate = new TestObject("someId", "someUpdatedValue");
@@ -67,7 +99,7 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test
-    public void shouldUpdateIfETagMatch() throws Exception {
+    public void shouldUpdateIfETagMatch() {
         // given
         final TestObject testObject = new TestObject("someId", "someValue");
         testee.create(testObject);
@@ -88,7 +120,7 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test
-    public void shouldNotUpdateIfEtagNotMatch() throws Exception {
+    public void shouldNotUpdateIfEtagNotMatch() {
         // given
         final TestObject testObject = new TestObject("someId", "someValue", "someEtagWhichIsNotInTheDb");
         testee.create(testObject);
@@ -101,7 +133,7 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test
-    public void shouldNotUpdateIfEtagNotExists() throws Exception {
+    public void shouldNotUpdateIfEtagNotExists() {
         // given
         final TestObject testObject = new TestObject("someId", "someValue");
 
@@ -113,7 +145,7 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void shouldNotCreateOrUpdateWithMissingId() throws Exception {
+    public void shouldNotCreateOrUpdateWithMissingId() {
         // given
         final TestObject testObject = new TestObject(null, "someValue");
 
@@ -125,7 +157,7 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void shouldNotCreateWithMissingId() throws Exception {
+    public void shouldNotCreateWithMissingId() {
         // given
         final TestObject testObject = new TestObject(null, "someValue");
 
@@ -137,7 +169,7 @@ public class AbstractMongoRepositoryTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void shouldFindOneWithMissingId() throws Exception {
+    public void shouldFindOneWithMissingId() {
         // when
         testee.findOne(null);
         // then
@@ -264,7 +296,6 @@ public class AbstractMongoRepositoryTest {
 
         private final String id;
         private final String value;
-
         private final String eTag;
 
         protected TestObject(final String id, final String value, final String eTag) {
@@ -277,5 +308,47 @@ public class AbstractMongoRepositoryTest {
             this(id, value, null);
         }
 
+        public boolean equalsWithoutEtag(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TestObject that = (TestObject) o;
+            return Objects.equals(id, that.id) &&
+                    Objects.equals(value, that.value);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TestObject that = (TestObject) o;
+            return Objects.equals(id, that.id) &&
+                    Objects.equals(value, that.value) &&
+                    Objects.equals(eTag, that.eTag);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, value, eTag);
+        }
+
+        @Override
+        public String toString() {
+            return "TestObject{" +
+                    "id='" + id + '\'' +
+                    ", value='" + value + '\'' +
+                    ", eTag='" + eTag + '\'' +
+                    '}';
+        }
+    }
+
+    class TestObjectMatcher extends CustomMatcher<TestObject> {
+        private final TestObject testObject;
+        TestObjectMatcher(TestObject testObject) {
+            super(String.format("TestObject{id='%s', value='%s', eTag=<IGNORED>}", testObject.id, testObject.value));
+            this.testObject = testObject;
+        }
+        public boolean matches(Object object) {
+            return ((object instanceof TestObject) && ((TestObject) object).equalsWithoutEtag(testObject));
+        }
     }
 }
