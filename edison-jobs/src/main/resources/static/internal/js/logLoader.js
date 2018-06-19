@@ -21,7 +21,7 @@ function getLog(logIndex) {
 
             while (logIndex <= newLogIndex) {
                 if (logIndex === 0) {
-                    logWindow.text("");
+                    logWindow.empty();
                 }
                 logWindow.append("<div>" + data.messages[logIndex] + "</div>");
                 logIndex++;
