@@ -16,10 +16,10 @@ function getLog(logIndex) {
             jobStatus.html("<span>UNKNOWN</span>");
         },
         success: function (data, textStatus, xhr) {
-            var newLogIndex = data.messages.length - 1;
+            var numberOfMessages = data.messages.length;
             var logWindow = $('.logWindow');
 
-            while (logIndex <= newLogIndex) {
+            while (logIndex < numberOfMessages) {
                 if (logIndex === 0) {
                     logWindow.empty();
                 }
@@ -37,7 +37,7 @@ function getLog(logIndex) {
             //Schedule further polling if still runnin'
             if (data.state === 'Running') {
                 setTimeout(function () {
-                    getLog(newLogIndex)
+                    getLog(logIndex)
                 }, 2000);
             } else {
                 var jobStatus = $('#job-status');
