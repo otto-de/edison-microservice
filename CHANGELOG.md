@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.2.18
+* **[edison-jobs]** Fix duplicate job log messages when polling
+
+## 1.2.17
+* **[edison-mongo]** Add bulk write functionality to abstract mongo repository
+
 ## 1.2.16
 * **[edison-jobs]** Fix jobs polling url when context path exists
 
