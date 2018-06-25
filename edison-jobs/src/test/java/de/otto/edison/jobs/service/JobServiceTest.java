@@ -198,7 +198,6 @@ public class JobServiceTest {
         OffsetDateTime now = OffsetDateTime.now(clock);
 
         verify(jobRepository).appendMessage(JOB_ID, jobMessage(Level.INFO, "Skipped job ..", now));
-        verify(jobRepository).setLastUpdate(JOB_ID, now);
         verify(jobRepository).setJobStatus(JOB_ID, JobInfo.JobStatus.SKIPPED);
     }
 
@@ -211,7 +210,6 @@ public class JobServiceTest {
         OffsetDateTime now = OffsetDateTime.now(clock);
 
         verify(jobRepository).appendMessage(JOB_ID, jobMessage(Level.WARNING, "Restarting job ..", now));
-        verify(jobRepository).setLastUpdate(JOB_ID, now);
         verify(jobRepository).setJobStatus(JOB_ID, JobInfo.JobStatus.OK);
     }
 
@@ -241,11 +239,8 @@ public class JobServiceTest {
         jobService.appendMessage(JOB_ID, message);
 
         // then
-        JobInfo expected = jobInfo.copy()
-                .setStatus(JobInfo.JobStatus.ERROR)
-                .setLastUpdated(now).build();
         verify(jobRepository).appendMessage(JOB_ID, message);
-        verify(jobRepository).createOrUpdate(expected);
+        verify(jobRepository).setJobStatus(JOB_ID, JobInfo.JobStatus.ERROR);
     }
 
     private JobInfo.Builder defaultJobInfo() {

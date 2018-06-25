@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.ReadPreference.primaryPreferred;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.push;
 import static com.mongodb.client.model.Updates.set;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
@@ -70,7 +71,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Override
     public void appendMessage(final String jobId, final JobMessage jobMessage) {
-        collectionWithWriteTimeout(250, TimeUnit.MILLISECONDS).updateOne(eq(ID, jobId), push(JobStructure.MESSAGES.key(), encodeJobMessage(jobMessage)));
+        collectionWithWriteTimeout(250, TimeUnit.MILLISECONDS).updateOne(eq(ID, jobId), combine(push(JobStructure.MESSAGES.key(), encodeJobMessage(jobMessage)), set(JobStructure.LAST_UPDATED.key(), DateTimeConverters.toDate(jobMessage.getTimestamp()))));
     }
 
     @Override

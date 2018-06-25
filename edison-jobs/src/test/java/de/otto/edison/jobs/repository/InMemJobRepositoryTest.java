@@ -241,13 +241,14 @@ public class InMemJobRepositoryTest {
     public void shouldAppendMessageToJobInfo() throws Exception {
 
         String someUri = "someUri";
+        OffsetDateTime now = now();
 
         //Given
         JobInfo jobInfo = newJobInfo(someUri, "TEST", systemDefaultZone(), "localhost");
         repository.createOrUpdate(jobInfo);
 
         //When
-        JobMessage igelMessage = JobMessage.jobMessage(Level.WARNING, "Der Igel ist froh.", now());
+        JobMessage igelMessage = JobMessage.jobMessage(Level.WARNING, "Der Igel ist froh.", now);
         repository.appendMessage(someUri, igelMessage);
 
         //Then
@@ -255,6 +256,7 @@ public class InMemJobRepositoryTest {
 
         assertThat(jobInfoFromRepo.getMessages().size(), is(1));
         assertThat(jobInfoFromRepo.getMessages().get(0), is(igelMessage));
+        assertThat(jobInfoFromRepo.getLastUpdated(), is(now));
 
     }
 
