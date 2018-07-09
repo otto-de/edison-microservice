@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.2.19
+**Dependencies:**
+
+* Updated Async-Http-Client to 2.4.9
+
 ## 1.2.18
 * **[edison-jobs]** Fix duplicate job log messages when polling
 
