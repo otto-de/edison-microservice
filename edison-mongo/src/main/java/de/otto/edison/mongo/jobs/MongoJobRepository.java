@@ -1,10 +1,10 @@
 package de.otto.edison.mongo.jobs;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
@@ -21,9 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.ReadPreference.primaryPreferred;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.combine;
-import static com.mongodb.client.model.Updates.push;
-import static com.mongodb.client.model.Updates.set;
+import static com.mongodb.client.model.Updates.*;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.time.Clock.systemDefaultZone;
@@ -224,8 +222,10 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
 
     @Override
     protected final void ensureIndexes() {
-        collection().createIndex(new BasicDBObject(JobStructure.JOB_TYPE.key(), 1));
-        collection().createIndex(new BasicDBObject(JobStructure.STARTED.key(), 1));
+        IndexOptions options = new IndexOptions().background(true);
+        collection().createIndex(Indexes.ascending(JobStructure.JOB_TYPE.key()), options);
+        collection().createIndex(Indexes.ascending(JobStructure.STARTED.key()), options);
+        collection().createIndex(Indexes.ascending(JobStructure.LAST_UPDATED.key(), JobStructure.STOPPED.key()), options);
     }
 
     private String getMessage(final Document document) {
@@ -244,27 +244,27 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
         return new Document(JobStructure.STARTED.key(), order);
     }
 
-	@Override
-	public List<JobInfo> findAllJobInfoWithoutMessages() {
+    @Override
+    public List<JobInfo> findAllJobInfoWithoutMessages() {
         return collection()
                 .find()
                 .maxTime(500, TimeUnit.MILLISECONDS)
                 .projection(new Document(getJobInfoWithoutMessagesProjection()))
                 .map(this::decode)
                 .into(new ArrayList<>());
-	}
-	
-	private Map<String, Object> getJobInfoWithoutMessagesProjection() {
-		final Map<String, Object> projection = new HashMap<>();
-		projection.put(JobStructure.ID.key(), true);
-		projection.put(JobStructure.JOB_TYPE.key(), true);
-		projection.put(JobStructure.STARTED.key(), true);
-		projection.put(JobStructure.LAST_UPDATED.key(), true);
-		projection.put(JobStructure.STOPPED.key(), true);
-		projection.put(JobStructure.STATUS.key(), true);
-		projection.put(JobStructure.HOSTNAME.key(), true);
-		return projection;
-		
-	}
+    }
+
+    private Map<String, Object> getJobInfoWithoutMessagesProjection() {
+        final Map<String, Object> projection = new HashMap<>();
+        projection.put(JobStructure.ID.key(), true);
+        projection.put(JobStructure.JOB_TYPE.key(), true);
+        projection.put(JobStructure.STARTED.key(), true);
+        projection.put(JobStructure.LAST_UPDATED.key(), true);
+        projection.put(JobStructure.STOPPED.key(), true);
+        projection.put(JobStructure.STATUS.key(), true);
+        projection.put(JobStructure.HOSTNAME.key(), true);
+        return projection;
+
+    }
 
 }
