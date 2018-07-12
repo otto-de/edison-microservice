@@ -186,7 +186,7 @@ public class JobStatusCalculator {
                     ? statusDetailWhenNoJobAvailable(jobDefinition)
                     : toStatusDetail(jobs, jobDefinition);
         } catch (final Exception e) {
-            LOG.error(LOAD_JOBS_EXCEPTION_MESSAGE + ": " + e.getMessage());
+            LOG.error(LOAD_JOBS_EXCEPTION_MESSAGE + ": " + e.getMessage(), e);
             return StatusDetail.statusDetail(jobDefinition.jobName(), ERROR, LOAD_JOBS_EXCEPTION_MESSAGE);
         }
     }
