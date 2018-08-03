@@ -3,7 +3,10 @@ package de.otto.edison.jobs.status;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
+import de.otto.edison.jobs.domain.JobMeta;
+import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import org.slf4j.Logger;
@@ -78,6 +81,7 @@ public class JobStatusCalculator {
     private static final String TOO_MANY_JOBS_FAILED_MESSAGE = "%d out of %d job executions failed";
     private static final String JOB_TOO_OLD_MESSAGE = "Job didn't run in the past %s";
     private static final String LOAD_JOBS_EXCEPTION_MESSAGE = "Failed to load job status";
+    private static final String JOB_DEACTIVATED_MESSAGE = "Job is deactivated: %s";
 
     private static final String REL_JOB = "http://github.com/otto-de/edison/link-relations/job";
 
@@ -85,6 +89,7 @@ public class JobStatusCalculator {
     private final int numberOfJobs;
     private final int maxFailedJobs;
     private final JobRepository jobRepository;
+    private final JobMetaRepository jobMetaRepository;
     private final String managementContextPath;
 
     /**
@@ -94,11 +99,13 @@ public class JobStatusCalculator {
      * @param numberOfJobs the total number of jobs to take into calculation.
      * @param maxFailedJobs the maximum number of jobs that that are accepted to fail.
      * @param jobRepository repository to fetch the last {@code numberOfJobs}.
+     * @param jobMetaRepository meta data to indentify disabled jobs
      */
     public JobStatusCalculator(final String key,
                                final int numberOfJobs,
                                final int maxFailedJobs,
                                final JobRepository jobRepository,
+                               final JobMetaRepository jobMetaRepository,
                                final String managementContextPath) {
         checkArgument(!key.isEmpty(), "Key must not be empty");
         checkArgument(maxFailedJobs <= numberOfJobs, "Parameter maxFailedJobs must not be greater numberOfJobs");
@@ -108,6 +115,7 @@ public class JobStatusCalculator {
         this.numberOfJobs = numberOfJobs;
         this.maxFailedJobs = maxFailedJobs;
         this.jobRepository = jobRepository;
+        this.jobMetaRepository = jobMetaRepository;
         this.managementContextPath = managementContextPath;
     }
 
@@ -120,9 +128,10 @@ public class JobStatusCalculator {
      */
     public static JobStatusCalculator warningOnLastJobFailed(final String key,
                                                              final JobRepository jobRepository,
+                                                             final JobMetaRepository jobMetaRepository,
                                                              final String managementContextPath) {
         return new JobStatusCalculator(
-                key, 1, 1, jobRepository, managementContextPath
+                key, 1, 1, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
@@ -135,9 +144,10 @@ public class JobStatusCalculator {
      */
     public static JobStatusCalculator errorOnLastJobFailed(final String key,
                                                            final JobRepository jobRepository,
+                                                           final JobMetaRepository jobMetaRepository,
                                                            final String managementContextPath) {
         return new JobStatusCalculator(
-                key, 1, 0, jobRepository, managementContextPath
+                key, 1, 0, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
@@ -152,10 +162,11 @@ public class JobStatusCalculator {
     public static JobStatusCalculator errorOnLastNumJobsFailed(final String key,
                                                                final int numJobs,
                                                                final JobRepository jobRepository,
+                                                               final JobMetaRepository jobMetaRepository,
                                                                final String managementContextPath
     ) {
         return new JobStatusCalculator(
-                key, numJobs, numJobs-1, jobRepository, managementContextPath
+                key, numJobs, numJobs-1, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
@@ -207,38 +218,44 @@ public class JobStatusCalculator {
         final Status status;
         final String message;
         final JobInfo lastJob = jobInfos.get(0);
+        final JobMeta jobMeta = getJobMeta(jobDefinition.jobType());
         long numFailedJobs = getNumFailedJobs(jobInfos);
-        switch(lastJob.getStatus()) {
-            case OK:
-            case SKIPPED:
-                if(jobTooOld(lastJob, jobDefinition)) {
-                    status = WARNING;
-                    message = jobAgeMessage(jobDefinition);
-                } else if (numFailedJobs > maxFailedJobs) {
-                    status = WARNING;
-                    message = format(TOO_MANY_JOBS_FAILED_MESSAGE, numFailedJobs, jobInfos.size());
-                } else {
-                    status = OK;
-                    message = SUCCESS_MESSAGE;
-                }
-                break;
-            case ERROR:
-                if (numFailedJobs > maxFailedJobs) {
-                    status = ERROR;
-                } else {
-                    status = WARNING;
-                }
-                if (numberOfJobs == 1 && maxFailedJobs <= 1) {
-                    message = ERROR_MESSAGE;
-                } else {
-                    message = format(TOO_MANY_JOBS_FAILED_MESSAGE, numFailedJobs, jobInfos.size());
-                }
-                break;
+        if (!jobMeta.isDisabled()) {
+            switch (lastJob.getStatus()) {
+                case OK:
+                case SKIPPED:
+                    if (jobTooOld(lastJob, jobDefinition)) {
+                        status = WARNING;
+                        message = jobAgeMessage(jobDefinition);
+                    } else if (numFailedJobs > maxFailedJobs) {
+                        status = WARNING;
+                        message = format(TOO_MANY_JOBS_FAILED_MESSAGE, numFailedJobs, jobInfos.size());
+                    } else {
+                        status = OK;
+                        message = SUCCESS_MESSAGE;
+                    }
+                    break;
+                case ERROR:
+                    if (numFailedJobs > maxFailedJobs) {
+                        status = ERROR;
+                    } else {
+                        status = WARNING;
+                    }
+                    if (numberOfJobs == 1 && maxFailedJobs <= 1) {
+                        message = ERROR_MESSAGE;
+                    } else {
+                        message = format(TOO_MANY_JOBS_FAILED_MESSAGE, numFailedJobs, jobInfos.size());
+                    }
+                    break;
 
-            case DEAD:
-            default:
-                status = WARNING;
-                message = DEAD_MESSAGE;
+                case DEAD:
+                default:
+                    status = WARNING;
+                    message = DEAD_MESSAGE;
+            }
+        } else {
+            status = OK;
+            message = format(JOB_DEACTIVATED_MESSAGE, jobMeta.getDisabledComment());
         }
         return StatusDetail.statusDetail(
                 jobDefinition.jobName(),
@@ -304,6 +321,10 @@ public class JobStatusCalculator {
         if (!expression) {
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public JobMeta getJobMeta(final String jobType) {
+        return jobMetaRepository.getJobMeta(jobType);
     }
 
 }

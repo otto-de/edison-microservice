@@ -113,23 +113,27 @@ public class JobsConfiguration {
 
     @Bean
     public JobStatusCalculator warningOnLastJobFailed(final JobRepository jobRepository,
+                                                      final JobMetaRepository jobMetaRepository,
                                                       final ManagementServerProperties managementServerProperties) {
-        return JobStatusCalculator.warningOnLastJobFailed("warningOnLastJobFailed", jobRepository, managementContextPath);
+        return JobStatusCalculator.warningOnLastJobFailed("warningOnLastJobFailed", jobRepository, jobMetaRepository, managementContextPath);
     }
 
     @Bean
-    public JobStatusCalculator errorOnLastJobFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastJobFailed("errorOnLastJobFailed", jobRepository, managementContextPath);
+    public JobStatusCalculator errorOnLastJobFailed(final JobRepository jobRepository,
+                                                    final JobMetaRepository jobMetaRepository) {
+        return JobStatusCalculator.errorOnLastJobFailed("errorOnLastJobFailed", jobRepository, jobMetaRepository, managementContextPath);
     }
 
     @Bean
-    public JobStatusCalculator errorOnLastThreeJobsFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastThreeJobsFailed", 3, jobRepository, managementContextPath);
+    public JobStatusCalculator errorOnLastThreeJobsFailed(final JobRepository jobRepository,
+                                                          final JobMetaRepository jobMetaRepository) {
+        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastThreeJobsFailed", 3, jobRepository, jobMetaRepository, managementContextPath);
     }
 
     @Bean
-    public JobStatusCalculator errorOnLastTenJobsFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastTenJobsFailed", 10, jobRepository, managementContextPath);
+    public JobStatusCalculator errorOnLastTenJobsFailed(final JobRepository jobRepository,
+                                                        final JobMetaRepository jobMetaRepository) {
+        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastTenJobsFailed", 10, jobRepository, jobMetaRepository, managementContextPath);
     }
 
     @Bean

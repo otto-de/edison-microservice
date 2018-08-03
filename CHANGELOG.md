@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.21
+* **[edison-jobs]** Fix Error Status for deactivated jobs
+
 ## 1.2.19
 **Dependencies:**
 
