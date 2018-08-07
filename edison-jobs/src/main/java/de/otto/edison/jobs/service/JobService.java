@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -190,7 +191,7 @@ public class JobService {
 
     public void appendMessage(final String jobId,
                               final JobMessage jobMessage) {
-        writeMessageAndStatus(jobId, jobMessage.getLevel(), jobMessage.getMessage(), jobMessage.getLevel() == Level.ERROR ? ERROR : OK, jobMessage.getTimestamp());
+        writeMessageAndStatus(jobId, jobMessage.getLevel(), jobMessage.getMessage(), jobMessage.getLevel() == Level.ERROR ? ERROR : null, jobMessage.getTimestamp());
     }
 
     public void keepAlive(final String jobId) {
@@ -210,10 +211,12 @@ public class JobService {
         writeMessageAndStatus(jobId, messageLevel, message, jobStatus, currentTimestamp);
     }
 
-    private void writeMessageAndStatus(final String jobId, Level messageLevel, String message, final JobStatus jobStatus, OffsetDateTime timestamp) {
+    private void writeMessageAndStatus(final String jobId, Level messageLevel, String message, @Nullable final JobStatus jobStatus, OffsetDateTime timestamp) {
         // TODO: Refactor JobRepository so only a single update is required
         jobRepository.appendMessage(jobId, jobMessage(messageLevel, message, timestamp));
-        jobRepository.setJobStatus(jobId, jobStatus);
+        if (jobStatus != null) {
+            jobRepository.setJobStatus(jobId, jobStatus);
+        }
     }
 
     private JobInfo createJobInfo(final String jobType) {

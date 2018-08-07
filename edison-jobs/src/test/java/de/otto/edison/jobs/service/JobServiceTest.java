@@ -243,6 +243,25 @@ public class JobServiceTest {
         verify(jobRepository).setJobStatus(JOB_ID, JobInfo.JobStatus.ERROR);
     }
 
+    @Test
+    public void shouldNotChangeStatusToOKWhenOnlyAppendingAMessage() {
+        OffsetDateTime now = OffsetDateTime.now(clock);
+        OffsetDateTime earlier = now.minus(10, MINUTES);
+        JobMessage message = JobMessage.jobMessage(Level.INFO, "Some info message", now);
+        JobInfo jobInfo = defaultJobInfo()
+                .setLastUpdated(earlier)
+                .setStatus(JobInfo.JobStatus.SKIPPED)
+                .build();
+        when(jobRepository.findOne(JOB_ID)).thenReturn(Optional.of(jobInfo));
+
+        // when
+        jobService.appendMessage(JOB_ID, message);
+
+        // then
+        verify(jobRepository).appendMessage(JOB_ID, message);
+        verifyNoMoreInteractions(jobRepository);
+    }
+
     private JobInfo.Builder defaultJobInfo() {
         return newJobInfo(JOB_ID, JOB_TYPE, clock, HOSTNAME).copy();
     }
