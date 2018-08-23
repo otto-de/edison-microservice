@@ -1,61 +1,55 @@
 package de.otto.edison.mongo.jobs;
 
-import static java.time.Clock.systemDefaultZone;
-import static java.time.OffsetDateTime.now;
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
+import com.mongodb.client.MongoDatabase;
+import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobInfo.JobStatus;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.domain.Level;
+import de.otto.edison.mongo.configuration.MongoProperties;
+import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
+import org.assertj.core.util.Lists;
+import org.bson.Document;
+import org.hamcrest.Matchers;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.mongo.jobs.DateTimeConverters.toDate;
-import static de.otto.edison.mongo.jobs.JobStructure.ID;
-import static de.otto.edison.mongo.jobs.JobStructure.JOB_TYPE;
-import static de.otto.edison.mongo.jobs.JobStructure.MESSAGES;
-import static de.otto.edison.mongo.jobs.JobStructure.MSG_LEVEL;
-import static de.otto.edison.mongo.jobs.JobStructure.MSG_TEXT;
-import static de.otto.edison.mongo.jobs.JobStructure.MSG_TS;
-import static de.otto.edison.mongo.jobs.JobStructure.STATUS;
-
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import de.otto.edison.mongo.configuration.MongoProperties;
-import org.assertj.core.util.Lists;
-import org.bson.Document;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.github.fakemongo.Fongo;
-import com.mongodb.client.MongoDatabase;
-
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobInfo.JobStatus;
-import de.otto.edison.jobs.domain.JobMessage;
-import de.otto.edison.jobs.domain.Level;
+import static de.otto.edison.mongo.jobs.JobStructure.*;
+import static java.time.Clock.systemDefaultZone;
+import static java.time.OffsetDateTime.now;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class MongoJobRepositoryTest {
+
+    @BeforeClass
+    public static void startMongo() throws IOException {
+        EmbeddedMongoHelper.startMongoDB();
+    }
+
+    @AfterClass
+    public static void teardownMongo() {
+        EmbeddedMongoHelper.stopMongoDB();
+    }
 
     private MongoJobRepository repo;
 
     @Before
     public void setup() {
-        final Fongo fongo = new Fongo("inmemory-mongodb");
-        final MongoDatabase mongoDatabase = fongo.getDatabase("jobsinfo");
+        final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("jobsinfo-" + UUID.randomUUID());
         repo = new MongoJobRepository(mongoDatabase, "jobsinfo", new MongoProperties());
     }
 

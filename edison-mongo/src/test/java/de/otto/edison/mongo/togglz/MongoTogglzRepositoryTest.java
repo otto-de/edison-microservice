@@ -1,33 +1,45 @@
 package de.otto.edison.mongo.togglz;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-import java.util.Optional;
-
+import com.mongodb.client.MongoDatabase;
 import de.otto.edison.mongo.configuration.MongoProperties;
+import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
+import de.otto.edison.togglz.FeatureClassProvider;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
 
-import com.github.fakemongo.Fongo;
-import com.mongodb.client.MongoDatabase;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-import de.otto.edison.togglz.FeatureClassProvider;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MongoTogglzRepositoryTest {
 
     private MongoTogglzRepository testee;
 
+    @BeforeClass
+    public static void setupMongo() throws IOException {
+        EmbeddedMongoHelper.startMongoDB();
+    }
+
+    @AfterClass
+    public static void teardownMongo() {
+        EmbeddedMongoHelper.stopMongoDB();
+    }
+
+
     @Before
-    public void setUp() throws Exception {
-        final Fongo fongo = new Fongo("inmemory-mongodb");
-        final MongoDatabase mongoDatabase = fongo.getDatabase("features");
+    public void setUp() {
+        final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("features-" + UUID.randomUUID());
         final FeatureClassProvider featureClassProvider = new TestFeatureClassProvider();
         final UserProvider userProvider = mock(UserProvider.class);
         when(userProvider.getCurrentUser()).thenReturn(new SimpleFeatureUser("someUser"));
@@ -35,7 +47,7 @@ public class MongoTogglzRepositoryTest {
     }
 
     @Test
-    public void shouldLoadFeatureState() throws Exception {
+    public void shouldLoadFeatureState() {
         // Given
         final FeatureState featureState = new FeatureState(TestFeatures.TEST_FEATURE_1);
         featureState.setEnabled(true);
@@ -56,7 +68,7 @@ public class MongoTogglzRepositoryTest {
     }
 
     @Test
-    public void shouldSetFeatureState() throws Exception {
+    public void shouldSetFeatureState() {
         // Given
         final FeatureState featureState = new FeatureState(TestFeatures.TEST_FEATURE_1);
         featureState.setEnabled(true);

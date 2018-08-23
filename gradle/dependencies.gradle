@@ -27,8 +27,8 @@ ext {
             hamcrest     : '1.3',
             mockito_core : '2.10.0',
             jsonassert   : '1.5.0',
-            fongo        : '2.1.0',
-            rest_assured : '2.9.0'
+            rest_assured : '2.9.0',
+            embedded_mongo: '2.1.1'
     ]
     plugin_versions = [
             versions     : '0.15.0',
@@ -76,9 +76,9 @@ ext {
             spring_boot_starter_test: "org.springframework.boot:spring-boot-starter-test:${versions.spring_boot}",
             jsonassert              : "org.skyscreamer:jsonassert:${test_versions.jsonassert}",
             togglz_testing          : "org.togglz:togglz-testing:${versions.togglz}",
-            fongo                   : "com.github.fakemongo:fongo:${test_versions.fongo}",
+            embedded_mongo          : "de.flapdoodle.embed:de.flapdoodle.embed.mongo:${test_versions.embedded_mongo}",
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
-            rest_assured             : "com.jayway.restassured:rest-assured:${test_versions.rest_assured}"
+            rest_assured            : "com.jayway.restassured:rest-assured:${test_versions.rest_assured}"
     ]
     gradle_plugins = [
             versions     : "com.github.ben-manes:gradle-versions-plugin:${plugin_versions.versions}",

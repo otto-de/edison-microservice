@@ -133,6 +133,14 @@ endpoints:
     status:
         enabled: false
 ```
+
+## 1.2.22-SNAPSHOT
+* **[edison-mongo]** Replace fongo tests with embedded mongo tests, because fongo doesn't work with recent mongo drivers
+* **[edison-mongo]** Updated mongo client library to latest version 3.8.1                       
+
+## 1.2.21
+* **[edison-jobs]** Fix Error Status for deactivated jobs
+
 ## 1.2.13
 * **[edison-validation]** Fix deserialization of ErrorHalRepresentation
 

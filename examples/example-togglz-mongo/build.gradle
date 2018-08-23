@@ -3,7 +3,7 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     compile project(":edison-togglz")
     compile project(":edison-mongo")
-    compile test_libraries.fongo // In-Memory impl of MongoDB; not intended for production
+    compile test_libraries.embedded_mongo // In-Memory impl of MongoDB; not intended for production
 
     testCompile project(":edison-testsupport")
 }
