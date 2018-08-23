@@ -10,7 +10,7 @@ dependencies {
     testCompile project(":edison-testsupport")
     testCompile project(":edison-jobs")
     testCompile project(":edison-togglz")
-    testCompile test_libraries.fongo
+    testCompile test_libraries.embedded_mongo
 }
 
 artifacts {

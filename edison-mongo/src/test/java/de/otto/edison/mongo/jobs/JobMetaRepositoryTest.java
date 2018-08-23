@@ -1,42 +1,50 @@
 package de.otto.edison.mongo.jobs;
 
-import com.github.fakemongo.Fongo;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobMetaRepository;
 import de.otto.edison.mongo.configuration.MongoProperties;
+import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)
 public class JobMetaRepositoryTest {
 
+    @AfterClass
+    public static void teardownMongo() {
+        EmbeddedMongoHelper.stopMongoDB();
+    }
+
     @Parameters(name = "{0}")
-    public static Collection<JobMetaRepository> data() {
+    public static Collection<JobMetaRepository> data() throws IOException {
+        EmbeddedMongoHelper.startMongoDB();
         return asList(
-                new MongoJobMetaRepository(new Fongo("inMemoryDb").getDatabase("jobmeta"),
+                new MongoJobMetaRepository(EmbeddedMongoHelper.getMongoClient().getDatabase("jobmeta-" + UUID.randomUUID()),
                         "jobmeta",
                         new MongoProperties()),
                 new InMemJobMetaRepository());
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         testee.deleteAll();
     }
 

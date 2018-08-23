@@ -1,35 +1,41 @@
 package de.otto.edison.mongo;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import de.otto.edison.mongo.configuration.MongoProperties;
+import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
+import org.bson.Document;
+import org.hamcrest.CustomMatcher;
+import org.junit.*;
+import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.util.*;
+
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Mockito.*;
 
-import java.util.*;
-
-import de.otto.edison.mongo.configuration.MongoProperties;
-import org.bson.Document;
-import org.hamcrest.CustomMatcher;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.github.fakemongo.Fongo;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import org.mockito.Mockito;
-
 public class AbstractMongoRepositoryTest {
+
     private TestRepository testee;
+
+    @BeforeClass
+    public static void setupMongo() throws IOException {
+        EmbeddedMongoHelper.startMongoDB();
+    }
+
+    @AfterClass
+    public static void teardownMongo() {
+        EmbeddedMongoHelper.stopMongoDB();
+    }
 
     @Before
     public void setUp() {
-        final Fongo fongo = new Fongo("inmemory-mongodb");
-        final MongoDatabase mongoDatabase = fongo.getDatabase("db");
-
+        MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("test-" + UUID.randomUUID());
         testee = new TestRepository(mongoDatabase);
     }
 
@@ -343,10 +349,12 @@ public class AbstractMongoRepositoryTest {
 
     class TestObjectMatcher extends CustomMatcher<TestObject> {
         private final TestObject testObject;
+
         TestObjectMatcher(TestObject testObject) {
             super(String.format("TestObject{id='%s', value='%s', eTag=<IGNORED>}", testObject.id, testObject.value));
             this.testObject = testObject;
         }
+
         public boolean matches(Object object) {
             return ((object instanceof TestObject) && ((TestObject) object).equalsWithoutEtag(testObject));
         }

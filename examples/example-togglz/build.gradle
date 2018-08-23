@@ -2,8 +2,6 @@ apply plugin: 'org.springframework.boot'
 
 dependencies {
     compile project(":edison-togglz")
-//    compile test_libraries.fongo
-//    compile project(":edison-mongo")
 
     testCompile project(":edison-testsupport")
 }
