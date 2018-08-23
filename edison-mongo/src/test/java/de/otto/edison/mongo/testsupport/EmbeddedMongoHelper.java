@@ -47,7 +47,7 @@ public class EmbeddedMongoHelper {
             mongodProcess = mongodExecutable.start();
             mongoClient = new MongoClient(bindIp, port);
         } catch (IOException e) {
-            started.set(false);
+            stopMongoDB();
             throw e;
         }
     }
