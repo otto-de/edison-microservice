@@ -30,7 +30,6 @@ It's purpose is to provide a common implementation for cross-cutting requirement
 * A simple job handling library that is used to run asynchronous background jobs, which for example can be used to run data imports from other systems.
 * An optional MongoDB-based implementation of a JobRepository
 * Support for MongoDB-based repositories in case you do not like Spring Data
-* Reporting of metrics to Graphite
 * Support for feature toggles based on [Togglz](https://www.togglz.org/)
 
 ... plus all the features of [Spring Boot](http://projects.spring.io/spring-boot/).
@@ -62,7 +61,6 @@ Edison Modules:
 
 Examples:
 * [`example-status`](examples/example-status): Service only relying on `edison-core` to show the usage of health and status features. 
-* [`example-metrics`](examples/example-metrics): Service that is using edison-core metrics.
 * [`example-jobs`](examples/example-jobs): Edison service using edison-jobs to run background tasks. 
 * [`example-togglz`](examples/example-togglz): Example using `edison-togglz´ to implement feature toggles.
 * [`example-togglz-mongo`](examples/example-togglz-mongo): Same `edison-toggz`, but with a MongoDB configuration to auto-configure persistence of 
@@ -101,7 +99,6 @@ recommended to first read it's documentation before starting with Edison.
 The examples can be started with gradle:
 
     gradle examples:example-status:bootRun
-    gradle examples:example-metrics:bootRun
     gradle examples:example-jobs:bootRun
     gradle examples:example-togglz:bootRun
     gradle examples:example-togglz-mongo:bootRun

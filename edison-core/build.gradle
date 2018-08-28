@@ -6,12 +6,6 @@ dependencies {
     compile libraries.spring_boot_starter_thymeleaf
     compile libraries.jcip_annotations
     compile libraries.logback_classic
-    compile libraries.metrics_annotation
-    compile libraries.metrics_core
-    compile libraries.metrics_graphite
-    compile libraries.metrics_healthchecks
-    compile libraries.metrics_jvm
-    compile libraries.metrics_spring
     compile libraries.spring_context_support
     compile libraries.unboundid_ldapsdk_minimal_edition
 

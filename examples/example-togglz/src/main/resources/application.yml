@@ -22,9 +22,6 @@ management:
 edison:
     gracefulshutdown:
         enabled: false
-    metrics:
-        slf4j:
-            logger: de.otto.edison.example.metrics
     status:
         application:
             description: Example service to show how to use edison-togglz in your microservices

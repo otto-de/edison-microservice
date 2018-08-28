@@ -6,7 +6,7 @@
 
 * Updated to Spring framework 5.0.8.RELEASE
 
-* Updated to Gradle 4.9
+* Updated to Gradle 4.10
 
 * Changed to Java 10 SDKe
 
@@ -14,7 +14,7 @@
 
 * Added Testconfiguration for TogglzTest
 
-
+* remove codahale metrics and use builtin micrometer in Spring Boot 2
 
 ## 2.0.0-m1-SNAPSHOT
 

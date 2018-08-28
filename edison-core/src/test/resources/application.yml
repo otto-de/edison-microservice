@@ -24,11 +24,6 @@ management:
 
 # edison-specific configuration
 edison:
-    metrics:
-        # Enable metrics load:
-        load:
-            enabled: true
-            timer-name: test
     status:
         # Additional information on status page:
         cluster:

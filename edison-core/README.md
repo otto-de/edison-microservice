@@ -235,7 +235,3 @@ the SystemInfoConfiguration is trying to get the hostname using InetAddress.getL
 * `edison.status.cluster.enabled:false`
 * `edison.status.cluster.color-header:X-Color`
 * `edison.status.cluster.color-state-header:X-Staging`
-
-# 4. de.otto.edison.metrics
-
-TODO

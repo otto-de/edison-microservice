@@ -19,11 +19,6 @@
         <appender-ref ref="jobAppender"/>
     </logger>
 
-    <logger name="de.otto.edison.example.metrics" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="console"/>
-    </logger>
-
     <logger name="org">
         <level value="INFO"/>
     </logger>

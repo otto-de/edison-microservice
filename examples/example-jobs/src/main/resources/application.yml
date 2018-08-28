@@ -34,9 +34,6 @@ edison:
                 Bar: errorOnLastThreeJobsFailed
                 Foo: warningOnLastJobFailed
                 default: errorOnLastJobFailed
-    metrics:
-        slf4j:
-            logger: de.otto.edison.example.metrics
     status:
         application:
             description: Example service to show how to use edison-jobs in your microservices
