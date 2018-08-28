@@ -16,3 +16,5 @@ health/health.iml
 example/example.iml
 .gitconfig
 classes
+gradlew*
+gradlew/

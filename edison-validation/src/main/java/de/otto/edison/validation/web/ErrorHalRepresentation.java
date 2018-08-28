@@ -1,11 +1,13 @@
 package de.otto.edison.validation.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.otto.edison.hal.HalRepresentation;
 
 import java.util.*;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static de.otto.edison.hal.Link.profile;
 import static de.otto.edison.hal.Links.linkingTo;
 
@@ -18,9 +20,10 @@ public class ErrorHalRepresentation extends HalRepresentation {
     private final Map<String, List<Map<String, String>>> errors;
 
     private ErrorHalRepresentation(Builder builder) {
-        super(linkingTo(
-                profile(PROFILE_ERROR)
-        ));
+        super(linkingTo()
+                .array(profile(PROFILE_ERROR))
+                .build()
+        );
         this.errors = builder.errors;
         this.errorMessage = builder.errorMessage;
     }
@@ -63,6 +66,7 @@ public class ErrorHalRepresentation extends HalRepresentation {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(NON_NULL)
     public static final class Builder {
         private Map<String, List<Map<String, String>>> errors = new HashMap<>();
         private String errorMessage;

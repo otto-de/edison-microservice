@@ -256,7 +256,7 @@ public class InMemJobRepositoryTest {
 
         assertThat(jobInfoFromRepo.getMessages().size(), is(1));
         assertThat(jobInfoFromRepo.getMessages().get(0), is(igelMessage));
-        assertThat(jobInfoFromRepo.getLastUpdated(), is(now));
+        assertThat(jobInfoFromRepo.getLastUpdated(), is(now.truncatedTo(ChronoUnit.MILLIS)));
 
     }
 

@@ -7,10 +7,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import static org.springframework.boot.SpringApplication.run;
 
-@SpringBootApplication
 @EnableScheduling
 @PropertySource("version.properties")
-@ComponentScan("de.otto.edison")
+@SpringBootApplication(scanBasePackages = "de.otto.edison")
 public class ExampleTogglzServer {
 
     public static void main(String[] args) {

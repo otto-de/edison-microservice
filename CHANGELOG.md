@@ -1,5 +1,21 @@
 # Release Notes
 
+## 2.0.0-m2-SNAPSHOT
+
+* Updated to Spring Boot 2.0.4.RELEASE
+
+* Updated to Spring framework 5.0.8.RELEASE
+
+* Updated to Gradle 4.9
+
+* Changed to Java 10 SDKe
+
+* Updated dependencies to latest versions
+
+* Added Testconfiguration for TogglzTest
+
+
+
 ## 2.0.0-m1-SNAPSHOT
 
 **Breaking Changes:**

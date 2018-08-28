@@ -2,7 +2,7 @@ apply plugin: 'idea'
 
 idea {
     project {
-        languageLevel = '1.8'
+        languageLevel = '10'
         ipr.withXml { provider ->
             provider.node.component.find { it.@name == 'VcsDirectoryMappings' }.mapping.@vcs = 'Git'
         }

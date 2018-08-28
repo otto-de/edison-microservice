@@ -5,12 +5,12 @@ import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.Annotation;
 import java.util.regex.Pattern;
 
-public class SafeIdValidator implements ConstraintValidator<Annotation, String> {
+public class SafeIdValidator implements ConstraintValidator<SafeId, String> {
 
     private static final Pattern IdPattern = Pattern.compile("[a-zA-Z0-9\\-_]*");
 
     @Override
-    public void initialize(Annotation annotation) {
+    public void initialize(SafeId safeId) {
         // do nothing
     }
 

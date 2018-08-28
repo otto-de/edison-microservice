@@ -1,7 +1,7 @@
 dependencies {
-    compileOnly libraries.togglz_servlet
     compileOnly libraries.togglz_console
     compileOnly libraries.togglz_spring_web
+    compileOnly libraries.togglz_spring_boot_starter
     compileOnly test_libraries.togglz_testing
 
     compile libraries.spring_boot

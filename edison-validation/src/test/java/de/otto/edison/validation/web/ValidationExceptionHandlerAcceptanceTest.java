@@ -1,8 +1,8 @@
 package de.otto.edison.validation.web;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
 import de.otto.edison.validation.validators.SafeId;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.ServletContext;
 import java.util.Collections;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -59,7 +59,7 @@ public class ValidationExceptionHandlerAcceptanceTest {
                 .put("/testing")
         .then()
                 .assertThat()
-                .statusCode(422).and()
+                .statusCode(is(422)).and()
                 .header("Content-type", Matchers.containsString(";charset=utf-8"))
                 .content("errors.id[0].key", Collections.emptyList(), is("id.invalid"))
                 .content("errors.id[0].message", Collections.emptyList(), is("Ungueltiger Id-Wert."))

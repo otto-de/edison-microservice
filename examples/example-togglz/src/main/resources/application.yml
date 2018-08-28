@@ -30,6 +30,7 @@ edison:
             description: Example service to show how to use edison-togglz in your microservices
             title: Example Togglz
     togglz:
+        enabled: true
         cache-ttl: 100
         console:
             enabled: true
