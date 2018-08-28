@@ -18,15 +18,19 @@ ext {
             hibernate_validator              : '6.0.12.Final',
             edison_hal                       : '2.0.1',
             validator_collection             : '2.2.0',
+            slf4j                            : '1.7.25',
+            aws_sdk                          : '2.0.1',
+            aws_sdk_preview                  : '2.0.0-preview-11',
             java_validation_api              : '2.0.1.Final'
     ]
     test_versions = [
-            junit           : '5.2.0',
-            hamcrest        : '1.3',
-            mockito_core    : '2.21.0',
-            jsonassert      : '1.5.0',
-            rest_assured    : '3.1.1',
-            embedded_mongo  : '2.1.1'
+            junit         : '5.2.0',
+            hamcrest      : '1.3',
+            mockito_core  : '2.21.0',
+            jsonassert    : '1.5.0',
+            rest_assured  : '3.1.1',
+            embedded_mongo: '2.1.1',
+            testcontainers: '1.8.3'
     ]
     plugin_versions = [
             versions     : '0.15.0',
@@ -43,6 +47,10 @@ ext {
             spring_boot_starter_cache          : "org.springframework.boot:spring-boot-starter-cache:${versions.spring_boot}",
             spring_boot_starter_actuator       : "org.springframework.boot:spring-boot-starter-actuator:${versions.spring_boot}",
             spring_boot_starter_thymeleaf      : "org.springframework.boot:spring-boot-starter-thymeleaf:${versions.spring_boot}",
+            aws_sdk_auth                       : "software.amazon.awssdk:auth:${versions.aws_sdk}",
+            aws_sdk_core                       : "software.amazon.awssdk:core:${versions.aws_sdk}",
+            aws_sdk_s3                         : "software.amazon.awssdk:s3:${versions.aws_sdk_preview}",
+            aws_sdk_ssm                        : "software.amazon.awssdk:ssm:${versions.aws_sdk_preview}",
             async_http_client                  : "org.asynchttpclient:async-http-client:${versions.async_http_client}",
             jcip_annotations                   : "net.jcip:jcip-annotations:${versions.jcip_annotations}",
             logback_classic                    : "ch.qos.logback:logback-classic:${versions.logback_classic}",
@@ -70,7 +78,9 @@ ext {
             togglz_testing          : "org.togglz:togglz-testing:${versions.togglz}",
             embedded_mongo          : "de.flapdoodle.embed:de.flapdoodle.embed.mongo:${test_versions.embedded_mongo}",
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
-            rest_assured            : "io.rest-assured:rest-assured:${test_versions.rest_assured}"
+            rest_assured            : "io.rest-assured:rest-assured:${test_versions.rest_assured}",
+            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}"
+
     ]
     gradle_plugins = [
             versions     : "com.github.ben-manes:gradle-versions-plugin:${plugin_versions.versions}",
