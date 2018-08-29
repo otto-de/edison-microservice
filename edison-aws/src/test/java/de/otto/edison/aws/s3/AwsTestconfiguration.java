@@ -13,9 +13,10 @@ public class AwsTestconfiguration {
     @Bean
     @Profile("test")
     public AwsCredentialsProvider awsCredentialsProvider() {
+        final AnonymousCredentialsProvider anonymousCredentialsProvider = AnonymousCredentialsProvider.create();
         return AwsCredentialsProviderChain
                 .builder()
-                .credentialsProviders(AnonymousCredentialsProvider.create())
+                .credentialsProviders(anonymousCredentialsProvider)
                 .build();
     }
 }

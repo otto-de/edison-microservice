@@ -1,22 +1,23 @@
 package de.otto.edison.aws.s3;
 
 import de.otto.edison.aws.configuration.AwsConfiguration;
+import de.otto.edison.aws.configuration.AwsProperties;
 import de.otto.edison.aws.s3.configuration.S3Config;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.startupcheck.MinimumDurationRunningStartupCheckStrategy;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.time.Duration;
 import java.util.List;
 
 import static de.otto.edison.aws.s3.S3TestHelper.createS3Client;
@@ -30,7 +31,6 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {AwsTestconfiguration.class, AwsConfiguration.class, S3Config.class})
-@TestPropertySource("classpath:application-test.properties")
 @ActiveProfiles("test")
 public class S3ServiceIntegrationTest {
 
@@ -41,6 +41,12 @@ public class S3ServiceIntegrationTest {
     public final static GenericContainer localstackContainer = createTestContainer(TEST_PORT_S3);
 
     private S3Service s3Service;
+
+    @BeforeClass
+    public static void prepareContext() {
+        // Set for AWS SDK
+        System.setProperty("aws.region", "eu-central-1");
+    }
 
     @Before
     public void setUp() {
