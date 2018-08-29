@@ -26,7 +26,7 @@ public class S3StateRepositoryTest {
     private final static String TEST_BUCKET = "test-togglz";
 
     @ClassRule
-    public final static GenericContainer localstackContainer = createTestContainer(TEST_PORT_S3);
+    public final static GenericContainer<?> localstackContainer = createTestContainer(TEST_PORT_S3);
 
     private S3StateRepository repository;
     private S3Client s3Client;

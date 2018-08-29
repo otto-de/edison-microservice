@@ -38,7 +38,7 @@ public class S3ServiceIntegrationTest {
     private static final String TESTBUCKET = "testbucket";
 
     @ClassRule
-    public final static GenericContainer localstackContainer = createTestContainer(TEST_PORT_S3);
+    public final static GenericContainer<?> localstackContainer = createTestContainer(TEST_PORT_S3);
 
     private S3Service s3Service;
 
