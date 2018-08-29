@@ -1,7 +1,5 @@
-package de.otto.edison.aws.s3.configuration;
+package de.otto.edison.aws.s3.togglz;
 
-import de.otto.edison.aws.s3.togglz.PrefetchCachingStateRepository;
-import de.otto.edison.aws.s3.togglz.S3StateRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

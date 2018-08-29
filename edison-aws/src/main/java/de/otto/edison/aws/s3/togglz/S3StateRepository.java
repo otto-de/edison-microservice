@@ -2,7 +2,6 @@ package de.otto.edison.aws.s3.togglz;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.otto.edison.aws.s3.configuration.S3TogglzProperties;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;

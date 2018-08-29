@@ -1,6 +1,5 @@
 package de.otto.edison.aws.s3.togglz;
 
-import de.otto.edison.aws.s3.configuration.S3TogglzProperties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;

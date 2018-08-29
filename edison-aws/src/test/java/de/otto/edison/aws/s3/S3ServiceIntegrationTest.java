@@ -1,18 +1,14 @@
 package de.otto.edison.aws.s3;
 
 import de.otto.edison.aws.configuration.AwsConfiguration;
-import de.otto.edison.aws.configuration.AwsProperties;
-import de.otto.edison.aws.s3.configuration.S3Config;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.GenericContainer;
 
@@ -30,7 +26,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AwsTestconfiguration.class, AwsConfiguration.class, S3Config.class})
+@ContextConfiguration(classes = {AwsTestconfiguration.class, AwsConfiguration.class})
 @ActiveProfiles("test")
 public class S3ServiceIntegrationTest {
 

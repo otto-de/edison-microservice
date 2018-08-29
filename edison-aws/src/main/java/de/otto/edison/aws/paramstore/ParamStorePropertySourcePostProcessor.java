@@ -1,9 +1,10 @@
 package de.otto.edison.aws.paramstore;
 
+import de.otto.edison.aws.configuration.AwsConfiguration;
+import de.otto.edison.aws.configuration.AwsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,6 +24,7 @@ import java.util.Properties;
 
 import static io.netty.util.internal.StringUtil.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
+import static software.amazon.awssdk.regions.Region.EU_CENTRAL_1;
 import static software.amazon.awssdk.services.ssm.model.ParameterType.SECURE_STRING;
 
 @Component
@@ -32,13 +34,8 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
     private static final Logger LOG = LoggerFactory.getLogger(ParamStorePropertySourcePostProcessor.class);
 
     private static final String PARAMETER_STORE_PROPERTY_SOURCE = "parameterStorePropertySource";
-    private final SsmClient ssmClient;
+    private SsmClient ssmClient;
     private ParamStoreProperties properties;
-
-    @Autowired
-    public ParamStorePropertySourcePostProcessor(final SsmClient ssmClient) {
-        this.ssmClient = ssmClient;
-    }
 
     @Override
     public void postProcessBeanFactory(final ConfigurableListableBeanFactory beanFactory) throws BeansException {
@@ -91,6 +88,14 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
         properties.setAddWithLowestPrecedence(
                 Boolean.parseBoolean(environment.getProperty("edison.aws.config.paramstore.addWithLowestPrecedence", "false")));
         properties.setPath(path);
+
+        final AwsProperties awsProperties = new AwsProperties();
+        awsProperties.setProfile(environment.getProperty("aws.profile", "default"));
+        awsProperties.setRegion(environment.getProperty("aws.region", EU_CENTRAL_1.id()));
+        final AwsConfiguration awsConfig = new AwsConfiguration();
+        this.ssmClient = SsmClient.builder()
+                .credentialsProvider(awsConfig.awsCredentialsProvider(awsProperties))
+                .build();
     }
 
 }
