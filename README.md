@@ -48,6 +48,22 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 **[2.0.0](https://github.com/otto-de/edison-microservice/milestone/3)**: Edison Microservices for Spring Boot 2.0
 
 
+## Migration from Edison 1.x to Edison 2
+
+Edison 2 has several breaking changes that will make a refactoring of your current application necessary. For a list of
+the actual changes, please take a look at the [Changelog](CHANGELOG.md).
+
+When migrating, take care of the following adjustments:
+
+* Starting with Edison 2.0, the minimal Java version will be Java10. So install and configure your application and 
+  CI-Systems to use Java10 for running and building.
+* Follow the [Spring Boot 2.0 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide)
+  to fix the most common problems.
+* Remove dependencies to the [edison-aws Project](https://github.com/otto-de/edison-aws), which will be deprecated some time in the future. 
+  Necessary functionality was transferred to a submodule of `edison-microservice` (named `edison-aws`).
+* Refactor calls made through the AWS SDK, which got updated in the process of the new major version of edison and this
+  will most probably break prior code that relied on the AWS SDK.
+
 ## Documentation
 
 Edison Modules:
