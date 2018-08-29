@@ -60,3 +60,6 @@ subprojects {
     apply from: "${rootDir}/gradle/maven.gradle"
     apply from: "${rootDir}/gradle/signing.gradle"
 }
+
+targetCompatibility = '10'
+sourceCompatibility = '10'
