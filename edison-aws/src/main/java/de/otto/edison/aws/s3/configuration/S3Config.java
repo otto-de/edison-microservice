@@ -14,7 +14,7 @@ import static software.amazon.awssdk.regions.Region.of;
 
 @Configuration
 @EnableConfigurationProperties(AwsProperties.class)
-public class S3Configuration {
+public class S3Config {
 
     @Bean
     @ConditionalOnMissingBean(S3Client.class)

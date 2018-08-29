@@ -1,30 +1,25 @@
 package de.otto.edison.aws.s3;
 
 import de.otto.edison.aws.configuration.AwsConfiguration;
-import de.otto.edison.aws.s3.S3Service;
-import de.otto.edison.aws.s3.configuration.S3Configuration;
+import de.otto.edison.aws.s3.configuration.S3Config;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
+import org.testcontainers.containers.startupcheck.MinimumDurationRunningStartupCheckStrategy;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URI;
+import java.time.Duration;
 import java.util.List;
 
+import static de.otto.edison.aws.s3.S3TestHelper.createS3Client;
+import static de.otto.edison.aws.s3.S3TestHelper.createTestContainer;
 import static java.nio.file.Files.createTempFile;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -33,36 +28,24 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AwsConfiguration.class, S3Configuration.class})
+@ContextConfiguration(classes = {AwsConfiguration.class, S3Config.class})
 @TestPropertySource("classpath:application-test.properties")
-@Ignore
 public class S3ServiceIntegrationTest {
 
-    @ClassRule
-    public final static GenericContainer localstackContainer = new FixedHostPortGenericContainer("localstack/localstack:latest")
-            .withFixedExposedPort(4572, 4572)
-            .withNetworkMode("host");
-
+    private static final int TEST_PORT_S3 = 4572;
     private static final String TESTBUCKET = "testbucket";
+
+    @ClassRule
+    public final static GenericContainer localstackContainer = createTestContainer(TEST_PORT_S3);
 
     private S3Service s3Service;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
+        final Integer mappedPort = localstackContainer.getMappedPort(TEST_PORT_S3);
 
-        S3Client s3Client = S3Client.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("test", "test")))
-                .region(Region.US_EAST_1)
-                .endpointOverride(new URI("http://localhost:4572"))
-                .serviceConfiguration(software.amazon.awssdk.services.s3.S3Configuration.builder()
-                        .pathStyleAccessEnabled(true)
-                        .build())
-                .build();
-
-        s3Service = new S3Service(s3Client);
-
+        s3Service = new S3Service(createS3Client(mappedPort));
         s3Service.createBucket(TESTBUCKET);
-        s3Service.deleteAllObjectsInBucket(TESTBUCKET);
     }
 
     @After
@@ -72,28 +55,15 @@ public class S3ServiceIntegrationTest {
 
     @Test
     public void shouldOnlyDeleteFilesWithPrefix() throws Exception {
-        //given
-        final File tempFile = createTempFile("test", ".txt").toFile();
-        try (FileWriter writer = new FileWriter(tempFile)) {
-            writer.append("Hello World!");
-            writer.flush();
-        }
-        s3Service.upload(TESTBUCKET, tempFile);
-        final File prefixedTempFile = createTempFile("prefix", ".txt").toFile();
-        try (FileWriter writer = new FileWriter(prefixedTempFile)) {
-            writer.append("Hello World!");
-            writer.flush();
-        }
-        s3Service.upload(TESTBUCKET, prefixedTempFile);
+        // given
+        s3Service.upload(TESTBUCKET, createTestfile("test", ".txt", "Hello World!"));
+        s3Service.upload(TESTBUCKET, createTestfile("prefix", ".txt", "Hello World!"));
 
-        System.out.println(prefixedTempFile.getName());
-
-        //when
+        // when
         s3Service.deleteAllObjectsWithPrefixInBucket(TESTBUCKET, "prefix");
 
-        //then
-        List<String> allFiles = s3Service.listAllFiles(TESTBUCKET);
-        System.out.println(allFiles);
+        // then
+        final List<String> allFiles = s3Service.listAllFiles(TESTBUCKET);
         assertThat(allFiles, contains(startsWith("test")));
         assertThat(allFiles, not(contains(startsWith("prefixed_test"))));
     }
@@ -108,8 +78,17 @@ public class S3ServiceIntegrationTest {
         s3Service.deleteAllObjectsInBucket(TESTBUCKET);
 
         //then
-        List<String> allFiles = s3Service.listAllFiles(TESTBUCKET);
+        final List<String> allFiles = s3Service.listAllFiles(TESTBUCKET);
         assertThat(allFiles, hasSize(0));
+    }
+
+    private File createTestfile(final String prefix, final String suffix, final String content) throws Exception  {
+        final File tempFile = createTempFile(prefix, suffix).toFile();
+        try (final FileWriter writer = new FileWriter(tempFile)) {
+            writer.append(content);
+            writer.flush();
+        }
+        return tempFile;
     }
 
 }

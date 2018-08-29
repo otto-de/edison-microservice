@@ -21,7 +21,7 @@ public class S3TogglzConfiguration {
     @ConditionalOnProperty(name = "edison.aws.s3.togglz.bucket-name")
     public StateRepository stateRepository(final S3TogglzProperties s3TogglzProperties,
                                            final S3Client s3Client) {
-        S3StateRepository togglzRepository = new S3StateRepository(s3TogglzProperties, s3Client);
+        final S3StateRepository togglzRepository = new S3StateRepository(s3TogglzProperties, s3Client);
         if (s3TogglzProperties.isPrefetch()) {
             return new PrefetchCachingStateRepository(togglzRepository);
         } else {

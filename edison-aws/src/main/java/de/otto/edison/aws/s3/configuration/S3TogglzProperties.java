@@ -23,7 +23,7 @@ public class S3TogglzProperties {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -31,7 +31,7 @@ public class S3TogglzProperties {
         return bucketName;
     }
 
-    public void setBucketName(String bucketName) {
+    public void setBucketName(final String bucketName) {
         this.bucketName = bucketName;
     }
 
@@ -39,7 +39,7 @@ public class S3TogglzProperties {
         return keyPrefix;
     }
 
-    public void setKeyPrefix(String keyPrefix) {
+    public void setKeyPrefix(final String keyPrefix) {
         this.keyPrefix = keyPrefix;
     }
 

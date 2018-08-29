@@ -3,7 +3,7 @@ package de.otto.edison.aws.s3;
 import de.otto.edison.aws.configuration.AwsProperties;
 import de.otto.edison.aws.configuration.AwsConfiguration;
 import de.otto.edison.aws.s3.configuration.S3Properties;
-import de.otto.edison.aws.s3.configuration.S3Configuration;
+import de.otto.edison.aws.s3.configuration.S3Config;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -36,7 +36,7 @@ public class S3BucketPropertySourcePostProcessor implements BeanFactoryPostProce
     public void postProcessBeanFactory(final ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
         final AwsConfiguration awsConfig = new AwsConfiguration();
-        final S3Configuration s3Config = new S3Configuration();
+        final S3Config s3Config = new S3Config();
 
         final S3Client s3Client = s3Config.s3Client(awsProperties, awsConfig.awsCredentialsProvider(awsProperties));
 

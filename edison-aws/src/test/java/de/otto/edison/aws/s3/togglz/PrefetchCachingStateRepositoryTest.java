@@ -1,7 +1,6 @@
 package de.otto.edison.aws.s3.togglz;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.togglz.core.Feature;
@@ -16,7 +15,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-@Ignore
 public class PrefetchCachingStateRepositoryTest {
 
     private PrefetchCachingStateRepository prefetchCachingStateRepository;
@@ -31,7 +29,7 @@ public class PrefetchCachingStateRepositoryTest {
     private FeatureState featureState;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         initMocks(this);
         prefetchCachingStateRepository = new PrefetchCachingStateRepository(stateRepository);
         when(feature.name()).thenReturn("someToggleName");
@@ -59,7 +57,7 @@ public class PrefetchCachingStateRepositoryTest {
         prefetchCachingStateRepository.setFeatureState(featureState);
         verify(stateRepository, times(1)).setFeatureState(featureState);
 
-        FeatureState featureStateFromCache = prefetchCachingStateRepository.getFeatureState(feature);
+        final FeatureState featureStateFromCache = prefetchCachingStateRepository.getFeatureState(feature);
         assertThat(featureStateFromCache, is(featureState));
         verifyZeroInteractions(stateRepository);
     }

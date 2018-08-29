@@ -19,7 +19,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-@Ignore
 public class S3BucketPropertyReaderTest {
 
     @Mock
@@ -40,13 +39,12 @@ public class S3BucketPropertyReaderTest {
     @Test
     public void shouldReadPropertiesFromS3() {
         // given
-        when(s3Properties.getBucketname()).thenReturn("someBucket");
-        when(s3Properties.getFilename()).thenReturn("someFileName");
-
         final Properties properties = new Properties();
         properties.put("foo", "bar");
         properties.put("key", "value");
 
+        when(s3Properties.getBucketname()).thenReturn("someBucket");
+        when(s3Properties.getFilename()).thenReturn("someFileName");
         when(s3Client.getObject(any(GetObjectRequest.class), (ResponseTransformer<GetObjectResponse, Properties>) any(ResponseTransformer.class))).thenReturn(properties);
 
         // when

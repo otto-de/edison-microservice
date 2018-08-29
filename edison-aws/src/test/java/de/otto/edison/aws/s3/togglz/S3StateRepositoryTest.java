@@ -1,45 +1,71 @@
 package de.otto.edison.aws.s3.togglz;
 
 import de.otto.edison.aws.s3.configuration.S3TogglzProperties;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.testcontainers.containers.GenericContainer;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.BucketCannedACL;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
-import java.net.URI;
 import java.util.HashSet;
 
+import static de.otto.edison.aws.s3.S3TestHelper.createS3Client;
+import static de.otto.edison.aws.s3.S3TestHelper.createTestContainer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 
-@Ignore
 public class S3StateRepositoryTest {
+    private static final int TEST_PORT_S3 = 4572;
+    private final static String TEST_BUCKET = "test-togglz";
 
-    private S3Client client;
+    @ClassRule
+    public final static GenericContainer localstackContainer = createTestContainer(TEST_PORT_S3);
+
     private S3StateRepository repository;
+    private S3Client s3Client;
+    private S3TogglzProperties togglzProperties;
 
     @Before
     public void setup() {
-        client = S3Client.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create("test", "test")))
-                .endpointOverride(URI.create("http://localhost:4572"))
-                .region(Region.EU_CENTRAL_1)
+        final Integer mappedPort = localstackContainer.getMappedPort(4572);
+        s3Client = createS3Client(mappedPort);
+
+        final CreateBucketRequest createBucketRequest = CreateBucketRequest
+                .builder()
+                .bucket(TEST_BUCKET)
+                .acl(BucketCannedACL.PUBLIC_READ_WRITE)
                 .build();
 
-        // TODO: Delete bucket instead of creating a new one on every run:
-        final String bucket = "test-togglz-" + System.currentTimeMillis();
-        client.createBucket(CreateBucketRequest.builder().bucket(bucket).build());
+        s3Client.createBucket(createBucketRequest);
 
-        final S3TogglzProperties togglzProperties = new S3TogglzProperties();
-        togglzProperties.setBucketName(bucket);
-        repository = new S3StateRepository(togglzProperties, client);
+        togglzProperties = new S3TogglzProperties();
+        togglzProperties.setBucketName(TEST_BUCKET);
+        repository = new S3StateRepository(togglzProperties, s3Client);
+    }
+
+    @After
+    public void tearDown() {
+        final String featureKey = String.format("%s%s", togglzProperties.getKeyPrefix(), TestFeature.FEATURE_1.name());
+        final DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest
+                .builder()
+                .bucket(TEST_BUCKET)
+                .key(featureKey)
+                .build();
+
+        s3Client.deleteObject(deleteObjectRequest);
+
+        final DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest
+                .builder()
+                .bucket(TEST_BUCKET)
+                .build();
+        s3Client.deleteBucket(deleteBucketRequest);
     }
 
     @Test
