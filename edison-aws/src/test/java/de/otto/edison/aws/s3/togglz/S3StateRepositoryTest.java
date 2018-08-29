@@ -34,7 +34,7 @@ public class S3StateRepositoryTest {
 
     @Before
     public void setup() {
-        final Integer mappedPort = localstackContainer.getMappedPort(4572);
+        final Integer mappedPort = localstackContainer.getMappedPort(TEST_PORT_S3);
         s3Client = createS3Client(mappedPort);
 
         final CreateBucketRequest createBucketRequest = CreateBucketRequest
