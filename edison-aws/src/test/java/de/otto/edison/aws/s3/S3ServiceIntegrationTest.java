@@ -1,6 +1,7 @@
 package de.otto.edison.aws.s3;
 
 import de.otto.edison.aws.configuration.AwsConfiguration;
+import de.otto.edison.testsupport.aws.AwsTestconfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

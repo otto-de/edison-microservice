@@ -1,4 +1,4 @@
-package de.otto.edison.aws.s3;
+package de.otto.edison.testsupport.aws;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

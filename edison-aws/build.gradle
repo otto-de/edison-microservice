@@ -5,6 +5,7 @@ dependencies {
 
     compileOnly project(":edison-togglz")
     testCompile project(":edison-togglz")
+    testCompile project(":edison-testsupport")
 
     testCompile test_libraries.junit
     testCompile test_libraries.mockito_core

@@ -4,6 +4,8 @@ dependencies {
     compileOnly libraries.togglz_spring_boot_starter
     compileOnly test_libraries.togglz_testing
 
+    compile libraries.aws_sdk_ssm
+    compile libraries.aws_sdk_s3
     compile libraries.spring_boot
     compile libraries.spring_boot_autoconfigure
     compile test_libraries.junit
