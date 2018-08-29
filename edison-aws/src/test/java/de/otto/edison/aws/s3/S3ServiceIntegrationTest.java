@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -28,8 +29,9 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AwsConfiguration.class, S3Config.class})
+@ContextConfiguration(classes = {AwsTestconfiguration.class, AwsConfiguration.class, S3Config.class})
 @TestPropertySource("classpath:application-test.properties")
+@ActiveProfiles("test")
 public class S3ServiceIntegrationTest {
 
     private static final int TEST_PORT_S3 = 4572;

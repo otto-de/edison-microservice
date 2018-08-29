@@ -32,7 +32,7 @@ public class S3TestHelper {
                 .build();
     }
 
-    public static GenericContainer createTestContainer(int testPort) {
+    public static GenericContainer createTestContainer(final int testPort) {
         return new GenericContainer("localstack/localstack:latest")
                 .withEnv("DEBUG", "1")
                 .waitingFor(new HttpWaitStrategy().forStatusCode(200).forPort(testPort));
