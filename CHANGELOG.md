@@ -16,6 +16,10 @@
 
 * remove codahale metrics and use builtin micrometer in Spring Boot 2
 
+* Migrate modules `edisown-aws-s3` and `edison-aws-config` into submodule `edison-aws`
+
+* Use `testcontainers`-library for local testing with `localstack` in `edison-aws`
+
 ## 2.0.0-m1-SNAPSHOT
 
 **Breaking Changes:**
