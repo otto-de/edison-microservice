@@ -1,17 +1,19 @@
 package de.otto.edison.mongo;
 
-import static java.util.Objects.isNull;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.BulkWriteOptions;
+import com.mongodb.client.model.CountOptions;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.model.ReplaceOneModel;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.UpdateOptions;
+import de.otto.edison.mongo.configuration.MongoProperties;
+import org.bson.BsonDocument;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.ReturnDocument.AFTER;
-
-import static de.otto.edison.mongo.UpdateIfMatchResult.CONCURRENTLY_MODIFIED;
-import static de.otto.edison.mongo.UpdateIfMatchResult.NOT_FOUND;
-import static de.otto.edison.mongo.UpdateIfMatchResult.OK;
-
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -19,16 +21,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.PostConstruct;
-
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.model.*;
-import de.otto.edison.mongo.configuration.MongoProperties;
-import org.bson.BsonDocument;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-
-import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.ReturnDocument.AFTER;
+import static de.otto.edison.mongo.UpdateIfMatchResult.CONCURRENTLY_MODIFIED;
+import static de.otto.edison.mongo.UpdateIfMatchResult.NOT_FOUND;
+import static de.otto.edison.mongo.UpdateIfMatchResult.OK;
+import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractMongoRepository<K, V> {
 
@@ -144,7 +145,7 @@ public abstract class AbstractMongoRepository<K, V> {
     public V createOrUpdate(final V value, final long maxTime, final TimeUnit timeUnit) {
         final Document doc = encode(value);
         collectionWithWriteTimeout(maxTime, timeUnit)
-                .replaceOne(byId(keyOf(value)), doc, new UpdateOptions().upsert(true));
+                .replaceOne(byId(keyOf(value)), doc, new ReplaceOptions().upsert(true));
         return decode(doc);
     }
 
@@ -254,7 +255,7 @@ public abstract class AbstractMongoRepository<K, V> {
             final Document updatedETaggable = collectionWithWriteTimeout(maxTime, timeUnit).findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
             if (isNull(updatedETaggable)) {
                 final boolean documentExists = collection()
-                        .count(eq(AbstractMongoRepository.ID, key), new CountOptions().maxTime(maxTime, timeUnit)) != 0;
+                        .countDocuments(eq(AbstractMongoRepository.ID, key), new CountOptions().maxTime(maxTime, timeUnit)) != 0;
                 if (documentExists) {
                     return CONCURRENTLY_MODIFIED;
                 }
@@ -273,7 +274,7 @@ public abstract class AbstractMongoRepository<K, V> {
     }
 
     public long size(final long maxTime, final TimeUnit timeUnit) {
-        return collection().count(new BsonDocument(), new CountOptions().maxTime(maxTime, timeUnit));
+        return collection().countDocuments(new BsonDocument(), new CountOptions().maxTime(maxTime, timeUnit));
     }
 
     /**
@@ -305,6 +306,7 @@ public abstract class AbstractMongoRepository<K, V> {
 
     /**
      * Deletes all documents from this repository.
+     *
      * @param maxTime  max time for the operation
      * @param timeUnit the time unit for the maxTime value
      */

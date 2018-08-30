@@ -6,18 +6,31 @@ import de.otto.edison.mongo.configuration.MongoProperties;
 import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
 import org.bson.Document;
 import org.hamcrest.CustomMatcher;
-import org.junit.*;
+import org.hamcrest.Matchers;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsNot.not;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 public class AbstractMongoRepositoryTest {
 
@@ -35,7 +48,7 @@ public class AbstractMongoRepositoryTest {
 
     @Before
     public void setUp() {
-        MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("test-" + UUID.randomUUID());
+        final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("test-" + UUID.randomUUID());
         testee = new TestRepository(mongoDatabase);
     }
 
@@ -49,11 +62,11 @@ public class AbstractMongoRepositoryTest {
         testee.createOrUpdateBulk(asList(testObjectA, testObjectB));
 
         // then
-        List<TestObject> foundObjects = testee.findAll();
+        final List<TestObject> foundObjects = testee.findAll();
         Assert.assertThat(foundObjects.size(), is(2));
-        Assert.assertThat(foundObjects, containsInAnyOrder(
+        Assert.assertThat(foundObjects, Matchers.containsInAnyOrder(List.of(
                 new TestObjectMatcher(testObjectA),
-                new TestObjectMatcher(testObjectB)));
+                new TestObjectMatcher(testObjectB))));
     }
 
     @Test
@@ -61,7 +74,7 @@ public class AbstractMongoRepositoryTest {
         testee = spy(new TestRepository(Mockito.mock(MongoDatabase.class)));
 
         // given
-        List<TestObject> emptyList = Collections.emptyList();
+        final List<TestObject> emptyList = Collections.emptyList();
 
         // when
         testee.createOrUpdateBulk(emptyList);
@@ -314,19 +327,19 @@ public class AbstractMongoRepositoryTest {
             this(id, value, null);
         }
 
-        public boolean equalsWithoutEtag(Object o) {
+        public boolean equalsWithoutEtag(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            TestObject that = (TestObject) o;
+            final TestObject that = (TestObject) o;
             return Objects.equals(id, that.id) &&
                     Objects.equals(value, that.value);
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            TestObject that = (TestObject) o;
+            final TestObject that = (TestObject) o;
             return Objects.equals(id, that.id) &&
                     Objects.equals(value, that.value) &&
                     Objects.equals(eTag, that.eTag);
@@ -350,12 +363,12 @@ public class AbstractMongoRepositoryTest {
     class TestObjectMatcher extends CustomMatcher<TestObject> {
         private final TestObject testObject;
 
-        TestObjectMatcher(TestObject testObject) {
+        TestObjectMatcher(final TestObject testObject) {
             super(String.format("TestObject{id='%s', value='%s', eTag=<IGNORED>}", testObject.id, testObject.value));
             this.testObject = testObject;
         }
 
-        public boolean matches(Object object) {
+        public boolean matches(final Object object) {
             return ((object instanceof TestObject) && ((TestObject) object).equalsWithoutEtag(testObject));
         }
     }

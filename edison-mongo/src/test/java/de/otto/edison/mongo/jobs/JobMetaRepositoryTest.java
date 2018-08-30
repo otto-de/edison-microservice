@@ -48,9 +48,9 @@ public class JobMetaRepositoryTest {
         testee.deleteAll();
     }
 
-    private JobMetaRepository testee;
+    private final JobMetaRepository testee;
 
-    public JobMetaRepositoryTest(JobMetaRepository testee) {
+    public JobMetaRepositoryTest(final JobMetaRepository testee) {
         this.testee = testee;
     }
 
@@ -68,7 +68,7 @@ public class JobMetaRepositoryTest {
 
     @Test
     public void shouldGetEmptyJobMeta() {
-        JobMeta jobMeta = testee.getJobMeta("someJob");
+        final JobMeta jobMeta = testee.getJobMeta("someJob");
 
         assertThat(jobMeta.getAll(), is(emptyMap()));
         assertThat(jobMeta.isDisabled(), is(false));
@@ -80,7 +80,7 @@ public class JobMetaRepositoryTest {
     @Test
     public void shouldGetJobMetaForRunningJob() {
         testee.setRunningJob("someJob", "someId");
-        JobMeta jobMeta = testee.getJobMeta("someJob");
+        final JobMeta jobMeta = testee.getJobMeta("someJob");
 
         assertThat(jobMeta.getAll(), is(emptyMap()));
         assertThat(jobMeta.isDisabled(), is(false));
@@ -92,7 +92,7 @@ public class JobMetaRepositoryTest {
     @Test
     public void shouldGetJobMetaForDisabledJob() {
         testee.disable("someJob", "some comment");
-        JobMeta jobMeta = testee.getJobMeta("someJob");
+        final JobMeta jobMeta = testee.getJobMeta("someJob");
 
         assertThat(jobMeta.getAll(), is(emptyMap()));
         assertThat(jobMeta.isDisabled(), is(true));
@@ -105,7 +105,7 @@ public class JobMetaRepositoryTest {
     public void shouldGetJobMetaForDisabledJobWithProperties() {
         testee.disable("someJob", "some comment");
         testee.setValue("someJob", "someKey", "some value");
-        JobMeta jobMeta = testee.getJobMeta("someJob");
+        final JobMeta jobMeta = testee.getJobMeta("someJob");
 
         assertThat(jobMeta.getAll(), is(singletonMap("someKey", "some value")));
         assertThat(jobMeta.isDisabled(), is(true));
@@ -179,7 +179,7 @@ public class JobMetaRepositoryTest {
         testee.setValue("someJob","someKey", "initialValue");
 
         // when
-        boolean value = testee.createValue("someJob", "someKey", "newValue");
+        final boolean value = testee.createValue("someJob", "someKey", "newValue");
 
         //then
         assertThat(value, is(false));
@@ -189,7 +189,7 @@ public class JobMetaRepositoryTest {
     @Test
     public void shouldCreateIfNotExists() throws Exception {
         // when
-        boolean value = testee.createValue("someJob", "someKey", "someValue");
+        final boolean value = testee.createValue("someJob", "someKey", "someValue");
 
         //then
         assertThat(value, is(true));
@@ -202,7 +202,7 @@ public class JobMetaRepositoryTest {
         testee.createValue("someJob", "someKey", "someValue");
 
         // when
-        boolean value = testee.createValue("someJob", "someOtherKey", "someOtherValue");
+        final boolean value = testee.createValue("someJob", "someOtherKey", "someOtherValue");
 
         //then
         assertThat(value, is(true));
@@ -216,7 +216,7 @@ public class JobMetaRepositoryTest {
         testee.createValue("someJob", "someKey", "someInitialValue");
 
         // when
-        boolean value = testee.createValue("someJob", "someKey", "someValue");
+        final boolean value = testee.createValue("someJob", "someKey", "someValue");
 
         //then
         assertThat(value, is(false));
@@ -229,7 +229,7 @@ public class JobMetaRepositoryTest {
         testee.setValue("someJob", "someKey", "someInitialValue");
 
         // when
-        boolean value = testee.createValue("someJob", "someAtomicKey", "someValue");
+        final boolean value = testee.createValue("someJob", "someAtomicKey", "someValue");
 
         //then
         assertThat(value, is(true));

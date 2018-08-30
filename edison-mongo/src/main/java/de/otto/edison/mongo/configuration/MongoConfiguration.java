@@ -6,17 +6,12 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import java.util.Collections;
-import java.util.List;
-
 import static com.mongodb.MongoCredential.createCredential;
-import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
@@ -25,12 +20,15 @@ public class MongoConfiguration {
 
     private static final Logger LOG = getLogger(MongoConfiguration.class);
 
-    private static List<MongoCredential> getMongoCredentials(final MongoProperties mongoProperties) {
+    private static MongoCredential getMongoCredentials(final MongoProperties mongoProperties) {
         if (useUnauthorizedConnection(mongoProperties)) {
-            return Collections.emptyList();
+            return null;
         }
-        return singletonList(createCredential(mongoProperties.getUser(),
-                getAuthenticationDb(mongoProperties), mongoProperties.getPassword().toCharArray()));
+        return createCredential(
+                mongoProperties.getUser(),
+                getAuthenticationDb(mongoProperties),
+                mongoProperties.getPassword().toCharArray()
+        );
     }
 
     private static boolean useUnauthorizedConnection(final MongoProperties mongoProperties) {
