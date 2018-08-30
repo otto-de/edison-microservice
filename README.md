@@ -59,6 +59,8 @@ When migrating, take care of the following adjustments:
   CI-Systems to use Java10 for running and building.
 * Follow the [Spring Boot 2.0 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide)
   to fix the most common problems.
+    * If you want to use the behaviour of Edison 1.x, which hosts all management endpoints below `/internal`, you have to 
+      configure `management.endpoints.web.base-path=/internal` in your `application.yml`
 * Remove dependencies to the [edison-aws Project](https://github.com/otto-de/edison-aws), which will be deprecated some time in the future. 
   Necessary functionality was transferred to a submodule of `edison-microservice` (named `edison-aws`).
 * Refactor calls made through the AWS SDK, which got updated in the process of the new major version of edison and this
