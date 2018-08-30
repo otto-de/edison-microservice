@@ -1,4 +1,4 @@
-package de.otto.edison.example;
+package de.otto.edison.testsupport.togglz;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
