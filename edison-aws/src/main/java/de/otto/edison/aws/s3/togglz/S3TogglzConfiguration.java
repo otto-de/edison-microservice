@@ -1,6 +1,5 @@
 package de.otto.edison.aws.s3.togglz;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -17,11 +16,6 @@ import org.togglz.core.user.UserProvider;
 @ConditionalOnProperty(name = "edison.togglz.enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnClass(name = "org.togglz.core.repository.StateRepository")
 public class S3TogglzConfiguration {
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
 
     @Bean
     @ConditionalOnProperty(name = "edison.togglz.s3.bucket-name")

@@ -28,7 +28,8 @@ public class FeatureStateConverter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    public FeatureStateConverter(final S3Client s3Client, final S3TogglzProperties s3TogglzProperties) {
+    public FeatureStateConverter(final S3Client s3Client,
+                                 final S3TogglzProperties s3TogglzProperties) {
         this.s3Client = s3Client;
         this.s3TogglzProperties = s3TogglzProperties;
     }
