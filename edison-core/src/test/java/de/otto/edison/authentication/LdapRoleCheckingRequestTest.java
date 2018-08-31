@@ -1,16 +1,23 @@
 package de.otto.edison.authentication;
 
-import com.unboundid.ldap.sdk.*;
-import de.otto.edison.authentication.configuration.EncryptionType;
+import com.unboundid.ldap.sdk.Attribute;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.LDAPInterface;
+import com.unboundid.ldap.sdk.LDAPSearchException;
+import com.unboundid.ldap.sdk.SearchRequest;
+import com.unboundid.ldap.sdk.SearchResult;
+import com.unboundid.ldap.sdk.SearchResultEntry;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static de.otto.edison.authentication.configuration.EncryptionType.*;
+import static de.otto.edison.authentication.configuration.EncryptionType.StartTLS;
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;

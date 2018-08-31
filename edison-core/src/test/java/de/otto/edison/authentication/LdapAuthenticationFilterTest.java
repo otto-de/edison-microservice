@@ -24,7 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -80,7 +83,7 @@ public class LdapAuthenticationFilterTest {
 
     @Test
     public void shouldBeUnauthenticatedIfLdapConnectionFails() throws Exception {
-        LDAPConnection ldapConnection = someLdapConnectionReturning(SERVER_DOWN);
+        final LDAPConnection ldapConnection = someLdapConnectionReturning(SERVER_DOWN);
         when(ldapConnectionFactory.buildLdapConnection()).thenReturn(ldapConnection);
 
         testee.doFilter(requestWithAuthorizationHeader(), response, mock(FilterChain.class));
@@ -89,10 +92,10 @@ public class LdapAuthenticationFilterTest {
 
     @Test
     public void shouldNotApplyFilterToWhitelistedEndpoint() throws Exception {
-        HttpServletRequest request = requestWithoutAuthorizationHeader();
+        final HttpServletRequest request = requestWithoutAuthorizationHeader();
         when(request.getServletPath()).thenReturn(WHITELISTED_PATH + "/etc");
 
-        FilterChain filterChain = mock(FilterChain.class);
+        final FilterChain filterChain = mock(FilterChain.class);
         testee.doFilter(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
@@ -100,10 +103,10 @@ public class LdapAuthenticationFilterTest {
 
     @Test
     public void shouldNotApplyFilterToInternalJavascript() throws Exception {
-        HttpServletRequest request = requestWithoutAuthorizationHeader();
+        final HttpServletRequest request = requestWithoutAuthorizationHeader();
         when(request.getServletPath()).thenReturn("/internal/js/foo.js");
 
-        FilterChain filterChain = mock(FilterChain.class);
+        final FilterChain filterChain = mock(FilterChain.class);
         testee.doFilter(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
@@ -118,7 +121,7 @@ public class LdapAuthenticationFilterTest {
         testee = new LdapAuthenticationFilter(ldapProperties, connectionFactory);
         final HttpServletRequest request = requestWithAuthorizationHeader();
         when(request.getServletPath()).thenReturn("/foo");
-        FilterChain filterChain = mock(FilterChain.class);
+        final FilterChain filterChain = mock(FilterChain.class);
         testee.doFilter(request, response, filterChain);
         verify(filterChain).doFilter(any(HttpServletRequest.class), any(HttpServletResponse.class));
     }
@@ -134,7 +137,7 @@ public class LdapAuthenticationFilterTest {
         // when
         final HttpServletRequest request = requestWithAuthorizationHeader();
         when(request.getServletPath()).thenReturn("/foo");
-        FilterChain filterChain = mock(FilterChain.class);
+        final FilterChain filterChain = mock(FilterChain.class);
         testee.doFilter(request, response, filterChain);
         // then
         verify(ldapConnection).bind(contains("exceptionBaseDn"), anyString());
@@ -151,20 +154,20 @@ public class LdapAuthenticationFilterTest {
         testee = new LdapAuthenticationFilter(ldapProperties, connectionFactory);
         final HttpServletRequest request = requestWithAuthorizationHeader();
         when(request.getServletPath()).thenReturn("/foo");
-        FilterChain filterChain = mock(FilterChain.class);
+        final FilterChain filterChain = mock(FilterChain.class);
         testee.doFilter(request, response, filterChain);
         verify(filterChain, never()).doFilter(any(HttpServletRequest.class), any(HttpServletResponse.class));
     }
 
     @Test
     public void shouldAuthenticateUser() throws LDAPException {
-        boolean authenticated = testee.authenticate(someLdapConnectionReturning(SUCCESS), "user", "password");
+        final boolean authenticated = testee.authenticate(someLdapConnectionReturning(SUCCESS), "user", "password");
         assertThat(authenticated).isEqualTo(true);
     }
 
     @Test
     public void shouldNotAuthenticateUser() throws LDAPException {
-        boolean authenticated = testee.authenticate(someLdapConnectionReturning(AUTHORIZATION_DENIED), "user", "password");
+        final boolean authenticated = testee.authenticate(someLdapConnectionReturning(AUTHORIZATION_DENIED), "user", "password");
         assertThat(authenticated).isEqualTo(false);
     }
 
@@ -175,13 +178,13 @@ public class LdapAuthenticationFilterTest {
     }
 
     private HttpServletRequest requestWithoutAuthorizationHeader() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getServletPath()).thenReturn("/internal");
         return request;
     }
 
     private HttpServletRequest requestWithAuthorizationHeader() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader(AUTHORIZATION)).thenReturn("Basic " + Base64Utils.encodeToString("someUsername:somePassword".getBytes()));
         when(request.getServletPath()).thenReturn("/internal");
         return request;
@@ -200,7 +203,7 @@ public class LdapAuthenticationFilterTest {
         return ldap;
     }
 
-    private LDAPConnection someLdapConnectionReturningSuccessOrThrowingBindException(String bindDnSuccess, String bindDnException) throws LDAPException {
+    private LDAPConnection someLdapConnectionReturningSuccessOrThrowingBindException(final String bindDnSuccess, final String bindDnException) throws LDAPException {
         final LDAPConnection ldap = mock(LDAPConnection.class);
 
         final BindResult mockBindResultSuccess = mock(BindResult.class);

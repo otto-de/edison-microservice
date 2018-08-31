@@ -1,15 +1,19 @@
 package de.otto.edison.status.indicator;
 
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.ApplicationStatus;
+import de.otto.edison.status.domain.Status;
+import de.otto.edison.status.domain.StatusDetail;
 import org.junit.Test;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CachedApplicationStatusAggregatorTest {
 

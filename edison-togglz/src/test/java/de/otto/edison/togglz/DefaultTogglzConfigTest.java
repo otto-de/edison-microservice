@@ -7,8 +7,8 @@ import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.cache.CachingStateRepository;
 
 import static de.otto.edison.testsupport.dsl.Then.assertThat;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.typeCompatibleWith;
 import static org.hamcrest.core.Is.is;

@@ -6,7 +6,7 @@ import org.junit.Test;
 import static de.otto.edison.status.domain.Status.*;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
