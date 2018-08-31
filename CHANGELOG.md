@@ -2,31 +2,31 @@
 
 ## 2.0.0-m3
 
-* TogglzStateRepositories are now always Cache-Repositories with a TTL of 60 Seconds. 
+* **[edison-togglz]**: TogglzStateRepositories are now always Cache-Repositories with a TTL of 60 Seconds. 
   If you need a non-Cached repo or any other way of handling these states, feel free to write a custom `TogglzConfig` spring bean configuration.
 
-* There is now a `S3TogglzRepository` generally available. It will store Togglz-State in S3, caches the state and refreshes it every 60 seconds
+* **[edison-aws]**: There is now a `S3TogglzRepository` generally available. It will store Togglz-State in S3, caches the state and refreshes it every 60 seconds
   from S3.
 
 ## 2.0.0-m2
 
-* Updated to Spring Boot 2.0.4.RELEASE
+* **[general]**: Updated to Spring Boot 2.0.4.RELEASE
 
-* Updated to Spring framework 5.0.8.RELEASE
+* **[general]**: Updated to Spring Framework 5.0.8.RELEASE
 
-* Updated to Gradle 4.10
+* **[general]**: Updated to Gradle 4.10
 
-* Changed to Java 10 SDKe
+* **[general]**: Changed to Java 10 SDK
 
-* Updated dependencies to latest versions
+* **[general]**: Updated dependencies to latest versions
 
-* Added Testconfiguration for TogglzTest
+* **[edison-togglz]**: Added Testconfiguration for TogglzTest
 
-* remove codahale metrics and use builtin micrometer in Spring Boot 2
+* **[edison-core]**: remove codahale metrics and use builtin micrometer in Spring Boot 2
 
-* Migrate modules `edisown-aws-s3` and `edison-aws-config` into submodule `edison-aws`
+* **[edison-aws]**: Migrate modules `edisown-aws-s3` and `edison-aws-config` into submodule `edison-aws`
 
-* Use `testcontainers`-library for local testing with `localstack` in `edison-aws`
+* **[edison-aws]**: Use `testcontainers`-library for local testing with `localstack` in `edison-aws`
 
 ## 2.0.0-m1
 
