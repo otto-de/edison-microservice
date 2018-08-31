@@ -2,7 +2,6 @@ package de.otto.edison.authentication.connection;
 
 import com.unboundid.ldap.sdk.LDAPException;
 import de.otto.edison.authentication.configuration.LdapProperties;
-import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
 import org.junit.Test;
 
 import java.security.GeneralSecurityException;

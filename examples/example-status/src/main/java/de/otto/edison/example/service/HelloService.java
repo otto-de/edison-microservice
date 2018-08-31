@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static de.otto.edison.status.domain.StatusDetail.*;
+import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 

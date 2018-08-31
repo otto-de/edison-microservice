@@ -2,7 +2,6 @@ package de.otto.edison.validation.validators;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.lang.annotation.Annotation;
 import java.util.regex.Pattern;
 
 public class SafeIdValidator implements ConstraintValidator<SafeId, String> {

@@ -18,20 +18,35 @@ import org.junit.Test;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.mongo.jobs.DateTimeConverters.toDate;
-import static de.otto.edison.mongo.jobs.JobStructure.*;
+import static de.otto.edison.mongo.jobs.JobStructure.ID;
+import static de.otto.edison.mongo.jobs.JobStructure.JOB_TYPE;
+import static de.otto.edison.mongo.jobs.JobStructure.MESSAGES;
+import static de.otto.edison.mongo.jobs.JobStructure.MSG_LEVEL;
+import static de.otto.edison.mongo.jobs.JobStructure.MSG_TEXT;
+import static de.otto.edison.mongo.jobs.JobStructure.MSG_TS;
+import static de.otto.edison.mongo.jobs.JobStructure.STATUS;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
 public class MongoJobRepositoryTest {
 

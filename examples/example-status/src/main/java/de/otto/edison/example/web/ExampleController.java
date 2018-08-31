@@ -2,7 +2,6 @@ package de.otto.edison.example.web;
 
 import io.micrometer.core.annotation.Timed;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 

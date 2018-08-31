@@ -4,8 +4,6 @@ import de.otto.edison.status.domain.StatusDetail;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
-
 /**
  * Indicates status information about a single part of the application.
  *

@@ -24,8 +24,13 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
-import static de.otto.edison.jobs.domain.JobInfo.*;
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.*;
+import static de.otto.edison.jobs.domain.JobInfo.Builder;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.DEAD;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.SKIPPED;
+import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.domain.Level.WARNING;

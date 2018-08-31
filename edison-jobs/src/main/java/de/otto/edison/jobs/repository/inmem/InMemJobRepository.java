@@ -6,7 +6,12 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.repository.JobRepository;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 

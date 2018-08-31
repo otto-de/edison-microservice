@@ -10,11 +10,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import static de.otto.edison.status.domain.Status.ERROR;
+import static de.otto.edison.status.domain.Status.OK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-
-import static de.otto.edison.status.domain.Status.OK;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 

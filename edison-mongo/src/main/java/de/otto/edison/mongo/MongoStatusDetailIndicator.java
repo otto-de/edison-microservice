@@ -9,13 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
-import static de.otto.edison.status.domain.StatusDetail.*;
-import static java.util.Collections.*;
+import static de.otto.edison.status.domain.StatusDetail.statusDetail;
+import static java.util.Collections.singletonList;
 
 @Component
 @ConditionalOnProperty(prefix = "edison.mongo.status", name = "enabled", havingValue = "true", matchIfMissing = true)

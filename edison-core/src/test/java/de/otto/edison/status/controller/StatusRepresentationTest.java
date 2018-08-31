@@ -1,7 +1,11 @@
 package de.otto.edison.status.controller;
 
 import de.otto.edison.configuration.EdisonApplicationProperties;
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.ApplicationInfo;
+import de.otto.edison.status.domain.ClusterInfo;
+import de.otto.edison.status.domain.SystemInfo;
+import de.otto.edison.status.domain.TeamInfo;
+import de.otto.edison.status.domain.VersionInfo;
 import de.otto.edison.testsupport.util.JsonMap;
 import org.junit.Test;
 

@@ -7,9 +7,9 @@ import org.junit.Test;
 import java.util.Map;
 
 import static de.otto.edison.togglz.controller.FeatureTogglesRepresentation.togglzRepresentation;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FeatureTogglesRepresentationTest {
 

@@ -5,12 +5,11 @@ import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
-import java.util.Collections;
 import java.util.List;
 
 import static de.otto.edison.status.domain.Status.OK;
 import static de.otto.edison.status.domain.Status.WARNING;
-import static de.otto.edison.status.domain.StatusDetail.*;
+import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.time.LocalTime.now;
 import static java.util.Collections.singletonList;
 

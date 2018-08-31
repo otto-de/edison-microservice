@@ -1,7 +1,10 @@
 package de.otto.edison.authentication;
 
-import com.unboundid.ldap.sdk.*;
-import de.otto.edison.authentication.configuration.EncryptionType;
+import com.unboundid.ldap.sdk.BindResult;
+import com.unboundid.ldap.sdk.LDAPBindException;
+import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.ResultCode;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import org.junit.Before;
@@ -15,7 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import static com.unboundid.ldap.sdk.ResultCode.*;
+import static com.unboundid.ldap.sdk.ResultCode.AUTHORIZATION_DENIED;
+import static com.unboundid.ldap.sdk.ResultCode.SERVER_DOWN;
+import static com.unboundid.ldap.sdk.ResultCode.SUCCESS;
 import static de.otto.edison.authentication.configuration.EncryptionType.StartTLS;
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
 import static java.util.Arrays.asList;

@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.domain;
 
 import de.otto.edison.jobs.repository.JobMetaRepository;
-import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.jobs.service.JobRunnable;
 
 import java.time.Instant;

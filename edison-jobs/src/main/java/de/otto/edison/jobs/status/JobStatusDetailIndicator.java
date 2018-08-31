@@ -4,7 +4,6 @@ import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;

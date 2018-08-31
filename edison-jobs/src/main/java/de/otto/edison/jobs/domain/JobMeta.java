@@ -1,10 +1,7 @@
 package de.otto.edison.jobs.domain;
 
-import java.time.Instant;
-import java.util.Collections;
 import java.util.Map;
 
-import static java.time.Instant.ofEpochMilli;
 import static java.util.Collections.unmodifiableMap;
 
 /**

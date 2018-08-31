@@ -9,8 +9,6 @@ import org.junit.Test;
 import java.time.Clock;
 import java.time.Instant;
 
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.SKIPPED;
 import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isAbsent;
@@ -19,7 +17,6 @@ import static java.time.Clock.fixed;
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 public class DeleteSkippedJobsTest {

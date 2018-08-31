@@ -1,6 +1,11 @@
 package de.otto.edison.status.indicator;
 
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.ApplicationInfo;
+import de.otto.edison.status.domain.ApplicationStatus;
+import de.otto.edison.status.domain.Status;
+import de.otto.edison.status.domain.SystemInfo;
+import de.otto.edison.status.domain.TeamInfo;
+import de.otto.edison.status.domain.VersionInfo;
 import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
 import de.otto.edison.status.scheduler.Scheduler;
 import org.junit.Test;
@@ -8,8 +13,8 @@ import org.junit.Test;
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

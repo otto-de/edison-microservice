@@ -5,13 +5,13 @@ import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import de.otto.edison.status.domain.Datasource;
 import org.bson.codecs.configuration.CodecRegistry;
-import javax.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;

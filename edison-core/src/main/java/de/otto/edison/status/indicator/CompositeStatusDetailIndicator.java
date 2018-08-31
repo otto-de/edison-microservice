@@ -1,6 +1,5 @@
 package de.otto.edison.status.indicator;
 
-import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 
 import java.util.Collection;

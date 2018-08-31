@@ -1,6 +1,12 @@
 package de.otto.edison.acceptance.status;
 
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.ApplicationInfo;
+import de.otto.edison.status.domain.Criticality;
+import de.otto.edison.status.domain.Level;
+import de.otto.edison.status.domain.ServiceDependency;
+import de.otto.edison.status.domain.Status;
+import de.otto.edison.status.domain.TeamInfo;
+import de.otto.edison.status.domain.VersionInfo;
 import de.otto.edison.status.indicator.MutableStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.springframework.context.annotation.Bean;

@@ -1,7 +1,5 @@
 package de.otto.edison.validation.validators;
 
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor;
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

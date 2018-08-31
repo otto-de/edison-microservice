@@ -1,7 +1,13 @@
 package de.otto.edison.testsupport.util;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.time.Instant.parse;
 import static java.util.Collections.emptyMap;

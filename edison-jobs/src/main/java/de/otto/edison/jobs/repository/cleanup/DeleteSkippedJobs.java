@@ -1,25 +1,19 @@
 package de.otto.edison.jobs.repository.cleanup;
 
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.SKIPPED;
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.reverseOrder;
-import static java.util.stream.Collectors.groupingBy;
+import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.repository.JobRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-
-import de.otto.edison.jobs.domain.JobInfo;
-import de.otto.edison.jobs.domain.JobInfo.JobStatus;
-import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.jobs.repository.cleanup.JobCleanupStrategy;
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.SKIPPED;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.reverseOrder;
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * A JobCleanupStrategy that is removing all but the newest N skipped jobs.

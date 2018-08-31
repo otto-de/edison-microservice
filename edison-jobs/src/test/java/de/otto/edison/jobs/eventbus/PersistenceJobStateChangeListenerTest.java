@@ -12,7 +12,12 @@ import java.time.OffsetDateTime;
 
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.ERROR;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.DEAD;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.FAILED;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.KEEP_ALIVE;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.RESTART;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.SKIPPED;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 import static java.time.Instant.ofEpochMilli;
 import static java.time.OffsetDateTime.ofInstant;

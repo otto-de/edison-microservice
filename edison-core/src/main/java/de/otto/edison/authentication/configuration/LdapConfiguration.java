@@ -1,9 +1,9 @@
 package de.otto.edison.authentication.configuration;
 
 import de.otto.edison.authentication.LdapAuthenticationFilter;
+import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import de.otto.edison.authentication.connection.SSLLdapConnectionFactory;
 import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
-import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

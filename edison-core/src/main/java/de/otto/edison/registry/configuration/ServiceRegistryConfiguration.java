@@ -1,6 +1,11 @@
 package de.otto.edison.registry.configuration;
 
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.Availability;
+import de.otto.edison.status.domain.Criticality;
+import de.otto.edison.status.domain.Level;
+import de.otto.edison.status.domain.Performance;
+import de.otto.edison.status.domain.ServiceDependency;
+import de.otto.edison.status.domain.ServiceDependencyBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

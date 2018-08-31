@@ -1,6 +1,10 @@
 package de.otto.edison.status.configuration;
 
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.ApplicationInfo;
+import de.otto.edison.status.domain.ClusterInfo;
+import de.otto.edison.status.domain.SystemInfo;
+import de.otto.edison.status.domain.TeamInfo;
+import de.otto.edison.status.domain.VersionInfo;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import de.otto.edison.status.indicator.CachedApplicationStatusAggregator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;

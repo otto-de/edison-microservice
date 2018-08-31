@@ -1,6 +1,9 @@
 package de.otto.edison.authentication;
 
-import com.unboundid.ldap.sdk.*;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.LDAPInterface;
+import com.unboundid.ldap.sdk.SearchRequest;
+import com.unboundid.ldap.sdk.SearchResult;
 import de.otto.edison.authentication.configuration.LdapProperties;
 
 import javax.servlet.http.HttpServletRequest;

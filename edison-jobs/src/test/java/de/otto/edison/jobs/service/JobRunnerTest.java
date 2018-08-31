@@ -15,7 +15,11 @@ import java.util.concurrent.TimeUnit;
 
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.fixedDelayJobDefinition;
 import static de.otto.edison.jobs.definition.DefaultJobDefinition.manuallyTriggerableJobDefinition;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.KEEP_ALIVE;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.RESTART;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.SKIPPED;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.START;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
 import static java.time.Duration.ofSeconds;
@@ -27,7 +31,12 @@ import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class JobRunnerTest {

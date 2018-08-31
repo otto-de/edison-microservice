@@ -1,11 +1,10 @@
 package de.otto.edison.health.indicator;
 
 import org.junit.Test;
-import org.mockito.InOrder;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 import static org.springframework.boot.actuate.health.Health.down;
 import static org.springframework.boot.actuate.health.Health.up;
 

@@ -3,7 +3,13 @@ package de.otto.edison.status.domain;
 import org.junit.Test;
 
 import static de.otto.edison.status.domain.Datasource.datasource;
-import static de.otto.edison.status.domain.DatasourceDependencyBuilder.*;
+import static de.otto.edison.status.domain.DatasourceDependencyBuilder.cassandraDependency;
+import static de.otto.edison.status.domain.DatasourceDependencyBuilder.copyOf;
+import static de.otto.edison.status.domain.DatasourceDependencyBuilder.datasourceDependency;
+import static de.otto.edison.status.domain.DatasourceDependencyBuilder.elasticSearchDependency;
+import static de.otto.edison.status.domain.DatasourceDependencyBuilder.kafkaDependency;
+import static de.otto.edison.status.domain.DatasourceDependencyBuilder.mongoDependency;
+import static de.otto.edison.status.domain.DatasourceDependencyBuilder.redisDependency;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -2,7 +2,19 @@ package de.otto.edison.status.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.otto.edison.status.domain.*;
+import de.otto.edison.status.domain.ApplicationStatus;
+import de.otto.edison.status.domain.ClusterInfo;
+import de.otto.edison.status.domain.Criticality;
+import de.otto.edison.status.domain.Datasource;
+import de.otto.edison.status.domain.DatasourceDependency;
+import de.otto.edison.status.domain.Expectations;
+import de.otto.edison.status.domain.ExternalDependency;
+import de.otto.edison.status.domain.Link;
+import de.otto.edison.status.domain.ServiceDependency;
+import de.otto.edison.status.domain.Status;
+import de.otto.edison.status.domain.StatusDetail;
+import de.otto.edison.status.domain.SystemInfo;
+import de.otto.edison.status.domain.TeamInfo;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

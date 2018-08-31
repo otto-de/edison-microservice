@@ -1,7 +1,5 @@
 package de.otto.edison.registry.client;
 
-import de.otto.edison.annotations.Beta;
-
 /**
  * A client to access a discovery service.
  *

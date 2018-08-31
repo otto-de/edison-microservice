@@ -1,6 +1,10 @@
 package de.otto.edison.authentication;
 
-import com.unboundid.ldap.sdk.*;
+import com.unboundid.ldap.sdk.BindResult;
+import com.unboundid.ldap.sdk.LDAPBindException;
+import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.ResultCode;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import org.slf4j.Logger;
