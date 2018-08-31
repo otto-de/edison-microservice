@@ -65,6 +65,52 @@ When migrating, take care of the following adjustments:
   Necessary functionality was transferred to a submodule of `edison-microservice` (named `edison-aws`).
 * Refactor calls made through the AWS SDK, which got updated in the process of the new major version of edison and this
   will most probably break prior code that relied on the AWS SDK.
+* To use `@Timed`-Annotations, you need to configure Micrometer accordingly. See the following Example for a configuration that
+  covers the annotation and naming of all metrics:
+  
+  ```java
+    @Configuration
+    @EnableAspectJAutoProxy
+    public class MicrometerConfiguration {
+    
+        @Bean
+        public PrometheusNamingConvention prometheusNamingConvention() {
+            return new PrometheusNamingConvention();
+        }
+    
+        @Bean
+        public MeterRegistryCustomizer<MeterRegistry> metricsCommonTags(@Value("${service.vertical}") final String vertical,
+                                                                        @Value("${service.name}") final String serviceName,
+                                                                        final PrometheusNamingConvention prometheusNamingConvention) {
+            return registry -> registry
+                    .config()
+                    .namingConvention(new NamingConvention() { 
+                        // Set naming convention that gets applied to all metrics, in this  example explicitly using a Prometheus naming convention
+                        @Override
+                        public String name(final String name, final Meter.Type type, final String baseUnit) {
+                            return prometheusNamingConvention.name(String.format("%s.%s.%s", vertical, serviceName, name), type, baseUnit);
+                        }
+                    })
+                    .meterFilter(new MeterFilter() { // Configure generally applicable configurations, like percentiles
+                        @Override
+                        public DistributionStatisticConfig configure(final Meter.Id id,
+                                                                     final DistributionStatisticConfig config) {
+                            return config.merge(DistributionStatisticConfig.builder()
+                                    .percentiles(0.5, 0.9, 0.95, 0.98, 0.99, 0.999)
+                                    .build());
+                        }
+                    });
+        }
+    
+        // Create a `TimedAspect` to enable `@Timed`-Annotations
+        @Bean
+        public TimedAspect timedAspect(final MeterRegistry registry) {
+            return new TimedAspect(registry);
+        }
+    }
+
+  ```
+
 
 ## Documentation
 
