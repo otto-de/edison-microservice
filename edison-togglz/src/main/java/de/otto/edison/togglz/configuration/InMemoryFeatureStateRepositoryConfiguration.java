@@ -36,7 +36,7 @@ public class InMemoryFeatureStateRepositoryConfiguration {
 
             Logger LOG = getLogger(TogglzConfiguration.class);
 
-            private Map<String, FeatureState> featureStore = new ConcurrentHashMap<>();
+            private final Map<String, FeatureState> featureStore = new ConcurrentHashMap<>();
 
             @Autowired
             UserProvider userProvider;

@@ -1,6 +1,14 @@
 # Release Notes
 
-## 2.0.0-m2-SNAPSHOT
+## 2.0.0-m3
+
+* TogglzStateRepositories are now always Cache-Repositories with a TTL of 60 Seconds. 
+  If you need a non-Cached repo or any other way of handling these states, feel free to write a custom `TogglzConfig` spring bean configuration.
+
+* There is now a `S3TogglzRepository` generally available. It will store Togglz-State in S3, caches the state and refreshes it every 60 seconds
+  from S3.
+
+## 2.0.0-m2
 
 * Updated to Spring Boot 2.0.4.RELEASE
 
@@ -20,7 +28,7 @@
 
 * Use `testcontainers`-library for local testing with `localstack` in `edison-aws`
 
-## 2.0.0-m1-SNAPSHOT
+## 2.0.0-m1
 
 **Breaking Changes:**
 

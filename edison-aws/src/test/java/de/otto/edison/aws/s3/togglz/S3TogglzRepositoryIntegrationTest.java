@@ -20,33 +20,38 @@ import static de.otto.edison.aws.s3.S3TestHelper.createTestContainer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 
-public class S3StateRepositoryTest {
+public class S3TogglzRepositoryIntegrationTest {
     private static final int TEST_PORT_S3 = 4572;
     private final static String TEST_BUCKET = "test-togglz";
 
     @ClassRule
     public final static GenericContainer<?> localstackContainer = createTestContainer(TEST_PORT_S3);
 
-    private S3StateRepository repository;
+    private S3TogglzRepository repository;
     private S3Client s3Client;
+    private FeatureStateConverter featureStateConverter;
     private S3TogglzProperties togglzProperties;
+
 
     @Before
     public void setup() {
         final Integer mappedPort = localstackContainer.getMappedPort(TEST_PORT_S3);
         s3Client = createS3Client(mappedPort);
 
+
         final CreateBucketRequest createBucketRequest = CreateBucketRequest
                 .builder()
                 .bucket(TEST_BUCKET)
                 .acl(BucketCannedACL.PUBLIC_READ_WRITE)
                 .build();
-
         s3Client.createBucket(createBucketRequest);
 
         togglzProperties = new S3TogglzProperties();
         togglzProperties.setBucketName(TEST_BUCKET);
-        repository = new S3StateRepository(togglzProperties, s3Client);
+
+        featureStateConverter = new FeatureStateConverter(s3Client, togglzProperties);
+
+        repository = new S3TogglzRepository(featureStateConverter);
     }
 
     @After

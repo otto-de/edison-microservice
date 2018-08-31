@@ -3,7 +3,6 @@ package de.otto.edison.togglz.configuration;
 import de.otto.edison.authentication.Credentials;
 import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -14,6 +13,7 @@ import org.togglz.core.context.StaticFeatureManagerProvider;
 import org.togglz.core.manager.FeatureManager;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
+import org.togglz.core.repository.cache.CachingStateRepository;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
 import org.togglz.servlet.TogglzFilter;
@@ -47,28 +47,30 @@ public class TogglzConfiguration {
     public UserProvider userProvider() {
         return () -> {
 
-            HttpServletRequest request = HttpServletRequestHolder.get();
+            final HttpServletRequest request = HttpServletRequestHolder.get();
 
-            Optional<Credentials> credentials = Credentials.readFrom(request);
-            boolean isAdmin = true; // "admin".equals(username);
+            final Optional<Credentials> credentials = Credentials.readFrom(request);
+            final boolean isAdmin = true; // "admin".equals(username);
 
             return new SimpleFeatureUser((credentials.isPresent() ? credentials.get().getUsername() : null), isAdmin);
         };
     }
 
     @Bean
-    @Autowired
+    @ConditionalOnMissingBean(TogglzConfig.class)
     public TogglzConfig togglzConfig(final StateRepository stateRepository,
                                      final FeatureClassProvider featureClassProvider,
-                                     final TogglzProperties togglzProperties) {
-        return new DefaultTogglzConfig(togglzProperties, stateRepository, userProvider(), featureClassProvider);
+                                     final TogglzProperties togglzProperties,
+                                     final UserProvider userProvider) {
+        final CachingStateRepository cachingStateRepository = new CachingStateRepository(stateRepository, togglzProperties.getCacheTtl());
+        return new DefaultTogglzConfig(cachingStateRepository, userProvider, featureClassProvider);
     }
 
     @Bean
     public FeatureManager featureManager(final TogglzConfig togglzConfig) throws Exception {
-        FeatureManagerFactory featureManagerFactory = new FeatureManagerFactory();
+        final FeatureManagerFactory featureManagerFactory = new FeatureManagerFactory();
         featureManagerFactory.setTogglzConfig(togglzConfig);
-        FeatureManager featureManager = featureManagerFactory.getObject();
+        final FeatureManager featureManager = featureManagerFactory.getObject();
         StaticFeatureManagerProvider.setFeatureManager(featureManager);  // this workaround should be fixed with togglz version 2.2
         return featureManager;
     }

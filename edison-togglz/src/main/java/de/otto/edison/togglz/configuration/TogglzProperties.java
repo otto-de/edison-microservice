@@ -17,7 +17,7 @@ public class TogglzProperties {
      * Number of millis used to cache toggle state. cache-ttl=0 will disable caching.
      */
     @Min(0)
-    private int cacheTtl = 5000;
+    private int cacheTtl = 60000;
     /**
      * Enable / Disable the Togglz web console.
      */
@@ -28,7 +28,7 @@ public class TogglzProperties {
         return cacheTtl;
     }
 
-    public void setCacheTtl(int cacheTtl) {
+    public void setCacheTtl(final int cacheTtl) {
         this.cacheTtl = cacheTtl;
     }
 
@@ -36,7 +36,7 @@ public class TogglzProperties {
         return console;
     }
 
-    public void setConsole(Console console) {
+    public void setConsole(final Console console) {
         this.console = console;
     }
 
@@ -50,7 +50,7 @@ public class TogglzProperties {
             return enabled;
         }
 
-        public void setEnabled(boolean enabled) {
+        public void setEnabled(final boolean enabled) {
             this.enabled = enabled;
         }
     }

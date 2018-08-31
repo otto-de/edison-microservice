@@ -2,8 +2,8 @@ dependencies {
     compile libraries.spring_boot_autoconfigure
     compile libraries.aws_sdk_ssm
     compile libraries.aws_sdk_s3
+    compile project(":edison-togglz")
 
-    compileOnly project(":edison-togglz")
     testCompile project(":edison-togglz")
     testCompile project(":edison-testsupport")
 

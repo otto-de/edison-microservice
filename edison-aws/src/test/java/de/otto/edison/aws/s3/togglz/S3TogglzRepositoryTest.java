@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
-import org.togglz.core.repository.StateRepository;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -15,12 +14,12 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class PrefetchCachingStateRepositoryTest {
+public class S3TogglzRepositoryTest {
 
-    private PrefetchCachingStateRepository prefetchCachingStateRepository;
+    private S3TogglzRepository s3TogglzRepository;
 
     @Mock
-    private StateRepository stateRepository;
+    private FeatureStateConverter featureStateConverter;
 
     @Mock
     private Feature feature;
@@ -31,22 +30,22 @@ public class PrefetchCachingStateRepositoryTest {
     @Before
     public void setUp() {
         initMocks(this);
-        prefetchCachingStateRepository = new PrefetchCachingStateRepository(stateRepository);
+        s3TogglzRepository = new S3TogglzRepository(featureStateConverter);
         when(feature.name()).thenReturn("someToggleName");
     }
 
     @Test
     public void shouldFetchInitialTogglzStatefromDelegateAndServeSubsequentRequestsFromCache() {
         // given
-        when(stateRepository.getFeatureState(feature)).thenReturn(featureState);
+        when(featureStateConverter.retrieveFeatureStateFromS3(feature)).thenReturn(featureState);
 
         // when
-        prefetchCachingStateRepository.getFeatureState(feature);
-        prefetchCachingStateRepository.getFeatureState(feature);
-        prefetchCachingStateRepository.getFeatureState(feature);
+        s3TogglzRepository.getFeatureState(feature);
+        s3TogglzRepository.getFeatureState(feature);
+        s3TogglzRepository.getFeatureState(feature);
 
         // then
-        verify(stateRepository, times(1)).getFeatureState(feature);
+        verify(featureStateConverter, times(1)).retrieveFeatureStateFromS3(feature);
     }
 
     @Test
@@ -54,11 +53,11 @@ public class PrefetchCachingStateRepositoryTest {
         // given
         when(featureState.getFeature()).thenReturn(feature);
         // when
-        prefetchCachingStateRepository.setFeatureState(featureState);
-        verify(stateRepository, times(1)).setFeatureState(featureState);
+        s3TogglzRepository.setFeatureState(featureState);
+        verify(featureStateConverter, times(1)).persistFeatureStateToS3(featureState);
 
-        final FeatureState featureStateFromCache = prefetchCachingStateRepository.getFeatureState(feature);
+        final FeatureState featureStateFromCache = s3TogglzRepository.getFeatureState(feature);
         assertThat(featureStateFromCache, is(featureState));
-        verifyZeroInteractions(stateRepository);
+        verifyZeroInteractions(featureStateConverter);
     }
 }

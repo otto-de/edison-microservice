@@ -13,18 +13,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Togglz state repository, that fetches the s3 state async
- *  to avoid s3 access while asking for togglz state.
+ * to avoid s3 access while asking for togglz state.
  */
-public class PrefetchCachingStateRepository implements StateRepository {
+public class S3TogglzRepository implements StateRepository {
 
-    private final static Logger LOG = LoggerFactory.getLogger(PrefetchCachingStateRepository.class);
-    private final static int SCHEDULE_RATE = 30000;
+    private final static Logger LOG = LoggerFactory.getLogger(S3TogglzRepository.class);
+    private static final int SCHEDULE_RATE_IN_MILLISECONDS = 60000;
 
     private final Map<Feature, CacheEntry> cache = new ConcurrentHashMap<>();
-    private final StateRepository delegate;
+    private final FeatureStateConverter featureStateConverter;
 
-    public PrefetchCachingStateRepository(final StateRepository delegate) {
-        this.delegate = delegate;
+    public S3TogglzRepository(final FeatureStateConverter featureStateConverter) {
+        this.featureStateConverter = featureStateConverter;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class PrefetchCachingStateRepository implements StateRepository {
         }
 
         // no cache hit - refresh state from delegate
-        final FeatureState featureState = delegate.getFeatureState(feature);
+        final FeatureState featureState = featureStateConverter.retrieveFeatureStateFromS3(feature);
         cache.put(feature, new CacheEntry(featureState));
 
         return featureState;
@@ -45,18 +45,18 @@ public class PrefetchCachingStateRepository implements StateRepository {
 
     @Override
     public void setFeatureState(final FeatureState featureState) {
-        delegate.setFeatureState(featureState);
+        featureStateConverter.persistFeatureStateToS3(featureState);
         cache.put(featureState.getFeature(), new CacheEntry(featureState));
     }
 
-    @Scheduled(initialDelay = 0, fixedRate = SCHEDULE_RATE)
+    @Scheduled(initialDelay = 0, fixedRate = SCHEDULE_RATE_IN_MILLISECONDS)
     private void prefetchFeatureStates() {
         if (cache.size() == 0) {
             LOG.debug("Initialize state for features");
             initializeFeatureStates();
         } else {
             LOG.debug("Refreshing state for features");
-            cache.replaceAll((feature, cacheEntry) -> new CacheEntry(delegate.getFeatureState(feature)));
+            cache.replaceAll((feature, cacheEntry) -> new CacheEntry(featureStateConverter.retrieveFeatureStateFromS3(feature)));
         }
     }
 
