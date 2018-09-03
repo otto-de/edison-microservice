@@ -63,6 +63,7 @@ When migrating, take care of the following adjustments:
       configure `management.endpoints.web.base-path=/internal` in your `application.yml`
 * Remove dependencies to the [edison-aws Project](https://github.com/otto-de/edison-aws), which will be deprecated some time in the future. 
   Necessary functionality was transferred to a submodule of `edison-microservice` (named `edison-aws`).
+* If you have used `gradlew bootRepackage` for packaging your application so far, you have to migrate this to `gradlew bootJar`.
 * Refactor calls made through the AWS SDK, which got updated in the process of the new major version of edison and this
   will most probably break prior code that relied on the AWS SDK.
 * To use `@Timed`-Annotations, you need to configure Micrometer accordingly. See the following Example for a configuration that
