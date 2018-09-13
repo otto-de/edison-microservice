@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,10 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 @Component
-@ConditionalOnMissingBean(OAuthPublicKeyStore.class)
-@ConditionalOnProperty(prefix = "api.oauth.public-key", name = "enabled", havingValue = "true")
+@ConditionalOnExpression("${api.oauth.public-key.enabled:false} && ${api.oauth.public-key.interval:0}>0")
 public class OAuthPublicKeyStore {
     private static final Logger LOG = LoggerFactory.getLogger(OAuthPublicKeyStore.class);
     private final ObjectMapper objectMapper;
@@ -33,23 +35,27 @@ public class OAuthPublicKeyStore {
     private final OAuthPublicKeyRepository oAuthPublicKeyRepository;
 
     @Autowired
-    public OAuthPublicKeyStore(@Value("${api.oauth.publicKey.url}") final String publicKeyUrl,
+    public OAuthPublicKeyStore(@Value("${api.oauth.public-key.url}") final String publicKeyUrl,
                                final AsyncHttpClient asyncHttpClient,
                                final OAuthPublicKeyRepository oAuthPublicKeyRepository) {
         this.publicKeyUrl = publicKeyUrl;
-        this.asyncHttpClient = asyncHttpClient;
         this.oAuthPublicKeyRepository = oAuthPublicKeyRepository;
-        this.objectMapper = new ObjectMapper();
+        this.asyncHttpClient = asyncHttpClient;
 
+        this.objectMapper = new ObjectMapper();
         final SimpleModule module = new SimpleModule();
         module.addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer());
         objectMapper.registerModule(module);
     }
 
-    @Scheduled(fixedDelayString = "${api.oauth.interval}")
+    @Scheduled(fixedDelayString = "${api.oauth.public-key.interval}")
     public void retrieveApiOauthPublicKey() {
         try {
-            final Response response = asyncHttpClient.prepareGet(publicKeyUrl).execute().get();
+            final Response response = asyncHttpClient
+                    .prepareGet(publicKeyUrl)
+                    .setRequestTimeout(5000)
+                    .execute()
+                    .get();
             if (response.getStatusCode() == HttpStatus.OK.value()) {
                 try {
                     final OAuthPublicKey[] retrievedPublicKeys = objectMapper.readValue(response.getResponseBody(), OAuthPublicKey[].class);
@@ -59,6 +65,11 @@ public class OAuthPublicKeyStore {
                         LOG.error(String.format("Did not retrieve valid OAuthPublicKeys from %s", publicKeyUrl));
                     } else {
                         oAuthPublicKeyRepository.refreshPublicKeys(activePublicKeys);
+                        LOG.info(String.format(
+                                "Successfully retrieved %d public keys with the following finger prints: %s",
+                                activePublicKeys.size(),
+                                activePublicKeys.stream().map(OAuthPublicKey::getPublicKeyFingerprint).collect(toList()))
+                        );
                     }
                 } catch (final IOException ex) {
                     LOG.error(String.format("Unable to parse PublicKeys from OAuth-Server-Response: %s", ex.getMessage()), ex);
@@ -75,7 +86,7 @@ public class OAuthPublicKeyStore {
         return Arrays
                 .stream(publicKeys)
                 .filter(this::isValid)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private boolean isValid(final OAuthPublicKey publicKey) {

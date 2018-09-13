@@ -129,8 +129,7 @@ Examples:
 * [`example-status`](examples/example-status): Service only relying on `edison-core` to show the usage of health and status features. 
 * [`example-jobs`](examples/example-jobs): Edison service using edison-jobs to run background tasks. 
 * [`example-togglz`](examples/example-togglz): Example using `edison-togglz´ to implement feature toggles.
-* [`example-togglz-mongo`](examples/example-togglz-mongo): Same `edison-toggz`, but with a MongoDB configuration to auto-configure persistence of 
-feature toggles.
+* [`example-togglz-mongo`](examples/example-togglz-mongo): Same `edison-toggz`, but with a MongoDB configuration to auto-configure persistence of feature toggles.
 
 
 ## Setup
