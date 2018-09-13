@@ -70,8 +70,7 @@ Examples:
 * [`example-metrics`](examples/example-metrics): Service that is using edison-core metrics.
 * [`example-jobs`](examples/example-jobs): Edison service using edison-jobs to run background tasks. 
 * [`example-togglz`](examples/example-togglz): Example using `edison-togglz´ to implement feature toggles.
-* [`example-togglz-mongo`](examples/example-togglz-mongo): Same `edison-toggz`, but with a MongoDB configuration to auto-configure persistence of 
-feature toggles.
+* [`example-togglz-mongo`](examples/example-togglz-mongo): Same `edison-toggz`, but with a MongoDB configuration to auto-configure persistence of feature toggles.
 
 
 ## Setup

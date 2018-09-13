@@ -16,8 +16,10 @@ Enable by setting the following properties:
 ```properties
 api.oauth.public-key.enabled=true
 api.oauth.public-key.url=https://base.url/public/key/path
-api.oauth.public-key.interval=1800
+api.oauth.public-key.interval=1800000
 ```
+
+(`interval` defines the time in milliseconds between retrievals of public keys)
 
 The retrieved Data has to be in the following format:
 
