@@ -1,12 +1,13 @@
-package de.otto.edison.oauth;
+package de.otto.edison.oauth.configuration;
 
+import de.otto.edison.oauth.OAuthPublicKeyInMemoryRepository;
+import de.otto.edison.oauth.OAuthPublicKeyRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnProperty(prefix = "api.oauth.public-key", name = "enabled", havingValue = "true")
 public class OAuthPublicKeyConfiguration {
 
     @Bean
