@@ -6,6 +6,8 @@ ext {
     versions = [
             spring_boot                      : '2.0.4.RELEASE',
             spring                           : '5.0.8.RELEASE',
+            spring_boot_security_oauth       : '2.3.3.RELEASE',
+            spring_boot_security_jwt         : '1.0.9.RELEASE',
             async_http_client                : '2.5.2',
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.3',
@@ -47,6 +49,9 @@ ext {
             spring_boot_starter_cache          : "org.springframework.boot:spring-boot-starter-cache:${versions.spring_boot}",
             spring_boot_starter_actuator       : "org.springframework.boot:spring-boot-starter-actuator:${versions.spring_boot}",
             spring_boot_starter_thymeleaf      : "org.springframework.boot:spring-boot-starter-thymeleaf:${versions.spring_boot}",
+            spring_boot_security               : "org.springframework.security:spring-security-core:${versions.spring}",
+            spring_boot_security_oauth         : "org.springframework.security.oauth:spring-security-oauth2:${versions.spring_boot_security_oauth}",
+            spring_boot_security_jwt           : "org.springframework.security:spring-security-jwt:${versions.spring_boot_security_jwt}",
             aws_sdk_auth                       : "software.amazon.awssdk:auth:${versions.aws_sdk}",
             aws_sdk_core                       : "software.amazon.awssdk:core:${versions.aws_sdk}",
             aws_sdk_s3                         : "software.amazon.awssdk:s3:${versions.aws_sdk_preview}",

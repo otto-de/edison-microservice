@@ -17,6 +17,8 @@ Enable by setting the following properties:
 api.oauth.public-key.enabled=true
 api.oauth.public-key.url=https://base.url/public/key/path
 api.oauth.public-key.interval=1800000
+api.oauth.authorization.resource.patterns=
+api.oauth.jwt.audience=https://api.otto.de/api-authorization
 ```
 
 (`interval` defines the time in milliseconds between retrievals of public keys)
