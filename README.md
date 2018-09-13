@@ -60,6 +60,7 @@ Edison Modules:
  Togglz StateRepository.
 * [`edison-dynamodb`](edison-dynamodb/README.md): Auto-configuration for DynamoDB repositories plus implementation of DynamoJobRepository and
  Togglz StateRepository.
+* [`edison-oauth`](edison-oauth/README.md): Auto-configuration for OAuth Public Key repositories with autofetching and a simple JWT Token Validation.
 * [`edison-togglz`](edison-togglz/README.md): Optional support for feature toggles for Edison microservices based on [Togglz](https://www.togglz.org/).
 * `edison-testsupport`: Test support for feature toggles plus utilities.
 * [`edison-validation`](edison-validation/README.md): Optional module for validation in Spring with a specific response format.
