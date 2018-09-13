@@ -116,10 +116,11 @@ When migrating, take care of the following adjustments:
 ## Documentation
 
 Edison Modules:
+* [`edison-aws`](edison-aws/README.md): AWS related configuration and togglz settings
 * [`edison-core`](edison-core/README.md): Main library of Edison microservices.
 * [`edison-jobs`](edison-jobs/README.md): Optional module providing a simple job library.
-* [`edison-mongo`](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and
- Togglz StateRepository.
+* [`edison-mongo`](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and Togglz StateRepository.
+* [`edison-oauth`](edison-oauth/README.md): Auto-configuration for OAuth Public Key repositories with autofetching and a simple JWT Token Validation.
 * [`edison-togglz`](edison-togglz/README.md): Optional support for feature toggles for Edison microservices based on [Togglz](https://www.togglz.org/).
 * `edison-testsupport`: Test support for feature toggles plus utilities.
 * [`edison-validation`](edison-validation/README.md): Optional module for validation in Spring with a specific response format.
