@@ -1,7 +1,7 @@
 # Release Notes
 
 ## 1.2.24
-
+* **[edison-oauth]** make builder public
 
 ## 1.2.23
 * **[edison-oauth]** add module edison oauth
