@@ -34,7 +34,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
-        http.headers().disable().csrf().disable().authorizeRequests().antMatchers(resourceServerUrlPatterns).authenticated();
+        http
+                .headers().disable()
+                .csrf().disable()
+                .authorizeRequests().antMatchers(resourceServerUrlPatterns).authenticated();
     }
 
     private JwtAccessTokenConverter accessTokenConverter() {

@@ -2,7 +2,7 @@ package de.otto.edison.oauth;
 
 import com.fasterxml.jackson.core.JsonParser;
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.mockito.Mock;
 
 import java.io.IOException;
