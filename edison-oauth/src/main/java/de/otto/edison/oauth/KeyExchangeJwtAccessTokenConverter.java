@@ -36,7 +36,7 @@ public class KeyExchangeJwtAccessTokenConverter extends JwtAccessTokenConverter 
             try {
                 return decodeJwtMap(token, publicKey);
             } catch (final Exception e) {
-                LOG.error(String.format("Unable to verify JWT token with public key: %s", publicKey.getPublicKeyFingerprint()));
+                LOG.debug(String.format("Unable to verify JWT token with public key: %s", publicKey.getPublicKeyFingerprint()));
             }
         }
         return Collections.emptyMap();

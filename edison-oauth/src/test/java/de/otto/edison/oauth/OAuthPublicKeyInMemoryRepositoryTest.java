@@ -1,6 +1,6 @@
 package de.otto.edison.oauth;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
@@ -18,7 +18,7 @@ public class OAuthPublicKeyInMemoryRepositoryTest {
 
     private OAuthPublicKeyInMemoryRepository inMemoryRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         inMemoryRepository = new OAuthPublicKeyInMemoryRepository();
     }
@@ -49,6 +49,29 @@ public class OAuthPublicKeyInMemoryRepositoryTest {
 
         // then
         assertThat(inMemoryRepository.retrieveActivePublicKeys(), is(validPublicKeys));
+    }
+
+
+    @Test
+    public void shouldNotUpdateCachedListWithExistingKey() {
+        // given
+        final ZonedDateTime now = ZonedDateTime.now();
+        final OAuthPublicKey publicKeyOne = oAuthPublicKeyBuilder()
+                .withPublicKey("publicKeyOne")
+                .withPublicKeyFingerprint("fingerPrintOne")
+                .withValidFrom(now.minusDays(1))
+                .withValidUntil(now.plusDays(1))
+                .build();
+        final List<OAuthPublicKey> validPublicKeys = Collections.singletonList(publicKeyOne);
+
+        inMemoryRepository.refreshPublicKeys(validPublicKeys);
+        final List<OAuthPublicKey> activeKeys = inMemoryRepository.retrieveActivePublicKeys();
+
+        // when
+        inMemoryRepository.refreshPublicKeys(validPublicKeys);
+
+        // then
+        assertThat(inMemoryRepository.retrieveActivePublicKeys(), is(activeKeys));
     }
 
     @Test

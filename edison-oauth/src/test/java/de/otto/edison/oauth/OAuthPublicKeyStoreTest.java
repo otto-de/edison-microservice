@@ -4,16 +4,18 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.BoundRequestBuilder;
 import org.asynchttpclient.ListenableFuture;
 import org.asynchttpclient.Response;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static de.otto.edison.oauth.OAuthPublicKey.oAuthPublicKeyBuilder;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -40,7 +42,7 @@ public class OAuthPublicKeyStoreTest {
     @Mock
     private Response response;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         keyStore = new OAuthPublicKeyStore(publicKeyUrl, asyncHttpClient, oAuthPublicKeyRepository);
@@ -55,6 +57,7 @@ public class OAuthPublicKeyStoreTest {
         final ZonedDateTime twoDaysAgo = now.minusDays(2);
 
         when(asyncHttpClient.prepareGet(publicKeyUrl)).thenReturn(boundRequestBuilder);
+        when(boundRequestBuilder.setRequestTimeout(anyInt())).thenReturn(boundRequestBuilder);
         when(boundRequestBuilder.execute()).thenReturn(future);
         when(future.get()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(200);
@@ -105,6 +108,7 @@ public class OAuthPublicKeyStoreTest {
         final ZonedDateTime twoDaysAgo = now.minusDays(2);
 
         when(asyncHttpClient.prepareGet(publicKeyUrl)).thenReturn(boundRequestBuilder);
+        when(boundRequestBuilder.setRequestTimeout(anyInt())).thenReturn(boundRequestBuilder);
         when(boundRequestBuilder.execute()).thenReturn(future);
         when(future.get()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(200);
@@ -129,9 +133,7 @@ public class OAuthPublicKeyStoreTest {
                 .withValidFrom(oneDayAgo)
                 .withValidUntil(oneDayAhead)
                 .build();
-        final List<OAuthPublicKey> validPublicKeys = Arrays.asList(
-                publicKeyOne
-        );
+        final List<OAuthPublicKey> validPublicKeys = Collections.singletonList(publicKeyOne);
 
         keyStore.retrieveApiOauthPublicKey();
 
@@ -143,6 +145,7 @@ public class OAuthPublicKeyStoreTest {
     public void shoulNotCallRepositoryWhenServiceResponsesWithStatusOtherThan200() throws ExecutionException, InterruptedException {
         // given
         when(asyncHttpClient.prepareGet(publicKeyUrl)).thenReturn(boundRequestBuilder);
+        when(boundRequestBuilder.setRequestTimeout(anyInt())).thenReturn(boundRequestBuilder);
         when(boundRequestBuilder.execute()).thenReturn(future);
         when(future.get()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(500);
@@ -161,6 +164,7 @@ public class OAuthPublicKeyStoreTest {
         final ZonedDateTime twoDaysAgo = now.minusDays(2);
 
         when(asyncHttpClient.prepareGet(publicKeyUrl)).thenReturn(boundRequestBuilder);
+        when(boundRequestBuilder.setRequestTimeout(anyInt())).thenReturn(boundRequestBuilder);
         when(boundRequestBuilder.execute()).thenReturn(future);
         when(future.get()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(200);

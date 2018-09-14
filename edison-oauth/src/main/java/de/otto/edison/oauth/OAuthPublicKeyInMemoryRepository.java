@@ -3,12 +3,14 @@ package de.otto.edison.oauth;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class OAuthPublicKeyInMemoryRepository implements OAuthPublicKeyRepository {
 
-    private List<OAuthPublicKey> activePublicKeys;
+    private final List<OAuthPublicKey> activePublicKeys = new ArrayList<>();
 
     @Override
     public void refreshPublicKeys(final List<OAuthPublicKey> publicKeys) throws IllegalArgumentException {
@@ -17,7 +19,11 @@ public class OAuthPublicKeyInMemoryRepository implements OAuthPublicKeyRepositor
                 .stream()
                 .allMatch(this::isValid), "Invalid public keys retrieved");
 
-        activePublicKeys = publicKeys;
+        activePublicKeys.addAll(publicKeys
+                .stream()
+                .filter(k -> !activePublicKeys.contains(k))
+                .collect(Collectors.toList())
+        );
     }
 
     private boolean isValid(final OAuthPublicKey publicKey) {
@@ -29,6 +35,6 @@ public class OAuthPublicKeyInMemoryRepository implements OAuthPublicKeyRepositor
 
     @Override
     public List<OAuthPublicKey> retrieveActivePublicKeys() {
-        return activePublicKeys;
+        return activePublicKeys.stream().filter(this::isValid).collect(Collectors.toList());
     }
 }

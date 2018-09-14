@@ -6,12 +6,8 @@ dependencies {
     compile libraries.spring_boot_security_oauth
     compile libraries.spring_boot_security_jwt
 
-    testCompile test_libraries.junit
-    testCompile test_libraries.mockito_core
-    testCompile test_libraries.hamcrest_core
-    testCompile test_libraries.hamcrest_library
-    testCompile test_libraries.spring_boot_starter_test
     testCompile libraries.async_http_client
+    testCompile project(":edison-testsupport")
 }
 
 artifacts {
