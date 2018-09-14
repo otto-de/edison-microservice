@@ -14,11 +14,11 @@ can be used to validate the issuer of OAuth Token when receiving requests.
 Enable by setting the following properties:
 
 ```properties
-api.oauth.public-key.enabled=true
-api.oauth.public-key.url=https://base.url/public/key/path
-api.oauth.public-key.interval=1800000
-api.oauth.authorization.resource.patterns=
-api.oauth.jwt.audience=https://api.otto.de/api-authorization
+edison.oauth.public-key.enabled=true
+edison.oauth.public-key.url=https://base.url/public/key/path
+edison.oauth.public-key.interval=1800000
+edison.oauth.authorization.resource.patterns=
+edison.oauth.jwt.audience=https://api.otto.de/api-authorization
 ```
 
 (`interval` defines the time in milliseconds between retrievals of public keys)

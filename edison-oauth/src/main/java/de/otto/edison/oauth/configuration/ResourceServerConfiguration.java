@@ -21,10 +21,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Resource
     private KeyExchangeJwtAccessTokenConverter keyExchangeJwtAccessTokenConverter;
 
-    @Value("${api.oauth.jwt.audience}")
+    @Value("${edison.oauth.jwt.audience}")
     private String audience;
 
-    @Value("${api.oauth.authorization.resource.patterns:/oauth2/**}")
+    @Value("${edison.oauth.authorization.resource.patterns:/oauth2/**}")
     private String[] resourceServerUrlPatterns;
 
     @Override
