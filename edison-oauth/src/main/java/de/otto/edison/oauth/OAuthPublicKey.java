@@ -69,7 +69,7 @@ public class OAuthPublicKey {
                 '}';
     }
 
-    static class Builder {
+    public static class Builder {
         @NotNull
         private String publicKey;
 
