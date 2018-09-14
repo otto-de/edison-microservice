@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 import static java.util.stream.Collectors.toList;
 
 @Component
-@ConditionalOnExpression("${api.oauth.public-key.enabled:false} && ${api.oauth.public-key.interval:0}>0")
+@ConditionalOnExpression("${edison.oauth.public-key.enabled:false} && ${edison.oauth.public-key.interval:0}>0")
 public class OAuthPublicKeyStore {
     private static final Logger LOG = LoggerFactory.getLogger(OAuthPublicKeyStore.class);
     private final ObjectMapper objectMapper;
@@ -32,7 +32,7 @@ public class OAuthPublicKeyStore {
     private final OAuthPublicKeyRepository oAuthPublicKeyRepository;
 
     @Autowired
-    public OAuthPublicKeyStore(@Value("${api.oauth.public-key.url}") final String publicKeyUrl,
+    public OAuthPublicKeyStore(@Value("${edison.oauth.public-key.url}") final String publicKeyUrl,
                                final AsyncHttpClient asyncHttpClient,
                                final OAuthPublicKeyRepository oAuthPublicKeyRepository) {
         this.publicKeyUrl = publicKeyUrl;
@@ -45,7 +45,7 @@ public class OAuthPublicKeyStore {
         objectMapper.registerModule(module);
     }
 
-    @Scheduled(fixedDelayString = "${api.oauth.public-key.interval}")
+    @Scheduled(fixedDelayString = "${edison.oauth.public-key.interval}")
     public void retrieveApiOauthPublicKey() {
         try {
             final Response response = asyncHttpClient
