@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.23
+* **[edison-oauth]** add module edison oauth
+
 ## 1.2.22
 * **[edison-mongo]** Replace fongo tests with embedded mongo tests, because fongo doesn't work with recent mongo drivers
 * **[edison-mongo]** Updated mongo client library to latest version 3.8.1                       
