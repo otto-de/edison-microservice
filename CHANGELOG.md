@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.24
+
+
 ## 1.2.23
 * **[edison-oauth]** add module edison oauth
 
