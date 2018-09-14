@@ -1,5 +1,8 @@
 .idea/
 .gradle
+gradlew*
+gradlew/
+gradle/
 .shelf
 build
 out
