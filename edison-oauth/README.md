@@ -17,8 +17,6 @@ Enable by setting the following properties:
 edison.oauth.public-key.enabled=true
 edison.oauth.public-key.url=https://base.url/public/key/path
 edison.oauth.public-key.interval=1800000
-edison.oauth.authorization.resource.patterns=
-edison.oauth.jwt.audience=https://api.otto.de/api-authorization
 ```
 
 (`interval` defines the time in milliseconds between retrievals of public keys)
@@ -46,3 +44,36 @@ or
 
 All valid keys are kept and can be validated against. 
 
+## OAuth authorisation for Controller
+
+### Description
+
+An OAuth2 Security Filter is added and can be used to verify users based on their scope inside
+their `Authorization`-Header.
+
+### Usage
+
+The configuration of the OAuthSecurity Beans is done automatically when adding the module `edison-oauth`.
+Configure it by setting the following properties:
+
+```properties
+edison.oauth.authorization.resource.patterns=["/secured/path","/another/secured/path/**"]
+edison.oauth.jwt.audience=https://api.otto.de/api-authorization
+```
+
+(`patterns` defaults to `/oauth/**`)
+
+Afterwards, you can use an annotation at the controller method that checks the request
+for a certain `scope` inside the JWT Data:
+
+```java
+    @RequestMapping(method = GET, value = "/secured/path", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @PreAuthorize("#oauth2.hasScope('some.oauth.scope')")
+    public List<Object> getObjects() {
+        ...
+    }
+```
+
+If the user is not authorized, he'll retrieve a HttpStatus of `401`. See the Spring documentation on
+OAuth for more details: https://spring.io/projects/spring-security-oauth 
