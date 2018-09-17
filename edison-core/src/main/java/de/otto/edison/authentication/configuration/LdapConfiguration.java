@@ -45,7 +45,7 @@ public class LdapConfiguration {
                                                            final LdapConnectionFactory ldapConnectionFactory) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
         filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties, ldapConnectionFactory));
-        filterRegistration.addUrlPatterns(String.format("%s/*", ldapProperties.getPrefix()));
+        ldapProperties.getPrefixes().forEach(prefix -> filterRegistration.addUrlPatterns(String.format("%s/*", prefix)));
         return filterRegistration;
     }
 }

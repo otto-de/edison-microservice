@@ -60,7 +60,7 @@ public class LdapProperties {
     /**
      * Prefix for LDAP secured paths, defaults to "/internal"
      */
-    private String prefix = "/internal";
+    private List<String> prefixes = Collections.singletonList( "/internal");
 
     /**
      * List of paths that should be whitelisted from LDAP authentication (sub-paths will also be whitelisted)
@@ -81,7 +81,7 @@ public class LdapProperties {
      * @param baseDn Base distinguished name
      * @param roleBaseDn Base distinguished name used to select user roles
      * @param rdnIdentifier Relative distinguished name
-     * @param prefix Prefix for paths that should require LDAP authentication
+     * @param prefix Prefixes of paths that should require LDAP authentication
      * @param encryptionType StartTLS or SSL for the connection to the LDAP server
      * @param whitelistedPaths Paths that should be excluded from LDAP authentication (includes sub-paths)
      * @return Ldap properties
@@ -91,9 +91,10 @@ public class LdapProperties {
                                                 final List<String> baseDn,
                                                 final String roleBaseDn,
                                                 final String rdnIdentifier,
-                                                final String prefix,
+                                                final List<String> prefix,
                                                 final EncryptionType encryptionType,
                                                 final String... whitelistedPaths) {
+
         final LdapProperties ldap = new LdapProperties();
         ldap.setEnabled(true);
         ldap.setHost(host);
@@ -101,7 +102,7 @@ public class LdapProperties {
         ldap.setBaseDn(baseDn);
         ldap.setRoleBaseDn(roleBaseDn);
         ldap.setRdnIdentifier(rdnIdentifier);
-        ldap.setPrefix(prefix);
+        ldap.setPrefixes(prefix);
         ldap.setEncryptionType(encryptionType);
         ldap.setWhitelistedPaths(asList(whitelistedPaths));
         return ldap;
@@ -177,12 +178,12 @@ public class LdapProperties {
         this.rdnIdentifier = rdnIdentifier;
     }
 
-    public String getPrefix() {
-        return prefix;
+    public List<String> getPrefixes() {
+        return prefixes;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
+    public void setPrefixes(List<String> prefixes) {
+        this.prefixes = prefixes;
     }
 
     public List<String> getWhitelistedPaths() {
