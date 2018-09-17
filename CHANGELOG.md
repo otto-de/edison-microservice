@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.2.25
+
+**Maintenance:**
+* **[edison-core]** changed prefix flag to be a list in order to support more than one paths that have to be secured
+
 ## 1.2.24
 * **[edison-oauth]** make builder public
 
@@ -89,7 +94,6 @@
 **Breaking Changes:**
 
 * **[edison-dynamodb]** __(Beta)__ Moved to [edison-aws](https://github.com/otto-de/edison-aws) repository.
-
 ## 1.2.2
 
 **Bugfixes:**
