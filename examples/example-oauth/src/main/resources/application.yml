@@ -40,6 +40,6 @@ edison:
             interval: 1800000
         authorization:
             resource:
-                patterns: "/lever"
+                patterns: "/api/**"
         jwt:
-            audience: https://develop.otto.de/api-authorization
+            audience: https://api.otto.de/api-authorization

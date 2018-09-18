@@ -1,0 +1,9 @@
+edison:
+    oauth:
+        public-key:
+            enabled: false
+        authorization:
+            resource:
+                patterns: "/"
+        jwt:
+            audience: https://api.otto.de/api-authorization
