@@ -1,0 +1,33 @@
+spring:
+    application:
+        name: example-oauth
+    jackson:
+        date-format: yyyy-MM-dd'T'hh:mm:ss.sssZ
+        serialization:
+            indent-output: true
+
+server:
+    servlet:
+        context-path: /
+    port: 8080
+
+management:
+    endpoints:
+        web:
+            base-path: /actuator
+            expose: '*'
+
+edison:
+    gracefulshutdown:
+        enabled: false
+    application:
+        name: status
+        description: Example service to show how to use edison-core in your microservices
+        environment: local
+        group: example
+        title: Example Status
+    status:
+        team:
+            business-contact: edison-team@example.org
+            name: Edison Team
+            technical-contact: edison-dev@example.org
