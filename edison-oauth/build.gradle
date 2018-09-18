@@ -5,7 +5,6 @@ dependencies {
     compile libraries.spring_boot_security
     compile libraries.spring_boot_security_oauth
     compile libraries.spring_boot_security_jwt
-    compile java_xml
 
     testCompile libraries.async_http_client
     testCompile project(":edison-testsupport")
