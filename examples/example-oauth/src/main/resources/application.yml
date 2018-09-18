@@ -31,3 +31,15 @@ edison:
             business-contact: edison-team@example.org
             name: Edison Team
             technical-contact: edison-dev@example.org
+
+    # OAuth Configuration goes here
+    oauth:
+        public-key:
+            enabled: true
+            url: http://localhost:8080/publicKey
+            interval: 1800000
+        authorization:
+            resource:
+                patterns: "/lever"
+        jwt:
+            audience: https://develop.otto.de/api-authorization

@@ -2,6 +2,7 @@ package de.otto.edison.example;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 
 import static org.springframework.boot.SpringApplication.run;
 
