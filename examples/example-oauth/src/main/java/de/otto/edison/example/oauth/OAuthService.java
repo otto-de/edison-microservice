@@ -10,14 +10,15 @@ import org.springframework.stereotype.Service;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 
 import static de.otto.edison.oauth.OAuthPublicKey.oAuthPublicKeyBuilder;
 
 @Service
 public class OAuthService {
 
-    private static final ZonedDateTime VALID_UNTIL = ZonedDateTime.now().minusDays(1);
-    private static final ZonedDateTime VALID_FROM = ZonedDateTime.now().plusDays(1);
+    private static final ZonedDateTime VALID_FROM = ZonedDateTime.now().minusDays(1);
+    private static final ZonedDateTime VALID_UNTIL = ZonedDateTime.now().plusDays(1);
     private final KeyPair keyPair;
 
     @Autowired
@@ -29,7 +30,7 @@ public class OAuthService {
         final ZonedDateTime soon = ZonedDateTime.now().plusDays(365);
         final String jwtToken = "{\n" +
                 "  \"aud\": [\n" +
-                "    \"someAudience\"\n" +
+                "    \"https://api.otto.de/api-authorization\"\n" +
                 "  ],\n" +
                 "  \"exp\": " + soon.toInstant().getEpochSecond() + ",\n" +
                 "  \"user_name\": \"3d44bbc24614e28edd094bc54ef0497809717af5\",\n" +
@@ -46,7 +47,7 @@ public class OAuthService {
 
     public OAuthPublicKey getPublicKey() {
         final String publicKeyStringRepresentation = "-----BEGIN PUBLIC KEY-----\n" +
-                new String(this.keyPair.getPublic().getEncoded()) +
+                new String(Base64.getEncoder().encode(this.keyPair.getPublic().getEncoded())) +
                 "\n-----END PUBLIC KEY-----";
 
         return oAuthPublicKeyBuilder()

@@ -23,7 +23,8 @@ ext {
             slf4j                            : '1.7.25',
             aws_sdk                          : '2.0.1',
             aws_sdk_preview                  : '2.0.0-preview-11',
-            java_validation_api              : '2.0.1.Final'
+            java_validation_api              : '2.0.1.Final',
+            java_xml                         : '2.3.0'
     ]
     test_versions = [
             junit         : '5.2.0',
@@ -71,6 +72,11 @@ ext {
             java_validation_api                : "javax.validation:validation-api:${versions.java_validation_api}",
             edison_hal                         : "de.otto.edison:edison-hal:${versions.edison_hal}",
             validator_collection               : "cz.jirutka.validator:validator-collection:${versions.validator_collection}"
+    ]
+    java_xml = [
+            "javax.xml.bind:jaxb-api:${versions.java_xml}",
+            "com.sun.xml.bind:jaxb-core:${versions.java_xml}",
+            "com.sun.xml.bind:jaxb-impl:${versions.java_xml}"
     ]
     test_libraries = [
             junit                   : "org.junit.jupiter:junit-jupiter-api:${test_versions.junit}",
