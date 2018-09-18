@@ -1,5 +1,6 @@
 package de.otto.edison.example.oauth;
 
+import de.otto.edison.oauth.OAuthPublicKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
@@ -9,15 +10,18 @@ import org.springframework.stereotype.Service;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.time.ZonedDateTime;
-import java.util.Base64;
+
+import static de.otto.edison.oauth.OAuthPublicKey.oAuthPublicKeyBuilder;
 
 @Service
 public class OAuthService {
 
+    private static final ZonedDateTime VALID_UNTIL = ZonedDateTime.now().minusDays(1);
+    private static final ZonedDateTime VALID_FROM = ZonedDateTime.now().plusDays(1);
     private final KeyPair keyPair;
 
     @Autowired
-    public OAuthService(KeyPair keyPair) {
+    public OAuthService(final KeyPair keyPair) {
         this.keyPair = keyPair;
     }
 
@@ -37,14 +41,20 @@ public class OAuthService {
                 "}";
         final RsaSigner rsaSigner = new RsaSigner((RSAPrivateKey) keyPair.getPrivate());
 
-
         return JwtHelper.encode(jwtToken, rsaSigner);
     }
 
-    public String getPublicKey() {
-        return "-----BEGIN PUBLIC KEY-----\n" +
+    public OAuthPublicKey getPublicKey() {
+        final String publicKeyStringRepresentation = "-----BEGIN PUBLIC KEY-----\n" +
                 new String(this.keyPair.getPublic().getEncoded()) +
                 "\n-----END PUBLIC KEY-----";
+
+        return oAuthPublicKeyBuilder()
+                .withValidUntil(VALID_UNTIL)
+                .withValidFrom(VALID_FROM)
+                .withPublicKeyFingerprint("fingerprint")
+                .withPublicKey(publicKeyStringRepresentation)
+                .build();
 
     }
 }

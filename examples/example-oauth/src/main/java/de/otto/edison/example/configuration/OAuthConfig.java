@@ -10,7 +10,6 @@ import java.security.NoSuchAlgorithmException;
 @Configuration
 public class OAuthConfig {
 
-
     @Bean
     public KeyPair keyPair() throws NoSuchAlgorithmException {
         return KeyPairGenerator.getInstance("RSA").generateKeyPair();
