@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.2.26
+
+**Maintenance:**
+* **[edison-jobs]** add retries to manuallyTriggerableJobDefinition
+
 ## 1.2.25
 
 **Maintenance:**
