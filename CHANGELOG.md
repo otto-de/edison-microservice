@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2-0.0-m4
+
+* **[general]**: You need Java >9 to compile, but target compatibility is set back to 1.8
+* **[edison-mongo]** create compound index of `type` and `started` in job repository
+
 ## 2.0.0-m3
 
 * **[edison-togglz]**: TogglzStateRepositories are now always Cache-Repositories with a TTL of 60 Seconds. 
