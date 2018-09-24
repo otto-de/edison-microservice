@@ -4,6 +4,7 @@
 
 **Maintenance:**
 * **[edison-jobs]** add retries to manuallyTriggerableJobDefinition
+* **[edison-mongo]** create compound index of `type` and `started` in job repository
 
 ## 1.2.25
 
