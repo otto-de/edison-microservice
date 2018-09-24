@@ -230,7 +230,7 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     @Override
     protected final void ensureIndexes() {
         IndexOptions options = new IndexOptions().background(true);
-        collection().createIndex(Indexes.ascending(JobStructure.JOB_TYPE.key()), options);
+        collection().createIndex(Indexes.compoundIndex(Indexes.ascending(JobStructure.JOB_TYPE.key()), Indexes.descending(JobStructure.STARTED.key())), options);
         collection().createIndex(Indexes.ascending(JobStructure.STARTED.key()), options);
         collection().createIndex(Indexes.ascending(JobStructure.LAST_UPDATED.key(), JobStructure.STOPPED.key()), options);
     }
