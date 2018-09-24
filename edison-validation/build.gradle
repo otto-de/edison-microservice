@@ -9,6 +9,9 @@ dependencies {
     testImplementation test_libraries.rest_assured
 }
 
+javadoc {
+    options.addBooleanOption('html5', true)
+}
 
 artifacts {
     archives jar

@@ -8,6 +8,10 @@ dependencies {
     testCompile project(":edison-testsupport")
 }
 
+javadoc {
+    options.addBooleanOption('html5', true)
+}
+
 artifacts {
     archives jar
     archives javadocJar

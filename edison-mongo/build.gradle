@@ -13,6 +13,10 @@ dependencies {
     testCompile test_libraries.embedded_mongo
 }
 
+javadoc {
+    options.addBooleanOption('html5', true)
+}
+
 artifacts {
     archives jar
     archives javadocJar

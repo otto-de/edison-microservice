@@ -8,6 +8,10 @@ dependencies {
     testCompile test_libraries.jsonassert
 }
 
+javadoc {
+    options.addBooleanOption('html5', true)
+}
+
 artifacts {
     archives jar
     archives javadocJar

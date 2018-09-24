@@ -16,6 +16,10 @@ dependencies {
     compile test_libraries.spring_boot_starter_test
 }
 
+javadoc {
+    options.addBooleanOption('html5', true)
+}
+
 artifacts {
     archives jar
     archives javadocJar
