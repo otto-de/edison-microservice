@@ -1,4 +1,4 @@
-package de.otto.edison.aws.s3;
+package de.otto.edison.togglz.s3;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;

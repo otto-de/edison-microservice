@@ -1,8 +1,7 @@
-package de.otto.edison.aws.s3.togglz;
+package de.otto.edison.togglz.s3;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
@@ -10,11 +9,7 @@ import org.togglz.core.util.FeatureStateStorageWrapper;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
-import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 
@@ -27,7 +22,6 @@ public class FeatureStateConverter {
     private final S3TogglzProperties s3TogglzProperties;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
     public FeatureStateConverter(final S3Client s3Client,
                                  final S3TogglzProperties s3TogglzProperties) {
         this.s3Client = s3Client;

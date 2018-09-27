@@ -1,4 +1,4 @@
-package de.otto.edison.aws.s3.togglz;
+package de.otto.edison.togglz.s3;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -16,8 +16,8 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
 import java.util.HashSet;
 
-import static de.otto.edison.aws.s3.S3TestHelper.createS3Client;
-import static de.otto.edison.aws.s3.S3TestHelper.createTestContainer;
+import static de.otto.edison.togglz.s3.S3TestHelper.createS3Client;
+import static de.otto.edison.togglz.s3.S3TestHelper.createTestContainer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 

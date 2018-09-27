@@ -1,11 +1,13 @@
 rootProject.name = 'edison-microservice'
 
 include "edison-testsupport"
-include "edison-aws"
+include "edison-paramstore"
 include "edison-mongo"
 include "edison-jobs"
 include "edison-togglz"
+include "edison-togglz-s3"
 include "edison-core"
+include "edison-auth-aws"
 include "edison-validation"
 include "edison-oauth"
 include "examples:example-status"

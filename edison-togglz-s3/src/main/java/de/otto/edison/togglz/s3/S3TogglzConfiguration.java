@@ -1,4 +1,4 @@
-package de.otto.edison.aws.s3.togglz;
+package de.otto.edison.togglz.s3;
 
 import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;

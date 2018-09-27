@@ -1,4 +1,4 @@
-package de.otto.edison.aws.s3.togglz;
+package de.otto.edison.togglz.s3;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

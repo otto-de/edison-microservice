@@ -1,4 +1,4 @@
-package de.otto.edison.aws.s3.togglz;
+package de.otto.edison.togglz.s3;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;

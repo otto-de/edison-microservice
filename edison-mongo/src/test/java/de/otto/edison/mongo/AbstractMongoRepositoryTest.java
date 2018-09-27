@@ -6,6 +6,10 @@ import de.otto.edison.mongo.configuration.MongoProperties;
 import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
 import org.bson.Document;
 import org.hamcrest.CustomMatcher;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,19 +18,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsNot.not;
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -66,7 +65,7 @@ public class AbstractMongoRepositoryTest {
         assertThat(foundObjects.size(), is(2));
         assertThat(foundObjects, Matchers.containsInAnyOrder(asList(
                 new TestObjectMatcher(testObjectA),
-                new TestObjectMatcher(testObjectB))));
+                new TestObjectMatcher(testObjectB)));
     }
 
     @Test

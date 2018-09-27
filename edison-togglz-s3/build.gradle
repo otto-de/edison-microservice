@@ -1,6 +1,5 @@
 dependencies {
     compile libraries.spring_boot_autoconfigure
-    compile libraries.aws_sdk_ssm
     compile libraries.aws_sdk_s3
     compile project(":edison-togglz")
 
@@ -14,10 +13,6 @@ dependencies {
     testCompile test_libraries.spring_boot_starter_test
     testCompile test_libraries.testcontainers
 
-}
-
-javadoc {
-    options.addBooleanOption('html5', true)
 }
 
 artifacts {
@@ -39,9 +34,9 @@ uploadArchives {
             }
 
             pom.project {
-                name 'edison-aws'
+                name 'edison-togglz-s3'
                 packaging 'jar'
-                description 'Configuration of Edison-AWS microservices.'
+                description 'S3 implementation of Togglz for Edison microservices.'
                 url 'http://github.com/otto-de/edison-microservice'
 
                 scm {
