@@ -1,7 +1,7 @@
 package de.otto.edison.jobs.domain;
 
 import de.otto.edison.jobs.controller.JobRepresentation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.is;
 
 public class JobRepresentationTest {
 
-    @Test()
+    @Test
     public void shouldCalculateRuntime() throws InterruptedException {
         final JobInfo job = jobInfoWithRuntime(90, ChronoUnit.SECONDS);
 

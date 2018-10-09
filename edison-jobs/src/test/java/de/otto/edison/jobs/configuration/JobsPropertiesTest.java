@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.configuration;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -2,8 +2,8 @@ package de.otto.edison.jobs.domain;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.JobMetaRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -20,7 +20,7 @@ public class MetaJobRunnableTest {
     JobMetaRepository metaRepository;
     MetaJobRunnable testee;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         metaRepository = mock(JobMetaRepository.class);
         testee = new MetaJobRunnable("someJob", metaRepository) {

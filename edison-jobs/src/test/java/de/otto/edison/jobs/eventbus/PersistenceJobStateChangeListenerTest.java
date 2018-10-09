@@ -4,8 +4,8 @@ import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.service.JobRunnable;
 import de.otto.edison.jobs.service.JobService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.time.OffsetDateTime;
@@ -42,7 +42,7 @@ public class PersistenceJobStateChangeListenerTest {
 
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         initMocks(this);
 

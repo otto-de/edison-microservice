@@ -4,8 +4,8 @@ import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.domain.RunningJob;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobMetaRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.util.HashSet;
@@ -17,6 +17,7 @@ import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,7 +32,7 @@ public class JobMetaServiceTest {
 
     private JobMetaService jobMetaService;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         initMocks(this);
@@ -57,7 +58,7 @@ public class JobMetaServiceTest {
         verify(jobMetaRepository).clearRunningJob("someType");
     }
 
-    @Test(expected = JobBlockedException.class)
+    @Test
     public void shouldNotAquireLockIfAlreadyRunning() throws Exception {
         // given
         when(jobMetaRepository.findAllJobTypes()).thenReturn(emptySet());
@@ -65,10 +66,10 @@ public class JobMetaServiceTest {
         when(jobMetaRepository.setRunningJob("myJobType", "someId")).thenReturn(false);
 
         // when
-        jobMetaService.aquireRunLock("jobId", "myJobType");
+        assertThrows(JobBlockedException.class, () -> jobMetaService.aquireRunLock("jobId", "myJobType"));
     }
 
-    @Test(expected = JobBlockedException.class)
+    @Test
     public void shouldNotStartJobIfBlockedByAnotherJob() throws Exception {
         // given
         when(jobMetaRepository.findAllJobTypes()).thenReturn(new HashSet<>(asList("job1", "job2")));
@@ -78,15 +79,10 @@ public class JobMetaServiceTest {
         when(jobMutexGroups.mutexJobTypesFor("job2")).thenReturn(new HashSet<>(asList("job1", "job2")));
 
         // when
-        try {
-            jobMetaService.aquireRunLock("first", "job2");
-        }
 
         // then
-        catch (final JobBlockedException e) {
-            verify(jobMetaRepository).clearRunningJob("job2");
-            throw e;
-        }
+        assertThrows(JobBlockedException.class, () -> jobMetaService.aquireRunLock("first", "job2"));
+        verify(jobMetaRepository).clearRunningJob("job2");
     }
 
     @Test
@@ -101,7 +97,7 @@ public class JobMetaServiceTest {
         ));
     }
 
-    @Test(expected = JobBlockedException.class)
+    @Test
     public void shouldNotStartADisabledJob() {
         // given
         when(jobMetaRepository.findAllJobTypes()).thenReturn(singleton("jobType"));
@@ -110,15 +106,9 @@ public class JobMetaServiceTest {
         );
 
         // when
-        try {
-            jobMetaService.aquireRunLock("someId", "jobType");
-        }
 
         // then
-        catch (JobBlockedException e) {
-            assertThat(e.getMessage(), is("Job 'jobType' is currently disabled"));
-            throw e;
-        }
+        assertThrows(JobBlockedException.class, () -> jobMetaService.aquireRunLock("someId", "jobType"), "Job 'jobType' is currently disabled");
     }
 
     @Test

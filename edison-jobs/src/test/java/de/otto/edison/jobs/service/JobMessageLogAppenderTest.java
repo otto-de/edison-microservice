@@ -4,8 +4,8 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import de.otto.edison.jobs.domain.JobMarker;
 import de.otto.edison.jobs.domain.JobMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -26,7 +26,7 @@ public class JobMessageLogAppenderTest {
 
     private JobMessageLogAppender jobEventAppender;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         jobService = mock(JobService.class);
         jobEventAppender = new JobMessageLogAppender(jobService);

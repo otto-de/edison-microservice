@@ -5,8 +5,8 @@ import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.navigation.NavBar;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -50,7 +50,7 @@ public class JobDefinitionsControllerTest {
 
     private static String MANAGEMENT_CONTEXT = "/someManagementContext";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         initMocks(this);
         webEndpointProperties.getManagement().setBasePath(MANAGEMENT_CONTEXT);

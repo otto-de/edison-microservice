@@ -5,8 +5,8 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
@@ -59,7 +59,7 @@ public class JobsControllerTest {
     private MockMvc mockMvc;
     private JobsController jobsController;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         jobsController = new JobsController(jobService, jobMetaService, navBar, applicationProperties);

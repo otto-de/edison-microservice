@@ -8,8 +8,8 @@ import de.otto.edison.jobs.status.JobStatusCalculator;
 import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
@@ -33,7 +33,7 @@ public class JobsConfigurationTest {
     private EdisonApplicationProperties properties;
     private JobsConfiguration testee;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         properties = new EdisonApplicationProperties();
         testee = new JobsConfiguration(new JobsProperties(), properties);

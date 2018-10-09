@@ -1,8 +1,8 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.slf4j.MDC;
@@ -47,7 +47,7 @@ public class JobRunnerTest {
     @Mock
     private ScheduledFuture<?> scheduledJob;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         initMocks(this);
 

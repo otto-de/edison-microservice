@@ -4,7 +4,7 @@ package de.otto.edison.jobs.repository;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Instant;

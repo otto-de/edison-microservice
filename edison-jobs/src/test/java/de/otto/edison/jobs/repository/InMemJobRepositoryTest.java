@@ -7,8 +7,8 @@ import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
 import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsCollectionWithSize;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -40,7 +40,7 @@ public class InMemJobRepositoryTest {
 
     InMemJobRepository repository;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         repository = new InMemJobRepository();
     }
