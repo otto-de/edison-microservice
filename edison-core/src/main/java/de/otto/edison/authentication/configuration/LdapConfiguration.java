@@ -1,15 +1,17 @@
 package de.otto.edison.authentication.configuration;
 
 import de.otto.edison.authentication.LdapAuthenticationFilter;
+import de.otto.edison.authentication.LdapRoleAuthenticationFilter;
+import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import de.otto.edison.authentication.connection.SSLLdapConnectionFactory;
 import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
-import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * Configuration for LDAP authentication. Secures specific endpoints according to the {@code edison.ldap} configuration
@@ -18,13 +20,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(LdapProperties.class)
 @ConditionalOnProperty(prefix = "edison.ldap", name = "enabled", havingValue = "true")
-@ConditionalOnMissingBean(name = {"ldapAuthenticationFilter", "togglzAuthenticationFilter"})
-//TODO: remove deprecated togglzAuthenticationFilter from ConditionalOnMissingBean in Edison 2.0.0
+@ConditionalOnMissingBean(name = {"ldapAuthenticationFilter"})
 public class LdapConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(LdapConnectionFactory.class)
-    @ConditionalOnProperty(prefix = "edison.ldap", name = "enabled", havingValue = "true")
     public LdapConnectionFactory ldapConnectionFactory(final LdapProperties ldapProperties) {
         if (ldapProperties.getEncryptionType() == EncryptionType.SSL) {
             return new SSLLdapConnectionFactory(ldapProperties);
@@ -34,10 +34,11 @@ public class LdapConfiguration {
 
     /**
      * Add an authentication filter to the web application context if edison.ldap property is set to {@code enabled}'.
-     * All routes starting with the value of the {@code edison.ldap.prefix} property will be secured by LDAP. If no
+     * All routes starting with the value of the {@code edison.ldap.prefixes} property will be secured by LDAP. If no
      * property is set this will default to all routes starting with '/internal'.
      *
      * @param ldapProperties the properties used to configure LDAP
+     * @param ldapConnectionFactory the connection factory used to build the LdapAuthenticationFilter
      * @return FilterRegistrationBean
      */
     @Bean
@@ -45,7 +46,26 @@ public class LdapConfiguration {
                                                            final LdapConnectionFactory ldapConnectionFactory) {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
         filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties, ldapConnectionFactory));
+        filterRegistration.setOrder(Ordered.LOWEST_PRECEDENCE - 1);
         ldapProperties.getPrefixes().forEach(prefix -> filterRegistration.addUrlPatterns(String.format("%s/*", prefix)));
         return filterRegistration;
     }
+
+    /**
+     * Add an authentication filter that requires a certain LDAP role to access secured paths.
+     * All routes starting with the value of the {@code edison.ldap.prefixes} property will be secured by LDAP.
+     * If no property is set this will default to all routes starting with '/internal'.
+     *
+     * @param ldapProperties the properties used to configure LDAP
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = "edison.ldap", name = "required-role")
+    public FilterRegistrationBean ldapRoleAuthenticationFilter(final LdapProperties ldapProperties) {
+        FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
+        filterRegistration.setFilter(new LdapRoleAuthenticationFilter(ldapProperties));
+        filterRegistration.setOrder(Ordered.LOWEST_PRECEDENCE);
+        ldapProperties.getPrefixes().forEach(prefix -> filterRegistration.addUrlPatterns(String.format("%s/*", prefix)));
+        return filterRegistration;
+    }
+
 }

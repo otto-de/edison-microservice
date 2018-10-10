@@ -6,11 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -47,10 +46,19 @@ public class LdapProperties {
      */
     @NotEmpty
     private List<String> baseDn;
+
     /**
      * Distinguished name used to select user roles
      */
     private String roleBaseDn = null;
+
+    /**
+     * The role that is required to access LDAP secured paths. The available roles for an user are retrieved by
+     * querying the LDAP tree using the {@link #roleBaseDn}. No sub tree branches are evaluated: The role has to
+     * be directly located under the baseRoleDn.
+     */
+    private String requiredRole = null;
+
     /**
      * Relative distinguished name (RDN)
      */
@@ -58,15 +66,24 @@ public class LdapProperties {
     private String rdnIdentifier;
 
     /**
+     * * Prefix for LDAP secured paths, defaults to "/internal"
+     *
+     * @deprecated use {@link #prefixes};
+     *             For backwards compatibility this deprecated prefix is automatically appended to {@link #prefixes}.
+     */
+    @Deprecated
+    private String prefix = "/internal";
+
+    /**
      * Prefix for LDAP secured paths, defaults to "/internal"
      */
-    private List<String> prefixes = Collections.singletonList( "/internal");
+    private Collection<String> prefixes = Collections.emptyList();
 
     /**
      * List of paths that should be whitelisted from LDAP authentication (sub-paths will also be whitelisted)
      */
     // TODO remove default internal/health
-    private List<String> whitelistedPaths = Collections.singletonList("/internal/health");
+    private List<String> whitelistedPaths = singletonList("/internal/health");
 
     /**
      * You can choose between StartTLS and SSL encryption for the LDAP server connection
@@ -81,7 +98,7 @@ public class LdapProperties {
      * @param baseDn Base distinguished name
      * @param roleBaseDn Base distinguished name used to select user roles
      * @param rdnIdentifier Relative distinguished name
-     * @param prefix Prefixes of paths that should require LDAP authentication
+     * @param prefixes Prefixes for paths that should require LDAP authentication
      * @param encryptionType StartTLS or SSL for the connection to the LDAP server
      * @param whitelistedPaths Paths that should be excluded from LDAP authentication (includes sub-paths)
      * @return Ldap properties
@@ -91,10 +108,9 @@ public class LdapProperties {
                                                 final List<String> baseDn,
                                                 final String roleBaseDn,
                                                 final String rdnIdentifier,
-                                                final List<String> prefix,
+                                                final Collection<String> prefixes,
                                                 final EncryptionType encryptionType,
                                                 final String... whitelistedPaths) {
-
         final LdapProperties ldap = new LdapProperties();
         ldap.setEnabled(true);
         ldap.setHost(host);
@@ -102,7 +118,7 @@ public class LdapProperties {
         ldap.setBaseDn(baseDn);
         ldap.setRoleBaseDn(roleBaseDn);
         ldap.setRdnIdentifier(rdnIdentifier);
-        ldap.setPrefixes(prefix);
+        ldap.setPrefixes(prefixes);
         ldap.setEncryptionType(encryptionType);
         ldap.setWhitelistedPaths(asList(whitelistedPaths));
         return ldap;
@@ -170,6 +186,14 @@ public class LdapProperties {
         this.roleBaseDn = roleBaseDn;
     }
 
+    public String getRequiredRole() {
+        return requiredRole;
+    }
+
+    public void setRequiredRole(String requiredRole) {
+        this.requiredRole = requiredRole;
+    }
+
     public String getRdnIdentifier() {
         return rdnIdentifier;
     }
@@ -178,11 +202,23 @@ public class LdapProperties {
         this.rdnIdentifier = rdnIdentifier;
     }
 
-    public List<String> getPrefixes() {
-        return prefixes;
+    @Deprecated
+    public String getPrefix() {
+        return prefix;
     }
 
-    public void setPrefixes(List<String> prefixes) {
+    @Deprecated
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public Collection<String> getPrefixes() {
+        Collection<String> copy = new HashSet<>(prefixes);
+        copy.add(prefix);
+        return copy;
+    }
+
+    public void setPrefixes(Collection<String> prefixes) {
         this.prefixes = prefixes;
     }
 
@@ -201,4 +237,5 @@ public class LdapProperties {
     public void setEncryptionType(EncryptionType encryptionType) {
         this.encryptionType = encryptionType;
     }
+
 }

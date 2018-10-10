@@ -1,13 +1,23 @@
 # Release Notes
 
-## 1.2.26
+## 1.2.27
+**New Features:**
+* **[edison-core]** Enhanced LDAP configuration to require a specific role to access secured paths. To achieve this you 
+                    can set the property `edison.ldap.required-role`. As usual, all whitelisted paths will be ignored.
+* **[edison-core]** Enhanced LDAP configuration to use more than one prefix path with the property `edison.ldap.prefixes`.  
+                    The old property `prefix` is now deprecated, but still usable and will be appended to `prefixes`.
+                    
+**Deprecation:**
+* **[edison-core]** The single value property `edison.ldap.prefix` is now deprecated and replaced by the multi value 
+                    property `edison.ldap.prefixes`.  
+                    The old property `prefix` is now deprecated, but still usable and will be appended to `prefixes`. 
 
+## 1.2.26
 **Maintenance:**
 * **[edison-jobs]** add retries to manuallyTriggerableJobDefinition
 * **[edison-mongo]** create compound index of `type` and `started` in job repository
 
 ## 1.2.25
-
 **Maintenance:**
 * **[edison-core]** changed prefix flag to be a list in order to support more than one paths that have to be secured
 

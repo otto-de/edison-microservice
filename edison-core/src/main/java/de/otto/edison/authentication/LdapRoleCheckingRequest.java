@@ -1,13 +1,16 @@
 package de.otto.edison.authentication;
 
-import com.unboundid.ldap.sdk.*;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.LDAPInterface;
+import com.unboundid.ldap.sdk.SearchRequest;
+import com.unboundid.ldap.sdk.SearchResult;
 import de.otto.edison.authentication.configuration.LdapProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.List;
 
-import static com.unboundid.ldap.sdk.SearchScope.SUB;
+import static com.unboundid.ldap.sdk.SearchScope.ONE;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -59,7 +62,7 @@ class LdapRoleCheckingRequest extends HttpServletRequestWrapper {
         final SearchRequest searchRequest =
                 new SearchRequest(
                         roleBaseDN,
-                        SUB,
+                        ONE,
                         "(uniqueMember=" + userDN + ")",
                         CN);
         final SearchResult searchResult = ldapInterface.search(searchRequest);
