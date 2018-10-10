@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.List;
 
-import static com.unboundid.ldap.sdk.SearchScope.SUB;
+import static com.unboundid.ldap.sdk.SearchScope.ONE;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -62,7 +62,7 @@ class LdapRoleCheckingRequest extends HttpServletRequestWrapper {
         final SearchRequest searchRequest =
                 new SearchRequest(
                         roleBaseDN,
-                        SUB,
+                        ONE,
                         "(uniqueMember=" + userDN + ")",
                         CN);
         final SearchResult searchResult = ldapInterface.search(searchRequest);

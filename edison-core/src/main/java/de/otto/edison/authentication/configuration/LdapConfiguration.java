@@ -1,6 +1,7 @@
 package de.otto.edison.authentication.configuration;
 
 import de.otto.edison.authentication.LdapAuthenticationFilter;
+import de.otto.edison.authentication.LdapRoleAuthenticationFilter;
 import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import de.otto.edison.authentication.connection.SSLLdapConnectionFactory;
 import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
@@ -10,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * Configuration for LDAP authentication. Secures specific endpoints according to the {@code edison.ldap} configuration
@@ -48,11 +50,22 @@ public class LdapConfiguration {
      * @return FilterRegistrationBean
      */
     @Bean
-    public FilterRegistrationBean<LdapAuthenticationFilter> ldapAuthenticationFilter(final LdapProperties ldapProperties,
-                                                                                     final LdapConnectionFactory ldapConnectionFactory) {
+    public FilterRegistrationBean ldapAuthenticationFilter(final LdapProperties ldapProperties,
+                                                           final LdapConnectionFactory ldapConnectionFactory) {
         FilterRegistrationBean<LdapAuthenticationFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties, ldapConnectionFactory));
-        filterRegistration.addUrlPatterns(String.format("%s/*", ldapProperties.getPrefix()));
+        filterRegistration.setOrder(Ordered.LOWEST_PRECEDENCE - 1);
+        ldapProperties.getPrefixes().forEach(prefix -> filterRegistration.addUrlPatterns(String.format("%s/*", prefix)));
+        return filterRegistration;
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "edison.ldap", name = "required-role")
+    public FilterRegistrationBean ldapRoleAuthenticationFilter(final LdapProperties ldapProperties) {
+        FilterRegistrationBean<LdapRoleAuthenticationFilter> filterRegistration = new FilterRegistrationBean<>();
+        filterRegistration.setFilter(new LdapRoleAuthenticationFilter(ldapProperties));
+        filterRegistration.setOrder(Ordered.LOWEST_PRECEDENCE);
+        ldapProperties.getPrefixes().forEach(prefix -> filterRegistration.addUrlPatterns(String.format("%s/*", prefix)));
         return filterRegistration;
     }
 }

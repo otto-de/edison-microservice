@@ -1,5 +1,18 @@
 # Release Notes
 
+## 2-0.0-m5
+
+**New Features:**
+* **[edison-core]** Enhanced LDAP configuration to require a specific role to access secured paths. To achieve this you 
+                    can set the property `edison.ldap.required-role`. As usual, all whitelisted paths will be ignored.
+* **[edison-core]** Enhanced LDAP configuration to use more than one prefix path with the property `edison.ldap.prefixes`.  
+                    The old property `prefix` is now deprecated, but still usable and will be appended to `prefixes`.
+                    
+**Deprecation:**
+* **[edison-core]** The single value property `edison.ldap.prefix` is now deprecated and replaced by the multi value 
+                    property `edison.ldap.prefixes`.  
+                    The old property `prefix` is now deprecated, but still usable and will be appended to `prefixes`.
+
 ## 2-0.0-m4
 
 * **[general]**: You need Java >9 to compile, but target compatibility is set back to 1.8
