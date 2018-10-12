@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.2.28
+* **[edison-core]** bugfix: internal/js is now ignored in `LdapRoleAuthenticationFilter` in order to load secured 
+                    internal pages correctly
+
 ## 1.2.27
 **New Features:**
 * **[edison-core]** Enhanced LDAP configuration to require a specific role to access secured paths. To achieve this you 
