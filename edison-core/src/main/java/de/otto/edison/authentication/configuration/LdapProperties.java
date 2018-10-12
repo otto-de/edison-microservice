@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import java.util.*;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.emptyList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -25,6 +25,13 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class LdapProperties {
 
     private static final Logger LOG = getLogger(LdapProperties.class);
+
+    /**
+     * Default paths that are whitelisted in any case.
+     *
+     * Note: /internal/js/ is the path for the JavaScript Code of edison. Has to be whitelisted to be excluded from authentication process.
+     */
+    private static final Collection<String> DEFAULT_WHITELIST = asList("/internal/js/", "/internal/health");
 
     /**
      * Enable / disable the LDAP authentication
@@ -82,13 +89,14 @@ public class LdapProperties {
     /**
      * List of paths that should be whitelisted from LDAP authentication (sub-paths will also be whitelisted)
      */
-    // TODO remove default internal/health
-    private List<String> whitelistedPaths = singletonList("/internal/health");
+    private Collection<String> whitelistedPaths = emptyList();
 
     /**
      * You can choose between StartTLS and SSL encryption for the LDAP server connection
      */
     private EncryptionType encryptionType = EncryptionType.StartTLS;
+
+
 
     /**
      * Creates Ldap properties. Primarily used in tests.
@@ -222,11 +230,13 @@ public class LdapProperties {
         this.prefixes = prefixes;
     }
 
-    public List<String> getWhitelistedPaths() {
+    public Collection<String> getWhitelistedPaths() {
+        Collection<String> copy = new HashSet<>(whitelistedPaths);
+        copy.addAll(DEFAULT_WHITELIST);
         return whitelistedPaths;
     }
 
-    public void setWhitelistedPaths(List<String> whitelistedPaths) {
+    public void setWhitelistedPaths(Collection<String> whitelistedPaths) {
         this.whitelistedPaths = whitelistedPaths;
     }
 

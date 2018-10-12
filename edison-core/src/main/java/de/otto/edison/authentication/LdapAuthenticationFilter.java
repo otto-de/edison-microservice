@@ -31,7 +31,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
  */
 public class LdapAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String INTERNAL_JS_PATH = "/internal/js/";
+
     private static Logger LOG = LoggerFactory.getLogger(LdapAuthenticationFilter.class);
 
     private final LdapProperties ldapProperties;
@@ -48,8 +48,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(final HttpServletRequest request) throws ServletException {
         final String servletPath = request.getServletPath();
-        // TODO remove INTERNAL_JS_PATH and add to whitelist
-        return servletPath.startsWith(INTERNAL_JS_PATH) || ldapProperties.getWhitelistedPaths()
+        return ldapProperties.getWhitelistedPaths()
                 .stream()
                 .anyMatch(servletPath::startsWith);
     }

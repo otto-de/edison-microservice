@@ -49,7 +49,7 @@ public class LdapRoleAuthenticationFilter extends OncePerRequestFilter {
             LOG.debug("Found correct role for login."); // don't expose roles at successful login as this is a security issue
             filterChain.doFilter(request, response);
         } else {
-            LOG.warn("Did not found correct role for login.");
+            LOG.warn("Did not find correct role for login.");
             unauthorized(response);
         }
     }
