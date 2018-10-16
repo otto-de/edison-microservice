@@ -2,6 +2,7 @@ package de.otto.edison.aws.configuration;
 
 import de.otto.edison.aws.s3.S3Service;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ public class AwsConfiguration {
 
     @Bean
     @ConditionalOnMissingBean({AwsCredentialsProvider.class})
-    @Profile({"prod", "live", "local", "develop"})
+    @ConditionalOnProperty(prefix = "aws", name = "profile")
     public AwsCredentialsProvider awsCredentialsProvider(final AwsProperties awsProperties) {
         return AwsCredentialsProviderChain
                 .builder()
