@@ -64,7 +64,7 @@ public class AbstractMongoRepositoryTest {
         // then
         final List<TestObject> foundObjects = testee.findAll();
         Assert.assertThat(foundObjects.size(), is(2));
-        Assert.assertThat(foundObjects, Matchers.containsInAnyOrder(List.of(
+        Assert.assertThat(foundObjects, Matchers.containsInAnyOrder(asList(
                 new TestObjectMatcher(testObjectA),
                 new TestObjectMatcher(testObjectB))));
     }
