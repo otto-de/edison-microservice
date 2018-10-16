@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.29
+* **[edison-core]** bugfix: default whitelist path is not ignored anymore
+
 ## 1.2.28
 * **[edison-core]** bugfix: internal/js is now ignored in `LdapRoleAuthenticationFilter` in order to load secured 
                     internal pages correctly
