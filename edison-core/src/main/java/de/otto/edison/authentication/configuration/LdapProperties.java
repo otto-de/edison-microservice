@@ -10,6 +10,7 @@ import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -233,7 +234,7 @@ public class LdapProperties {
     public Collection<String> getWhitelistedPaths() {
         Collection<String> copy = new HashSet<>(whitelistedPaths);
         copy.addAll(DEFAULT_WHITELIST);
-        return whitelistedPaths;
+        return copy;
     }
 
     public void setWhitelistedPaths(Collection<String> whitelistedPaths) {
