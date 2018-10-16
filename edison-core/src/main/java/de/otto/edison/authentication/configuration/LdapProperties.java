@@ -233,7 +233,7 @@ public class LdapProperties {
     public Collection<String> getWhitelistedPaths() {
         Collection<String> copy = new HashSet<>(whitelistedPaths);
         copy.addAll(DEFAULT_WHITELIST);
-        return whitelistedPaths;
+        return copy;
     }
 
     public void setWhitelistedPaths(Collection<String> whitelistedPaths) {
