@@ -50,7 +50,7 @@ public class LdapConfiguration {
      * @return FilterRegistrationBean
      */
     @Bean
-    public FilterRegistrationBean ldapAuthenticationFilter(final LdapProperties ldapProperties,
+    public FilterRegistrationBean<LdapAuthenticationFilter> ldapAuthenticationFilter(final LdapProperties ldapProperties,
                                                            final LdapConnectionFactory ldapConnectionFactory) {
         FilterRegistrationBean<LdapAuthenticationFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new LdapAuthenticationFilter(ldapProperties, ldapConnectionFactory));
@@ -61,7 +61,7 @@ public class LdapConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "edison.ldap", name = "required-role")
-    public FilterRegistrationBean ldapRoleAuthenticationFilter(final LdapProperties ldapProperties) {
+    public FilterRegistrationBean<LdapRoleAuthenticationFilter> ldapRoleAuthenticationFilter(final LdapProperties ldapProperties) {
         FilterRegistrationBean<LdapRoleAuthenticationFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new LdapRoleAuthenticationFilter(ldapProperties));
         filterRegistration.setOrder(Ordered.LOWEST_PRECEDENCE);

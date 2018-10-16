@@ -151,7 +151,7 @@ public class LdapConfigurationTest {
                 .applyTo(context);
         this.context.refresh();
 
-        FilterRegistrationBean filterRegistrationBean = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class);
+        FilterRegistrationBean<?> filterRegistrationBean = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class);
         ArrayList<String> urlPatterns = new ArrayList<String>(filterRegistrationBean.getUrlPatterns());
         assertThat(urlPatterns, hasSize(2));
         assertThat(urlPatterns, containsInAnyOrder("/deprecatedTestPrefix/*", "/newTestPrefix/*"));
@@ -170,7 +170,7 @@ public class LdapConfigurationTest {
                 .applyTo(context);
         this.context.refresh();
 
-        FilterRegistrationBean filterRegistrationBean = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class);
+        FilterRegistrationBean<?> filterRegistrationBean = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class);
         ArrayList<String> urlPatterns = new ArrayList<String>(filterRegistrationBean.getUrlPatterns());
         assertThat(urlPatterns, hasSize(1));
         assertThat(urlPatterns, containsInAnyOrder("/deprecatedTestPrefix/*"));

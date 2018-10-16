@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.codec.Base64;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -20,6 +19,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,7 +70,7 @@ public class OAuthPublicKeyTestConfiguration {
 
                 final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
                 final String verifierKey = "-----BEGIN PUBLIC KEY-----\n" +
-                        new String(Base64.encode(publicKey.getEncoded())) +
+                        Base64.getEncoder().encodeToString(publicKey.getEncoded()) +
                         "\n-----END PUBLIC KEY-----";
 
                 final OAuthPublicKey oAuthPublicKey = OAuthPublicKey
