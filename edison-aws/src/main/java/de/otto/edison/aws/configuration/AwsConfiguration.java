@@ -21,7 +21,7 @@ import static software.amazon.awssdk.regions.Region.of;
 public class AwsConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(AwsCredentialsProvider.class)
+    @ConditionalOnMissingBean({AwsCredentialsProvider.class})
     @Profile({"prod", "live", "local", "develop"})
     public AwsCredentialsProvider awsCredentialsProvider(final AwsProperties awsProperties) {
         return AwsCredentialsProviderChain
@@ -38,7 +38,7 @@ public class AwsConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(S3Client.class)
+    @ConditionalOnMissingBean({S3Client.class})
     public S3Client s3Client(final AwsProperties awsProperties,
                              final AwsCredentialsProvider awsCredentialsProvider) {
         return S3Client
