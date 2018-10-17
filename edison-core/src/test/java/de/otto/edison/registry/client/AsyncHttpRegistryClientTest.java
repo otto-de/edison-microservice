@@ -2,9 +2,9 @@ package de.otto.edison.registry.client;
 
 import de.otto.edison.status.configuration.ApplicationInfoConfiguration;
 import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -15,12 +15,12 @@ public class AsyncHttpRegistryClientTest {
 
     private AnnotationConfigApplicationContext context;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         context = new AnnotationConfigApplicationContext();
     }
 
-    @After
+    @AfterEach
     public void close() {
         if (context != null) {
             context.close();
@@ -28,7 +28,7 @@ public class AsyncHttpRegistryClientTest {
     }
 
     @Test
-    public void shouldDoNothingIfNotEnabled() throws Exception {
+    public void shouldDoNothingIfNotEnabled() {
         // given
         TestPropertyValues.of("edison.serviceregistry.enabled=false").applyTo(context);
         context.register(DefaultAsyncHttpClient.class);
@@ -44,7 +44,7 @@ public class AsyncHttpRegistryClientTest {
 
 
     @Test
-    public void shouldHaveRegistryIfServersAndServicePresent() throws Exception {
+    public void shouldHaveRegistryIfServersAndServicePresent() {
         // given
         TestPropertyValues
                 .of("edison.serviceregistry.servers=http://foo")
@@ -59,7 +59,7 @@ public class AsyncHttpRegistryClientTest {
     }
 
     @Test
-    public void shouldDoNothingIfNoServersAreSet() throws Exception {
+    public void shouldDoNothingIfNoServersAreSet() {
         // given
         TestPropertyValues
                 .of("edison.serviceregistry.enabled=true")
@@ -76,7 +76,7 @@ public class AsyncHttpRegistryClientTest {
     }
 
     @Test
-    public void shouldDoNothingIfNoServiceAreSet() throws Exception {
+    public void shouldDoNothingIfNoServiceAreSet() {
         // given
         TestPropertyValues
                 .of("edison.serviceregistry.enabled=true")
@@ -93,7 +93,7 @@ public class AsyncHttpRegistryClientTest {
     }
 
     @Test
-    public void shouldDoNothingIfRegistryDisabled() throws Exception {
+    public void shouldDoNothingIfRegistryDisabled() {
         // given
         TestPropertyValues
                 .of("edison.serviceregistry.enabled=false")
@@ -111,7 +111,7 @@ public class AsyncHttpRegistryClientTest {
     }
 
     @Test
-    public void shouldDoNothingIfNothingConfigured() throws Exception {
+    public void shouldDoNothingIfNothingConfigured() {
         // given
         context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);

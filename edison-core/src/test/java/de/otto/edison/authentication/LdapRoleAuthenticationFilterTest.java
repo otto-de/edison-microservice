@@ -1,7 +1,7 @@
 package de.otto.edison.authentication;
 
 import de.otto.edison.authentication.configuration.LdapProperties;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
 import javax.servlet.FilterChain;
@@ -22,12 +22,12 @@ public class LdapRoleAuthenticationFilterTest {
     @Test
     public void shouldRejectUserThatHasNotRequiredRole() throws ServletException, IOException {
         // given
-        LdapProperties ldapProperties = mockLdapPropertiesWithRequiredRole("roleX");
-        LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
+        final LdapProperties ldapProperties = mockLdapPropertiesWithRequiredRole("roleX");
+        final LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
 
-        HttpServletRequest request = mockRequestWithAvailableRoles("roleA", "roleB");
-        HttpServletResponse response = mockResponse();
-        FilterChain filterChain = mockFilterChain();
+        final HttpServletRequest request = mockRequestWithAvailableRoles("roleA", "roleB");
+        final HttpServletResponse response = mockResponse();
+        final FilterChain filterChain = mockFilterChain();
 
         // when
         filter.doFilterInternal(request, response, filterChain);
@@ -40,12 +40,12 @@ public class LdapRoleAuthenticationFilterTest {
     @Test
     public void shouldContinueFilterChainWhenUserHasRequiredRole() throws ServletException, IOException {
         // given
-        LdapProperties ldapProperties = mockLdapPropertiesWithRequiredRole("roleB");
-        LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
+        final LdapProperties ldapProperties = mockLdapPropertiesWithRequiredRole("roleB");
+        final LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
 
-        HttpServletRequest request = mockRequestWithAvailableRoles("roleA", "roleB", "roleC");
-        HttpServletResponse response = mockResponse();
-        FilterChain filterChain = mockFilterChain();
+        final HttpServletRequest request = mockRequestWithAvailableRoles("roleA", "roleB", "roleC");
+        final HttpServletResponse response = mockResponse();
+        final FilterChain filterChain = mockFilterChain();
 
         // when
         filter.doFilterInternal(request, response, filterChain);
@@ -58,13 +58,13 @@ public class LdapRoleAuthenticationFilterTest {
     @Test
     public void shouldInvokeFilterLogicWhenRequestIsForSecuredPath() throws ServletException {
         // given
-        LdapProperties ldapProperties = mockLdapPropertiesWithProtecedAndWhiteListedPath("/internal", "/internal/public");
-        LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
+        final LdapProperties ldapProperties = mockLdapPropertiesWithProtecedAndWhiteListedPath("/internal", "/internal/public");
+        final LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
 
-        HttpServletRequest request = mockRequestWithPath("/internal");
+        final HttpServletRequest request = mockRequestWithPath("/internal");
 
         // when
-        boolean shouldInvokeFilterLogic = !filter.shouldNotFilter(request);
+        final boolean shouldInvokeFilterLogic = !filter.shouldNotFilter(request);
 
         // then
         assertTrue(shouldInvokeFilterLogic);
@@ -73,43 +73,43 @@ public class LdapRoleAuthenticationFilterTest {
     @Test
     public void shouldNotInvokeFilterLogicWhenRequestIsForWhitelistedPath() throws ServletException {
         // given
-        LdapProperties ldapProperties = mockLdapPropertiesWithProtecedAndWhiteListedPath("/internal", "/internal/public");
-        LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
+        final LdapProperties ldapProperties = mockLdapPropertiesWithProtecedAndWhiteListedPath("/internal", "/internal/public");
+        final LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
 
-        HttpServletRequest request = mockRequestWithPath("/internal/public");
+        final HttpServletRequest request = mockRequestWithPath("/internal/public");
 
         // when
-        boolean shouldInvokeFilterLogic = !filter.shouldNotFilter(request);
+        final boolean shouldInvokeFilterLogic = !filter.shouldNotFilter(request);
 
         // then
         assertFalse(shouldInvokeFilterLogic);
     }
 
 
-    private HttpServletRequest mockRequestWithAvailableRoles(String... roles) {
-        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+    private HttpServletRequest mockRequestWithAvailableRoles(final String... roles) {
+        final HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.isUserInRole((anyString())))
                 .thenAnswer((Answer) invocation -> {
-                    String arg = (String) invocation.getArguments()[0];
+                    final String arg = (String) invocation.getArguments()[0];
                     return Arrays.asList(roles).contains(arg);
                 });
         return httpServletRequest;
     }
 
-    private HttpServletRequest mockRequestWithPath(String path) {
-        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+    private HttpServletRequest mockRequestWithPath(final String path) {
+        final HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.getServletPath()).thenReturn(path);
         return httpServletRequest;
     }
 
-    private LdapProperties mockLdapPropertiesWithRequiredRole(String role) {
-        LdapProperties ldapPropertiesMock = mock(LdapProperties.class);
+    private LdapProperties mockLdapPropertiesWithRequiredRole(final String role) {
+        final LdapProperties ldapPropertiesMock = mock(LdapProperties.class);
         when(ldapPropertiesMock.getRequiredRole()).thenReturn(role);
         return ldapPropertiesMock;
     }
 
-    private LdapProperties mockLdapPropertiesWithProtecedAndWhiteListedPath(String securedPath, String whiteListedPath) {
-        LdapProperties ldapPropertiesMock = mock(LdapProperties.class);
+    private LdapProperties mockLdapPropertiesWithProtecedAndWhiteListedPath(final String securedPath, final String whiteListedPath) {
+        final LdapProperties ldapPropertiesMock = mock(LdapProperties.class);
         when(ldapPropertiesMock.getPrefixes()).thenReturn(singletonList(securedPath));
         when(ldapPropertiesMock.getWhitelistedPaths()).thenReturn(singletonList(whiteListedPath));
         when(ldapPropertiesMock.getRequiredRole()).thenReturn("someRole");

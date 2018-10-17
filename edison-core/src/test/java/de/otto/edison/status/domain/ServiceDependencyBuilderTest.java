@@ -1,6 +1,6 @@
 package de.otto.edison.status.domain;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.otto.edison.status.domain.ServiceDependency.AUTH_HMAC;
 import static de.otto.edison.status.domain.ServiceDependency.AUTH_OAUTH;

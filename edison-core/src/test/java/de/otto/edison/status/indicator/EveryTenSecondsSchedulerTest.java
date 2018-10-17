@@ -8,7 +8,7 @@ import de.otto.edison.status.domain.TeamInfo;
 import de.otto.edison.status.domain.VersionInfo;
 import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
 import de.otto.edison.status.scheduler.Scheduler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
@@ -25,22 +25,22 @@ public class EveryTenSecondsSchedulerTest {
 
     @Test
     public void shouldDelegateStatusAggregation() throws Exception {
-        ApplicationStatusAggregator statusAggregator = mock(ApplicationStatusAggregator.class);
+        final ApplicationStatusAggregator statusAggregator = mock(ApplicationStatusAggregator.class);
         when(statusAggregator.aggregatedStatus()).thenReturn(SOME_STATUS);
 
-        Scheduler scheduler = new EveryTenSecondsScheduler(statusAggregator);
+        final Scheduler scheduler = new EveryTenSecondsScheduler(statusAggregator);
         scheduler.update();
         assertThat(statusAggregator.aggregatedStatus(), is(SOME_STATUS));
     }
 
     @Test
     public void shouldUpdateStatus() throws Exception {
-        ApplicationStatusAggregator statusAggregator = mock(ApplicationStatusAggregator.class);
+        final ApplicationStatusAggregator statusAggregator = mock(ApplicationStatusAggregator.class);
         when(statusAggregator.aggregatedStatus())
                 .thenReturn(SOME_STATUS)
                 .thenReturn(SOME_OTHER_STATUS);
 
-        Scheduler scheduler = new EveryTenSecondsScheduler(statusAggregator);
+        final Scheduler scheduler = new EveryTenSecondsScheduler(statusAggregator);
         // when
         scheduler.update();
         // then

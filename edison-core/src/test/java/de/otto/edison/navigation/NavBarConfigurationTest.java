@@ -1,7 +1,7 @@
 package de.otto.edison.navigation;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -14,7 +14,7 @@ public class NavBarConfigurationTest {
 
     private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
-    @After
+    @AfterEach
     public void close() {
         if (context != null) {
             context.close();

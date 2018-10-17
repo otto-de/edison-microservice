@@ -1,8 +1,8 @@
 package de.otto.edison.logging.ui;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -15,12 +15,12 @@ public class DisableEndpointPostProcessorTest {
 
     private AnnotationConfigApplicationContext ctx;
 
-    @Before
+    @BeforeEach
     public void setup() {
         ctx = new AnnotationConfigApplicationContext();
     }
 
-    @After
+    @AfterEach
     public void close() {
         if (ctx != null) {
             ctx.close();

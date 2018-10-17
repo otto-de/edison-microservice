@@ -1,7 +1,7 @@
 package de.otto.edison.status.indicator;
 
 import de.otto.edison.status.domain.StatusDetail;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
@@ -12,6 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MutableStatusDetailIndicatorTest {
 
@@ -112,13 +113,14 @@ public class MutableStatusDetailIndicatorTest {
         assertThat(statusDetail.getDetails(), not(hasEntry("bar", "baz")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailToUpdateStatusWithDifferentName() {
         // given
         final MutableStatusDetailIndicator indicator = new MutableStatusDetailIndicator(statusDetail("foo", OK, "message"));
-        // when
-        indicator.update(statusDetail("bar", OK, "message"));
-        // then an exception is thrown
-    }
 
+        // when / then
+        assertThrows(IllegalArgumentException.class, () -> {
+            indicator.update(statusDetail("bar", OK, "message"));
+        });
+    }
 }

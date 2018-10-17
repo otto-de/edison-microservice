@@ -1,7 +1,7 @@
 package de.otto.edison.navigation;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.otto.edison.navigation.NavBar.navBar;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;

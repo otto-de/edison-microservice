@@ -1,6 +1,6 @@
 package de.otto.edison.acceptance.status;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;

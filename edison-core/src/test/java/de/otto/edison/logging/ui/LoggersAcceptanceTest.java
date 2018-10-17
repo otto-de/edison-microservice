@@ -1,9 +1,9 @@
 package de.otto.edison.logging.ui;
 
 import de.otto.edison.navigation.NavBar;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -12,7 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.core.Is.is;
@@ -23,7 +23,7 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.TEXT_HTML;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 public class LoggersAcceptanceTest {
@@ -37,7 +37,7 @@ public class LoggersAcceptanceTest {
     private HttpHeaders htmlHeaders;
     private HttpHeaders jsonHeaders;
 
-    @Before
+    @BeforeEach
     public void setup() {
         htmlHeaders = new HttpHeaders();
         htmlHeaders.setAccept(singletonList(TEXT_HTML));

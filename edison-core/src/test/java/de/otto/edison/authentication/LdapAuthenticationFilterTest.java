@@ -7,8 +7,8 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import de.otto.edison.authentication.connection.LdapConnectionFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.Base64Utils;
 
 import javax.servlet.FilterChain;
@@ -26,6 +26,7 @@ import static de.otto.edison.authentication.configuration.LdapProperties.ldapPro
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
@@ -45,8 +46,8 @@ public class LdapAuthenticationFilterTest {
     private HttpServletResponse response;
     private LdapConnectionFactory ldapConnectionFactory;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         ldapConnectionFactory = mock(LdapConnectionFactory.class);
         response = mock(HttpServletResponse.class);
 
@@ -56,28 +57,35 @@ public class LdapAuthenticationFilterTest {
         );
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void shouldFailToStartIfHostIsNotConfigured() throws Exception {
-        new LdapAuthenticationFilter(
-                ldapProperties("", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal", StartTLS),
-                ldapConnectionFactory
-        );
+    @Test
+    public void shouldFailToStartIfHostIsNotConfigured() {
+        assertThrows(IllegalStateException.class, () -> {
+
+            new LdapAuthenticationFilter(
+                    ldapProperties("", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", "/internal", StartTLS),
+                    ldapConnectionFactory
+            );
+        });
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void shouldFailToStartIfBaseDnIsNotConfigured() throws Exception {
-        new LdapAuthenticationFilter(
-                ldapProperties("someHost", 389, singletonList(""), null, "someRdnIdentifier", "/internal", StartTLS),
-                ldapConnectionFactory
-        );
+    @Test
+    public void shouldFailToStartIfBaseDnIsNotConfigured() {
+        assertThrows(IllegalStateException.class, () -> {
+            new LdapAuthenticationFilter(
+                    ldapProperties("someHost", 389, singletonList(""), null, "someRdnIdentifier", "/internal", StartTLS),
+                    ldapConnectionFactory
+            );
+        });
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void shouldFailToStartIfRdnIdentifierIsNotConfigured() throws Exception {
-        new LdapAuthenticationFilter(
-                ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "", "/internal", StartTLS),
-                ldapConnectionFactory
-        );
+    @Test
+    public void shouldFailToStartIfRdnIdentifierIsNotConfigured() {
+        assertThrows(IllegalStateException.class, () -> {
+            new LdapAuthenticationFilter(
+                    ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "", "/internal", StartTLS),
+                    ldapConnectionFactory
+            );
+        });
     }
 
     @Test

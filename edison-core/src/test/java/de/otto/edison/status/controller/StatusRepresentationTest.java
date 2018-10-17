@@ -7,7 +7,7 @@ import de.otto.edison.status.domain.SystemInfo;
 import de.otto.edison.status.domain.TeamInfo;
 import de.otto.edison.status.domain.VersionInfo;
 import de.otto.edison.testsupport.util.JsonMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
 package de.otto.edison.status.indicator;
 
 import de.otto.edison.status.domain.StatusDetail;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.otto.edison.status.domain.Status.ERROR;
 import static de.otto.edison.status.domain.Status.OK;
@@ -11,12 +11,16 @@ import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CompositeStatusDetailIndicatorTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotAcceptEmptyListOfDelegates() {
-        new CompositeStatusDetailIndicator(emptyList());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CompositeStatusDetailIndicator(emptyList());
+        });
     }
 
     @Test

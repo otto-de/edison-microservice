@@ -3,7 +3,7 @@ package de.otto.edison.status.indicator;
 import de.otto.edison.status.domain.ApplicationStatus;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Arrays.asList;

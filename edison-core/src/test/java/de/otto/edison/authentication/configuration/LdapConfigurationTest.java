@@ -2,8 +2,8 @@ package de.otto.edison.authentication.configuration;
 
 import de.otto.edison.authentication.connection.SSLLdapConnectionFactory;
 import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -13,17 +13,20 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LdapConfigurationTest {
 
-    private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
     @ImportAutoConfiguration({LdapConfiguration.class})
     static class EnableAutoConfig {
     }
 
-    @After
+    @AfterEach
     public void close() {
         if (this.context != null) {
             this.context.close();
@@ -62,8 +65,8 @@ public class LdapConfigurationTest {
         assertThat(this.context.containsBean("ldapAuthenticationFilter"), is(true));
         assertThat(this.context.containsBean("ldapRoleAuthenticationFilter"), is(true));
 
-        int ldapFilterOrder = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class).getOrder();
-        int ldapRoleFilterOrder = this.context.getBean("ldapRoleAuthenticationFilter", FilterRegistrationBean.class).getOrder();
+        final int ldapFilterOrder = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class).getOrder();
+        final int ldapRoleFilterOrder = this.context.getBean("ldapRoleAuthenticationFilter", FilterRegistrationBean.class).getOrder();
         assertThat(ldapFilterOrder < ldapRoleFilterOrder, is(true));
     }
 
@@ -79,7 +82,7 @@ public class LdapConfigurationTest {
         assertThat(this.context.containsBean("ldapAuthenticationFilter"), is(false));
     }
 
-    @Test(expected = UnsatisfiedDependencyException.class)
+    @Test
     public void shouldValidateProperties() {
         this.context.register(EnableAutoConfig.class);
         TestPropertyValues
@@ -87,7 +90,9 @@ public class LdapConfigurationTest {
                 .and("edison.ldap.enabled=true")
                 .applyTo(context);
 
-        this.context.refresh();
+        assertThrows(UnsatisfiedDependencyException.class, () -> {
+            this.context.refresh();
+        });
     }
 
     @Test
@@ -151,8 +156,8 @@ public class LdapConfigurationTest {
                 .applyTo(context);
         this.context.refresh();
 
-        FilterRegistrationBean<?> filterRegistrationBean = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class);
-        ArrayList<String> urlPatterns = new ArrayList<String>(filterRegistrationBean.getUrlPatterns());
+        final FilterRegistrationBean<?> filterRegistrationBean = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class);
+        final ArrayList<String> urlPatterns = new ArrayList<String>(filterRegistrationBean.getUrlPatterns());
         assertThat(urlPatterns, hasSize(2));
         assertThat(urlPatterns, containsInAnyOrder("/deprecatedTestPrefix/*", "/newTestPrefix/*"));
     }
@@ -170,8 +175,8 @@ public class LdapConfigurationTest {
                 .applyTo(context);
         this.context.refresh();
 
-        FilterRegistrationBean<?> filterRegistrationBean = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class);
-        ArrayList<String> urlPatterns = new ArrayList<String>(filterRegistrationBean.getUrlPatterns());
+        final FilterRegistrationBean<?> filterRegistrationBean = this.context.getBean("ldapAuthenticationFilter", FilterRegistrationBean.class);
+        final ArrayList<String> urlPatterns = new ArrayList<String>(filterRegistrationBean.getUrlPatterns());
         assertThat(urlPatterns, hasSize(1));
         assertThat(urlPatterns, containsInAnyOrder("/deprecatedTestPrefix/*"));
     }

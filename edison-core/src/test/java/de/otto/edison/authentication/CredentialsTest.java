@@ -1,7 +1,7 @@
 package de.otto.edison.authentication;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,12 +18,12 @@ public class CredentialsTest {
     @Mock
     private HttpServletRequest httpServletRequest;
 
-    private void mockHttpServletRequestWithAuthentication(String authString) {
+    private void mockHttpServletRequestWithAuthentication(final String authString) {
         when(httpServletRequest.getHeader("Authorization"))
                 .thenReturn("Basic " + encodeToString(authString.getBytes()));
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
     }
@@ -34,7 +34,7 @@ public class CredentialsTest {
         mockHttpServletRequestWithAuthentication("someUsername:somePassword");
 
         // when
-        Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
 
         // then
         assertThat(credentials.isPresent(), is(true));
@@ -45,7 +45,7 @@ public class CredentialsTest {
     @Test
     public void shouldReturnEmptyCredentialsIfHeaderDoesNotExist() {
         // when
-        Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
 
         // then
         assertThat(credentials.isPresent(), is(false));
@@ -57,7 +57,7 @@ public class CredentialsTest {
         mockHttpServletRequestWithAuthentication("someUsername:");
 
         // when
-        Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
 
         // then
         assertThat(credentials.isPresent(), is(false));
@@ -69,7 +69,7 @@ public class CredentialsTest {
         mockHttpServletRequestWithAuthentication(":password");
 
         // when
-        Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
 
         // then
         assertThat(credentials.isPresent(), is(false));
@@ -81,7 +81,7 @@ public class CredentialsTest {
         mockHttpServletRequestWithAuthentication("user:pass:word");
 
         // when
-        Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
 
         // then
         assertThat(credentials.isPresent(), is(true));
