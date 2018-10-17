@@ -20,7 +20,7 @@ import java.util.HashSet;
 import static de.otto.edison.togglz.s3.S3TestHelper.createS3Client;
 import static de.otto.edison.togglz.s3.S3TestHelper.createTestContainer;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class S3TogglzRepositoryIntegrationTest {
     private static final int TEST_PORT_S3 = 4572;

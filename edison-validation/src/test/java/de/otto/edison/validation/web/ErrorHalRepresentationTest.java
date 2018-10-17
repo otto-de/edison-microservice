@@ -5,23 +5,23 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 public class ErrorHalRepresentationTest {
 
     @Test
     public void shouldSerializeAndDeserializeWithObjectMapper() throws IOException {
         // given
-        ErrorHalRepresentation errorHalRepresentation = ErrorHalRepresentation.builder()
+        final ErrorHalRepresentation errorHalRepresentation = ErrorHalRepresentation.builder()
                 .withErrorMessage("some error message")
                 .withError("field", "key", "message", "rejected")
                 .build();
-        ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectMapper objectMapper = new ObjectMapper();
 
         // when
-        String json = objectMapper.writeValueAsString(errorHalRepresentation);
-        ErrorHalRepresentation deserialized = objectMapper.readValue(json, ErrorHalRepresentation.class);
+        final String json = objectMapper.writeValueAsString(errorHalRepresentation);
+        final ErrorHalRepresentation deserialized = objectMapper.readValue(json, ErrorHalRepresentation.class);
 
         // then
         assertThat(deserialized, is(errorHalRepresentation));

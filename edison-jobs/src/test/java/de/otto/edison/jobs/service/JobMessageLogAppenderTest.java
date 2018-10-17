@@ -6,13 +6,11 @@ import de.otto.edison.jobs.domain.JobMarker;
 import de.otto.edison.jobs.domain.JobMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Collections.singletonMap;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -26,13 +24,13 @@ public class JobMessageLogAppenderTest {
     private JobMessageLogAppender jobEventAppender;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         jobService = mock(JobService.class);
         jobEventAppender = new JobMessageLogAppender(jobService);
     }
 
     @Test
-    public void shouldNotLogWhenNoJobIdInMDC() throws Exception {
+    public void shouldNotLogWhenNoJobIdInMDC() {
         final LoggingEvent loggingEvent = new LoggingEvent();
 
         //when
@@ -43,12 +41,12 @@ public class JobMessageLogAppenderTest {
     }
 
     @Test
-    public void shouldStartAppender() throws Exception {
+    public void shouldStartAppender() {
         assertThat(jobEventAppender.isStarted(), is(true));
     }
 
     @Test
-    public void shouldPublishEventWithJobIdAndLevelERROR() throws Exception {
+    public void shouldPublishEventWithJobIdAndLevelERROR() {
         // given
         final LoggingEvent loggingEvent = createLoggingEvent(Level.ERROR);
 
@@ -63,7 +61,7 @@ public class JobMessageLogAppenderTest {
     }
 
     @Test
-    public void shouldPublishEventWithJobIdAndLevelWARN() throws Exception {
+    public void shouldPublishEventWithJobIdAndLevelWARN() {
         // given
         final LoggingEvent loggingEvent = createLoggingEvent(Level.WARN);
 
@@ -78,7 +76,7 @@ public class JobMessageLogAppenderTest {
     }
 
     @Test
-    public void shouldPublishEventWithJobIdAndLevelINFO() throws Exception {
+    public void shouldPublishEventWithJobIdAndLevelINFO() {
         // given
         final LoggingEvent loggingEvent = createLoggingEvent(Level.INFO);
 
