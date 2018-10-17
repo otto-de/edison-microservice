@@ -1,4 +1,4 @@
-tasks.withType(Test) {
+test {
     // pass -Dspring.profiles.active=local and other system properties to the test task
     systemProperties = System.properties
     // jacoco needs this property when using it with subprojects
@@ -19,4 +19,6 @@ tasks.withType(Test) {
         showExceptions = true
         showStackTraces = true
     }
+
+    useJUnitPlatform()
 }
