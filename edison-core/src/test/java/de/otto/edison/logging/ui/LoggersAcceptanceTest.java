@@ -31,8 +31,7 @@ public class LoggersAcceptanceTest {
 
     @Autowired
     private ConfigurableApplicationContext ctx;
-    @Autowired
-    private TestRestTemplate template;
+    @Autowired private TestRestTemplate template;
 
     private HttpHeaders htmlHeaders;
     private HttpHeaders jsonHeaders;
@@ -55,7 +54,7 @@ public class LoggersAcceptanceTest {
 
     @Test
     public void shouldHaveLoggersAsHtmlThroughHeader() {
-        HttpEntity<String> httpEntity = new HttpEntity<>("", htmlHeaders);
+        final HttpEntity<String> httpEntity = new HttpEntity<>("", htmlHeaders);
         final ResponseEntity<String> response = template.exchange("/internal/loggers", GET, httpEntity, String.class);
         assertThat(response.getStatusCodeValue(), is(200));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(TEXT_HTML), is(true));
@@ -70,7 +69,7 @@ public class LoggersAcceptanceTest {
 
     @Test
     public void shouldHaveLoggersAsJsonThroughHeader() {
-        HttpEntity<String> httpEntity = new HttpEntity<>("", jsonHeaders);
+        final HttpEntity<String> httpEntity = new HttpEntity<>("", jsonHeaders);
         final ResponseEntity<String> response = template.exchange("/internal/loggers", GET, httpEntity, String.class);
         assertThat(response.getStatusCodeValue(), is(200));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
