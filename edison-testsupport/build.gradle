@@ -9,6 +9,7 @@ dependencies {
     compile libraries.spring_boot
     compile libraries.spring_boot_autoconfigure
     compile test_libraries.junit
+    compile test_libraries.junit_params
     compile test_libraries.hamcrest_core
     compile test_libraries.hamcrest_library
     compile test_libraries.mockito_core

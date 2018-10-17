@@ -7,11 +7,10 @@ import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
 import org.bson.Document;
 import org.hamcrest.CustomMatcher;
 import org.hamcrest.Matchers;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -28,6 +27,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsNot.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -36,17 +36,17 @@ public class AbstractMongoRepositoryTest {
 
     private TestRepository testee;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupMongo() throws IOException {
         EmbeddedMongoHelper.startMongoDB();
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardownMongo() {
         EmbeddedMongoHelper.stopMongoDB();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("test-" + UUID.randomUUID());
         testee = new TestRepository(mongoDatabase);
@@ -63,8 +63,8 @@ public class AbstractMongoRepositoryTest {
 
         // then
         final List<TestObject> foundObjects = testee.findAll();
-        Assert.assertThat(foundObjects.size(), is(2));
-        Assert.assertThat(foundObjects, Matchers.containsInAnyOrder(asList(
+        assertThat(foundObjects.size(), is(2));
+        assertThat(foundObjects, Matchers.containsInAnyOrder(asList(
                 new TestObjectMatcher(testObjectA),
                 new TestObjectMatcher(testObjectB))));
     }
@@ -163,36 +163,36 @@ public class AbstractMongoRepositoryTest {
         assertThat(updated, is(UpdateIfMatchResult.NOT_FOUND));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldNotCreateOrUpdateWithMissingId() {
         // given
         final TestObject testObject = new TestObject(null, "someValue");
 
-        // when
-        final TestObject resultingObject = testee.createOrUpdate(testObject);
+        // when / then
+        assertThrows(NullPointerException.class, () -> {
 
-        // then
-        // NullPointerException is thrown
+            final TestObject resultingObject = testee.createOrUpdate(testObject);
+        });
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldNotCreateWithMissingId() {
         // given
         final TestObject testObject = new TestObject(null, "someValue");
 
-        // when
-        final TestObject resultingObject = testee.create(testObject);
-
-        // then
-        // NullPointerException is thrown
+        // when / then
+        assertThrows(NullPointerException.class, () -> {
+            testee.create(testObject);
+        });
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldFindOneWithMissingId() {
-        // when
-        testee.findOne(null);
-        // then
-        // NullPointerException is thrown
+        // when / then
+        assertThrows(NullPointerException.class, () -> {
+
+            testee.findOne(null);
+        });
     }
 
     private void createTestObjects(final String... values) {

@@ -10,10 +10,10 @@ import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
 import org.assertj.core.util.Lists;
 import org.bson.Document;
 import org.hamcrest.Matchers;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -50,19 +50,19 @@ import static org.hamcrest.Matchers.is;
 
 public class MongoJobRepositoryTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void startMongo() throws IOException {
         EmbeddedMongoHelper.startMongoDB();
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardownMongo() {
         EmbeddedMongoHelper.stopMongoDB();
     }
 
     private MongoJobRepository repo;
 
-    @Before
+    @BeforeEach
     public void setup() {
         final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("jobsinfo-" + UUID.randomUUID());
         repo = new MongoJobRepository(mongoDatabase, "jobsinfo", new MongoProperties());

@@ -4,10 +4,10 @@ import com.mongodb.client.MongoDatabase;
 import de.otto.edison.mongo.configuration.MongoProperties;
 import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
 import de.otto.edison.togglz.FeatureClassProvider;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
@@ -26,18 +26,18 @@ public class MongoTogglzRepositoryTest {
 
     private MongoTogglzRepository testee;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupMongo() throws IOException {
         EmbeddedMongoHelper.startMongoDB();
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardownMongo() {
         EmbeddedMongoHelper.stopMongoDB();
     }
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("features-" + UUID.randomUUID());
         final FeatureClassProvider featureClassProvider = new TestFeatureClassProvider();
@@ -90,7 +90,7 @@ public class MongoTogglzRepositoryTest {
     }
 
     @Test
-    public void shouldLoadAllFeatureStates() throws Exception {
+    public void shouldLoadAllFeatureStates() {
         // Given
         final FeatureState featureState1 = new FeatureState(TestFeatures.TEST_FEATURE_1);
         featureState1.setEnabled(true);
