@@ -2,7 +2,7 @@ package de.otto.edison.togglz.controller;
 
 import de.otto.edison.togglz.EmptyFeatures;
 import de.otto.edison.togglz.TestFeatures;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 

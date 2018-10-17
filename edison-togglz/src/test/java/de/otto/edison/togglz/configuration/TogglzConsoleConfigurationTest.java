@@ -1,8 +1,8 @@
 package de.otto.edison.togglz.configuration;
 
 import de.otto.edison.navigation.NavBarConfiguration;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -11,9 +11,9 @@ import static org.hamcrest.Matchers.is;
 
 public class TogglzConsoleConfigurationTest {
 
-    private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
-    @After
+    @AfterEach
     public void close() {
         if (this.context != null) {
             this.context.close();

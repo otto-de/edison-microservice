@@ -1,6 +1,6 @@
 package de.otto.edison.togglz.configuration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.Base64Utils;
 import org.togglz.core.user.FeatureUser;
 import org.togglz.core.user.UserProvider;
@@ -21,13 +21,13 @@ public class UserProviderTest {
         // given
         final UserProvider userProvider = new TogglzConfiguration().userProvider();
 
-        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        final HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         when(mockRequest.getHeader("Authorization")).thenReturn("Basic " + Base64Utils.encodeToString("testuser:passwd".getBytes()));
 
         HttpServletRequestHolder.bind(mockRequest);
 
         // when
-        FeatureUser currentUser = userProvider.getCurrentUser();
+        final FeatureUser currentUser = userProvider.getCurrentUser();
         // then
         assertThat(currentUser.getName(), is("testuser"));
     }

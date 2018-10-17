@@ -1,6 +1,6 @@
 package de.otto.edison.acceptance.togglz;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -25,7 +25,5 @@ public class FeatureTogglesControllerAcceptanceTest {
                 assertThat(the_returned_json().at("/features/TEST_FEATURE_2/description").asText(), is("TEST_FEATURE_2")),
                 assertThat(the_returned_json().at("/features/TEST_FEATURE_2/enabled").asBoolean(), is(true))
         );
-
     }
-
 }

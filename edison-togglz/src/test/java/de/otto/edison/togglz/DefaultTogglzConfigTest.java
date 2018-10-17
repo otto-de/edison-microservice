@@ -1,8 +1,8 @@
 package de.otto.edison.togglz;
 
 import de.otto.edison.testsupport.applicationdriver.SpringTestBase;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.cache.CachingStateRepository;
 
@@ -17,8 +17,8 @@ public class DefaultTogglzConfigTest extends SpringTestBase {
 
     private TogglzConfig togglzConfig;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         togglzConfig = applicationContext().getBean(TogglzConfig.class);
 
     }
