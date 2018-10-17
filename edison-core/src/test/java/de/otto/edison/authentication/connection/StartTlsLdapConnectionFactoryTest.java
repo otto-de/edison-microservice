@@ -4,8 +4,6 @@ import com.unboundid.ldap.sdk.LDAPException;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import org.junit.jupiter.api.Test;
 
-import java.security.GeneralSecurityException;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
