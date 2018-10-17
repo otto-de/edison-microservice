@@ -1,5 +1,6 @@
 package de.otto.edison.togglz.s3;
 
+import de.otto.edison.togglz.configuration.TogglzProperties;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,7 +31,7 @@ public class S3TogglzRepositoryIntegrationTest {
     private S3TogglzRepository repository;
     private S3Client s3Client;
     private FeatureStateConverter featureStateConverter;
-    private S3TogglzProperties togglzProperties;
+    private TogglzProperties togglzProperties;
 
     @BeforeAll
     public static void prepareContext() {
@@ -57,8 +58,8 @@ public class S3TogglzRepositoryIntegrationTest {
                 .build();
         s3Client.createBucket(createBucketRequest);
 
-        togglzProperties = new S3TogglzProperties();
-        togglzProperties.setBucketName(TEST_BUCKET);
+        togglzProperties = new TogglzProperties();
+        togglzProperties.getS3().setBucketName(TEST_BUCKET);
 
         featureStateConverter = new FeatureStateConverter(s3Client, togglzProperties);
 
@@ -67,7 +68,7 @@ public class S3TogglzRepositoryIntegrationTest {
 
     @AfterEach
     public void tearDown() {
-        final String featureKey = String.format("%s%s", togglzProperties.getKeyPrefix(), TestFeature.FEATURE_1.name());
+        final String featureKey = String.format("%s%s", togglzProperties.getS3().getKeyPrefix(), TestFeature.FEATURE_1.name());
         final DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest
                 .builder()
                 .bucket(TEST_BUCKET)

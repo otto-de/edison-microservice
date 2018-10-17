@@ -24,6 +24,9 @@ public class TogglzProperties {
     @Valid
     private Console console = new Console();
 
+    @Valid
+    private S3 s3 = new S3();
+
     public int getCacheTtl() {
         return cacheTtl;
     }
@@ -40,6 +43,14 @@ public class TogglzProperties {
         this.console = console;
     }
 
+    public S3 getS3() {
+        return s3;
+    }
+
+    public void setS3(S3 s3) {
+        this.s3 = s3;
+    }
+
     public static class Console {
         /**
          * Enable / disable the Togglz web console.
@@ -52,6 +63,39 @@ public class TogglzProperties {
 
         public void setEnabled(final boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    public static class S3 {
+        /**
+         * Enable / disable the S3 togglz.
+         */
+        private boolean enabled = true;
+        private String bucketName;
+        private String keyPrefix = "togglz/";
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getBucketName() {
+            return bucketName;
+        }
+
+        public void setBucketName(final String bucketName) {
+            this.bucketName = bucketName;
+        }
+
+        public String getKeyPrefix() {
+            return keyPrefix;
+        }
+
+        public void setKeyPrefix(final String keyPrefix) {
+            this.keyPrefix = keyPrefix;
         }
     }
 

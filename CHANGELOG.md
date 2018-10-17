@@ -13,6 +13,14 @@
                     property `edison.ldap.prefixes`.  
                     The old property `prefix` is now deprecated, but still usable and will be appended to `prefixes`.
 
+**Breaking Changes:**
+* **[edison-aws]**  AWS-related stuff now requires an AwsCredentialsProvider to be exposed as a Spring bean. No default
+                    bean available anymore.
+* **[edison-aws]**  S3 togglz repository is automatically used if the property `edison.togglz.s3.bucket-name` is set, 
+                    `edison-togglz.s3.enabled` is not false, and if the S3Client.class is in the classpath of your 
+                    Edison service. A S3Client bean is required in the ApplicationContext.                     
+
+
 ## 2-0.0-m4
 
 * **[general]**: You need Java >9 to compile, but target compatibility is set back to 1.8

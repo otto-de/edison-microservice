@@ -2,7 +2,7 @@ package de.otto.edison.togglz.s3;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Component;
+import de.otto.edison.togglz.configuration.TogglzProperties;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.util.FeatureStateStorageWrapper;
@@ -13,24 +13,23 @@ import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 
-@Component
 public class FeatureStateConverter {
 
     private static final String ERR_NO_SUCH_KEY = "NoSuchKey";
 
     private final S3Client s3Client;
-    private final S3TogglzProperties s3TogglzProperties;
+    private final TogglzProperties togglzProperties;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public FeatureStateConverter(final S3Client s3Client,
-                                 final S3TogglzProperties s3TogglzProperties) {
+                                 final TogglzProperties togglzProperties) {
         this.s3Client = s3Client;
-        this.s3TogglzProperties = s3TogglzProperties;
+        this.togglzProperties = togglzProperties;
     }
 
     public FeatureState retrieveFeatureStateFromS3(final Feature feature) {
         final GetObjectRequest getRequest = GetObjectRequest.builder()
-                .bucket(s3TogglzProperties.getBucketName())
+                .bucket(togglzProperties.getS3().getBucketName())
                 .key(keyForFeature(feature))
                 .build();
         try (final ResponseInputStream<GetObjectResponse> responseStream = s3Client.getObject(getRequest)) {
@@ -56,7 +55,7 @@ public class FeatureStateConverter {
             final FeatureStateStorageWrapper storageWrapper = FeatureStateStorageWrapper.wrapperForFeatureState(featureState);
             final String json = objectMapper.writeValueAsString(storageWrapper);
             final PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(s3TogglzProperties.getBucketName())
+                    .bucket(togglzProperties.getS3().getBucketName())
                     .key(keyForFeature(featureState.getFeature()))
                     .serverSideEncryption(ServerSideEncryption.AES256)
                     .build();
@@ -68,7 +67,7 @@ public class FeatureStateConverter {
     }
 
     private String keyForFeature(final Feature feature) {
-        return s3TogglzProperties.getKeyPrefix() + feature.name();
+        return togglzProperties.getS3().getKeyPrefix() + feature.name();
     }
 
 }

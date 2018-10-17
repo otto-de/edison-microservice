@@ -2,9 +2,20 @@ dependencies {
     compile project(":edison-core")
     compile libraries.togglz_console
     compile libraries.togglz_spring_web
+
+    compileOnly libraries.aws_sdk_s3
+
     compile libraries.unboundid_ldapsdk_minimal_edition
 
     testCompile project(":edison-testsupport")
+    testCompile libraries.aws_sdk_s3
+    testCompile test_libraries.testcontainers
+    testCompile test_libraries.junit
+    testCompile test_libraries.mockito_core
+    testCompile test_libraries.hamcrest_core
+    testCompile test_libraries.hamcrest_library
+    testCompile test_libraries.spring_boot_starter_test
+
 }
 
 javadoc {
