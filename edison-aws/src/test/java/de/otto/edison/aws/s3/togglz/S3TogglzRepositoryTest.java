@@ -1,7 +1,7 @@
 package de.otto.edison.aws.s3.togglz;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
@@ -27,7 +27,7 @@ public class S3TogglzRepositoryTest {
     @Mock
     private FeatureState featureState;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         s3TogglzRepository = new S3TogglzRepository(featureStateConverter);

@@ -1,9 +1,10 @@
 package de.otto.edison.aws.s3.togglz;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
@@ -24,16 +25,26 @@ public class S3TogglzRepositoryIntegrationTest {
     private static final int TEST_PORT_S3 = 4572;
     private final static String TEST_BUCKET = "test-togglz";
 
-    @ClassRule
-    public final static GenericContainer<?> localstackContainer = createTestContainer(TEST_PORT_S3);
+    private final static GenericContainer<?> localstackContainer = createTestContainer(TEST_PORT_S3);
 
     private S3TogglzRepository repository;
     private S3Client s3Client;
     private FeatureStateConverter featureStateConverter;
     private S3TogglzProperties togglzProperties;
 
+    @BeforeAll
+    public static void prepareContext() {
+        // Set for AWS SDK
+        System.setProperty("aws.region", "eu-central-1");
+        localstackContainer.start();
+    }
 
-    @Before
+    @AfterAll
+    public static void stopContainer() {
+        localstackContainer.stop();
+    }
+
+    @BeforeEach
     public void setup() {
         final Integer mappedPort = localstackContainer.getMappedPort(TEST_PORT_S3);
         s3Client = createS3Client(mappedPort);
@@ -54,7 +65,7 @@ public class S3TogglzRepositoryIntegrationTest {
         repository = new S3TogglzRepository(featureStateConverter);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         final String featureKey = String.format("%s%s", togglzProperties.getKeyPrefix(), TestFeature.FEATURE_1.name());
         final DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest

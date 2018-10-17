@@ -2,15 +2,15 @@ package de.otto.edison.aws.s3;
 
 import de.otto.edison.aws.configuration.AwsConfiguration;
 import de.otto.edison.testsupport.aws.AwsTestconfiguration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.GenericContainer;
 
 import java.io.File;
@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AwsTestconfiguration.class, AwsConfiguration.class})
 @ActiveProfiles("test")
 public class S3ServiceIntegrationTest {
@@ -34,18 +34,23 @@ public class S3ServiceIntegrationTest {
     private static final int TEST_PORT_S3 = 4572;
     private static final String TESTBUCKET = "testbucket";
 
-    @ClassRule
-    public final static GenericContainer<?> localstackContainer = createTestContainer(TEST_PORT_S3);
+    private final static GenericContainer<?> localstackContainer = createTestContainer(TEST_PORT_S3);
 
     private S3Service s3Service;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareContext() {
         // Set for AWS SDK
         System.setProperty("aws.region", "eu-central-1");
+        localstackContainer.start();
     }
 
-    @Before
+    @AfterAll
+    public static void stopContainer() {
+        localstackContainer.stop();
+    }
+
+    @BeforeEach
     public void setUp() {
         final Integer mappedPort = localstackContainer.getMappedPort(TEST_PORT_S3);
 
@@ -53,7 +58,7 @@ public class S3ServiceIntegrationTest {
         s3Service.createBucket(TESTBUCKET);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         s3Service.deleteAllObjectsInBucket(TESTBUCKET);
     }
