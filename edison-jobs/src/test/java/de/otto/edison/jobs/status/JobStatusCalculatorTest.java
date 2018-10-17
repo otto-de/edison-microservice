@@ -5,8 +5,8 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -50,7 +50,7 @@ public class JobStatusCalculatorTest {
     private JobStatusCalculator errorOnLastJobFailed;
     private JobStatusCalculator errorOnLastTwoJobsFailed;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         jobRepository = mock(JobRepository.class);
         warningOnLastJobFailed = warningOnLastJobFailed("test", jobRepository, "/someInternalPath");
@@ -65,8 +65,8 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobs);
 
         // when
-        StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
-        StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(first.getStatus(), is(Status.OK));
@@ -81,8 +81,8 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobs);
 
         // when
-        StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
-        StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(first.getStatus(), is(Status.OK));
@@ -98,7 +98,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobs);
 
         // when
-        StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(first.getLinks().size(), is(1));
@@ -112,8 +112,8 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
 
         // when
-        StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
-        StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(first.getStatus(), is(Status.ERROR));
@@ -131,7 +131,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(2))).thenReturn(jobInfos);
 
         // when
-        StatusDetail detail = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
+        final StatusDetail detail = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(detail.getStatus(), is(Status.OK));
@@ -147,7 +147,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(2))).thenReturn(jobInfos);
 
         // when
-        StatusDetail detail = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
+        final StatusDetail detail = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(detail.getStatus(), is(Status.WARNING));
@@ -164,8 +164,8 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(3))).thenReturn(jobInfos);
 
         // when
-        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, "/someInternalPath");
-        StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
+        final JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, "/someInternalPath");
+        final StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
 
         // then
         assertThat(detail.getStatus(), is(Status.WARNING));
@@ -182,8 +182,8 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(3))).thenReturn(jobInfos);
 
         // when
-        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, "/someInternalPath");
-        StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
+        final JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, "/someInternalPath");
+        final StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
 
         // then
         assertThat(detail.getStatus(), is(Status.ERROR));
@@ -199,7 +199,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(2))).thenReturn(jobInfos);
 
         // when
-        StatusDetail detail = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
+        final StatusDetail detail = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(detail.getStatus(), is(Status.ERROR));
@@ -217,9 +217,9 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(2))).thenReturn(jobInfos);
 
         // when
-        StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
-        StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
-        StatusDetail third = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
+        final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail third = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(first.getStatus(), is(Status.WARNING));
@@ -236,7 +236,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(emptyList());
 
         // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(statusDetail.getLinks(), is(emptyList()));
@@ -251,7 +251,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
 
         // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(statusDetail.getDetails(), not(hasKey("Running")));
@@ -265,7 +265,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
 
         // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(statusDetail.getStatus(), is(Status.WARNING));
@@ -279,7 +279,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
 
         // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(statusDetail.getStatus(), is(Status.WARNING));
@@ -293,7 +293,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenThrow(RuntimeException.class);
 
         // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(statusDetail.getStatus(), is(Status.ERROR));
@@ -305,7 +305,7 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(emptyList());
 
         // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(statusDetail.getStatus(), is(Status.OK));
@@ -318,15 +318,15 @@ public class JobStatusCalculatorTest {
         when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
 
         // when
-        StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
 
         // then
         assertThat(statusDetail.getName(), is("test"));
     }
 
-    private JobInfo someStoppedJob(final JobInfo.JobStatus jobStatus, int startedSecondsAgo) {
-        OffsetDateTime now = now();
-        JobInfo someJob = mock(JobInfo.class);
+    private JobInfo someStoppedJob(final JobInfo.JobStatus jobStatus, final int startedSecondsAgo) {
+        final OffsetDateTime now = now();
+        final JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
         when(someJob.getJobId()).thenReturn("someId");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(startedSecondsAgo));
@@ -335,9 +335,9 @@ public class JobStatusCalculatorTest {
         return someJob;
     }
 
-    private JobInfo someRunningJob(final JobInfo.JobStatus jobStatus, int startedSecondsAgo) {
-        OffsetDateTime now = now();
-        JobInfo someJob = mock(JobInfo.class);
+    private JobInfo someRunningJob(final JobInfo.JobStatus jobStatus, final int startedSecondsAgo) {
+        final OffsetDateTime now = now();
+        final JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
         when(someJob.getJobId()).thenReturn("someJobId");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(startedSecondsAgo));

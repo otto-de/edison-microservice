@@ -2,17 +2,15 @@ package de.otto.edison.example;
 
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.Response;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.concurrent.ExecutionException;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -20,7 +18,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ExampleOauthServer.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 public class ApiControllerIntegrationTest {
@@ -36,7 +34,7 @@ public class ApiControllerIntegrationTest {
     private int port;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         baseUrl = String.format("http://localhost:%d", port);
     }
