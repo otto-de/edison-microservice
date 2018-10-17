@@ -1,55 +1,47 @@
 package de.otto.edison.validation.validators;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(Parameterized.class)
 public class SafeIdValidatorTest {
 
-    @Parameterized.Parameter(0)
-    public String inputId;
+    private final SafeIdValidator validator = new SafeIdValidator();
 
-    @Parameterized.Parameter(1)
-    public boolean expectedValid;
-
-    private SafeIdValidator validator = new SafeIdValidator();
-
-    @Test
-    public void testAllExampleIdValidPairs() {
-        assertThat(validator.isValid(inputId, null), is(expectedValid));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testAllExampleIdValidPairs(final String id, final boolean expected) {
+        assertThat(validator.isValid(Objects.toString(id), null), is(expected));
     }
 
-
-    @Parameterized.Parameters(name = "{index}: Is {0} valid? => {1}")
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(
-                new Object[] { "id",                                              true },
-                new Object[] { "long-id",                                         true },
-                new Object[] { "long-id-with-numbers-1234567890",                 true },
-                new Object[] { "long-id-with-numbers-1234567890-and-underscore_", true },
-                new Object[] { "ID-with-CAPITALS",                                true },
-                new Object[] { null,                                              true },
-                new Object[] { "id<",                                             false },
-                new Object[] { "id>",                                             false },
-                new Object[] { "id!",                                             false },
-                new Object[] { "id@",                                             false },
-                new Object[] { "id#",                                             false },
-                new Object[] { "id$",                                             false },
-                new Object[] { "id%",                                             false },
-                new Object[] { "id^",                                             false },
-                new Object[] { "id&",                                             false },
-                new Object[] { "id*",                                             false },
-                new Object[] { "id(",                                             false },
-                new Object[] { "id)",                                             false },
-                new Object[] { "id+",                                             false },
-                new Object[] { "id=",                                             false }
+    private static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of("id", true),
+                Arguments.of("long-id", true),
+                Arguments.of("long-id-with-numbers-1234567890", true),
+                Arguments.of("long-id-with-numbers-1234567890-and-underscore_", true),
+                Arguments.of("ID-with-CAPITALS", true),
+                Arguments.of(null, true),
+                Arguments.of("id<", false),
+                Arguments.of("id>", false),
+                Arguments.of("id!", false),
+                Arguments.of("id@", false),
+                Arguments.of("id#", false),
+                Arguments.of("id$", false),
+                Arguments.of("id%", false),
+                Arguments.of("id^", false),
+                Arguments.of("id&", false),
+                Arguments.of("id*", false),
+                Arguments.of("id(", false),
+                Arguments.of("id)", false),
+                Arguments.of("id+", false),
+                Arguments.of("id=", false)
         );
     }
-
 }

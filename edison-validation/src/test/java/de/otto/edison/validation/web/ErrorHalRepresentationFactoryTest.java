@@ -1,10 +1,8 @@
 package de.otto.edison.validation.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -20,14 +18,13 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ErrorHalRepresentationFactoryTest {
 
 
     private ResourceBundleMessageSource messageSource;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("ValidationMessages");
         messageSource.setUseCodeAsDefaultMessage(true);
@@ -37,11 +34,11 @@ public class ErrorHalRepresentationFactoryTest {
     @Test
     public void shouldBuildRepresentationForValidationResults() {
         // given
-        ErrorHalRepresentationFactory factory = new ErrorHalRepresentationFactory(messageSource, new ObjectMapper());
+        final ErrorHalRepresentationFactory factory = new ErrorHalRepresentationFactory(messageSource, new ObjectMapper());
 
         // when
-        Errors mockErrors = mock(Errors.class);
-        FieldError fieldError = new FieldError("someObject",
+        final Errors mockErrors = mock(Errors.class);
+        final FieldError fieldError = new FieldError("someObject",
                 "xyzField",
                 "rejected",
                 true,
@@ -50,11 +47,11 @@ public class ErrorHalRepresentationFactoryTest {
                 "Some default message");
         when(mockErrors.getAllErrors()).thenReturn(Collections.singletonList(fieldError));
         when(mockErrors.getErrorCount()).thenReturn(1);
-        ErrorHalRepresentation errorHalRepresentation = factory.halRepresentationForValidationErrors(mockErrors);
+        final ErrorHalRepresentation errorHalRepresentation = factory.halRepresentationForValidationErrors(mockErrors);
 
         // then
         assertThat(errorHalRepresentation.getErrorMessage(), is("Validation failed. 1 error(s)"));
-        List<Map<String, String>> listOfViolations = errorHalRepresentation.getErrors().get("xyzField");
+        final List<Map<String, String>> listOfViolations = errorHalRepresentation.getErrors().get("xyzField");
         assertThat(listOfViolations, hasSize(1));
         assertThat(listOfViolations.get(0), hasEntry("key", "text.not_empty"));
         assertThat(listOfViolations.get(0), hasEntry("message", "Some default message"));
@@ -64,11 +61,11 @@ public class ErrorHalRepresentationFactoryTest {
     @Test
     public void shouldNotCrashOnNullValues() {
         // given
-        ErrorHalRepresentationFactory factory = new ErrorHalRepresentationFactory(messageSource, new ObjectMapper());
+        final ErrorHalRepresentationFactory factory = new ErrorHalRepresentationFactory(messageSource, new ObjectMapper());
 
         // when
-        Errors mockErrors = mock(Errors.class);
-        FieldError fieldError = new FieldError("someObject",
+        final Errors mockErrors = mock(Errors.class);
+        final FieldError fieldError = new FieldError("someObject",
                 "xyzField",
                 null,
                 true,
@@ -77,11 +74,11 @@ public class ErrorHalRepresentationFactoryTest {
                 "Some default message");
         when(mockErrors.getAllErrors()).thenReturn(Collections.singletonList(fieldError));
         when(mockErrors.getErrorCount()).thenReturn(1);
-        ErrorHalRepresentation errorHalRepresentation = factory.halRepresentationForValidationErrors(mockErrors);
+        final ErrorHalRepresentation errorHalRepresentation = factory.halRepresentationForValidationErrors(mockErrors);
 
         // then
         assertThat(errorHalRepresentation.getErrorMessage(), is("Validation failed. 1 error(s)"));
-        List<Map<String, String>> listOfViolations = errorHalRepresentation.getErrors().get("xyzField");
+        final List<Map<String, String>> listOfViolations = errorHalRepresentation.getErrors().get("xyzField");
         assertThat(listOfViolations, hasSize(1));
         assertThat(listOfViolations.get(0), hasEntry("key", "text.not_empty"));
         assertThat(listOfViolations.get(0), hasEntry("message", "Some default message"));

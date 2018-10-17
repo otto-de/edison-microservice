@@ -4,9 +4,9 @@ import de.otto.edison.validation.validators.SafeId;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +14,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +28,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @EnableAutoConfiguration
@@ -44,7 +44,7 @@ public class ValidationExceptionHandlerAcceptanceTest {
     @Autowired
     private ServletContext servletContext;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         RestAssured.port = port;
         RestAssured.basePath = servletContext.getContextPath();
@@ -73,7 +73,7 @@ public class ValidationExceptionHandlerAcceptanceTest {
                     method = RequestMethod.PUT,
                     consumes = APPLICATION_JSON_VALUE,
                     produces = APPLICATION_JSON_VALUE)
-            public String doTest(@Validated @RequestBody ContentRepresentation content) {
+            public String doTest(@Validated @RequestBody final ContentRepresentation content) {
                 return "bla";
             }
         }
