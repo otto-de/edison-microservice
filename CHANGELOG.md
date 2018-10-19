@@ -20,6 +20,8 @@
                     `edison-togglz.s3.enabled` is not false, and if the S3Client.class is in the classpath of your 
                     Edison service. A S3Client bean is required in the ApplicationContext.                     
 
+**Maintenance:**
+* **[general]**     Tests have been moved from JUnit4 to JUnit5 in all projects.
 
 ## 2-0.0-m4
 
