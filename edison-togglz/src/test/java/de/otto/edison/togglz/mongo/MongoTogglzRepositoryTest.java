@@ -1,8 +1,8 @@
-package de.otto.edison.mongo.togglz;
+package de.otto.edison.togglz.mongo;
 
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.mongo.configuration.MongoProperties;
-import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
+import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import de.otto.edison.togglz.FeatureClassProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

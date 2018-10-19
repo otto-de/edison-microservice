@@ -19,10 +19,16 @@
 * **[edison-aws]**  S3 togglz repository is automatically used if the property `edison.togglz.s3.bucket-name` is set, 
                     `edison-togglz.s3.enabled` is not false, and if the S3Client.class is in the classpath of your 
                     Edison service. A S3Client bean is required in the ApplicationContext.                     
-
+* **[edison-aws]**  S3TogglzRepository is now part of **[edison-togglz]** and is automatically used if the property 
+                    `edison.togglz.s3.bucket-name` is set, `edison.togglz.s3.enabled` is true and a bean of type 
+                    `software.amazon.awssdk.services.s3.S3Client` is provided.    
+* **[edison-mongo]**MongoTogglzRepository is now part of **[edison-togglz]** and will be autoconfigured if `edison.togglz.mongo.enabled`
+                    is true and a bean of type `com.mongodb.MongoClient` is provided.
+* **[edison-mongo]**MongoJobRepository is now part of **[edison-jobs]** and will be autoconfigured if `edison.jobs.mongo.enabled`
+                    is true and a bean of type `com.mongodb.MongoClient` is provided.
+                    
 **Maintenance:**
 * **[general]**     Tests have been moved from JUnit4 to JUnit5 in all projects.
-
 ## 2-0.0-m4
 
 * **[general]**: You need Java >9 to compile, but target compatibility is set back to 1.8

@@ -1,4 +1,4 @@
-package de.otto.edison.mongo.testsupport;
+package de.otto.edison.testsupport.mongo;
 
 import com.mongodb.MongoClient;
 import de.flapdoodle.embed.mongo.Command;

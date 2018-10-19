@@ -17,17 +17,28 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "edison.jobs")
 @Validated
 public class JobsProperties {
-    /** Enables / disabled the support for external triggers (->Edison JobTrigger). If false, the job controllers are not available. */
+    /**
+     * Enables / disabled the support for external triggers (->Edison JobTrigger). If false, the job controllers are not available.
+     */
     private boolean externalTrigger = true;
-    /** Number of threads available to run jobs. */
+    /**
+     * Number of threads available to run jobs.
+     */
     @Min(1)
     private int threadCount = 10;
-    /** Properties used to configure clean-up strategies. */
+    /**
+     * Properties used to configure clean-up strategies.
+     */
     @Valid
     private Cleanup cleanup = new Cleanup();
-    /** Properties used to configure the reporting of job status using StatusDetailIndicators. */
+    /**
+     * Properties used to configure the reporting of job status using StatusDetailIndicators.
+     */
     @Valid
     private Status status = new Status();
+
+    @Valid
+    private Mongo mongo = new Mongo();
 
     public boolean isExternalTrigger() {
         return externalTrigger;
@@ -61,6 +72,14 @@ public class JobsProperties {
         this.status = status;
     }
 
+    public Mongo getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(Mongo mongo) {
+        this.mongo = mongo;
+    }
+
     public static class Cleanup {
         /**
          * The number of jobs to keep by strategies like KeepLastJobs to clean up old jobs.
@@ -72,7 +91,7 @@ public class JobsProperties {
          */
         @Min(1)
         private int numberOfSkippedJobsToKeep = 10;
-         /**
+        /**
          * Number of seconds without update after which a job is considered to be dead.
          */
         @Min(1)
@@ -104,13 +123,17 @@ public class JobsProperties {
     }
 
     public static class Status {
-        /** Enable / disable StatusDetailIndicators for jobs. */
+        /**
+         * Enable / disable StatusDetailIndicators for jobs.
+         */
         private boolean enabled = true;
 
-        /** Configuration of the strategy used to map job state to StatusDetails. edison.jobs.status.calculator.default
-         * is used to configure the default strategy. */
+        /**
+         * Configuration of the strategy used to map job state to StatusDetails. edison.jobs.status.calculator.default
+         * is used to configure the default strategy.
+         */
         @NotNull
-        private Map<String,String> calculator = new HashMap<>();
+        private Map<String, String> calculator = new HashMap<>();
 
         public boolean isEnabled() {
             return enabled;
@@ -132,5 +155,21 @@ public class JobsProperties {
             });
             this.calculator = normalized;
         }
+    }
+
+    public static class Mongo {
+        /**
+         * Enable / disable mongo job repository.
+         */
+        private boolean enabled = false;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
     }
 }

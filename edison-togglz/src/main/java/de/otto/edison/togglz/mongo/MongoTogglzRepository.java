@@ -1,4 +1,4 @@
-package de.otto.edison.mongo.togglz;
+package de.otto.edison.togglz.mongo;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;

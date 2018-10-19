@@ -1,10 +1,10 @@
-package de.otto.edison.mongo.jobs;
+package de.otto.edison.jobs.repository.mongo;
 
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobMetaRepository;
 import de.otto.edison.mongo.configuration.MongoProperties;
-import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
+import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,10 +18,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
 public class JobMetaRepositoryTest {

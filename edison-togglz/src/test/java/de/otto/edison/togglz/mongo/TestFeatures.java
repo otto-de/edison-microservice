@@ -1,4 +1,4 @@
-package de.otto.edison.mongo.togglz;
+package de.otto.edison.togglz.mongo;
 
 import org.togglz.core.Feature;
 import org.togglz.core.annotation.Label;

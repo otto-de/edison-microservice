@@ -1,13 +1,15 @@
-package de.otto.edison.mongo.configuration;
+package de.otto.edison.jobs.configuration;
 
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.mongo.jobs.MongoJobMetaRepository;
-import de.otto.edison.mongo.jobs.MongoJobRepository;
+import de.otto.edison.jobs.repository.mongo.MongoJobMetaRepository;
+import de.otto.edison.jobs.repository.mongo.MongoJobRepository;
+import de.otto.edison.mongo.configuration.MongoProperties;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +17,9 @@ import org.springframework.context.annotation.Configuration;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
-@ConditionalOnClass(name = "de.otto.edison.jobs.configuration.JobsConfiguration")
 @EnableConfigurationProperties(MongoProperties.class)
+@ConditionalOnProperty(prefix = "edison.jobs", name = "mongo.enabled", havingValue = "true")
+@ConditionalOnBean(type = "com.mongodb.MongoClient")
 public class MongoJobsConfiguration {
 
     private static final Logger LOG = getLogger(MongoJobsConfiguration.class);

@@ -1,4 +1,4 @@
-package de.otto.edison.mongo.jobs;
+package de.otto.edison.jobs.repository.mongo;
 
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.domain.JobInfo;
@@ -6,7 +6,8 @@ import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.mongo.configuration.MongoProperties;
-import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
+import de.otto.edison.testsupport.matcher.OptionalMatchers;
+import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import org.assertj.core.util.Lists;
 import org.bson.Document;
 import org.hamcrest.Matchers;
@@ -18,35 +19,19 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-import static de.otto.edison.mongo.jobs.DateTimeConverters.toDate;
-import static de.otto.edison.mongo.jobs.JobStructure.ID;
-import static de.otto.edison.mongo.jobs.JobStructure.JOB_TYPE;
-import static de.otto.edison.mongo.jobs.JobStructure.MESSAGES;
-import static de.otto.edison.mongo.jobs.JobStructure.MSG_LEVEL;
-import static de.otto.edison.mongo.jobs.JobStructure.MSG_TEXT;
-import static de.otto.edison.mongo.jobs.JobStructure.MSG_TS;
-import static de.otto.edison.mongo.jobs.JobStructure.STATUS;
+import static de.otto.edison.jobs.repository.mongo.JobStructure.*;
 import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class MongoJobRepositoryTest {
 
@@ -120,7 +105,8 @@ public class MongoJobRepositoryTest {
         final Optional<JobInfo> jobInfo = repo.findOne(foo.getJobId());
 
         //Then
-        assertThat(toDate(jobInfo.orElse(null).getLastUpdated()), is(toDate(myTestTime)));
+        assertThat(jobInfo, OptionalMatchers.isPresent());
+        assertThat(Date.from(jobInfo.get().getLastUpdated().toInstant()), is(Date.from(myTestTime.toInstant())));
     }
 
     @Test
@@ -148,9 +134,9 @@ public class MongoJobRepositoryTest {
     @Test
     public void shouldStoreAndRetrieveAllJobInfoWithoutMessages() {
         // given
-    	final JobInfo job1 = someJobInfo("http://localhost/foo");
-    	final JobInfo job2 = someJobInfo("http://localhost/bar");
-   	
+        final JobInfo job1 = someJobInfo("http://localhost/foo");
+        final JobInfo job2 = someJobInfo("http://localhost/bar");
+
         repo.createOrUpdate(job1);
         repo.createOrUpdate(job2);
         // when
@@ -253,7 +239,7 @@ public class MongoJobRepositoryTest {
 
         // Then
         assertThat(allJobIds, hasSize(3));
-        assertThat(allJobIds, Matchers.containsInAnyOrder("jobEins", "jobZwei", "jobVier"));
+        assertThat(allJobIds, containsInAnyOrder("jobEins", "jobZwei", "jobVier"));
     }
 
     @Test
@@ -277,7 +263,7 @@ public class MongoJobRepositoryTest {
 
         // Then
         assertThat(latestDistinct, hasSize(3));
-        assertThat(latestDistinct, Matchers.containsInAnyOrder(fuenf, zwei, drei));
+        assertThat(latestDistinct, containsInAnyOrder(fuenf, zwei, drei));
     }
 
     @Test
@@ -333,14 +319,14 @@ public class MongoJobRepositoryTest {
         repo.createOrUpdate(jobInfo);
 
         // when
-        final JobMessage jobMessage = JobMessage.jobMessage(Level.INFO, "Schön ist es auf der Welt zu sein, sagt der Igel zu dem Stachelschwein", now());
+        final JobMessage jobMessage = jobMessage(Level.INFO, "Schön ist es auf der Welt zu sein, sagt der Igel zu dem Stachelschwein", now());
         repo.appendMessage(jobId, jobMessage);
 
         // then
         final JobInfo jobInfoFromDB = repo.findOne(jobId).orElse(null);
         assertThat(jobInfoFromDB.getMessages(), hasSize(3));
         assertThat(jobInfoFromDB.getMessages().get(2), is(jobMessage));
-        assertThat(jobInfoFromDB.getStatus(), is(JobStatus.OK));
+        assertThat(jobInfoFromDB.getStatus(), is(OK));
 
     }
 

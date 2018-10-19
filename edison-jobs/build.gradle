@@ -3,9 +3,14 @@ dependencies {
 
     compile project(":edison-core")
 
+    compileOnly libraries.mongodb_driver
+    compileOnly project(":edison-mongo")
+
+    testCompile project(":edison-mongo")
     testCompile project(":edison-testsupport")
     testCompile test_libraries.json_path
     testCompile test_libraries.jsonassert
+    testCompile test_libraries.embedded_mongo
 }
 
 javadoc {

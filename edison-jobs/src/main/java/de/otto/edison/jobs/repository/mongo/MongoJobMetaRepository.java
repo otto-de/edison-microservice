@@ -1,9 +1,11 @@
-package de.otto.edison.mongo.jobs;
+package de.otto.edison.jobs.repository.mongo;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.Updates;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.mongo.configuration.MongoProperties;
@@ -14,11 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.exists;
-import static com.mongodb.client.model.Updates.set;
-import static com.mongodb.client.model.Updates.unset;
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Updates.*;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -27,7 +26,7 @@ import static java.util.stream.StreamSupport.stream;
 /**
  * {@inheritDoc}
  * <p>
- *     MongoDB implementation of the JobMetaRepository.
+ * MongoDB implementation of the JobMetaRepository.
  *
  * </p>
  */
@@ -120,8 +119,8 @@ public class MongoJobMetaRepository implements JobMetaRepository {
 
     @Override
     public String setValue(final String jobType,
-                         final String key,
-                         final String value) {
+                           final String key,
+                           final String value) {
         final Document previous;
         if (value != null) {
             previous = collection.findOneAndUpdate(eq(ID, jobType), set(key, value), UPSERT);

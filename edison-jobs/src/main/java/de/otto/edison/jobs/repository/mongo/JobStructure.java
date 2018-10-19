@@ -1,4 +1,4 @@
-package de.otto.edison.mongo.jobs;
+package de.otto.edison.jobs.repository.mongo;
 
 enum JobStructure {
 

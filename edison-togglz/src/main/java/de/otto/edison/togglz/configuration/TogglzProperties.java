@@ -27,6 +27,9 @@ public class TogglzProperties {
     @Valid
     private S3 s3 = new S3();
 
+    @Valid
+    private Mongo mongo = new Mongo();
+
     public int getCacheTtl() {
         return cacheTtl;
     }
@@ -51,6 +54,14 @@ public class TogglzProperties {
         this.s3 = s3;
     }
 
+    public Mongo getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(Mongo mongo) {
+        this.mongo = mongo;
+    }
+
     public static class Console {
         /**
          * Enable / disable the Togglz web console.
@@ -70,7 +81,7 @@ public class TogglzProperties {
         /**
          * Enable / disable the S3 togglz.
          */
-        private boolean enabled = true;
+        private boolean enabled = false;
         private String bucketName;
         private String keyPrefix = "togglz/";
 
@@ -97,6 +108,22 @@ public class TogglzProperties {
         public void setKeyPrefix(final String keyPrefix) {
             this.keyPrefix = keyPrefix;
         }
+    }
+
+    public static class Mongo {
+        /**
+         * Enable / disable the mongo togglz.
+         */
+        private boolean enabled = false;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
     }
 
 }

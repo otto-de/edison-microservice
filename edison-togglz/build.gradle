@@ -4,11 +4,16 @@ dependencies {
     compile libraries.togglz_spring_web
 
     compileOnly libraries.aws_sdk_s3
+    compileOnly libraries.mongodb_driver
+    compileOnly project(":edison-mongo")
 
     compile libraries.unboundid_ldapsdk_minimal_edition
 
     testCompile project(":edison-testsupport")
+    testCompile project(":edison-mongo")
+
     testCompile libraries.aws_sdk_s3
+    testCompile test_libraries.embedded_mongo
     testCompile test_libraries.testcontainers
     testCompile test_libraries.junit
     testCompile test_libraries.mockito_core

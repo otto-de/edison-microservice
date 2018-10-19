@@ -1,8 +1,8 @@
 package de.otto.edison.jobs.service;
 
+import de.otto.edison.jobs.TestServer;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.testsupport.TestServer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

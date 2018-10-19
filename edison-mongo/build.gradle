@@ -1,15 +1,10 @@
 dependencies {
-    compileOnly project(":edison-jobs")
-    compileOnly project(":edison-togglz")
-
     compile project(":edison-core")
     compile libraries.spring_boot
     compile libraries.spring_boot_autoconfigure
     compile libraries.mongodb_driver
 
     testCompile project(":edison-testsupport")
-    testCompile project(":edison-jobs")
-    testCompile project(":edison-togglz")
     testCompile test_libraries.embedded_mongo
 }
 

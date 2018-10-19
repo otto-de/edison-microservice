@@ -1,7 +1,10 @@
 package de.otto.edison.togglz.configuration;
 
 import de.otto.edison.togglz.s3.S3TogglzRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +20,16 @@ class S3TogglzConfigurationTest {
 
     private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
+    @ImportAutoConfiguration({S3TestConfiguration.class, TogglzConfiguration.class, S3TogglzConfiguration.class, InMemoryFeatureStateRepositoryConfiguration.class})
+    private static class TogglzAutoConfiguration {
+    }
+
+    @AfterEach
+    void close() {
+        this.context.close();
+    }
+
+    @TestConfiguration
     static class S3TestConfiguration {
         @Bean
         public S3Client s3Client() {
@@ -26,10 +39,8 @@ class S3TogglzConfigurationTest {
 
     @Test
     public void shouldExposeS3StaterepositoryIfEnabled() {
+        this.context.register(TogglzAutoConfiguration.class);
         this.context.register(S3TestConfiguration.class);
-        this.context.register(TogglzConfiguration.class);
-        this.context.register(S3TogglzConfiguration.class);
-        this.context.register(InMemoryFeatureStateRepositoryConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.s3.enabled=true")
                 .and("edison.togglz.s3.bucket-name=togglz-bucket")
@@ -42,10 +53,8 @@ class S3TogglzConfigurationTest {
 
     @Test
     public void shouldUseInMemoryStateRepositoryIfS3BucketNotConfigured() {
+        this.context.register(TogglzAutoConfiguration.class);
         this.context.register(S3TestConfiguration.class);
-        this.context.register(TogglzConfiguration.class);
-        this.context.register(S3TogglzConfiguration.class);
-        this.context.register(InMemoryFeatureStateRepositoryConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.s3.enabled=true")
                 .applyTo(context);
@@ -58,9 +67,7 @@ class S3TogglzConfigurationTest {
     @Test
     public void shouldUseInMemoryStateRepositoryIfS3Disabled() {
         this.context.register(S3TestConfiguration.class);
-        this.context.register(TogglzConfiguration.class);
-        this.context.register(S3TogglzConfiguration.class);
-        this.context.register(InMemoryFeatureStateRepositoryConfiguration.class);
+        this.context.register(TogglzAutoConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.s3.enabled=false")
                 .and("edison.togglz.s3.bucket-name=togglz-bucket")
@@ -73,9 +80,7 @@ class S3TogglzConfigurationTest {
 
     @Test
     public void shouldUseInMemoryStateRepositoryIfMissingS3Client() {
-        this.context.register(TogglzConfiguration.class);
-        this.context.register(S3TogglzConfiguration.class);
-        this.context.register(InMemoryFeatureStateRepositoryConfiguration.class);
+        this.context.register(TogglzAutoConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.s3.enabled=true")
                 .and("edison.togglz.s3.bucket-name=togglz-bucket")

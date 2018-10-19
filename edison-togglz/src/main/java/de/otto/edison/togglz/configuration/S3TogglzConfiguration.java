@@ -4,6 +4,8 @@ import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
 import de.otto.edison.togglz.s3.FeatureStateConverter;
 import de.otto.edison.togglz.s3.S3TogglzRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,9 +18,11 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
 @EnableConfigurationProperties(TogglzProperties.class)
-@ConditionalOnProperty(name = "edison.togglz.s3.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "edison.togglz", name = "s3.enabled", havingValue = "true")
 @ConditionalOnBean(type = "software.amazon.awssdk.services.s3.S3Client")
 public class S3TogglzConfiguration {
+
+    private static final Logger LOG = LoggerFactory.getLogger(S3TogglzConfiguration.class);
 
     @Bean
     @ConditionalOnProperty(name = "edison.togglz.s3.bucket-name")
@@ -37,6 +41,9 @@ public class S3TogglzConfiguration {
     @Bean
     @ConditionalOnProperty(name = "edison.togglz.s3.bucket-name")
     public StateRepository stateRepository(final FeatureStateConverter featureStateConverter) {
+        LOG.info("========================");
+        LOG.info("Using S3TogglzRepository");
+        LOG.info("========================");
         return new S3TogglzRepository(featureStateConverter);
     }
 }

@@ -3,7 +3,7 @@ package de.otto.edison.mongo;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.mongo.configuration.MongoProperties;
-import de.otto.edison.mongo.testsupport.EmbeddedMongoHelper;
+import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import org.bson.Document;
 import org.hamcrest.CustomMatcher;
 import org.hamcrest.Matchers;
