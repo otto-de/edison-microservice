@@ -1,18 +1,17 @@
-package de.otto.edison.aws.paramstore;
+package de.otto.edison.properties;
 
+import de.otto.edison.configuration.ParamStoreProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.stereotype.Component;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParametersByPathRequest;
 import software.amazon.awssdk.services.ssm.model.GetParametersByPathResponse;
@@ -25,20 +24,18 @@ import static io.netty.util.internal.StringUtil.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 import static software.amazon.awssdk.services.ssm.model.ParameterType.SECURE_STRING;
 
-@Component
-@ConditionalOnProperty(name = "edison.aws.config.paramstore.enabled", havingValue = "true")
 public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostProcessor, EnvironmentAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParamStorePropertySourcePostProcessor.class);
 
     private static final String PARAMETER_STORE_PROPERTY_SOURCE = "parameterStorePropertySource";
-    private SsmClient ssmClient;
+
     private ParamStoreProperties properties;
+    private final SsmClient ssmClient;
 
-    private final AwsCredentialsProvider awsCredentialsProvider;
-
-    public ParamStorePropertySourcePostProcessor(final AwsCredentialsProvider awsCredentialsProvider) {
-        this.awsCredentialsProvider = awsCredentialsProvider;
+    @Autowired
+    public ParamStorePropertySourcePostProcessor(final SsmClient ssmClient) {
+        this.ssmClient = ssmClient;
     }
 
     @Override
@@ -92,10 +89,6 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
         properties.setAddWithLowestPrecedence(
                 Boolean.parseBoolean(environment.getProperty("edison.aws.config.paramstore.addWithLowestPrecedence", "false")));
         properties.setPath(path);
-
-        this.ssmClient = SsmClient.builder()
-                .credentialsProvider(awsCredentialsProvider)
-                .build();
     }
 
 }

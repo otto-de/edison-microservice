@@ -1,4 +1,4 @@
-package de.otto.edison.aws.paramstore;
+package de.otto.edison.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

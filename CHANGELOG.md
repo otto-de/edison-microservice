@@ -26,6 +26,7 @@
                     is true and a bean of type `com.mongodb.MongoClient` is provided.
 * **[edison-mongo]**MongoJobRepository is now part of **[edison-jobs]** and will be autoconfigured if `edison.jobs.mongo.enabled`
                     is true and a bean of type `com.mongodb.MongoClient` is provided.
+* **[edison-core]**ParamStorePropertySourcePostProcessor moved to **[edison-core]** and removed project **[edison-paramstore]**
                     
 **Maintenance:**
 * **[general]**     Tests have been moved from JUnit4 to JUnit5 in all projects.
