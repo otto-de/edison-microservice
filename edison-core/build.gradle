@@ -1,7 +1,5 @@
 dependencies {
-    compile libraries.spring_boot_autoconfigure
-    compile libraries.aws_sdk_ssm
-    
+    compileOnly libraries.aws_sdk_ssm
     compile libraries.async_http_client
 
     compile libraries.spring_boot_starter_web
@@ -13,6 +11,7 @@ dependencies {
     compile libraries.unboundid_ldapsdk_minimal_edition
 
     testCompile project(":edison-testsupport")
+    testCompile libraries.aws_sdk_ssm
     testCompile libraries.async_http_client
 }
 
