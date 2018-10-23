@@ -29,6 +29,8 @@ edison:
     gracefulshutdown:
         enabled: false
     jobs:
+        mongo:
+            enabled: false # enable for persistence
         status:
             calculator:
                 Bar: errorOnLastThreeJobsFailed
