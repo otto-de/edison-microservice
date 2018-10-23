@@ -20,11 +20,14 @@ management:
             expose: '*'
 
 edison:
+    togglz:
+        mongo:
+            enabled: true
     gracefulshutdown:
         enabled: false
     mongo:
         db: edison-example
-        host: localhost:27017,localhost:27018,localhost:27019
+        host: localhost
         passwd: ''
         user: edison-example
     status:
