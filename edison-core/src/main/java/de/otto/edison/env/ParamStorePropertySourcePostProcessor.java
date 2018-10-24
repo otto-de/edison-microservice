@@ -1,6 +1,5 @@
-package de.otto.edison.properties;
+package de.otto.edison.env;
 
-import de.otto.edison.configuration.ParamStoreProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static io.netty.util.internal.StringUtil.isNullOrEmpty;
+import static java.lang.Boolean.parseBoolean;
 import static java.util.Objects.requireNonNull;
 import static software.amazon.awssdk.services.ssm.model.ParameterType.SECURE_STRING;
 
@@ -28,7 +28,7 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
 
     private static final Logger LOG = LoggerFactory.getLogger(ParamStorePropertySourcePostProcessor.class);
 
-    private static final String PARAMETER_STORE_PROPERTY_SOURCE = "parameterStorePropertySource";
+    private static final String PARAMETER_STORE_PROPERTY_SOURCE = "paramStorePropertySource";
 
     private ParamStoreProperties properties;
     private final SsmClient ssmClient;
@@ -82,12 +82,12 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
 
     @Override
     public void setEnvironment(final Environment environment) {
-        final String pathProperty = "edison.aws.config.paramstore.path";
+        final String pathProperty = "edison.env.paramstore.path";
         final String path = requireNonNull(environment.getProperty(pathProperty),
                 "Property '" + pathProperty + "' must not be null");
         properties = new ParamStoreProperties();
         properties.setAddWithLowestPrecedence(
-                Boolean.parseBoolean(environment.getProperty("edison.aws.config.paramstore.addWithLowestPrecedence", "false")));
+                parseBoolean(environment.getProperty("edison.env.paramstore.addWithLowestPrecedence", "false")));
         properties.setPath(path);
     }
 

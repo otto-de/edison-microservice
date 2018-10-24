@@ -1,8 +1,8 @@
-package de.otto.edison.configuration;
+package de.otto.edison.env;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "edison.aws.config.paramstore")
+@ConfigurationProperties(prefix = "edison.env.paramstore")
 public class ParamStoreProperties {
     private boolean enabled;
     private String path;

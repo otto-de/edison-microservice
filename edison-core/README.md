@@ -210,7 +210,7 @@ using the Spring Boot GitProperties for all the other information.
 
 ### 3.9 External Dependencies
 
-## 3.3 Environment Properties
+## 3.10 Environment Properties
 
 The following properties should be added to your application.properties or application.yml configuration.
 
@@ -235,3 +235,15 @@ the SystemInfoConfiguration is trying to get the hostname using InetAddress.getL
 * `edison.status.cluster.enabled:false`
 * `edison.status.cluster.color-header:X-Color`
 * `edison.status.cluster.color-state-header:X-Staging`
+
+# 4.0 de.otto.edison.env
+
+The core package contains optional support for AWS ParamStore. Properties configured in the ParamStore can be 
+automatically loaded and added to the environment of the application.
+
+ParamStore support must be explicitly enabled:
+
+- The AWS SSM v2 JAR must be in the classpath of the application.
+- A Spring bean with type `software.amazon.awssdk.services.ssm.SsmClient` must be configured.
+- `edison.env.paramstore.enabled=true` must be added to the application.properties.
+- `edison.env.paramstore.path` must be configured

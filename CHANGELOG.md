@@ -21,12 +21,16 @@
                     Edison service. A S3Client bean is required in the ApplicationContext.                     
 * **[edison-aws]**  S3TogglzRepository is now part of **[edison-togglz]** and is automatically used if the property 
                     `edison.togglz.s3.bucket-name` is set, `edison.togglz.s3.enabled` is true and a bean of type 
-                    `software.amazon.awssdk.services.s3.S3Client` is provided.    
-* **[edison-mongo]**MongoTogglzRepository is now part of **[edison-togglz]** and will be autoconfigured if `edison.togglz.mongo.enabled`
+                    `software.amazon.awssdk.services.s3.S3Client` is provided.
+                        
+* **[edison-mongo]** MongoTogglzRepository is now part of **[edison-togglz]** and will be autoconfigured if `edison.togglz.mongo.enabled`
                     is true and a bean of type `com.mongodb.MongoClient` is provided.
-* **[edison-mongo]**MongoJobRepository is now part of **[edison-jobs]** and will be autoconfigured if `edison.jobs.mongo.enabled`
+* **[edison-mongo]** MongoJobRepository is now part of **[edison-jobs]** and will be autoconfigured if `edison.jobs.mongo.enabled`
                     is true and a bean of type `com.mongodb.MongoClient` is provided.
-* **[edison-core]**ParamStorePropertySourcePostProcessor moved to **[edison-core]** and removed project **[edison-paramstore]**
+* **[edison-core]** ParamStorePropertySourcePostProcessor moved to **[edison-core]** and removed project 
+                    **[edison-paramstore]**.
+                    The properties used to configure the paramstore have changed from `edison.aws.config.*` to 
+                    `edison.env.paramstore.*`
                     
 **Maintenance:**
 * **[general]**     Tests have been moved from JUnit4 to JUnit5 in all projects.

@@ -1,9 +1,8 @@
-package de.otto.edison.properties;
+package de.otto.edison.env;
 
-import de.otto.edison.configuration.ParamStoreProperties;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -15,6 +14,7 @@ import software.amazon.awssdk.services.ssm.model.GetParametersByPathResponse;
 import software.amazon.awssdk.services.ssm.model.Parameter;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -24,8 +24,8 @@ class ParamStorePropertySourcePostProcessorTest {
 
     private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
-    @ImportAutoConfiguration({SSMTestConfiguration.class, ParamStoreProperties.class, PropertiesConfiguration.class})
-    private static class ParamStoreAutoConfiguration {
+    @ImportAutoConfiguration({SSMTestConfiguration.class, ParamStoreConfiguration.class})
+    private static class ParamStoreTestConfiguration {
     }
 
     @TestConfiguration
@@ -48,28 +48,26 @@ class ParamStorePropertySourcePostProcessorTest {
         this.context.close();
     }
 
-
     @Test
     void shouldLoadPropertiesFromParamStore() {
-        this.context.register(ParamStoreAutoConfiguration.class);
+        this.context.register(ParamStoreTestConfiguration.class);
         TestPropertyValues
-                .of("edison.aws.config.paramstore.enabled=true")
-                .and("edison.aws.config.paramstore.path=mongo")
+                .of("edison.env.paramstore.enabled=true")
+                .and("edison.env.paramstore.path=mongo")
                 .applyTo(context);
         this.context.refresh();
-
-        assertThat(this.context.containsBean("paramStorePropertySourcePostProcessor"), Matchers.is(true));
-        assertThat(this.context.getEnvironment().getPropertySources().contains("parameterStorePropertySource"), Matchers.is(true));
+        assertThat(this.context.containsBean("paramStorePropertySourcePostProcessor"), is(true));
+        assertThat(this.context.getEnvironment().getPropertySources().contains("paramStorePropertySource"), is(true));
         assertEquals("secret", this.context.getEnvironment().getProperty("password"));
     }
 
     @Test
     void shouldNotLoadPropertiesFromParamStore() {
         TestPropertyValues
-                .of("edison.aws.config.paramstore.enabled=false")
+                .of("edison.env.paramstore.enabled=false")
                 .applyTo(context);
         this.context.refresh();
 
-        assertThat(this.context.containsBean("paramStorePropertySourcePostProcessor"), Matchers.is(false));
+        assertThat(this.context.containsBean("paramStorePropertySourcePostProcessor"), is(false));
     }
 }
