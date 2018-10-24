@@ -15,10 +15,6 @@ dependencies {
     testCompile libraries.async_http_client
 }
 
-javadoc {
-    options.addBooleanOption('html5', true)
-}
-
 artifacts {
     archives jar
     archives javadocJar
