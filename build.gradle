@@ -60,6 +60,10 @@ subprojects {
     apply from: "${rootDir}/gradle/maven.gradle"
     apply from: "${rootDir}/gradle/signing.gradle"
 
+    dependencies {
+        compileOnly "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}"
+    }
+
     targetCompatibility = '1.8'
     sourceCompatibility = '1.8'
 }
