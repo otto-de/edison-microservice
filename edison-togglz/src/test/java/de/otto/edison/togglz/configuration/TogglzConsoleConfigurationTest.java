@@ -1,6 +1,6 @@
 package de.otto.edison.togglz.configuration;
 
-import de.otto.edison.navigation.NavBarConfiguration;
+import de.otto.edison.navigation.configuration.NavBarConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.util.TestPropertyValues;

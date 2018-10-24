@@ -1,5 +1,7 @@
-package de.otto.edison.navigation;
+package de.otto.edison.navigation.configuration;
 
+import de.otto.edison.navigation.NavBar;
+import de.otto.edison.navigation.NavBarItem;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.util.TestPropertyValues;
