@@ -6,6 +6,7 @@ import de.otto.edison.status.domain.StatusDetail;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Collections.singletonList;
 
 @Component
+@ConditionalOnBean(MongoDatabase.class)
 @ConditionalOnProperty(prefix = "edison.mongo.status", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class MongoStatusDetailIndicator implements StatusDetailIndicator {
 

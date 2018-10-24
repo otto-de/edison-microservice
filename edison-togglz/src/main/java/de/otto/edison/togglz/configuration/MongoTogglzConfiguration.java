@@ -7,7 +7,6 @@ import de.otto.edison.togglz.mongo.MongoTogglzRepository;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.togglz.core.repository.StateRepository;
@@ -16,7 +15,6 @@ import org.togglz.core.user.UserProvider;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
-@EnableConfigurationProperties(MongoProperties.class)
 @ConditionalOnProperty(prefix = "edison.togglz", name = "mongo.enabled", havingValue = "true")
 @ConditionalOnBean(type = "com.mongodb.MongoClient")
 public class MongoTogglzConfiguration {

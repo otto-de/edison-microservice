@@ -6,6 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import static com.mongodb.MongoCredential.createCredential;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
+@ConditionalOnProperty(prefix = "edison.mongo", name = "db")
 @EnableConfigurationProperties(MongoProperties.class)
 public class MongoConfiguration {
 

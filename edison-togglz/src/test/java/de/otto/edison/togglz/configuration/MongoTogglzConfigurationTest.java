@@ -19,7 +19,11 @@ class MongoTogglzConfigurationTest {
     private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
     @ImportAutoConfiguration({TogglzConfiguration.class, MongoTogglzConfiguration.class, InMemoryFeatureStateRepositoryConfiguration.class})
-    private static class TogglzAutoConfiguration {
+    private static class TogglzTestConfiguration {
+    }
+
+    @ImportAutoConfiguration({MongoConfiguration.class, TogglzConfiguration.class, MongoTogglzConfiguration.class, InMemoryFeatureStateRepositoryConfiguration.class})
+    private static class MongoTogglzTestConfiguration {
     }
 
     @AfterEach
@@ -29,8 +33,7 @@ class MongoTogglzConfigurationTest {
 
     @Test
     public void shouldUseMongoStateRepositoryIfEnabled() {
-        this.context.register(MongoConfiguration.class);
-        this.context.register(TogglzAutoConfiguration.class);
+        this.context.register(MongoTogglzTestConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.mongo.enabled=true")
                 .and("edison.mongo.db=db")
@@ -45,8 +48,7 @@ class MongoTogglzConfigurationTest {
 
     @Test
     public void shouldUseInMemoryStateRepositoryIfMongoDisabled() {
-        this.context.register(MongoConfiguration.class);
-        this.context.register(TogglzAutoConfiguration.class);
+        this.context.register(MongoTogglzTestConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.mongo.enabled=false")
                 .and("edison.mongo.db=db")
@@ -61,7 +63,7 @@ class MongoTogglzConfigurationTest {
 
     @Test
     public void shouldUseInMemoryStateRepositoryIfMissingMongoClient() {
-        this.context.register(TogglzAutoConfiguration.class);
+        this.context.register(TogglzTestConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.mongo.enabled=true")
                 .and("edison.mongo.db=db")
