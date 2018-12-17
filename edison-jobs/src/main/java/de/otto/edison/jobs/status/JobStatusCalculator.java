@@ -3,7 +3,10 @@ package de.otto.edison.jobs.status;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
+import de.otto.edison.jobs.domain.JobMeta;
+import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import org.slf4j.Logger;
@@ -78,6 +81,7 @@ public class JobStatusCalculator {
     private static final String TOO_MANY_JOBS_FAILED_MESSAGE = "%d out of %d job executions failed";
     private static final String JOB_TOO_OLD_MESSAGE = "Job didn't run in the past %s";
     private static final String LOAD_JOBS_EXCEPTION_MESSAGE = "Failed to load job status";
+    private static final String JOB_DEACTIVATED_MESSAGE = "Job is deactivated: %s";
 
     private static final String REL_JOB = "http://github.com/otto-de/edison/link-relations/job";
 
@@ -85,7 +89,8 @@ public class JobStatusCalculator {
     private final int numberOfJobs;
     private final int maxFailedJobs;
     private final JobRepository jobRepository;
-    private final String edisonManagementBasePath;
+    private final JobMetaRepository jobMetaRepository;
+    private final String managementContextPath;
 
     /**
      * Creates a JobStatusCalculator.
@@ -94,13 +99,14 @@ public class JobStatusCalculator {
      * @param numberOfJobs the total number of jobs to take into calculation.
      * @param maxFailedJobs the maximum number of jobs that that are accepted to fail.
      * @param jobRepository repository to fetch the last {@code numberOfJobs}.
-     * @param edisonManagementBasePath the base-path used to generate links to the job details
+     * @param jobMetaRepository meta data to indentify disabled jobs
      */
     public JobStatusCalculator(final String key,
                                final int numberOfJobs,
                                final int maxFailedJobs,
                                final JobRepository jobRepository,
-                               final String edisonManagementBasePath) {
+                               final JobMetaRepository jobMetaRepository,
+                               final String managementContextPath) {
         checkArgument(!key.isEmpty(), "Key must not be empty");
         checkArgument(maxFailedJobs <= numberOfJobs, "Parameter maxFailedJobs must not be greater numberOfJobs");
         checkArgument(numberOfJobs > 0, "Parameter numberOfJobs must be greater 0");
@@ -109,7 +115,8 @@ public class JobStatusCalculator {
         this.numberOfJobs = numberOfJobs;
         this.maxFailedJobs = maxFailedJobs;
         this.jobRepository = jobRepository;
-        this.edisonManagementBasePath = edisonManagementBasePath;
+        this.jobMetaRepository = jobMetaRepository;
+        this.managementContextPath = managementContextPath;
     }
 
     /**
@@ -117,14 +124,14 @@ public class JobStatusCalculator {
      *
      * @param key key of the calculator
      * @param jobRepository the repository
-     * @param edisonManagementBasePath the base-path used to generate links to the job details
      * @return JobStatusCalculator
      */
     public static JobStatusCalculator warningOnLastJobFailed(final String key,
                                                              final JobRepository jobRepository,
-                                                             final String edisonManagementBasePath) {
+                                                             final JobMetaRepository jobMetaRepository,
+                                                             final String managementContextPath) {
         return new JobStatusCalculator(
-                key, 1, 1, jobRepository, edisonManagementBasePath
+                key, 1, 1, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
@@ -133,14 +140,14 @@ public class JobStatusCalculator {
      *
      * @param key key of the calculator
      * @param jobRepository the repository
-     * @param edisonManagementBasePath the base-path used to generate links to the job details
      * @return JobStatusCalculator
      */
     public static JobStatusCalculator errorOnLastJobFailed(final String key,
                                                            final JobRepository jobRepository,
-                                                           final String edisonManagementBasePath) {
+                                                           final JobMetaRepository jobMetaRepository,
+                                                           final String managementContextPath) {
         return new JobStatusCalculator(
-                key, 1, 0, jobRepository, edisonManagementBasePath
+                key, 1, 0, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
@@ -150,16 +157,16 @@ public class JobStatusCalculator {
      * @param key key of the calculator
      * @param numJobs the number of last jobs used to calculate the job status
      * @param jobRepository the repository
-     * @param edisonManagementBasePath the base-path used to generate links to the job details
      * @return JobStatusCalculator
      */
     public static JobStatusCalculator errorOnLastNumJobsFailed(final String key,
                                                                final int numJobs,
                                                                final JobRepository jobRepository,
-                                                               final String edisonManagementBasePath
+                                                               final JobMetaRepository jobMetaRepository,
+                                                               final String managementContextPath
     ) {
         return new JobStatusCalculator(
-                key, numJobs, numJobs-1, jobRepository, edisonManagementBasePath
+                key, numJobs, numJobs-1, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
@@ -185,12 +192,12 @@ public class JobStatusCalculator {
      */
     public StatusDetail statusDetail(final JobDefinition jobDefinition) {
         try {
-            final List<JobInfo> jobs = jobRepository.findLatestBy(jobDefinition.jobType(), numberOfJobs);
+            final List<JobInfo> jobs = jobRepository.findLatestBy(jobDefinition.jobType(), numberOfJobs + 1);
             return jobs.isEmpty()
                     ? statusDetailWhenNoJobAvailable(jobDefinition)
                     : toStatusDetail(jobs, jobDefinition);
         } catch (final Exception e) {
-            LOG.error(LOAD_JOBS_EXCEPTION_MESSAGE + ": " + e.getMessage());
+            LOG.error(LOAD_JOBS_EXCEPTION_MESSAGE + ": " + e.getMessage(), e);
             return StatusDetail.statusDetail(jobDefinition.jobName(), ERROR, LOAD_JOBS_EXCEPTION_MESSAGE);
         }
     }
@@ -210,8 +217,11 @@ public class JobStatusCalculator {
                                           final JobDefinition jobDefinition) {
         final Status status;
         final String message;
-        final JobInfo lastJob = jobInfos.get(0);
+        final JobInfo currentJob = jobInfos.get(0);
+        final JobInfo lastJob = (!currentJob.getStopped().isPresent() && currentJob.getStatus() == JobStatus.OK && jobInfos.size() > 1) ? jobInfos.get(1) : jobInfos.get(0);
+        final JobMeta jobMeta = getJobMeta(jobDefinition.jobType());
         long numFailedJobs = getNumFailedJobs(jobInfos);
+        if (!jobMeta.isDisabled()) {
         switch(lastJob.getStatus()) {
             case OK:
             case SKIPPED:
@@ -244,12 +254,16 @@ public class JobStatusCalculator {
                 status = WARNING;
                 message = DEAD_MESSAGE;
         }
+        } else {
+            status = OK;
+            message = format(JOB_DEACTIVATED_MESSAGE, jobMeta.getDisabledComment());
+        }
         return StatusDetail.statusDetail(
                 jobDefinition.jobName(),
                 status,
                 message,
                 asList(
-                        link(REL_JOB, String.format("%s/jobs/%s", edisonManagementBasePath, lastJob.getJobId()), "Details")
+                        link(REL_JOB, String.format("%s/jobs/%s", managementContextPath, lastJob.getJobId()), "Details")
                 ),
                 runningDetailsFor(lastJob)
         );
@@ -308,6 +322,10 @@ public class JobStatusCalculator {
         if (!expression) {
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public JobMeta getJobMeta(final String jobType) {
+        return jobMetaRepository.getJobMeta(jobType);
     }
 
 }

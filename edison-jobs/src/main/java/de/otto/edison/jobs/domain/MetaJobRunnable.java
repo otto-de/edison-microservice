@@ -45,14 +45,36 @@ public abstract class MetaJobRunnable implements JobRunnable {
         metaRepository.setValue(jobType, key, String.valueOf(value));
     }
 
+    public final void setMeta(final String key, final Integer value) {
+        checkKey(key);
+        if (value != null) {
+            metaRepository.setValue(jobType, key, String.valueOf(value));
+        } else {
+            deleteMeta(key);
+        }
+    }
+
     public final void setMeta(final String key, final long value) {
         checkKey(key);
         metaRepository.setValue(jobType, key, String.valueOf(value));
     }
 
+    public final void setMeta(final String key, final Long value) {
+        checkKey(key);
+        if (value != null) {
+            metaRepository.setValue(jobType, key, String.valueOf(value));
+        } else {
+            deleteMeta(key);
+        }
+    }
+
     public final void setMeta(final String key, final Instant value) {
         checkKey(key);
+        if (value != null) {
         setMeta(key, value.toEpochMilli());
+        } else {
+            deleteMeta(key);
+        }
     }
 
     public final String getMetaAsString(final String key) {

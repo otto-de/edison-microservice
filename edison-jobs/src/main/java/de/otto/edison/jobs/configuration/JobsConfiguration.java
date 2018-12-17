@@ -113,23 +113,23 @@ public class JobsConfiguration {
     }
 
     @Bean
-    public JobStatusCalculator warningOnLastJobFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.warningOnLastJobFailed("warningOnLastJobFailed", jobRepository, edisonManagementBasePath);
+    public JobStatusCalculator warningOnLastJobFailed(final JobRepository jobRepository, final JobMetaRepository jobMetaRepository) {
+        return JobStatusCalculator.warningOnLastJobFailed("warningOnLastJobFailed", jobRepository, jobMetaRepository, edisonManagementBasePath);
     }
 
     @Bean
-    public JobStatusCalculator errorOnLastJobFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastJobFailed("errorOnLastJobFailed", jobRepository, edisonManagementBasePath);
+    public JobStatusCalculator errorOnLastJobFailed(final JobRepository jobRepository, final JobMetaRepository jobMetaRepository) {
+        return JobStatusCalculator.errorOnLastJobFailed("errorOnLastJobFailed", jobRepository, jobMetaRepository, edisonManagementBasePath);
     }
 
     @Bean
-    public JobStatusCalculator errorOnLastThreeJobsFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastThreeJobsFailed", 3, jobRepository, edisonManagementBasePath);
+    public JobStatusCalculator errorOnLastThreeJobsFailed(final JobRepository jobRepository, final JobMetaRepository jobMetaRepository) {
+        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastThreeJobsFailed", 3, jobRepository, jobMetaRepository, edisonManagementBasePath);
     }
 
     @Bean
-    public JobStatusCalculator errorOnLastTenJobsFailed(final JobRepository jobRepository) {
-        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastTenJobsFailed", 10, jobRepository, edisonManagementBasePath);
+    public JobStatusCalculator errorOnLastTenJobsFailed(final JobRepository jobRepository, final JobMetaRepository jobMetaRepository) {
+        return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastTenJobsFailed", 10, jobRepository, jobMetaRepository, edisonManagementBasePath);
     }
 
     @Bean

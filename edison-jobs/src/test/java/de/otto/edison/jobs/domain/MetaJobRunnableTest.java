@@ -72,6 +72,12 @@ public class MetaJobRunnableTest {
     }
 
     @Test
+    public void shouldDeletaMetaAsInstant() {
+        testee.setMeta("key", (Instant) null);
+        verify(metaRepository).setValue("someJob", "key", null);
+    }
+
+    @Test
     public void shouldGetJobMetaAsString() {
         when(metaRepository.getValue("someJob", "key")).thenReturn("42");
         final String value = testee.getMetaAsString("key");

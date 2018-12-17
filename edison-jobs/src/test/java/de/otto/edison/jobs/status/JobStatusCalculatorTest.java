@@ -2,6 +2,8 @@ package de.otto.edison.jobs.status;
 
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMeta;
+import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
@@ -23,6 +25,7 @@ import static java.time.Duration.ofSeconds;
 import static java.time.OffsetDateTime.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -46,6 +49,7 @@ public class JobStatusCalculatorTest {
             of(ofSeconds(10))
     );
     private JobRepository jobRepository;
+    private JobMetaRepository jobMetaRepository;
     private JobStatusCalculator warningOnLastJobFailed;
     private JobStatusCalculator errorOnLastJobFailed;
     private JobStatusCalculator errorOnLastTwoJobsFailed;
@@ -53,16 +57,19 @@ public class JobStatusCalculatorTest {
     @BeforeEach
     public void setUp() throws Exception {
         jobRepository = mock(JobRepository.class);
-        warningOnLastJobFailed = warningOnLastJobFailed("test", jobRepository, "/someInternalPath");
-        errorOnLastJobFailed = errorOnLastJobFailed("test", jobRepository, "/someInternalPath");
-        errorOnLastTwoJobsFailed = errorOnLastNumJobsFailed("test", 2, jobRepository, "/someInternalPath");
+        jobMetaRepository = mock(JobMetaRepository.class);
+        warningOnLastJobFailed = warningOnLastJobFailed("test", jobRepository, jobMetaRepository, "/someInternalPath");
+        errorOnLastJobFailed = errorOnLastJobFailed("test", jobRepository, jobMetaRepository, "/someInternalPath");
+        errorOnLastTwoJobsFailed = errorOnLastNumJobsFailed("test", 2, jobRepository, jobMetaRepository,"/someInternalPath");
     }
 
     @Test
     public void shouldIndicateOkIfLastJobOk() {
         // given
         final List<JobInfo> jobs = singletonList(someStoppedJob(OK, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobs);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobs);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -78,7 +85,9 @@ public class JobStatusCalculatorTest {
     public void shouldIndicateOkIfLastJobSkipped() {
         // given
         final List<JobInfo> jobs = singletonList(someStoppedJob(SKIPPED, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobs);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobs);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -95,7 +104,9 @@ public class JobStatusCalculatorTest {
         // given
         final JobInfo jobInfo = someStoppedJob(OK, 1);
         final List<JobInfo> jobs = singletonList(jobInfo);
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobs);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobs);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -109,7 +120,9 @@ public class JobStatusCalculatorTest {
     public void shouldIndicateStateIfLastJobFailed() {
         // given
         final List<JobInfo> jobInfos = singletonList(someStoppedJob(ERROR, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -128,7 +141,9 @@ public class JobStatusCalculatorTest {
         final List<JobInfo> jobInfos = asList(
                 someStoppedJob(OK, 1),
                 someStoppedJob(ERROR, 2));
-        when(jobRepository.findLatestBy(anyString(), eq(2))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(2+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail detail = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
@@ -144,7 +159,9 @@ public class JobStatusCalculatorTest {
         final List<JobInfo> jobInfos = asList(
                 someStoppedJob(ERROR, 1),
                 someStoppedJob(OK, 2));
-        when(jobRepository.findLatestBy(anyString(), eq(2))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(2+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail detail = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
@@ -161,10 +178,12 @@ public class JobStatusCalculatorTest {
                 someStoppedJob(OK, 1),
                 someStoppedJob(ERROR, 2),
                 someStoppedJob(ERROR, 2));
-        when(jobRepository.findLatestBy(anyString(), eq(3))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(3+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
-        final JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, "/someInternalPath");
+        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, jobMetaRepository,"/someInternalPath");
         final StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
 
         // then
@@ -179,10 +198,12 @@ public class JobStatusCalculatorTest {
                 someStoppedJob(ERROR, 1),
                 someStoppedJob(OK, 2),
                 someStoppedJob(ERROR, 2));
-        when(jobRepository.findLatestBy(anyString(), eq(3))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(3+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
-        final JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, "/someInternalPath");
+        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, jobMetaRepository, "/someInternalPath");
         final StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
 
         // then
@@ -196,7 +217,9 @@ public class JobStatusCalculatorTest {
         final List<JobInfo> jobInfos = asList(
                 someStoppedJob(ERROR, 1),
                 someStoppedJob(ERROR, 2));
-        when(jobRepository.findLatestBy(anyString(), eq(2))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(2+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail detail = errorOnLastTwoJobsFailed.statusDetail(jobDefinition);
@@ -213,8 +236,10 @@ public class JobStatusCalculatorTest {
         final List<JobInfo> jobInfos = asList(
                 someStoppedJob(OK, 11),
                 someStoppedJob(OK, 12));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfo);
-        when(jobRepository.findLatestBy(anyString(), eq(2))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobInfo);
+        when(jobRepository.findLatestBy(anyString(), eq(2+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -233,7 +258,9 @@ public class JobStatusCalculatorTest {
     @Test
     public void shouldNotHaveUriOrRunningIfNoJobPresent() {
         // given
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(emptyList());
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(emptyList());
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -248,7 +275,9 @@ public class JobStatusCalculatorTest {
     public void shouldIndicateThatJobIsNotRunning() {
         // given
         final List<JobInfo> jobInfos = singletonList(someStoppedJob(OK, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -262,7 +291,9 @@ public class JobStatusCalculatorTest {
     public void shouldIndicateWarningIfJobRunWasDead() {
         // given
         final List<JobInfo> jobInfos = singletonList(someRunningJob(DEAD, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -276,7 +307,9 @@ public class JobStatusCalculatorTest {
     public void shouldIndicateWarningIfLastJobRunWasDead() {
         // given
         final List<JobInfo> jobInfos = singletonList(someStoppedJob(DEAD, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -287,10 +320,29 @@ public class JobStatusCalculatorTest {
     }
 
     @Test
+    public void shouldIndicateOkForDisabledJob() {
+        // given
+        final List<JobInfo> jobs = singletonList(someStoppedJob(ERROR, 1));
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobs);
+        final JobMeta jobMeta = new JobMeta("test", false, true, "Test", emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
+        // when
+        final StatusDetail first = errorOnLastJobFailed.statusDetail(jobDefinition);
+        final StatusDetail second = warningOnLastJobFailed.statusDetail(jobDefinition);
+
+        // then
+        assertThat(first.getStatus(), is(Status.OK));
+        assertThat(first.getMessage(), is("Job is deactivated: Test"));
+        assertThat(second.getStatus(), is(Status.OK));
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void shouldIndicateErrorIfJobCouldNotBeRetievedFromRepository() {
         // given
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenThrow(RuntimeException.class);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenThrow(RuntimeException.class);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
         final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -302,7 +354,7 @@ public class JobStatusCalculatorTest {
     @Test
     public void shouldAcceptIfNoJobRan() {
         // given
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(emptyList());
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(emptyList());
 
         // when
         final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -315,7 +367,7 @@ public class JobStatusCalculatorTest {
     public void shouldHaveName() {
         // given
         final List<JobInfo> jobInfos = singletonList(someStoppedJob(OK, 1));
-        when(jobRepository.findLatestBy(anyString(), eq(1))).thenReturn(jobInfos);
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobInfos);
 
         // when
         final StatusDetail statusDetail = errorOnLastJobFailed.statusDetail(jobDefinition);
@@ -324,9 +376,9 @@ public class JobStatusCalculatorTest {
         assertThat(statusDetail.getName(), is("test"));
     }
 
-    private JobInfo someStoppedJob(final JobInfo.JobStatus jobStatus, final int startedSecondsAgo) {
-        final OffsetDateTime now = now();
-        final JobInfo someJob = mock(JobInfo.class);
+    private JobInfo someStoppedJob(final JobInfo.JobStatus jobStatus, int startedSecondsAgo) {
+        OffsetDateTime now = now();
+        JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
         when(someJob.getJobId()).thenReturn("someId");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(startedSecondsAgo));
@@ -335,9 +387,9 @@ public class JobStatusCalculatorTest {
         return someJob;
     }
 
-    private JobInfo someRunningJob(final JobInfo.JobStatus jobStatus, final int startedSecondsAgo) {
-        final OffsetDateTime now = now();
-        final JobInfo someJob = mock(JobInfo.class);
+    private JobInfo someRunningJob(final JobInfo.JobStatus jobStatus, int startedSecondsAgo) {
+        OffsetDateTime now = now();
+        JobInfo someJob = mock(JobInfo.class);
         when(someJob.getJobType()).thenReturn("someJobType");
         when(someJob.getJobId()).thenReturn("someJobId");
         when(someJob.getStarted()).thenReturn(now.minusSeconds(startedSecondsAgo));
