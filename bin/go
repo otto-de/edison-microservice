@@ -31,5 +31,5 @@ if [ "$1" == "help" ]; then
 elif [ "$1" == "release" ]; then
     release
 else
-    ${SCRIPT_DIR}/gradlew $*
+    ${SCRIPT_DIR}/../gradlew $*
 fi

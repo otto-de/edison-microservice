@@ -1,4 +1,7 @@
 # Release Notes
+## 2-0.0-m6
+
+* **[general]**: Updated to Gradle 5.0
 
 ## 2-0.0-m5
 
