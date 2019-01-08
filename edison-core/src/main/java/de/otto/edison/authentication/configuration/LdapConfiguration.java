@@ -59,6 +59,13 @@ public class LdapConfiguration {
         return filterRegistration;
     }
 
+    /**
+     * Add an authentication filter that requires a certain LDAP role to access secured paths.
+     * All routes starting with the value of the {@code edison.ldap.prefixes} property will be secured by LDAP.
+     * If no property is set this will default to all routes starting with '/internal'.
+     *
+     * @param ldapProperties the properties used to configure LDAP
+     */
     @Bean
     @ConditionalOnProperty(prefix = "edison.ldap", name = "required-role")
     public FilterRegistrationBean<LdapRoleAuthenticationFilter> ldapRoleAuthenticationFilter(final LdapProperties ldapProperties) {

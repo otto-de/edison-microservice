@@ -104,7 +104,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
     boolean authenticate(final LDAPConnection ldap, final String userDN, final String password) throws LDAPException {
         final BindResult bindResult = ldap.bind(userDN, password);
         if (bindResult.getResultCode().equals(ResultCode.SUCCESS)) {
-            LOG.info("Login successful: " + userDN);
+            LOG.debug("Login successful: " + userDN); // don't expose user names at successful login as this is a security issue
             return true;
         } else {
             LOG.warn("Access denied: " + userDN);
