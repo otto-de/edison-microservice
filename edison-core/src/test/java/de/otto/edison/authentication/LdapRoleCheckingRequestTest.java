@@ -48,7 +48,7 @@ public class LdapRoleCheckingRequestTest {
     }
 
     private LdapProperties someLdapProperties() {
-        return ldapProperties("", 389, singletonList("someBaseDn"), "someRoleBaseDn", "someRdnIdentifier", "/internal", StartTLS);
+        return ldapProperties("", 389, singletonList("someBaseDn"), "someRoleBaseDn", "someRdnIdentifier", singletonList("/internal"), StartTLS);
     }
 
     private LDAPInterface someLdapInterfaceReturning(String... roles) throws LDAPSearchException {

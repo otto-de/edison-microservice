@@ -10,7 +10,6 @@ import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -107,7 +106,7 @@ public class LdapProperties {
      * @param baseDn Base distinguished name
      * @param roleBaseDn Base distinguished name used to select user roles
      * @param rdnIdentifier Relative distinguished name
-     * @param prefix Prefix for paths that should require LDAP authentication
+     * @param prefix Prefixes of paths that should require LDAP authentication
      * @param encryptionType StartTLS or SSL for the connection to the LDAP server
      * @param whitelistedPaths Paths that should be excluded from LDAP authentication (includes sub-paths)
      * @return Ldap properties
@@ -117,7 +116,7 @@ public class LdapProperties {
                                                 final List<String> baseDn,
                                                 final String roleBaseDn,
                                                 final String rdnIdentifier,
-                                                final String prefix,
+                                                final List<String> prefix,
                                                 final EncryptionType encryptionType,
                                                 final String... whitelistedPaths) {
         final LdapProperties ldap = new LdapProperties();
@@ -127,7 +126,7 @@ public class LdapProperties {
         ldap.setBaseDn(baseDn);
         ldap.setRoleBaseDn(roleBaseDn);
         ldap.setRdnIdentifier(rdnIdentifier);
-        ldap.setPrefixes(singletonList(prefix));
+        ldap.setPrefixes(prefix);
         ldap.setEncryptionType(encryptionType);
         ldap.setWhitelistedPaths(asList(whitelistedPaths));
         return ldap;
