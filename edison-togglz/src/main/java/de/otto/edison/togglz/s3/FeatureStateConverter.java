@@ -40,7 +40,7 @@ public class FeatureStateConverter {
                 return FeatureStateStorageWrapper.featureStateForWrapper(feature, wrapper);
             }
         } catch (final S3Exception ae) {
-            if (ERR_NO_SUCH_KEY.equals(ae.awsErrorDetails().errorCode())) {
+            if (ERR_NO_SUCH_KEY.equals(ae.awsErrorDetails().errorCode()) ||  ae.awsErrorDetails().sdkHttpResponse().statusCode() == 404) {
                 return null;
             }
             throw ae;
