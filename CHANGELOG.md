@@ -1,6 +1,6 @@
 # Release Notes
 
-## 2-0.0-m6
+## 2-0.0-rc1
 
 * **[general]**: Updated to Gradle 5.0
 * **[general]**: Updated to AWS SDK 2.2.0
