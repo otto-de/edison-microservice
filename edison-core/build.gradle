@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly libraries.aws_sdk_ssm
+    compile libraries.aws_sdk_ssm
     compile libraries.async_http_client
 
     compile libraries.spring_boot_starter_web

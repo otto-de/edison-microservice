@@ -1,7 +1,5 @@
 package de.otto.edison.env;
 
-import de.otto.edison.env.ParamStorePropertySourcePostProcessor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
