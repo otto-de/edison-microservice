@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.ssm.SsmClient;
 public class ParamStoreConfiguration {
 
     @Bean
-    public ParamStorePropertySourcePostProcessor paramStorePropertySourcePostProcessor(final SsmClient ssmClient) {
+    public static ParamStorePropertySourcePostProcessor paramStorePropertySourcePostProcessor(final SsmClient ssmClient) {
         return new ParamStorePropertySourcePostProcessor(ssmClient);
     }
 }
