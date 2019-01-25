@@ -21,12 +21,7 @@ public class TogglzTestConfiguration {
     @Bean
     @Profile("test")
     public UserProvider userProvider() {
-        return new UserProvider() {
-            @Override
-            public FeatureUser getCurrentUser() {
-                return new SimpleFeatureUser("someName", false);
-            }
-        };
+        return () -> new SimpleFeatureUser("someName", false);
     }
 
     @Bean
