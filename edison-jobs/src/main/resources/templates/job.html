@@ -48,7 +48,7 @@
                 </div>
                 <div class="col-md-10">
                     <div class="form-check text-right">
-                        <input type="checkbox" class="form-check-input" id="follow-log" checked="checked">
+                        <input type="checkbox" class="form-check-input" id="follow-log" checked="checked" />
                         <label class="form-check-label" for="follow-log">Follow log</label>
                     </div>
                     <pre class="logWindow pre-scrollable" th:attr="data-job-url=${job.jobUri} + '?humanReadable=true'"><div th:each="message : ${job.messages}" th:text="${message}" ></div></pre>
