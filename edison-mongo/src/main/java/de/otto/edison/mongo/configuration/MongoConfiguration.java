@@ -1,9 +1,10 @@
 package de.otto.edison.mongo.configuration;
 
-import com.mongodb.*;
-import com.mongodb.client.MongoClients;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.internal.connection.MongoCredentialWithCache;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
