@@ -23,14 +23,10 @@ apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
 apply from: "${rootDir}/gradle/root/jacoco.gradle"
 apply from: "${rootDir}/gradle/root/nexusstaging.gradle"
-apply from: "${rootDir}/gradle/aws.gradle"
 
 subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'project-report'
-    apply plugin: 'maven'
-    apply plugin: 'maven-publish'
-
 
     // USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
     //
@@ -41,7 +37,7 @@ subprojects {
     // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-    version = '2.0.0-rc3-SNAPSHOT'
+    version = '2.0.0-rc2-SNAPSHOT'
     group = 'de.otto.edison'
 
     repositories {
@@ -66,28 +62,6 @@ subprojects {
 
     dependencies {
         compileOnly "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}"
-    }
-
-    publishing {
-        repositories {
-            maven {
-                url 's3://863255755531de-otto-product-artifacts.s3.eu-central-1.amazonaws.com'
-                credentials(AwsCredentials) {
-                    accessKey = project.aws.credentials.accessKeyId()
-                    secretKey = project.aws.credentials.secretAccessKey()
-                    if (project.aws.credentials.hasProperty("sessionToken")) {
-                        sessionToken = project.aws.credentials.sessionToken()
-                    }
-                }
-            }
-        }
-
-        publications {
-            maven(MavenPublication) {
-                from components.java
-            }
-        }
-
     }
 
     targetCompatibility = '1.8'
