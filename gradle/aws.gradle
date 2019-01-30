@@ -1,0 +1,90 @@
+import groovy.json.JsonSlurper
+import software.amazon.awssdk.auth.credentials.*
+import software.amazon.awssdk.core.client.builder.ClientHttpConfiguration
+import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory
+import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.GetObjectRequest
+import software.amazon.awssdk.services.ssm.SSMClient
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse
+import software.amazon.awssdk.services.ssm.model.GetParameterRequest
+import software.amazon.awssdk.services.ssm.model.GetParameterResponse
+
+import java.nio.charset.StandardCharsets
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "software.amazon.awssdk:apache-client:2.0.0-preview-10"
+        classpath "software.amazon.awssdk:auth:2.0.0-preview-10"
+        classpath "software.amazon.awssdk:core:2.0.0-preview-10"
+        classpath "software.amazon.awssdk:s3:2.0.0-preview-10"
+        classpath "software.amazon.awssdk:ssm:2.0.0-preview-10"
+        classpath "software.amazon.awssdk:secretsmanager:2.0.0-preview-10"
+    }
+}
+
+def fetchAwsCredentials() {
+    try {
+        final List<AwsCredentialsProvider> providerList = new ArrayList<>();
+
+        providerList.add(ContainerCredentialsProvider.builder().build())
+        providerList.add(InstanceProfileCredentialsProvider.create())
+        providerList.add(EnvironmentVariableCredentialsProvider.create())
+        providerList.add(ProfileCredentialsProvider.builder().profileName('ft5-infrastructure-developer').build())
+
+        return AwsCredentialsProviderChain.builder().credentialsProviders(providerList).build().credentials
+    } catch (Exception e) {
+        logger.error('Unable to retrieve AWS credentials from profile, publishing to S3 will not be available.', e)
+        return null
+    }
+}
+
+def fetchTextFromS3(bucket, key) {
+    ApacheSdkHttpClientFactory apacheClientFactory = ApacheSdkHttpClientFactory.builder().build()
+    AwsCredentials awsCredentials = fetchAwsCredentials();
+    StaticCredentialsProvider staticCredentialsProvider = new StaticCredentialsProvider(awsCredentials)
+    ClientHttpConfiguration clientHttpConfiguration = ClientHttpConfiguration.builder().httpClientFactory(apacheClientFactory).build()
+    S3Client s3Client = S3Client.builder().httpConfiguration(clientHttpConfiguration).credentialsProvider(staticCredentialsProvider).build()
+    GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(key).build()
+    println "Load key " + key + " from bucket " + bucket
+    return s3Client.getObjectAsBytes(getObjectRequest).asString(StandardCharsets.UTF_8)
+}
+
+def fetchJsonFromS3(bucket, key) {
+    String accessCookieJsonText = fetchTextFromS3(bucket, key)
+    return new JsonSlurper().parseText(accessCookieJsonText)
+}
+
+def fetchParameterFromSsmByName(String parameterKey) {
+    ApacheSdkHttpClientFactory apacheClientFactory = ApacheSdkHttpClientFactory.builder().build()
+    AwsCredentials awsCredentials = fetchAwsCredentials();
+    StaticCredentialsProvider awsStaticCredentialsProvider = new StaticCredentialsProvider(awsCredentials);
+    ClientHttpConfiguration clientHttpConfiguration = ClientHttpConfiguration.builder().httpClientFactory(apacheClientFactory).build()
+    SSMClient ssm = SSMClient.builder().httpConfiguration(clientHttpConfiguration).credentialsProvider(awsStaticCredentialsProvider).build();
+    GetParameterRequest parameterRequest = GetParameterRequest.builder().name(parameterKey).withDecryption(true).build();
+    GetParameterResponse parameterResult = ssm.getParameter(parameterRequest);
+    return parameterResult.parameter();
+}
+
+def fetchParameterFromSecretsManagerById(String secretId) {
+    ApacheSdkHttpClientFactory apacheClientFactory = ApacheSdkHttpClientFactory.builder().build()
+    AwsCredentials awsCredentials = fetchAwsCredentials();
+    StaticCredentialsProvider awsStaticCredentialsProvider = new StaticCredentialsProvider(awsCredentials);
+    ClientHttpConfiguration clientHttpConfiguration = ClientHttpConfiguration.builder().httpClientFactory(apacheClientFactory).build()
+    SecretsManagerClient secretsManager = SecretsManagerClient.builder().httpConfiguration(clientHttpConfiguration).credentialsProvider(awsStaticCredentialsProvider).build()
+    GetSecretValueRequest secretsRequest = GetSecretValueRequest.builder().secretId(secretId).build()
+    GetSecretValueResponse secretValueResponse = secretsManager.getSecretValue(secretsRequest)
+    return secretValueResponse.secretString()
+}
+
+project.ext.aws = [
+    credentials: this.fetchAwsCredentials(),
+    fetchJsonFromS3: this.&fetchJsonFromS3,
+    fetchParameterFromSsmByName: this.&fetchParameterFromSsmByName,
+    fetchParameterFromSecretsManagerById: this.&fetchParameterFromSecretsManagerById
+]
