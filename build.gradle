@@ -67,29 +67,6 @@ subprojects {
     dependencies {
         compileOnly "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}"
     }
-
-    publishing {
-        repositories {
-            maven {
-                url 's3://863255755531de-otto-product-artifacts.s3.eu-central-1.amazonaws.com'
-                credentials(AwsCredentials) {
-                    accessKey = project.aws.credentials.accessKeyId()
-                    secretKey = project.aws.credentials.secretAccessKey()
-                    if (project.aws.credentials.hasProperty("sessionToken")) {
-                        sessionToken = project.aws.credentials.sessionToken()
-                    }
-                }
-            }
-        }
-
-        publications {
-            maven(MavenPublication) {
-                from components.java
-            }
-        }
-
-    }
-
     targetCompatibility = '1.8'
     sourceCompatibility = '1.8'
 }
