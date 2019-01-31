@@ -23,14 +23,10 @@ apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
 apply from: "${rootDir}/gradle/root/jacoco.gradle"
 apply from: "${rootDir}/gradle/root/nexusstaging.gradle"
-apply from: "${rootDir}/gradle/aws.gradle"
 
 subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'project-report'
-    apply plugin: 'maven'
-    apply plugin: 'maven-publish'
-
 
     // USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
     //
@@ -41,7 +37,7 @@ subprojects {
     // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-    version = '2.0.0-rc3-SNAPSHOT'
+    version = '2.0.0-rc2-SNAPSHOT'
     group = 'de.otto.edison'
 
     repositories {
