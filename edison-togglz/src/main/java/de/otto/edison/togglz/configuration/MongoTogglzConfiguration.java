@@ -15,7 +15,7 @@ import org.togglz.core.user.UserProvider;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
-@ConditionalOnProperty(prefix = "edison.togglz", name = "mongo.enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "edison.togglz", name = "mongo.enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnBean(type = "com.mongodb.MongoClient")
 public class MongoTogglzConfiguration {
 

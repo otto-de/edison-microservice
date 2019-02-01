@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
-@ConditionalOnProperty(prefix = "edison.jobs", name = "mongo.enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "edison.jobs", name = "mongo.enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnBean(type = "com.mongodb.MongoClient")
 public class MongoJobsConfiguration {
 

@@ -1,5 +1,13 @@
 # Release Notes
 
+## 2.0.0-rc2
+
+* **[edison-togglz]**: 
+`edison.togglz.mongo.enabled` is now true by default
+
+* **[edison-jobs]**: 
+`edison.jobs.mongo.enabled` is now true by default
+
 ## 2-0.0-rc1
 
 * **[general]**: Updated to Gradle 5.0
