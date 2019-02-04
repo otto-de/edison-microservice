@@ -1,12 +1,15 @@
 # Release Notes
 
-## 2.0.0-rc2
+## 2.0.0-rc3
 
 * **[edison-togglz]**: 
 `edison.togglz.mongo.enabled` is now true by default
 
 * **[edison-jobs]**: 
 `edison.jobs.mongo.enabled` is now true by default
+
+## 2.0.0-rc2
+* **[general]**: Updated to Spring Boot 2.1.2
 
 ## 2-0.0-rc1
 
