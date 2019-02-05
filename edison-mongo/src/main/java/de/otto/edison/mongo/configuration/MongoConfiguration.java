@@ -34,7 +34,7 @@ public class MongoConfiguration {
         );
     }
 
-    private boolean useUnauthorizedConnection(final MongoProperties mongoProperties) {
+    private static boolean useUnauthorizedConnection(final MongoProperties mongoProperties) {
         return mongoProperties.getUser().isEmpty() || mongoProperties.getPassword().isEmpty();
     }
 
@@ -61,14 +61,10 @@ public class MongoConfiguration {
         List<ServerAddress> mongoServers = mongoProperties.getServers();
         MongoClientOptions mongoClientOptions = mongoProperties.toMongoClientOptions(codecRegistry());
 
-        if(!useUnauthorizedConnection(mongoProperties))
-        {
-            return new MongoClient(mongoServers, getMongoCredentials(mongoProperties),
-                    mongoClientOptions);
-        }
-        else {
-            return new MongoClient(mongoServers,
-                    mongoClientOptions);
+        if (!useUnauthorizedConnection(mongoProperties)) {
+            return new MongoClient(mongoServers, getMongoCredentials(mongoProperties), mongoClientOptions);
+        } else {
+            return new MongoClient(mongoServers, mongoClientOptions);
         }
     }
 
