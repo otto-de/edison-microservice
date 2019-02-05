@@ -11,12 +11,12 @@
 ## 2.0.0-rc2
 * **[general]**: Updated to Spring Boot 2.1.2
 
-## 2-0.0-rc1
+## 2.0.0-rc1
 
 * **[general]**: Updated to Gradle 5.0
 * **[general]**: Updated to AWS SDK 2.2.0
 
-## 2-0.0-m5
+## 2.0.0-m5
 
 **New Features:**
 * **[edison-core]** Enhanced LDAP configuration to require a specific role to access secured paths. To achieve this you 
@@ -53,7 +53,7 @@
 **Maintenance:**
 * **[general]**     Tests have been moved from JUnit4 to JUnit5 in all projects.
 
-## 2-0.0-m4
+## 2.0.0-m4
 
 * **[general]**: You need Java >9 to compile, but target compatibility is set back to 1.8
 * **[edison-mongo]** create compound index of `type` and `started` in job repository
