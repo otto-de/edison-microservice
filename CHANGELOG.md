@@ -1,5 +1,7 @@
 # Release Notes
 
+## 2.0.0-rc4
+
 ## 2.0.0-rc3
 
 * **[edison-togglz]**: 
