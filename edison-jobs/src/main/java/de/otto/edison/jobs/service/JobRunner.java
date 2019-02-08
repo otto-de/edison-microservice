@@ -117,7 +117,7 @@ public final class JobRunner implements Runnable {
     }
 
     synchronized void error(final Exception e) {
-        LOG.error(jobMarker, format("Fatal error in job %s (%s)", jobRunnable.getJobDefinition().jobType(), jobId), e);
+        LOG.error(jobMarker, format("Fatal error in job %s (%s) - %s: %s", jobRunnable.getJobDefinition().jobType(), jobId, e.getClass().getName(), e.getMessage()), e);
     }
 
     synchronized void stop() {
