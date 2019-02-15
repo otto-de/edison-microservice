@@ -30,12 +30,12 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Strategy used to calculate the StatusDetail for the last N executions of a job.
  * <p>
- *     JobStatusCalculators are used to calculate the {@link StatusDetail} for a {@link JobStatusDetailIndicator}
- *     using the last couple of job executions.
+ * JobStatusCalculators are used to calculate the {@link StatusDetail} for a {@link JobStatusDetailIndicator}
+ * using the last couple of job executions.
  * </p>
  * <p>
- *     Multiple calculators can be configured as a Spring Bean. They are identified by their unique {@link #key} and
- *     configured in the {@code application.properties} for {@link JobDefinition#jobType() job types} as follows:
+ * Multiple calculators can be configured as a Spring Bean. They are identified by their unique {@link #key} and
+ * configured in the {@code application.properties} for {@link JobDefinition#jobType() job types} as follows:
  * </p>
  * <pre><code>
  *     edison.jobs.status.default=&lt;key of calculator&gt;
@@ -43,31 +43,31 @@ import static org.slf4j.LoggerFactory.getLogger;
  *     edison.jobs.status.&lt;otherJobType&gt;=&lt;key of calculator&gt;
  * </code></pre>
  * <p>
- *     The JobStatusCalculator can be configured to behave differently, depending on
- *     how many jobs failed in the last couple of executions:
+ * The JobStatusCalculator can be configured to behave differently, depending on
+ * how many jobs failed in the last couple of executions:
  * </p>
  * <ul>
- *     <li>
- *         {@code numberOfJobs}: This specifies how many of the last job executions are taken into the calculation.
- *     </li>
- *     <li>
- *         {@code maxFailedJobs}: The maximum number of jobs that are accepted to fail.
- *     </li>
+ * <li>
+ * {@code numberOfJobs}: This specifies how many of the last job executions are taken into the calculation.
+ * </li>
+ * <li>
+ * {@code maxFailedJobs}: The maximum number of jobs that are accepted to fail.
+ * </li>
  * </ul>
  * Depending on the state of the last job execution and the number of failed jobs during the last {@code numberOfJobs},
  * the result of the calculator is as follows:
  * <ul>
- *     <li>
- *         If the last job execution was {@link JobStatus#OK successful}, the calculator will resolve to
- *         {@link Status#WARNING}, if more than {@code maxFailedJobs} out of the last {@code numberOfJobs} have
- *         failed.
- *     </li>
- *     <li>
- *         If the last job execution {@link JobStatus#ERROR failed} for some reason, the calculator will
- *         resolve to {@link Status#ERROR}, if more than {@code maxFailedJobs} out of the last
- *         {@code numberOfJobs} have failed. Otherwise, the result of the calculation will be
- *         {@link Status#WARNING}
- *     </li>
+ * <li>
+ * If the last job execution was {@link JobStatus#OK successful}, the calculator will resolve to
+ * {@link Status#WARNING}, if more than {@code maxFailedJobs} out of the last {@code numberOfJobs} have
+ * failed.
+ * </li>
+ * <li>
+ * If the last job execution {@link JobStatus#ERROR failed} for some reason, the calculator will
+ * resolve to {@link Status#ERROR}, if more than {@code maxFailedJobs} out of the last
+ * {@code numberOfJobs} have failed. Otherwise, the result of the calculation will be
+ * {@link Status#WARNING}
+ * </li>
  * </ul>
  * If the last job is {@link JobStatus#DEAD}, the resulting status will be {@link Status#WARNING}.
  */
@@ -95,11 +95,12 @@ public class JobStatusCalculator {
     /**
      * Creates a JobStatusCalculator.
      *
-     * @param key the key of the calculator.
-     * @param numberOfJobs the total number of jobs to take into calculation.
-     * @param maxFailedJobs the maximum number of jobs that that are accepted to fail.
-     * @param jobRepository repository to fetch the last {@code numberOfJobs}.
-     * @param jobMetaRepository meta data to indentify disabled jobs
+     * @param key                   the key of the calculator.
+     * @param numberOfJobs          the total number of jobs to take into calculation.
+     * @param maxFailedJobs         the maximum number of jobs that that are accepted to fail.
+     * @param jobRepository         repository to fetch the last {@code numberOfJobs}.
+     * @param jobMetaRepository     meta data to indentify disabled jobs
+     * @param managementContextPath base path to link to job directly
      */
     public JobStatusCalculator(final String key,
                                final int numberOfJobs,
@@ -122,8 +123,10 @@ public class JobStatusCalculator {
     /**
      * Builds a JobStatusCalculator that is reporting {@link Status#WARNING} if the last job failed.
      *
-     * @param key key of the calculator
-     * @param jobRepository the repository
+     * @param key                   key of the calculator
+     * @param jobRepository         the repository
+     * @param jobMetaRepository     meta data to indentify disabled jobs
+     * @param managementContextPath base path to link to job directly
      * @return JobStatusCalculator
      */
     public static JobStatusCalculator warningOnLastJobFailed(final String key,
@@ -138,8 +141,10 @@ public class JobStatusCalculator {
     /**
      * Builds a JobStatusCalculator that is reporting {@link Status#ERROR} if the last job failed.
      *
-     * @param key key of the calculator
-     * @param jobRepository the repository
+     * @param key                   key of the calculator
+     * @param jobRepository         the repository
+     * @param jobMetaRepository     meta data to indentify disabled jobs
+     * @param managementContextPath base path to link to job directly
      * @return JobStatusCalculator
      */
     public static JobStatusCalculator errorOnLastJobFailed(final String key,
@@ -154,9 +159,11 @@ public class JobStatusCalculator {
     /**
      * Builds a JobStatusCalculator that is reporting {@link Status#ERROR} if the last {@code numJobs} job failed.
      *
-     * @param key key of the calculator
-     * @param numJobs the number of last jobs used to calculate the job status
-     * @param jobRepository the repository
+     * @param key                   key of the calculator
+     * @param numJobs               the number of last jobs used to calculate the job status
+     * @param jobRepository         the repository
+     * @param jobMetaRepository     meta data to indentify disabled jobs
+     * @param managementContextPath base path to link to job directly
      * @return JobStatusCalculator
      */
     public static JobStatusCalculator errorOnLastNumJobsFailed(final String key,
@@ -166,15 +173,15 @@ public class JobStatusCalculator {
                                                                final String managementContextPath
     ) {
         return new JobStatusCalculator(
-                key, numJobs, numJobs-1, jobRepository, jobMetaRepository, managementContextPath
+                key, numJobs, numJobs - 1, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
     /**
      * The key of the JobStatusCalculator.
      * <p>
-     *     Used as a value of the application property {@code edison.jobs.status.calculator.*} to configure the
-     *     calculator for a {@link JobDefinition#jobType() job type}
+     * Used as a value of the application property {@code edison.jobs.status.calculator.*} to configure the
+     * calculator for a {@link JobDefinition#jobType() job type}
      * </p>
      *
      * @return key used to select one of several calculators
@@ -209,7 +216,7 @@ public class JobStatusCalculator {
     /**
      * Calculates the StatusDetail from the last job executions.
      *
-     * @param jobInfos one or more JobInfo
+     * @param jobInfos      one or more JobInfo
      * @param jobDefinition definition of the last job
      * @return StatusDetail to indicate for the given last job
      */
@@ -222,38 +229,38 @@ public class JobStatusCalculator {
         final JobMeta jobMeta = getJobMeta(jobDefinition.jobType());
         long numFailedJobs = getNumFailedJobs(jobInfos);
         if (!jobMeta.isDisabled()) {
-        switch(lastJob.getStatus()) {
-            case OK:
-            case SKIPPED:
-                if(jobTooOld(lastJob, jobDefinition)) {
-                    status = WARNING;
-                    message = jobAgeMessage(jobDefinition);
-                } else if (numFailedJobs > maxFailedJobs) {
-                    status = WARNING;
-                    message = format(TOO_MANY_JOBS_FAILED_MESSAGE, numFailedJobs, jobInfos.size());
-                } else {
-                    status = OK;
-                    message = SUCCESS_MESSAGE;
-                }
-                break;
-            case ERROR:
-                if (numFailedJobs > maxFailedJobs) {
-                    status = ERROR;
-                } else {
-                    status = WARNING;
-                }
-                if (numberOfJobs == 1 && maxFailedJobs <= 1) {
-                    message = ERROR_MESSAGE;
-                } else {
-                    message = format(TOO_MANY_JOBS_FAILED_MESSAGE, numFailedJobs, jobInfos.size());
-                }
-                break;
+            switch (lastJob.getStatus()) {
+                case OK:
+                case SKIPPED:
+                    if (jobTooOld(lastJob, jobDefinition)) {
+                        status = WARNING;
+                        message = jobAgeMessage(jobDefinition);
+                    } else if (numFailedJobs > maxFailedJobs) {
+                        status = WARNING;
+                        message = format(TOO_MANY_JOBS_FAILED_MESSAGE, numFailedJobs, jobInfos.size());
+                    } else {
+                        status = OK;
+                        message = SUCCESS_MESSAGE;
+                    }
+                    break;
+                case ERROR:
+                    if (numFailedJobs > maxFailedJobs) {
+                        status = ERROR;
+                    } else {
+                        status = WARNING;
+                    }
+                    if (numberOfJobs == 1 && maxFailedJobs <= 1) {
+                        message = ERROR_MESSAGE;
+                    } else {
+                        message = format(TOO_MANY_JOBS_FAILED_MESSAGE, numFailedJobs, jobInfos.size());
+                    }
+                    break;
 
-            case DEAD:
-            default:
-                status = WARNING;
-                message = DEAD_MESSAGE;
-        }
+                case DEAD:
+                default:
+                    status = WARNING;
+                    message = DEAD_MESSAGE;
+            }
         } else {
             status = OK;
             message = format(JOB_DEACTIVATED_MESSAGE, jobMeta.getDisabledComment());
@@ -300,7 +307,7 @@ public class JobStatusCalculator {
     /**
      * Calculates whether or not the last job execution is too old.
      *
-     * @param jobInfo job info of the last job execution
+     * @param jobInfo       job info of the last job execution
      * @param jobDefinition job definition, specifying the max age of jobs
      * @return boolean
      */

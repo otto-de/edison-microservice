@@ -65,6 +65,7 @@ public class LdapConfiguration {
      * If no property is set this will default to all routes starting with '/internal'.
      *
      * @param ldapProperties the properties used to configure LDAP
+     * @return FilterRegistrationBean
      */
     @Bean
     @ConditionalOnProperty(prefix = "edison.ldap", name = "required-role")

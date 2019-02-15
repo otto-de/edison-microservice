@@ -66,4 +66,8 @@ public class EmbeddedMongoHelper {
         return mongoClient;
     }
 
+    public static boolean isStarted(){
+        return started.get();
+    }
+
 }
