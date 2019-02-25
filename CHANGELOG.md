@@ -2,6 +2,9 @@
 
 ## 2.0.0-rc4
 
+* **[edison-togglz]**:
+Re-Enable Prefetch-Feature for `S3TogglzRepository` in newer Spring versions again
+
 ## 2.0.0-rc3
 
 * **[edison-togglz]**: 
