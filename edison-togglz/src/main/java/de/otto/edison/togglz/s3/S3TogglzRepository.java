@@ -50,7 +50,7 @@ public class S3TogglzRepository implements StateRepository {
     }
 
     @Scheduled(initialDelay = 0, fixedRate = SCHEDULE_RATE_IN_MILLISECONDS)
-    private void prefetchFeatureStates() {
+    protected void prefetchFeatureStates() {
         if (cache.size() == 0) {
             LOG.debug("Initialize state for features");
             initializeFeatureStates();
