@@ -33,7 +33,7 @@ public interface JobRunnable {
      *
      * @param jobEventPublisher publishes events to the event bus.
      * @return false, if the job was skipped without doing anything, true otherwise
-     * @Deprecated use execute, don't remove this method
+     * @deprecated use execute, don't remove this method
      */
     default boolean execute(JobEventPublisher jobEventPublisher) {
         return execute();
