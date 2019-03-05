@@ -1,11 +1,15 @@
 package de.otto.edison.jobs.eventbus;
 
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.service.JobService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.ERROR;
@@ -61,6 +65,22 @@ public class PersistenceJobStateChangeListener implements JobStateChangeListener
         catch(RuntimeException e) {
             LOG.error("Failed to persist job state change: jobId="+event.getJobId()+", state="+event.getState()+", message="+event.getMessage(), e);
         }
+    }
+
+    @Override
+    public void consumeMessage(final MessageEvent messageEvent) {
+        try {
+            JobMessage jobMessage = convertMessage(messageEvent);
+            jobService.appendMessage(messageEvent.getJobId(), jobMessage);
+        }
+        catch(RuntimeException e) {
+            LOG.error("Failed to persist job message (jobId="+messageEvent.getJobId()+"): "+messageEvent.getMessage(), e);
+        }
+    }
+
+    private JobMessage convertMessage(MessageEvent messageEvent) {
+        return jobMessage(messageEvent.getLevel(), messageEvent.getMessage(),
+                OffsetDateTime.ofInstant(Instant.ofEpochMilli(messageEvent.getTimestamp()), ZoneId.systemDefault()));
     }
 
 }

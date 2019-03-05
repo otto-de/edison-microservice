@@ -1,5 +1,7 @@
 package de.otto.edison.example;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -25,6 +29,8 @@ public class ExampleJobsSmokeTest {
     private TestRestTemplate restTemplate;
     @LocalServerPort
     private int port;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     public void shouldRenderMainPage() {
@@ -111,6 +117,24 @@ public class ExampleJobsSmokeTest {
         assertThat(jobResponse.getStatusCodeValue()).isEqualTo(200);
         assertThat(jobResponse.getBody()).containsPattern(("\"state\"( )*:( )*\"Running\"")); // contains ignoring whitespaces
         assertThat(jobResponse.getBody()).containsPattern("\"jobType\"( )*:( )*\"Foo\""); // contains ignoring whitespaces
+    }
+
+    @Test
+    public void shouldUseJobEventPublisherForOldJob() throws IOException, InterruptedException {
+        final ResponseEntity<String> postResponse = restTemplate.postForEntity("/internal/jobs/Old", "", String.class);
+        assertThat(postResponse.getStatusCodeValue()).isEqualTo(204);
+        ResponseEntity<String> jobResponse = restTemplate.getForEntity(postResponse.getHeaders().getLocation(), String.class);
+        assertThat(jobResponse.getStatusCodeValue()).isEqualTo(200);
+        assertThat(jobResponse.getBody()).containsPattern(("\"state\"( )*:( )*\"Running\"")); // contains ignoring whitespaces
+        assertThat(jobResponse.getBody()).containsPattern("\"jobType\"( )*:( )*\"Old\""); // contains ignoring whitespaces
+
+        Thread.sleep(2000);
+        jobResponse = restTemplate.getForEntity(postResponse.getHeaders().getLocation(), String.class);
+        assertThat(jobResponse.getStatusCodeValue()).isEqualTo(200);
+        assertThat(jobResponse.getBody()).containsPattern(("\"state\"( )*:( )*\"Stopped\"")); // contains ignoring whitespaces
+        assertThat(jobResponse.getBody()).containsPattern(("\"status\"( )*:( )*\"SKIPPED\"")); // contains ignoring whitespaces
+        assertThat(jobResponse.getBody()).containsPattern("( )*Still doing some work...( )*"); // contains ignoring whitespaces
+
     }
 
 }

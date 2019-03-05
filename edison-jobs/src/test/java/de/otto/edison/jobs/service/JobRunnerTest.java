@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -69,7 +70,7 @@ public class JobRunnerTest {
         jobRunner.run();
 
         // then
-        verify(jobRunnable).execute();
+        verify(jobRunnable).execute(any(JobEventPublisher.class));
     }
 
     @Test
@@ -131,7 +132,7 @@ public class JobRunnerTest {
         when(jobRunnable.getJobDefinition())
                 .thenReturn(manuallyTriggerableJobDefinition("someJobType", "someJobname", "Me is testjob", 2, Optional.empty()));
         doThrow(new RuntimeException("some error"))
-                .when(jobRunnable).execute();
+                .when(jobRunnable).execute(any(JobEventPublisher.class));
         JobRunner jobRunner = jobRunner(jobRunnable);
 
         // when
@@ -141,7 +142,7 @@ public class JobRunnerTest {
         verify(eventPublisher)
                 .publishEvent(newStateChangeEvent(jobRunnable, "42", START));
         verify(jobRunnable, times(3))
-                .execute();
+                .execute(any(JobEventPublisher.class));
         verify(eventPublisher, times(2))
                 .publishEvent(newStateChangeEvent(jobRunnable, "42", RESTART));
         verify(eventPublisher)

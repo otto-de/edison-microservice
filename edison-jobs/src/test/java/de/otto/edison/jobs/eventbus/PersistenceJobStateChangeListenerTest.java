@@ -1,6 +1,8 @@
 package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.definition.JobDefinition;
+import de.otto.edison.jobs.domain.JobMessage;
+import de.otto.edison.jobs.eventbus.events.MessageEvent;
 import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import de.otto.edison.jobs.service.JobRunnable;
 import de.otto.edison.jobs.service.JobService;
@@ -8,10 +10,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.Optional;
 
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.ERROR;
+import static de.otto.edison.jobs.domain.Level.INFO;
+import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.DEAD;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.FAILED;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.KEEP_ALIVE;
@@ -104,6 +111,16 @@ public class PersistenceJobStateChangeListenerTest {
         subject.consumeStateChange(stateChangedEvent(STOP));
 
         verify(jobServiceMock).stopJob(JOB_ID);
+    }
+
+    @Test
+    public void shouldPersistMessage() throws Exception {
+        MessageEvent messageEvent = newMessageEvent(jobRunnableMock, JOB_ID, INFO, "some message", Optional.empty());
+        OffsetDateTime timestamp = OffsetDateTime.ofInstant(Instant.ofEpochMilli(messageEvent.getTimestamp()), ZoneId.systemDefault());
+
+        subject.consumeMessage(messageEvent);
+
+        verify(jobServiceMock).appendMessage(JOB_ID, JobMessage.jobMessage(INFO, "some message", timestamp));
     }
 
     private StateChangeEvent stateChangedEvent(StateChangeEvent.State stop) {

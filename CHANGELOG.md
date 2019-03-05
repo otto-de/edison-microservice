@@ -1,7 +1,8 @@
 # Release Notes
 
 ## 2.0.0-rc5
-
+* **[edison-jobs]**: 
+Reimplement the JobEventPublisher from Edison 1.x for backwards compatibility
 
 ## 2.0.0-rc4
 
