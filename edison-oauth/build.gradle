@@ -3,6 +3,7 @@ dependencies {
     compile libraries.spring_boot_starter_web
     compile libraries.async_http_client
     compile libraries.spring_security
+    compile libraries.spring_security_web
     compile libraries.spring_security_oauth
     compile libraries.spring_security_jwt
     compile java_xml

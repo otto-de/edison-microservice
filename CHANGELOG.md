@@ -3,6 +3,8 @@
 ## 2.0.0-rc5
 * **[edison-jobs]**: 
 Reimplement the JobEventPublisher from Edison 1.x for backwards compatibility
+* **[edison-oauth]**: 
+Add dependency to org.springframework.security:spring-security-web:5.1.4.RELEASE
 
 ## 2.0.0-rc4
 
