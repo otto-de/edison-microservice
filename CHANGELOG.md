@@ -71,10 +71,13 @@ Suppress unnecessary warning on startup
 Block query of public keys until keys have been initially fetched from server 
 
 ## 2.0.0-rc5
+
 * **[edison-jobs]**: 
-Reimplement the JobEventPublisher from Edison 1.x for backwards compatibility
+    - Reimplement the JobEventPublisher from Edison 1.x for backwards compatibility
+
 * **[edison-oauth]**: 
-Add dependency to org.springframework.security:spring-security-web:5.1.4.RELEASE
+    - Add dependency to org.springframework.security:spring-security-web:5.1.4.RELEASE
+    - Fixes thread-safety issue in OAuthPublicKeyInMemoryRepository
 
 ## 2.0.0-rc4
 
