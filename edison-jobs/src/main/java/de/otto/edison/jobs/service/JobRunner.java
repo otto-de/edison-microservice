@@ -60,7 +60,7 @@ public final class JobRunner implements Runnable {
             final int restarts = jobDefinition.restarts();
             final Optional<Duration> retryDelay = jobDefinition.retryDelay();
             executeAndRetry(restarts, retryDelay);
-        } catch (final RuntimeException e) {
+        } catch (final Throwable e) {
             error(e);
         } finally {
             stop();
@@ -117,7 +117,7 @@ public final class JobRunner implements Runnable {
         }
     }
 
-    synchronized void error(final Exception e) {
+    synchronized void error(final Throwable e) {
         LOG.error(jobMarker, format("Fatal error in job %s (%s) - %s: %s", jobRunnable.getJobDefinition().jobType(), jobId, e.getClass().getName(), e.getMessage()), e);
     }
 
