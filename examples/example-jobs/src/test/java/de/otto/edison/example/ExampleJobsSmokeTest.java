@@ -1,6 +1,5 @@
 package de.otto.edison.example;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
@@ -77,6 +76,10 @@ public class ExampleJobsSmokeTest {
                 "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/Foo\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
                 "    \"title\" : \"Foo Job\"\n" +
+                "  }, {\n" +
+                "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/Old\",\n" +
+                "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
+                "    \"title\" : \"Old Job\"\n" +
                 "  }, {\n" +
                 "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions\",\n" +
                 "    \"rel\" : \"self\",\n" +
