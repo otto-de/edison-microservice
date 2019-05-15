@@ -2,6 +2,7 @@ package de.otto.edison.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.Response;
 import org.slf4j.Logger;
@@ -15,12 +16,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-
-import static java.util.stream.Collectors.toList;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @ConditionalOnExpression("${edison.oauth.public-key.enabled:false} && ${edison.oauth.public-key.interval:0}>0")
@@ -30,6 +30,7 @@ public class OAuthPublicKeyStore {
     private final String publicKeyUrl;
     private final AsyncHttpClient asyncHttpClient;
     private final OAuthPublicKeyRepository oAuthPublicKeyRepository;
+    private final CountDownLatch publicKeysRetrievedCountDownLatch = new CountDownLatch(1);
 
     @Autowired
     public OAuthPublicKeyStore(@Value("${edison.oauth.public-key.url}") final String publicKeyUrl,
@@ -39,57 +40,59 @@ public class OAuthPublicKeyStore {
         this.oAuthPublicKeyRepository = oAuthPublicKeyRepository;
         this.asyncHttpClient = asyncHttpClient;
 
-        this.objectMapper = new ObjectMapper();
-        final SimpleModule module = new SimpleModule();
-        module.addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer());
-        objectMapper.registerModule(module);
+        this.objectMapper = createObjectMapper();
+    }
+
+    public List<OAuthPublicKey> getActivePublicKeys() {
+        try {
+            if (publicKeysRetrievedCountDownLatch.await(10, TimeUnit.SECONDS)) {
+                return oAuthPublicKeyRepository.retrieveActivePublicKeys();
+            } else {
+                throw new RuntimeException("Timeout while waiting that public keys got fetched");
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Got interrupted while waiting that public keys got fetched");
+        }
     }
 
     @Scheduled(fixedDelayString = "${edison.oauth.public-key.interval}")
-    public void retrieveApiOauthPublicKey() {
+    public void refreshPublicKeys() {
+        LOG.info("Start refreshing public keys");
+        List<OAuthPublicKey> oAuthPublicKeys = fetchOAuthPublicKeysFromServer();
+        oAuthPublicKeyRepository.refreshPublicKeys(oAuthPublicKeys);
+        publicKeysRetrievedCountDownLatch.countDown();
+        LOG.info("Done refreshing public keys");
+
+    }
+
+    List<OAuthPublicKey> fetchOAuthPublicKeysFromServer() {
         try {
             final Response response = asyncHttpClient
                     .prepareGet(publicKeyUrl)
                     .setRequestTimeout(5000)
                     .execute()
                     .get();
+
             if (response.getStatusCode() == HttpStatus.OK.value()) {
-                try {
-                    final OAuthPublicKey[] retrievedPublicKeys = objectMapper.readValue(response.getResponseBody(), OAuthPublicKey[].class);
-                    final List<OAuthPublicKey> activePublicKeys = filterActivePublicKeys(retrievedPublicKeys);
-
-                    if (activePublicKeys.isEmpty()) {
-                        LOG.error(String.format("Did not retrieve valid OAuthPublicKeys from %s", publicKeyUrl));
-                    } else {
-                        oAuthPublicKeyRepository.refreshPublicKeys(activePublicKeys);
-                        LOG.info(String.format(
-                                "Successfully retrieved %d public keys with the following finger prints: %s",
-                                activePublicKeys.size(),
-                                activePublicKeys.stream().map(OAuthPublicKey::getPublicKeyFingerprint).collect(toList()))
-                        );
-                    }
-                } catch (final IOException ex) {
-                    LOG.error(String.format("Unable to parse PublicKeys from OAuth-Server-Response: %s", ex.getMessage()), ex);
-                }
+                return objectMapper.readValue(response.getResponseBody(), TypeFactory.defaultInstance().constructCollectionType(List.class, OAuthPublicKey.class));
             } else {
-                LOG.error(String.format("Unable to retrieve list of public keys. Status was %d", response.getStatusCode()));
+                LOG.warn("Unable to retrieve list of public keys. Got status code {} and message {}", response.getStatusCode(), response.getStatusText());
             }
-        } catch (final InterruptedException | ExecutionException ex) {
-            LOG.error("Unable to retrieve list of public keys.", ex);
+        } catch (IOException | ExecutionException e) {
+            LOG.error("Unable to retrieve list of public keys. ", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
+        return Collections.emptyList();
     }
 
-    private List<OAuthPublicKey> filterActivePublicKeys(final OAuthPublicKey[] publicKeys) {
-        return Arrays
-                .stream(publicKeys)
-                .filter(this::isValid)
-                .collect(toList());
+    private ObjectMapper createObjectMapper() {
+        ObjectMapper newObjectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer());
+        newObjectMapper.registerModule(module);
+        return newObjectMapper;
     }
 
-    private boolean isValid(final OAuthPublicKey publicKey) {
-        final ZonedDateTime now = ZonedDateTime.now();
-
-        return now.isAfter(publicKey.getValidFrom()) &&
-                (Objects.isNull(publicKey.getValidUntil()) || now.isBefore(publicKey.getValidUntil()));
-    }
 }
+

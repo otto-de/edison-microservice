@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.0.0-rc6
+* **[edison-oauth]**: 
+Block query of public keys until keys have been initially fetched from server 
+
 ## 2.0.0-rc5
 * **[edison-jobs]**: 
 Reimplement the JobEventPublisher from Edison 1.x for backwards compatibility

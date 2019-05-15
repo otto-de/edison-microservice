@@ -4,34 +4,35 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.BoundRequestBuilder;
 import org.asynchttpclient.ListenableFuture;
 import org.asynchttpclient.Response;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static de.otto.edison.oauth.OAuthPublicKey.oAuthPublicKeyBuilder;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class OAuthPublicKeyStoreTest {
+class OAuthPublicKeyStoreTest {
+
+    private static final String PUBLIC_KEY_URL = "somePublicKeyUrl";
+
+    private static final ZonedDateTime now = ZonedDateTime.now();
+    private static final ZonedDateTime oneDayAgo = now.minusDays(1);
+    private static final ZonedDateTime oneDayAhead = now.plusDays(1);
+    private static final ZonedDateTime twoDaysAgo = now.minusDays(2);
 
     private OAuthPublicKeyStore keyStore;
-
-    private final String publicKeyUrl = "somePublicKeyUrl";
 
     @Mock
     private AsyncHttpClient asyncHttpClient;
 
-    @Mock
-    private OAuthPublicKeyRepository oAuthPublicKeyRepository;
 
     @Mock
     private BoundRequestBuilder boundRequestBuilder;
@@ -39,29 +40,16 @@ public class OAuthPublicKeyStoreTest {
     @Mock
     private ListenableFuture<Response> future;
 
+    private OAuthPublicKeyRepository oAuthPublicKeyRepository = new OAuthPublicKeyInMemoryRepository();
+
     @Mock
     private Response response;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() throws ExecutionException, InterruptedException {
         initMocks(this);
-        keyStore = new OAuthPublicKeyStore(publicKeyUrl, asyncHttpClient, oAuthPublicKeyRepository);
-    }
-
-    @Test
-    public void shouldStoreActivePublicKeysInRepository() throws ExecutionException, InterruptedException {
-        // given
-        final ZonedDateTime now = ZonedDateTime.now();
-        final ZonedDateTime oneDayAgo = now.minusDays(1);
-        final ZonedDateTime oneDayAhead = now.plusDays(1);
-        final ZonedDateTime twoDaysAgo = now.minusDays(2);
-
-        when(asyncHttpClient.prepareGet(publicKeyUrl)).thenReturn(boundRequestBuilder);
-        when(boundRequestBuilder.setRequestTimeout(anyInt())).thenReturn(boundRequestBuilder);
-        when(boundRequestBuilder.execute()).thenReturn(future);
-        when(future.get()).thenReturn(response);
-        when(response.getStatusCode()).thenReturn(200);
-        when(response.getResponseBody()).thenReturn("[\n" +
+        keyStore = new OAuthPublicKeyStore(PUBLIC_KEY_URL, asyncHttpClient, oAuthPublicKeyRepository);
+        withPublicKeyResponse("[\n" +
                 "{\n" +
                 "\"publicKey\": \"publicKeyOne\",\n" +
                 "\"publicKeyFingerprint\": \"fingerPrintOne\",\n" +
@@ -76,6 +64,17 @@ public class OAuthPublicKeyStoreTest {
                 "}\n" +
                 "]");
 
+    }
+
+    @Test
+    void shouldReturnInitiallyFetchedPublicKeys() {
+        //given
+        keyStore.refreshPublicKeys();
+
+        //when
+        List<OAuthPublicKey> activePublicKeys = keyStore.getActivePublicKeys();
+
+        //then
         final OAuthPublicKey publicKeyOne = oAuthPublicKeyBuilder()
                 .withPublicKey("publicKeyOne")
                 .withPublicKeyFingerprint("fingerPrintOne")
@@ -88,44 +87,29 @@ public class OAuthPublicKeyStoreTest {
                 .withValidFrom(twoDaysAgo)
                 .withValidUntil(null)
                 .build();
-        final List<OAuthPublicKey> validPublicKeys = Arrays.asList(
-                publicKeyOne,
-                publicKeyTwo
-        );
 
-        keyStore.retrieveApiOauthPublicKey();
-
-        //then
-        verify(oAuthPublicKeyRepository).refreshPublicKeys(validPublicKeys);
+        assertThat(activePublicKeys, Matchers.contains(publicKeyOne, publicKeyTwo));
     }
 
     @Test
-    public void shoulOnlyStoreActivePublicKeysInRepository() throws ExecutionException, InterruptedException {
-        // given
-        final ZonedDateTime now = ZonedDateTime.now();
-        final ZonedDateTime oneDayAgo = now.minusDays(1);
-        final ZonedDateTime oneDayAhead = now.plusDays(1);
-        final ZonedDateTime twoDaysAgo = now.minusDays(2);
+    void shouldAddKeysToInitiallyFetchedOned() throws ExecutionException, InterruptedException {
+        //given
+        keyStore.refreshPublicKeys();
 
-        when(asyncHttpClient.prepareGet(publicKeyUrl)).thenReturn(boundRequestBuilder);
-        when(boundRequestBuilder.setRequestTimeout(anyInt())).thenReturn(boundRequestBuilder);
-        when(boundRequestBuilder.execute()).thenReturn(future);
-        when(future.get()).thenReturn(response);
-        when(response.getStatusCode()).thenReturn(200);
-        when(response.getResponseBody()).thenReturn("[\n" +
-                "{\n" +
-                "\"publicKey\": \"publicKeyOne\",\n" +
-                "\"publicKeyFingerprint\": \"fingerPrintOne\",\n" +
-                "\"validFrom\": \"" + oneDayAgo.toString() + "\",\n" +
-                "\"validUntil\": \"" + oneDayAhead.toString() + "\"\n" +
-                "},\n" +
-                "{\n" +
-                "\"publicKey\": \"publicKeyTwo\",\n" +
-                "\"publicKeyFingerprint\": \"fingerPrintTwo\",\n" +
-                "\"validFrom\": \"" + twoDaysAgo.toString() + "\",\n" +
-                "\"validUntil\": \"" + oneDayAgo.toString() + "\"\n" +
-                "}\n" +
+        //when
+        withPublicKeyResponse("[\n" +
+                "  {\n" +
+                "    \"publicKey\": \"publicKeyThree\",\n" +
+                "    \"publicKeyFingerprint\": \"fingerPrintThree\",\n" +
+                "    \"validFrom\": \"" + twoDaysAgo.toString() + "\",\n" +
+                "    \"validUntil\": \"" + oneDayAhead.toString() + "\"\n" +
+                "  }\n" +
                 "]");
+        keyStore.refreshPublicKeys();
+
+        //then
+        List<OAuthPublicKey> activePublicKeys = keyStore.getActivePublicKeys();
+
 
         final OAuthPublicKey publicKeyOne = oAuthPublicKeyBuilder()
                 .withPublicKey("publicKeyOne")
@@ -133,54 +117,29 @@ public class OAuthPublicKeyStoreTest {
                 .withValidFrom(oneDayAgo)
                 .withValidUntil(oneDayAhead)
                 .build();
-        final List<OAuthPublicKey> validPublicKeys = Collections.singletonList(publicKeyOne);
+        final OAuthPublicKey publicKeyTwo = oAuthPublicKeyBuilder()
+                .withPublicKey("publicKeyTwo")
+                .withPublicKeyFingerprint("fingerPrintTwo")
+                .withValidFrom(twoDaysAgo)
+                .withValidUntil(null)
+                .build();
+        final OAuthPublicKey publicKeyThree = oAuthPublicKeyBuilder()
+                .withPublicKey("publicKeyThree")
+                .withPublicKeyFingerprint("fingerPrintThree")
+                .withValidFrom(twoDaysAgo)
+                .withValidUntil(oneDayAhead)
+                .build();
 
-        keyStore.retrieveApiOauthPublicKey();
-
-        //then
-        verify(oAuthPublicKeyRepository).refreshPublicKeys(validPublicKeys);
+        assertThat(activePublicKeys, Matchers.containsInAnyOrder(publicKeyOne, publicKeyTwo, publicKeyThree));
     }
 
-    @Test
-    public void shoulNotCallRepositoryWhenServiceResponsesWithStatusOtherThan200() throws ExecutionException, InterruptedException {
-        // given
-        when(asyncHttpClient.prepareGet(publicKeyUrl)).thenReturn(boundRequestBuilder);
-        when(boundRequestBuilder.setRequestTimeout(anyInt())).thenReturn(boundRequestBuilder);
-        when(boundRequestBuilder.execute()).thenReturn(future);
-        when(future.get()).thenReturn(response);
-        when(response.getStatusCode()).thenReturn(500);
-
-        keyStore.retrieveApiOauthPublicKey();
-
-        //then
-        verifyZeroInteractions(oAuthPublicKeyRepository);
-    }
-
-    @Test
-    public void shoulNotCallRepositoryWithEmptyKeyList() throws ExecutionException, InterruptedException {
-        // given
-        final ZonedDateTime now = ZonedDateTime.now();
-        final ZonedDateTime oneDayAgo = now.minusDays(1);
-        final ZonedDateTime twoDaysAgo = now.minusDays(2);
-
-        when(asyncHttpClient.prepareGet(publicKeyUrl)).thenReturn(boundRequestBuilder);
+    private void withPublicKeyResponse(String publicKeyData) throws InterruptedException, ExecutionException {
+        when(asyncHttpClient.prepareGet(PUBLIC_KEY_URL)).thenReturn(boundRequestBuilder);
         when(boundRequestBuilder.setRequestTimeout(anyInt())).thenReturn(boundRequestBuilder);
         when(boundRequestBuilder.execute()).thenReturn(future);
         when(future.get()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(200);
-        when(response.getResponseBody()).thenReturn("[\n" +
-                "{\n" +
-                "\"publicKey\": \"publicKeyTwo\",\n" +
-                "\"publicKeyFingerprint\": \"fingerPrintTwo\",\n" +
-                "\"validFrom\": \"" + twoDaysAgo.toString() + "\",\n" +
-                "\"validUntil\": \"" + oneDayAgo.toString() + "\"\n" +
-                "}\n" +
-                "]");
-
-        keyStore.retrieveApiOauthPublicKey();
-
-        //then
-        verifyZeroInteractions(oAuthPublicKeyRepository);
+        when(response.getResponseBody()).thenReturn(publicKeyData);
     }
 
 }

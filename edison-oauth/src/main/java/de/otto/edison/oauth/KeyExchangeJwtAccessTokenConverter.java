@@ -20,17 +20,16 @@ public class KeyExchangeJwtAccessTokenConverter extends JwtAccessTokenConverter 
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyExchangeJwtAccessTokenConverter.class);
     private static final JsonParser objectMapper = JsonParserFactory.create();
-    private final OAuthPublicKeyRepository oAuthPublicKeyRepository;
+    private final OAuthPublicKeyStore oAuthPublicKeyStore;
 
     @Autowired
-    public KeyExchangeJwtAccessTokenConverter(final OAuthPublicKeyRepository oAuthPublicKeyRepository) {
-
-        this.oAuthPublicKeyRepository = oAuthPublicKeyRepository;
+    public KeyExchangeJwtAccessTokenConverter(final OAuthPublicKeyStore oAuthPublicKeyStore) {
+        this.oAuthPublicKeyStore = oAuthPublicKeyStore;
     }
 
     @Override
     protected Map<String, Object> decode(final String token) {
-        final List<OAuthPublicKey> currentPublicKeys = oAuthPublicKeyRepository.retrieveActivePublicKeys();
+        final List<OAuthPublicKey> currentPublicKeys = oAuthPublicKeyStore.getActivePublicKeys();
 
         for (final OAuthPublicKey publicKey : currentPublicKeys) {
             try {

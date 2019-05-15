@@ -13,18 +13,18 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class OAuthPublicKeyInMemoryRepositoryTest {
+class OAuthPublicKeyInMemoryRepositoryTest {
 
 
     private OAuthPublicKeyInMemoryRepository inMemoryRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         inMemoryRepository = new OAuthPublicKeyInMemoryRepository();
     }
 
     @Test
-    public void shouldUpdateCachedListWithValidKeys() {
+    void shouldUpdateCachedListWithValidKeys() {
         // given
         final ZonedDateTime now = ZonedDateTime.now();
         final OAuthPublicKey publicKeyOne = oAuthPublicKeyBuilder()
@@ -53,7 +53,7 @@ public class OAuthPublicKeyInMemoryRepositoryTest {
 
 
     @Test
-    public void shouldNotUpdateCachedListWithExistingKey() {
+    void shouldNotUpdateCachedListWithExistingKey() {
         // given
         final ZonedDateTime now = ZonedDateTime.now();
         final OAuthPublicKey publicKeyOne = oAuthPublicKeyBuilder()
@@ -75,7 +75,7 @@ public class OAuthPublicKeyInMemoryRepositoryTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenInactiveKeysWhereGiven() {
+    void shouldThrowExceptionWhenInactiveKeysWhereGiven() {
         // given
         final ZonedDateTime now = ZonedDateTime.now();
         final OAuthPublicKey publicKeyOne = oAuthPublicKeyBuilder()
