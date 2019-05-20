@@ -3,10 +3,12 @@ package de.otto.edison.example.configuration;
 import de.otto.edison.oauth.KeyExchangeJwtAccessTokenConverter;
 import de.otto.edison.oauth.OAuthPublicKey;
 import de.otto.edison.oauth.OAuthPublicKeyRepository;
+import de.otto.edison.oauth.OAuthPublicKeyStore;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -14,6 +16,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.togglz.core.user.SimpleFeatureUser;
+import org.togglz.core.user.UserProvider;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -43,6 +47,18 @@ public class OAuthPublicKeyTestConfiguration {
     public KeyPair testKeyPair() throws NoSuchAlgorithmException {
         final KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         return keyGen.generateKeyPair();
+    }
+
+    @Bean
+    @Profile("test")
+    public OAuthPublicKeyStore testOAuthPublicKeyStore(AsyncHttpClient asyncHttpClient, OAuthPublicKeyRepository inMemoryTestRepository) {
+        return new OAuthPublicKeyStore("http://localhost/access/publicKeys", asyncHttpClient, inMemoryTestRepository);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(UserProvider.class)
+    public UserProvider userProvider() {
+        return () -> new SimpleFeatureUser("someUser");
     }
 
     @Bean

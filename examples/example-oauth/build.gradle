@@ -3,6 +3,7 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     compile project(":edison-oauth")
 
+    compile libraries.togglz_spring_web
     testCompile project(":edison-testsupport")
 }
 
