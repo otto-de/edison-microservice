@@ -73,20 +73,4 @@ class OAuthPublicKeyInMemoryRepositoryTest {
         // then
         assertThat(inMemoryRepository.retrieveActivePublicKeys(), is(activeKeys));
     }
-
-    @Test
-    void shouldThrowExceptionWhenInactiveKeysWhereGiven() {
-        // given
-        final ZonedDateTime now = ZonedDateTime.now();
-        final OAuthPublicKey publicKeyOne = oAuthPublicKeyBuilder()
-                .withPublicKey("publicKeyOne")
-                .withPublicKeyFingerprint("fingerPrintOne")
-                .withValidFrom(now.minusDays(2))
-                .withValidUntil(now.minusDays(1))
-                .build();
-        final List<OAuthPublicKey> invalidPublicKeys = Collections.singletonList(publicKeyOne);
-
-        // when/then
-        assertThrows(IllegalArgumentException.class, () -> inMemoryRepository.refreshPublicKeys(invalidPublicKeys), "Invalid public keys retrieved");
-    }
 }
