@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.0.0-rc7
+* **[edison-oauth]**: 
+Suppress unnecessary warning on startup
+
 ## 2.0.0-rc6
 * **[edison-oauth]**: 
 Block query of public keys until keys have been initially fetched from server 

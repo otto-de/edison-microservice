@@ -54,5 +54,10 @@ public class KeyExchangeJwtAccessTokenConverter extends JwtAccessTokenConverter 
         }
         return map;
     }
+
+    @Override
+    public void afterPropertiesSet() {
+        // override with empty method because we do not use any signer and to suppress unnecessary warning
+    }
 }
 
