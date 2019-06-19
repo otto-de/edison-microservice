@@ -6,8 +6,8 @@ ext {
     versions = [
             spring_boot                      : '2.1.5.RELEASE',
             spring                           : '5.1.8.RELEASE',
-            spring_security_core             : '5.1.8.RELEASE',
-            spring_security_web              : '5.1.8.RELEASE',
+            spring_security_core             : '5.1.5.RELEASE',
+            spring_security_web              : '5.1.5.RELEASE',
             spring_security_oauth            : '2.3.6.RELEASE',
             spring_security_jwt              : '1.0.10.RELEASE',
             async_http_client                : '2.7.0',
