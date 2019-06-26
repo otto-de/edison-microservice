@@ -4,6 +4,8 @@
 * **[edison-oauth]**: 
 Suppress unnecessary warning on startup
 
+* **[general]**: Various dependency upgrades
+
 ## 2.0.0-rc6
 * **[edison-oauth]**: 
 Block query of public keys until keys have been initially fetched from server 
