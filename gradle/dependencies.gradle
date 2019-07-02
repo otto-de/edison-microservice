@@ -10,7 +10,7 @@ ext {
             spring_security_web              : '5.1.5.RELEASE',
             spring_security_oauth            : '2.3.6.RELEASE',
             spring_security_jwt              : '1.0.10.RELEASE',
-            async_http_client                : '2.10.1',
+            async_http_client                : '2.9.0', //Use 2.9.0 because next update updates netty to 4.1.36 which is incompatible with AWS SDK as of 2019-06-02 (needs 4.1.33)
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.3',
             javax_servlet_api                : '3.1.0',
@@ -23,7 +23,7 @@ ext {
             edison_hal                       : '2.0.2',
             validator_collection             : '2.2.0',
             slf4j                            : '1.7.26',
-            aws_sdk                          : '2.5.29',
+            aws_sdk                          : '2.6.4',
             java_validation_api              : '2.0.1.Final',
             java_xml                         : '2.3.0'
     ]
