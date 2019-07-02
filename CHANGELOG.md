@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.0.0-rc8
+* **[general]**: Bugfix: Use async http client version that fits AWS SDK
+
 ## 2.0.0-rc7
 * **[edison-oauth]**: 
 Suppress unnecessary warning on startup
