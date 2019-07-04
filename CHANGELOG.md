@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.0.0-rc9
+* **[edison-togglz]**: 
+If `edison.togglz.s3.check-bucket` is enabled, the s3 bucket has to be available in order to let the service startup correctly.
+This prevents the in-memory repository to instantiate.
+
+
 ## 2.0.0-rc8
 * **[general]**: Bugfix: Use async http client version that fits AWS SDK
 

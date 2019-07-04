@@ -14,7 +14,12 @@ import org.springframework.context.annotation.Configuration;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.UserProvider;
+import org.togglz.core.util.FeatureStateStorageWrapper;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.*;
+
+import java.io.IOException;
 
 @Configuration
 @EnableConfigurationProperties(TogglzProperties.class)
@@ -45,5 +50,18 @@ public class S3TogglzConfiguration {
         LOG.info("Using S3TogglzRepository");
         LOG.info("========================");
         return new S3TogglzRepository(featureStateConverter);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "edison.togglz.s3.check-bucket", havingValue = "true")
+    public Boolean checkBucketAvailability(final S3Client s3Client, final TogglzProperties togglzProperties){
+
+        ListObjectsRequest listObjectsRequest = ListObjectsRequest.builder()
+                .bucket(togglzProperties.getS3().getBucketName())
+                .build();
+        //throws exception on missing bucket
+        s3Client.listObjects(listObjectsRequest);
+
+        return true;
     }
 }
