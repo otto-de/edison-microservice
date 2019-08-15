@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.0.0
+* **[edison-validation]**: Add EnumSetValidator to be able to validate is Set of Enums
+
 ## 2.0.0-rc9
 * **[edison-togglz]**: 
 If `edison.togglz.s3.check-bucket` is enabled, the s3 bucket has to be available in order to let the service startup correctly.
