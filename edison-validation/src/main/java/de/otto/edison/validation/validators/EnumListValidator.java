@@ -6,20 +6,21 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class EnumSetValidator implements ConstraintValidator<IsEnum, Set<String>> {
+public class EnumListValidator implements ConstraintValidator<IsEnum, List<String>> {
 
-    private static final String UNKNOWN_ENUMSET_VALUE_MESSAGE_CODE = "unknown.enumset.values";
+    private static final String UNKNOWN_ENUMS_VALUE_MESSAGE_CODE = "unknown.enums.values";
     private final ResourceBundleMessageSource messageSource;
     private Set<String> availableEnumNames;
     private boolean ignoreCase;
     private boolean allowNull;
 
-    public EnumSetValidator(@Qualifier("edisonValidationMessageSource") ResourceBundleMessageSource messageSource) {
+    public EnumListValidator(@Qualifier("edisonValidationMessageSource") ResourceBundleMessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
@@ -35,18 +36,18 @@ public class EnumSetValidator implements ConstraintValidator<IsEnum, Set<String>
     }
 
     @Override
-    public boolean isValid(Set<String> value, ConstraintValidatorContext context) {
+    public boolean isValid(List<String> value, ConstraintValidatorContext context) {
         if (value == null) {
             return allowNull;
         } else {
-            Set<String> invalidValues = value.stream()
+            List<String> invalidValues = value.stream()
                     .filter(v -> !isValidEnum(v))
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             if (!invalidValues.isEmpty()) {
                 context.disableDefaultConstraintViolation();
                 String invalidValuesString = String.join(",", invalidValues);
-                String messageTemplate = messageSource.getMessage(UNKNOWN_ENUMSET_VALUE_MESSAGE_CODE, new Object[] {invalidValuesString}, Locale.getDefault());
+                String messageTemplate = messageSource.getMessage(UNKNOWN_ENUMS_VALUE_MESSAGE_CODE, new Object[]{invalidValuesString}, Locale.getDefault());
                 context.buildConstraintViolationWithTemplate(messageTemplate).addConstraintViolation();
             }
 

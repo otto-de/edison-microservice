@@ -1,7 +1,7 @@
 # Release Notes
 
 ## 2.0.0
-* **[edison-validation]**: Add EnumSetValidator to be able to validate is Set of Enums
+* **[edison-validation]**: Add EnumListValidator to be able to validate a list of enums
 
 ## 2.0.0-rc9
 * **[edison-togglz]**: 

@@ -8,17 +8,14 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.metadata.ConstraintDescriptor;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class EnumSetValidatorTest {
+public class EnumListValidatorTest {
 
     enum TestEnum {
         foo,
@@ -27,69 +24,69 @@ public class EnumSetValidatorTest {
 
     @Test
     public void shouldValidateSuccessfully() throws Exception {
-        EnumSetValidator enumSetValidator = createAndInitializeValidator(false, false);
-        boolean valid = enumSetValidator.isValid(createSet("foo", "bar"), createContext());
+        EnumListValidator enumListValidator = createAndInitializeValidator(false, false);
+        boolean valid = enumListValidator.isValid(Arrays.asList("foo", "bar"), createContext());
         assertThat(valid, is(true));
     }
 
     @Test
     public void shouldFailForInvalidValue() throws Exception {
-        EnumSetValidator enumSetValidator = createAndInitializeValidator(false, false);
-        boolean valid = enumSetValidator.isValid(createSet("foo", "xxx"), createContext());
+        EnumListValidator enumListValidator = createAndInitializeValidator(false, false);
+        boolean valid = enumListValidator.isValid(Arrays.asList("foo", "xxx"), createContext());
         assertThat(valid, is(false));
     }
 
     @Test
     public void shouldFailWhenNotIgnoringCase() throws Exception {
-        EnumSetValidator enumSetValidator = createAndInitializeValidator(false, false);
+        EnumListValidator enumListValidator = createAndInitializeValidator(false, false);
         ConstraintValidatorContext context = createContext();
-        boolean valid = enumSetValidator.isValid(createSet("Foo"), context);
+        boolean valid = enumListValidator.isValid(Collections.singletonList("Foo"), context);
         assertThat(valid, is(false));
     }
 
     @Test
     public void shouldSucceedWhenIgnoringCase() throws Exception {
-        EnumSetValidator enumSetValidator = createAndInitializeValidator(true, false);
-        boolean valid = enumSetValidator.isValid(createSet("Foo"), createContext());
+        EnumListValidator enumListValidator = createAndInitializeValidator(true, false);
+        boolean valid = enumListValidator.isValid(Collections.singletonList("Foo"), createContext());
         assertThat(valid, is(true));
     }
 
     @Test
     public void shouldFailForNull() {
-        EnumSetValidator enumSetValidator = createAndInitializeValidator(true, false);
-        boolean valid = enumSetValidator.isValid(null, createContext());
+        EnumListValidator enumListValidator = createAndInitializeValidator(true, false);
+        boolean valid = enumListValidator.isValid(null, createContext());
         assertThat(valid, is(false));
     }
 
     @Test
     public void shouldFailForNullValue() {
-        EnumSetValidator enumSetValidator = createAndInitializeValidator(true, false);
-        boolean valid = enumSetValidator.isValid(createSet((String) null), createContext());
+        EnumListValidator enumListValidator = createAndInitializeValidator(true, false);
+        boolean valid = enumListValidator.isValid(Collections.singletonList((String) null), createContext());
         assertThat(valid, is(false));
     }
 
     @Test
     public void shouldAllowNullWhenFlagIsSet() {
-        EnumSetValidator enumSetValidator = createAndInitializeValidator(true, true);
-        boolean valid = enumSetValidator.isValid(null, createContext());
+        EnumListValidator enumListValidator = createAndInitializeValidator(true, true);
+        boolean valid = enumListValidator.isValid(null, createContext());
         assertThat(valid, is(true));
     }
 
     @Test
     public void shouldFailForEmptyString() {
-        EnumSetValidator enumSetValidator = createAndInitializeValidator(true, false);
-        boolean valid = enumSetValidator.isValid(createSet(""), createContext());
+        EnumListValidator enumListValidator = createAndInitializeValidator(true, false);
+        boolean valid = enumListValidator.isValid(Collections.singletonList(""), createContext());
         assertThat(valid, is(false));
     }
 
-    private EnumSetValidator createAndInitializeValidator(boolean ignoreCase, boolean allowNull) {
+    private EnumListValidator createAndInitializeValidator(boolean ignoreCase, boolean allowNull) {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("ValidationMessages");
         messageSource.setUseCodeAsDefaultMessage(true);
 
-        EnumSetValidator enumSetValidator = new EnumSetValidator(messageSource);
-        enumSetValidator.initialize(createAnnotation(TestEnum.class, ignoreCase, allowNull));
-        return enumSetValidator;
+        EnumListValidator enumListValidator = new EnumListValidator(messageSource);
+        enumListValidator.initialize(createAnnotation(TestEnum.class, ignoreCase, allowNull));
+        return enumListValidator;
     }
 
     private ConstraintValidatorContext createContext() {
@@ -106,9 +103,4 @@ public class EnumSetValidatorTest {
         return mockAnnotation;
     }
 
-    private Set<String> createSet(String... values) {
-        return new HashSet<String>() {{
-            addAll(Arrays.asList(values));
-        }};
-    }
 }
