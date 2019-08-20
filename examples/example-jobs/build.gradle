@@ -1,11 +1,12 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    compile project(":edison-jobs")
+    implementation project(":edison-core")
+    implementation project(":edison-jobs")
 //  compile project(":edison-mongo")  // Enable to get persistent job information
-    compile libraries.async_http_client
+    implementation libraries.async_http_client
 
-    testCompile project(":edison-testsupport")
+    testImplementation project(":edison-testsupport")
 }
 
 artifacts {

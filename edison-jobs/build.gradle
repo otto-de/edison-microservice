@@ -1,16 +1,25 @@
+apply plugin: 'java-library'
+
 dependencies {
-    compile libraries.async_http_client
+    implementation libraries.async_http_client
 
-    compile project(":edison-core")
+    implementation project(":edison-core")
 
-    compileOnly libraries.mongodb_driver
-    compileOnly project(":edison-mongo")
+    implementation libraries.mongodb_driver
+    implementation project(":edison-mongo")
 
-    testCompile project(":edison-mongo")
-    testCompile project(":edison-testsupport")
-    testCompile test_libraries.json_path
-    testCompile test_libraries.jsonassert
-    testCompile test_libraries.embedded_mongo
+    implementation group: 'io.micrometer', name: 'micrometer-core', version: '1.2.0'
+    implementation libraries.jcip_annotations
+    implementation libraries.javax_servlet_api
+    implementation libraries.hibernate_validator
+    implementation libraries.java_validation_api
+    api libraries.spring_boot_starter_web
+
+    testImplementation project(":edison-mongo")
+    testImplementation project(":edison-testsupport")
+    testImplementation test_libraries.json_path
+    testImplementation test_libraries.jsonassert
+    testImplementation test_libraries.embedded_mongo
 }
 
 artifacts {

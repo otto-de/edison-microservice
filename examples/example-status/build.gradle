@@ -1,10 +1,13 @@
+apply plugin: 'java-library'
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    compile project(":edison-core")
-    compile libraries.spring_boot_devtools
+    implementation libraries.spring_boot_starter_actuator
 
-    testCompile project(":edison-testsupport")
+    implementation project(":edison-core")
+    implementation libraries.spring_boot_devtools
+
+    testImplementation project(":edison-testsupport")
 }
 
 artifacts {
