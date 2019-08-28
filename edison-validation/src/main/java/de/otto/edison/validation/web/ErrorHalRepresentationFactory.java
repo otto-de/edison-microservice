@@ -3,6 +3,7 @@ package de.otto.edison.validation.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -17,15 +18,28 @@ public class ErrorHalRepresentationFactory {
 
     private final ResourceBundleMessageSource messageSource;
     private final ObjectMapper objectMapper;
+    private final String errorProfile;
 
     @Autowired
-    public ErrorHalRepresentationFactory(ResourceBundleMessageSource edisonValidationMessageSource, ObjectMapper objectMapper) {
+    public ErrorHalRepresentationFactory(
+            ResourceBundleMessageSource edisonValidationMessageSource,
+            ObjectMapper objectMapper,
+            @Value("${edison.validation.error-profile:http://spec.otto.de/profiles/error}") String errorProfile) {
         this.messageSource = edisonValidationMessageSource;
         this.objectMapper = objectMapper;
+        this.errorProfile = errorProfile;
+    }
+
+    public ErrorHalRepresentation halRepresentationForErrorMessage(String errorMessage) {
+        return ErrorHalRepresentation.builder()
+                .withProfile(errorProfile)
+                .withErrorMessage(errorMessage)
+                .build();
     }
 
     public ErrorHalRepresentation halRepresentationForValidationErrors(Errors validationResult) {
         ErrorHalRepresentation.Builder builder = ErrorHalRepresentation.builder()
+                .withProfile(errorProfile)
                 .withErrorMessage(String.format("Validation failed. %d error(s)", validationResult.getErrorCount()));
 
         validationResult.getAllErrors()
