@@ -1,5 +1,9 @@
 # Release Notes
 
+
+## 2.0.1
+* **[edison-validation]**: Make error profile configurable via application property 'edison.validation.error-profile'
+
 ## 2.0.0
 * **[edison-validation]**: Add EnumListValidator to be able to validate a list of enums
 
