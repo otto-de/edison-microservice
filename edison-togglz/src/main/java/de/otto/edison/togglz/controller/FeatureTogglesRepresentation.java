@@ -25,7 +25,10 @@ public class FeatureTogglesRepresentation {
     }
 
     private Map<String, FeatureToggleRepresentation> buildTogglzState(final Class<? extends Feature> featureClass) {
-        final Feature[] features = featureClass.getEnumConstants();
+        Feature[] features = featureClass.getEnumConstants();
+        if(features == null || features.length == 0) {
+            features = getFeatureManager().getFeatures().toArray(new Feature[]{});
+        }
         return stream(features)
                 .collect(
                         toMap(Feature::name, this::toFeatureToggleRepresentation)
