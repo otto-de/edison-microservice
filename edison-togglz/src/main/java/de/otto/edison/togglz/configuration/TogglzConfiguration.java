@@ -3,17 +3,22 @@ package de.otto.edison.togglz.configuration;
 import de.otto.edison.authentication.Credentials;
 import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
+import de.otto.edison.togglz.KFeatureManagerProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.togglz.core.Feature;
 import org.togglz.core.context.StaticFeatureManagerProvider;
 import org.togglz.core.manager.FeatureManager;
+import org.togglz.core.manager.FeatureManagerBuilder;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.repository.cache.CachingStateRepository;
+import org.togglz.core.spi.FeatureProvider;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
 import org.togglz.servlet.TogglzFilter;
@@ -67,11 +72,26 @@ public class TogglzConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(FeatureManager.class)
     public FeatureManager featureManager(final TogglzConfig togglzConfig) throws Exception {
         final FeatureManagerFactory featureManagerFactory = new FeatureManagerFactory();
         featureManagerFactory.setTogglzConfig(togglzConfig);
         final FeatureManager featureManager = featureManagerFactory.getObject();
         StaticFeatureManagerProvider.setFeatureManager(featureManager);  // this workaround should be fixed with togglz version 2.2
+        return featureManager;
+    }
+
+    @Bean
+    @Primary
+    @Profile("test")
+    public FeatureManager testFeatureManager(final Optional<FeatureProvider> featureProvider) throws Exception {
+
+        FeatureManagerBuilder featureManagerBuilder = FeatureManagerBuilder.begin();
+
+        featureProvider.ifPresent(featureManagerBuilder::featureProvider);
+
+        FeatureManager featureManager = featureManagerBuilder.build();
+        KFeatureManagerProvider.Companion.setInstance(featureManager);
         return featureManager;
     }
 
