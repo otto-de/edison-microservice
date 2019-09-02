@@ -92,7 +92,9 @@ ext {
             embedded_mongo          : "de.flapdoodle.embed:de.flapdoodle.embed.mongo:${test_versions.embedded_mongo}",
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
             rest_assured            : "io.rest-assured:rest-assured:${test_versions.rest_assured}",
-            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}"
+            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}",
+            mockk                   : "io.mockk:mockk:1.9.3",
+            kotlintest              : "io.kotlintest:kotlintest-runner-junit5:3.4.0"
 
     ]
     gradle_plugins = [
