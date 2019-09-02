@@ -38,7 +38,7 @@ public class FeatureTogglesControllerAcceptanceTest {
     private int port;
 
     @Test
-    public void shouldTogglesAsJson() {
+    public void shouldReturnTogglesAsJson() {
         // when
         ResponseEntity<String> resource = getResource("http://localhost:" + port + "/togglztest/internal/toggles");
 
