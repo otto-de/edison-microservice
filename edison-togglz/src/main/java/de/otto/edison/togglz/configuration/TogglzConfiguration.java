@@ -81,20 +81,6 @@ public class TogglzConfiguration {
         return featureManager;
     }
 
-    @Bean
-    @Primary
-    @Profile("test")
-    public FeatureManager testFeatureManager(final Optional<FeatureProvider> featureProvider) throws Exception {
-
-        FeatureManagerBuilder featureManagerBuilder = FeatureManagerBuilder.begin();
-
-        featureProvider.ifPresent(featureManagerBuilder::featureProvider);
-
-        FeatureManager featureManager = featureManagerBuilder.build();
-        KFeatureManagerProvider.Companion.setInstance(featureManager);
-        return featureManager;
-    }
-
     private enum Features implements Feature {
         /* no features */
     }
