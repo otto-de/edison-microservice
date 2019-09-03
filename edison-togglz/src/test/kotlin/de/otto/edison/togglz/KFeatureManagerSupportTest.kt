@@ -2,6 +2,7 @@ package de.otto.edison.togglz
 
 import io.kotlintest.shouldBe
 import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -64,5 +65,10 @@ internal class KFeatureManagerSupportTest {
 
         //then
         KotlinTestFeatures.values().forEach { it.isActive() shouldBe false }
+    }
+
+    @AfterEach
+    internal fun tearDown() {
+        KFeatureManagerProvider.instance = null
     }
 }

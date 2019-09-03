@@ -1,6 +1,7 @@
 package de.otto.edison.togglz.controller;
 
 import de.otto.edison.togglz.FeatureClassProvider;
+import de.otto.edison.togglz.FeatureEnum;
 import net.jcip.annotations.Immutable;
 import org.togglz.core.Feature;
 import org.togglz.core.annotation.Label;
@@ -25,10 +26,9 @@ public class FeatureTogglesRepresentation {
     }
 
     private Map<String, FeatureToggleRepresentation> buildTogglzState(final Class<? extends Feature> featureClass) {
-        Feature[] features = featureClass.getEnumConstants();
-        if(features == null || features.length == 0) {
-            features = getFeatureManager().getFeatures().toArray(new Feature[]{});
-        }
+        Feature[] features = !featureClass.equals(FeatureEnum.class)
+                ? featureClass.getEnumConstants()
+                :getFeatureManager().getFeatures().toArray(new Feature[]{});
         return stream(features)
                 .collect(
                         toMap(Feature::name, this::toFeatureToggleRepresentation)

@@ -1,8 +1,11 @@
 package de.otto.edison.togglz.controller;
 
+import de.otto.edison.testsupport.togglz.FeatureManagerSupport;
 import de.otto.edison.togglz.EmptyFeatures;
 import de.otto.edison.togglz.TestFeatures;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.togglz.core.manager.FeatureManager;
 
 import java.util.Map;
 
@@ -14,6 +17,11 @@ import static org.hamcrest.Matchers.notNullValue;
 public class FeatureTogglesRepresentationTest {
 
     private FeatureTogglesRepresentation testee;
+
+    @BeforeEach
+    void setUp() {
+        FeatureManagerSupport.allEnabledFeatureConfig(TestFeatures.class);
+    }
 
     @Test
     public void testGetFeatureRepresentation() {
