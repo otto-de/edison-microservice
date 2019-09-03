@@ -2,7 +2,6 @@
 .gradle
 .shelf
 build
-.kotlintest/
 out
 **/build
 *.iws

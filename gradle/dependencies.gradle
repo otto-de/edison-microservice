@@ -65,6 +65,7 @@ ext {
             togglz_console                     : "org.togglz:togglz-console:${versions.togglz}",
             togglz_spring_web                  : "org.togglz:togglz-spring-web:${versions.togglz}",
             togglz_spring_boot_starter         : "org.togglz:togglz-spring-boot-starter:${versions.togglz}",
+            togglz_testing                     : "org.togglz:togglz-testing:${versions.togglz}",
             mongodb_driver                     : "org.mongodb:mongodb-driver:${versions.mongodb_driver}",
             caffeine                           : "com.github.ben-manes.caffeine:caffeine:${versions.caffeine}",
             unboundid_ldapsdk_minimal_edition  : "com.unboundid:unboundid-ldapsdk-minimal-edition:${versions.unboundid_ldapsdk_minimal_edition}",
@@ -92,9 +93,7 @@ ext {
             embedded_mongo          : "de.flapdoodle.embed:de.flapdoodle.embed.mongo:${test_versions.embedded_mongo}",
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
             rest_assured            : "io.rest-assured:rest-assured:${test_versions.rest_assured}",
-            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}",
-            mockk                   : "io.mockk:mockk:1.9.3",
-            kotlintest              : "io.kotlintest:kotlintest-runner-junit5:3.4.0"
+            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}"
 
     ]
     gradle_plugins = [

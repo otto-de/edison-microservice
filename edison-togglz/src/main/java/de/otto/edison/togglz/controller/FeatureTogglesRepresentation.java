@@ -1,61 +1,41 @@
 package de.otto.edison.togglz.controller;
 
-import de.otto.edison.togglz.FeatureClassProvider;
-import de.otto.edison.togglz.FeatureEnum;
 import net.jcip.annotations.Immutable;
 import org.togglz.core.Feature;
-import org.togglz.core.annotation.Label;
+import org.togglz.core.manager.FeatureManager;
 
 import java.util.Map;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
-import static org.togglz.core.context.FeatureContext.getFeatureManager;
 
 @Immutable
 public class FeatureTogglesRepresentation {
 
     public final Map<String, FeatureToggleRepresentation> features;
 
-    private FeatureTogglesRepresentation(final Class<? extends Feature> featureClass) {
-        this.features = buildTogglzState(featureClass);
+    private FeatureTogglesRepresentation(final FeatureManager featureManager) {
+        this.features = buildTogglzState(featureManager);
     }
 
-    public static FeatureTogglesRepresentation togglzRepresentation(final FeatureClassProvider featureClassProvider) {
-        return new FeatureTogglesRepresentation(featureClassProvider.getFeatureClass());
+    public static FeatureTogglesRepresentation togglzRepresentation(final FeatureManager featureManager) {
+        return new FeatureTogglesRepresentation(featureManager);
     }
 
-    private Map<String, FeatureToggleRepresentation> buildTogglzState(final Class<? extends Feature> featureClass) {
-        Feature[] features = !featureClass.equals(FeatureEnum.class)
-                ? featureClass.getEnumConstants()
-                :getFeatureManager().getFeatures().toArray(new Feature[]{});
+    private Map<String, FeatureToggleRepresentation> buildTogglzState(final FeatureManager featureManager) {
+        Feature[] features = featureManager.getFeatures().toArray(new Feature[]{});
         return stream(features)
                 .collect(
-                        toMap(Feature::name, this::toFeatureToggleRepresentation)
+                        toMap(Feature::name, feature -> toFeatureToggleRepresentation(feature, featureManager))
                 );
     }
 
-    private FeatureToggleRepresentation toFeatureToggleRepresentation(final Feature feature) {
-        final Label label = getLabelAnnotation(feature);
+    private FeatureToggleRepresentation toFeatureToggleRepresentation(final Feature feature, FeatureManager featureManager) {
+
+        final String label = featureManager.getMetaData(feature).getLabel();
         return new FeatureToggleRepresentation(
-                label != null ? label.value() : feature.name(),
-                getFeatureManager().getFeatureState(feature).isEnabled(),
+                label != null ? label : feature.name(),
+                featureManager.getFeatureState(feature).isEnabled(),
                 null);
     }
-
-    public static Label getLabelAnnotation(Feature feature) {
-        try {
-            Class<? extends Feature> featureClass = feature.getClass();
-            Label fieldAnnotation = featureClass.getField(feature.name()).getAnnotation(Label.class);
-            Label classAnnotation = featureClass.getAnnotation(Label.class);
-
-            return fieldAnnotation != null ? fieldAnnotation : classAnnotation;
-        } catch (SecurityException e) {
-            // ignore
-        } catch (NoSuchFieldException e) {
-            // ignore
-        }
-        return null;
-    }
-
 }

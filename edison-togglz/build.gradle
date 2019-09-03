@@ -23,10 +23,8 @@ dependencies {
     testCompile test_libraries.hamcrest_core
     testCompile test_libraries.hamcrest_library
     testCompile test_libraries.spring_boot_starter_test
-    testCompile test_libraries.mockk
-    testCompile test_libraries.kotlintest
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "org.jetbrains.kotlin:kotlin-reflect"
+    testCompile test_libraries.togglz_testing
+
 
 }
 
@@ -80,14 +78,4 @@ uploadArchives {
 }
 repositories {
     mavenCentral()
-}
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
