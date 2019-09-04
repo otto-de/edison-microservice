@@ -4,7 +4,6 @@ import org.togglz.core.Feature;
 import org.togglz.core.context.FeatureContext;
 import org.togglz.core.manager.FeatureManager;
 import org.togglz.core.repository.FeatureState;
-import org.togglz.core.util.FeatureAnnotations;
 
 import static org.togglz.core.context.FeatureContext.clearCache;
 import static org.togglz.core.context.FeatureContext.getFeatureManager;
@@ -52,7 +51,7 @@ public class FeatureManagerSupport {
     }
 
     private static boolean shouldRunInTests(FeatureManager featureManager, Feature feature) {
-        return !featureManager.getMetaData(feature).getAttributes().containsKey("inactiveInTests");
+        return !featureManager.getMetaData(feature).getLabel().contains("[inactiveInTests]");
     }
 
     public static void enable(final Feature feature) {

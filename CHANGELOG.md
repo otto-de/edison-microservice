@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.1.0
+* **[edison-togglz]**: 
+  * Make FeatureManager @ConditionalOnMissingBean to allow overriding
+  * Get @Label and other annotations from FeatureManager.getMetaData so that this works with Features that are not enums, too
+  * Add methods to FeatureManagerSupport that get the FeatureManager as parameter instead of from the FeatureContext
 
 ## 2.0.1
 * **[edison-validation]**: Make error profile configurable via application property 'edison.validation.error-profile'

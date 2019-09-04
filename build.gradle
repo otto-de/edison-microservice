@@ -37,7 +37,7 @@ subprojects {
     // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-    version = '2.0.2-SNAPSHOT'
+    version = '2.1.0'
     group = 'de.otto.edison'
 
     repositories {
