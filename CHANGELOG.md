@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.1.1
+* **[edison-togglz]**: 
+  * Make S3TogglzRepository cache dependent from String instead of Feature in order to support kotlin togglz
+  * Add `getFeatureFromName(String name)`- function to be able to retrieve current feature by its name
+
 ## 2.1.0
 * **[edison-togglz]**: 
   * Make FeatureManager @ConditionalOnMissingBean to allow overriding
