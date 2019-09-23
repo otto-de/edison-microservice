@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.1.2
+* **[general]**: increase gradle version
+
 ## 2.1.1
 * **[edison-togglz]**: 
   * Make S3TogglzRepository cache dependent from String instead of Feature in order to support kotlin togglz
