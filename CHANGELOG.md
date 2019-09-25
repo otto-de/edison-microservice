@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.1.3
+* **[general]**: Update dependencies
+
 ## 2.1.2
 * **[general]**: increase gradle version
 
