@@ -3,6 +3,7 @@ package de.otto.edison.oauth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.jwt.crypto.sign.RsaVerifier;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@ConditionalOnExpression("${edison.oauth.public-key.enabled:false")
 public class KeyExchangeJwtAccessTokenConverter extends JwtAccessTokenConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyExchangeJwtAccessTokenConverter.class);

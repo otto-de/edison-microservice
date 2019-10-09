@@ -5,6 +5,9 @@
 
 See https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2-Release-Notes for a migration guide 
 
+## 2.1.4
+* **[edison-oauth]**: Bugfix Bean Creation when inactivate public key exchange
+
 ## 2.1.3
 * **[general]**: Update dependencies
 
