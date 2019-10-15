@@ -39,11 +39,24 @@ public class Credentials {
         String authorizationHeader = request.getHeader("Authorization");
         if (!StringUtils.isEmpty(authorizationHeader)) {
             String credentials = authorizationHeader.substring(6, authorizationHeader.length());
-            String[] decodedCredentialParts = new String(Base64Utils.decode(credentials.getBytes())).split(":", 2);
-            if (!decodedCredentialParts[0].isEmpty() && !decodedCredentialParts[1].isEmpty()) {
+            Optional<String> decodedCredentials = base64Decode(credentials);
+            String[] decodedCredentialParts = decodedCredentials
+                    .map(s1 -> s1.split(":", 2))
+                    .orElse(new String[0]);
+            if (decodedCredentialParts.length >= 2
+                    && !decodedCredentialParts[0].isEmpty()
+                    && !decodedCredentialParts[1].isEmpty()) {
                 return Optional.of(new Credentials(decodedCredentialParts[0], decodedCredentialParts[1]));
             }
         }
         return Optional.empty();
+    }
+
+    private static Optional<String> base64Decode(String input) {
+        try {
+            return Optional.of(new String(Base64Utils.decode(input.getBytes())));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 }
