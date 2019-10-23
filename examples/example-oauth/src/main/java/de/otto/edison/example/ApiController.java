@@ -1,5 +1,6 @@
 package de.otto.edison.example;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,7 +13,7 @@ public class ApiController {
 
     @RequestMapping(
             value = "/api/hello",
-            produces = "application/json",
+            produces = MediaType.APPLICATION_JSON_VALUE,
             method = GET)
     @ResponseBody
     @PreAuthorize("#oauth2.hasScope('hello.read')")

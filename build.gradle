@@ -37,7 +37,7 @@ subprojects {
     // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-    version = '2.1.4-SNAPSHOT'
+    version = '2.2.0-SNAPSHOT'
     group = 'de.otto.edison'
 
     repositories {
@@ -50,6 +50,7 @@ subprojects {
     // Override some Spring Boot default versions
     // see https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-customize-dependency-versions
     ext['mockito.version'] = test_versions.mockito_core
+    ext['jackson.version'] = versions.jackson
 
     task allDeps(type: DependencyReportTask) {}
 

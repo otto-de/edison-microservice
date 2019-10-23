@@ -17,7 +17,11 @@ management:
     endpoints:
         web:
             base-path: /actuator
-            expose: '*'
+            exposure:
+                include: '*'
+    endpoint:
+        loggers:
+            enabled: true
 
 edison:
     gracefulshutdown:

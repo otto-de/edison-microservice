@@ -7,6 +7,8 @@ spring:
             favor-parameter: true
             media-types:
                 html: text/html
+    #jmx:
+    #    enabled: true
 
 # context + port of the application
 server:
@@ -14,13 +16,19 @@ server:
         context-path: /testcore
     port: 8084
 
+
+
 # context of the management endpoints like metrics, health, and so on
 # default is /actuator
 management:
     endpoints:
         web:
             base-path: /actuator
-            expose: '*'
+            exposure:
+                include: '*'
+    endpoint:
+        loggers:
+            enabled: true
 
 # edison-specific configuration
 edison:

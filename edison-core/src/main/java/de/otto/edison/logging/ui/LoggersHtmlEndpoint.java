@@ -132,7 +132,7 @@ public class LoggersHtmlEndpoint {
                 .keySet()
                 .stream()
                 .map(key -> key.contains("$") ? null : new HashMap<String,Object>() {{
-                    final LoggerLevels logger = (LoggerLevels) loggers.get(key);
+                    final LoggersEndpoint.SingleLoggerLevels logger = (LoggersEndpoint.SingleLoggerLevels) loggers.get(key);
                     put("name", key);
                     put("displayName", displayNameOf(key));
                     put("configuredLevel", logger.getConfiguredLevel());
