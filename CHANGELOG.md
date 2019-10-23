@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.2.0
+* **[general]**: Update to Spring Boot 2.2
+
+See https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2-Release-Notes for a migration guide 
+
 ## 2.1.3
 * **[general]**: Update dependencies
 
