@@ -1,6 +1,8 @@
 dependencies {
     compile libraries.async_http_client
 
+    compile libraries.aws_sdk_dynamodb
+
     compile project(":edison-core")
 
     compileOnly libraries.mongodb_driver

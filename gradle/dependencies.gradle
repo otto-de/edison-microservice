@@ -58,6 +58,7 @@ ext {
             spring_security_jwt                : "org.springframework.security:spring-security-jwt:${versions.spring_security_jwt}",
             aws_sdk_s3                         : "software.amazon.awssdk:s3:${versions.aws_sdk}",
             aws_sdk_ssm                        : "software.amazon.awssdk:ssm:${versions.aws_sdk}",
+            aws_sdk_dynamodb                   : "software.amazon.awssdk:dynamodb:${versions.aws_sdk}",
             async_http_client                  : "org.asynchttpclient:async-http-client:${versions.async_http_client}",
             jcip_annotations                   : "net.jcip:jcip-annotations:${versions.jcip_annotations}",
             logback_classic                    : "ch.qos.logback:logback-classic:${versions.logback_classic}",
