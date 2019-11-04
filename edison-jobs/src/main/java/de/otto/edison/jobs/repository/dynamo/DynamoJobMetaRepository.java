@@ -7,9 +7,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.*;
 import software.amazon.awssdk.utils.ImmutableMap;
 
 import java.util.HashMap;
@@ -45,8 +43,8 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        final boolean isRunning = meta.containsKey("running") && Boolean.parseBoolean(meta.get("running"));
-        final boolean isDisabled = meta.containsKey("disabled") && Boolean.parseBoolean(meta.get("disabled"));
+        final boolean isRunning = meta.containsKey("running");
+        final boolean isDisabled = meta.containsKey("disabled");
         final String comment = meta.get("disabledComment");
 
         return new JobMeta(jobType, isRunning, isDisabled, comment, meta);
@@ -54,22 +52,38 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     @Override
     public boolean createValue(String jobType, String key, String value) {
-        return false;
+        ImmutableMap<String, AttributeValue> itemRequestKey = ImmutableMap.of("jobType", AttributeValue.builder().s(jobType).build());
+        GetItemRequest itemRequest = GetItemRequest.builder()
+                .tableName("jobMeta")
+                .key(itemRequestKey)
+                .build();
+        GetItemResponse response = dynamoDbClient.getItem(itemRequest);
+
+        HashMap<String, AttributeValue> item = new HashMap<>(response.item());
+        item.put(key, AttributeValue.builder().s(value).build());
+        PutItemRequest putItemRequest = PutItemRequest.builder()
+                .tableName("jobMeta")
+                .item(item)
+                .build();
+
+        dynamoDbClient.putItem(putItemRequest);
+
+        return true;
     }
 
     @Override
     public boolean setRunningJob(String jobType, String jobId) {
-        return false;
+        return createValue(jobType, "running", jobId);
     }
 
     @Override
     public String getRunningJob(String jobType) {
-        return null;
+        return getValue(jobType, "running");
     }
 
     @Override
     public void clearRunningJob(String jobType) {
-
+        setValue(jobType, "running", null);
     }
 
     @Override
@@ -84,12 +98,44 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     @Override
     public String setValue(String jobType, String key, String value) {
-        return null;
+        ImmutableMap<String, AttributeValue> itemRequestKey = ImmutableMap.of("jobType", AttributeValue.builder().s(jobType).build());
+        GetItemRequest itemRequest = GetItemRequest.builder()
+                .tableName("jobMeta")
+                .key(itemRequestKey)
+                .build();
+        GetItemResponse response = dynamoDbClient.getItem(itemRequest);
+        String previous = null;
+        Map<String, AttributeValue> responseItem = response.item();
+        if (responseItem != null) {
+            previous = responseItem.get(key) != null ? responseItem.get(key).s() : null;
+
+            HashMap<String, AttributeValue> item = new HashMap<>(responseItem);
+            item.put(key, AttributeValue.builder().s(value).build());
+
+            if (value == null) {
+                item.remove(key);
+            }
+
+            PutItemRequest putItemRequest = PutItemRequest.builder()
+                    .tableName("jobMeta")
+                    .item(item)
+                    .build();
+
+            dynamoDbClient.putItem(putItemRequest);
+        }
+
+        return previous;
     }
 
     @Override
     public String getValue(String jobType, String key) {
-        return null;
+        ImmutableMap<String, AttributeValue> getItemRequestKey = ImmutableMap.of("jobType", AttributeValue.builder().s(jobType).build());
+        GetItemRequest itemRequest = GetItemRequest.builder()
+                .tableName("jobMeta")
+                .key(getItemRequestKey)
+                .build();
+        GetItemResponse response = dynamoDbClient.getItem(itemRequest);
+        return response.item().get(key).s();
     }
 
     @Override
