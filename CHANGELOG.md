@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.2.1
+* **[general]**: upgrade aws sdk
+* **[edison-core]**: Fix basic auth credentials retrieval on wrong format
+
 ## 2.2.0
 * **[general]**: Update to Spring Boot 2.2
 
