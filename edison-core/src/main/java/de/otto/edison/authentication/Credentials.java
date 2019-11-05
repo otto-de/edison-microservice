@@ -37,10 +37,10 @@ public class Credentials {
      */
     public static Optional<Credentials> readFrom(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
-        if (!StringUtils.isEmpty(authorizationHeader)) {
+        if (!StringUtils.isEmpty(authorizationHeader) && authorizationHeader.contains("Basic")) {
             String credentials = authorizationHeader.substring(6, authorizationHeader.length());
             String[] decodedCredentialParts = new String(Base64Utils.decode(credentials.getBytes())).split(":", 2);
-            if (!decodedCredentialParts[0].isEmpty() && !decodedCredentialParts[1].isEmpty()) {
+            if (decodedCredentialParts.length == 2 && !decodedCredentialParts[0].isEmpty() && !decodedCredentialParts[1].isEmpty()) {
                 return Optional.of(new Credentials(decodedCredentialParts[0], decodedCredentialParts[1]));
             }
         }
