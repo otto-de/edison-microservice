@@ -35,7 +35,7 @@ ext {
             jsonassert    : '1.5.0',
             rest_assured  : '4.1.2',
             embedded_mongo: '2.2.0',
-            testcontainers: '1.12.1'
+            testcontainers: '1.12.3'
     ]
     plugin_versions = [
             versions     : '0.25.0',
@@ -98,7 +98,8 @@ ext {
             embedded_mongo          : "de.flapdoodle.embed:de.flapdoodle.embed.mongo:${test_versions.embedded_mongo}",
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
             rest_assured            : "io.rest-assured:rest-assured:${test_versions.rest_assured}",
-            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}"
+//            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}",
+            testcontainers          : "org.testcontainers:junit-jupiter:${test_versions.testcontainers}"
 
     ]
     gradle_plugins = [
