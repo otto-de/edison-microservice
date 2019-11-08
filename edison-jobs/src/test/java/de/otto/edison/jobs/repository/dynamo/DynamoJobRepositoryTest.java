@@ -104,25 +104,33 @@ public class DynamoJobRepositoryTest {
         assertThat(readJobInfo.get(), equalTo(savedjobInfo));
     }
 
-//    @Test
-//    public void shouldFindJobInfoByUri() {
-//        // given
-//        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper);
-//
-//        // when
-//        JobInfo job = newJobInfo(randomUUID().toString(), "MYJOB", clock, "localhost");
-//        repository.createOrUpdate(job);
-//
-//        // then
-//        assertThat(repository.findOne(job.getJobId()), isPresent());
-//    }
-//
-//    @Test
-//    public void shouldReturnAbsentStatus() {
-//        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper);
-//        assertThat(repository.findOne("some-nonexisting-job-id"), isAbsent());
-//    }
-//
+    @Test
+    public void shouldFindJobInfoByUri() {
+        // given
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper);
+
+        // when
+        JobInfo job = newJobInfo(randomUUID().toString(), "MYJOB", clock, "localhost");
+        repository.createOrUpdate(job);
+
+        // then
+        assertThat(repository.findOne(job.getJobId()), isPresent());
+    }
+
+    @Test
+    public void shouldReturnAbsentStatus() {
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper);
+        assertThat(repository.findOne("some-nonexisting-job-id"), isAbsent());
+    }
+
+    @Test
+    public void shouldNotFailToRemoveMissingJob() {
+        // when
+        testee.removeIfStopped("foo");
+        // then
+        // no Exception is thrown...
+    }
+
 //    @Test
 //    public void shouldNotRemoveRunningJobs() {
 //        // given
@@ -132,34 +140,27 @@ public class DynamoJobRepositoryTest {
 //        testee.removeIfStopped(testUri);
 //        // then
 //        assertThat(testee.size(), is(1L));
+
 //    }
-//
-//    @Test
-//    public void shouldNotFailToRemoveMissingJob() {
-//        // when
-//        testee.removeIfStopped("foo");
-//        // then
-//        // no Exception is thrown...
-//    }
-//
-//    @Test
-//    public void shouldRemoveJob() throws Exception {
-//        JobInfo stoppedJob = builder()
-//                .setJobId("some/job/stopped")
-//                .setJobType("test")
-//                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
-//                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
-//                .setHostname("localhost")
-//                .setStatus(JobStatus.OK)
-//                .build();
-//        testee.createOrUpdate(stoppedJob);
-//        testee.createOrUpdate(stoppedJob);
-//
-//        testee.removeIfStopped(stoppedJob.getJobId());
-//
-//        assertThat(testee.size(), is(0L));
-//    }
-//
+
+    @Test
+    public void shouldRemoveJob() throws Exception {
+        JobInfo stoppedJob = builder()
+                .setJobId("some/job/stopped")
+                .setJobType("test")
+                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                .setHostname("localhost")
+                .setStatus(JobStatus.OK)
+                .build();
+        testee.createOrUpdate(stoppedJob);
+        testee.createOrUpdate(stoppedJob);
+
+        testee.removeIfStopped(stoppedJob.getJobId());
+
+        assertThat(testee.size(), is(0L));
+    }
+
     @Test
     public void shouldFindAll() {
         // given
@@ -172,6 +173,34 @@ public class DynamoJobRepositoryTest {
         assertThat(jobInfos.get(0).getJobId(), is("youngest"));
         assertThat(jobInfos.get(1).getJobId(), is("oldest"));
     }
+
+    @Test
+    public void shouldFindAllinSizeOperation() {
+        // given
+        testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        // when
+        final long count = testee.size();
+        // then
+        assertThat(count, is(2L));
+    }
+
+    @Test
+    public void shouldFindAllinSizeOperationWithPageing() {
+        // given
+        testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youn44444556gest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("yo121ungest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youn333333gest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youn1212gest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        // when
+        final long count = testee.size();
+        // then
+        //TODO write better test with paging enabled in scan
+        assertThat(count, is(7L));
+    }
+
 //
 //    @Test
 //    public void shouldFindLatestDistinct() throws Exception {

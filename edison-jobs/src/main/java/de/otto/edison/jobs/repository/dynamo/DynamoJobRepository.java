@@ -108,7 +108,9 @@ public class DynamoJobRepository implements JobRepository {
         jobAsItem.put(JobStructure.STARTED.key(), toStringAttributeValue(jobInfo.getStarted()));
         jobAsItem.put(JobStructure.STATUS.key(), toStringAttributeValue(jobInfo.getStatus().name()));
         jobInfo.getStopped().ifPresent(offsetDateTime -> jobAsItem.put(JobStructure.STOPPED.key(), toStringAttributeValue(offsetDateTime)));
-        jobAsItem.put(JobStructure.LAST_UPDATED.key(), toStringAttributeValue(jobInfo.getLastUpdated()));
+        if (null != jobInfo.getLastUpdated()) {
+            jobAsItem.put(JobStructure.LAST_UPDATED.key(), toStringAttributeValue(jobInfo.getLastUpdated()));
+        }
         jobAsItem.put(JobStructure.MESSAGES.key(), messagesToAttributeValueList(jobInfo.getMessages()));
 
 
@@ -122,16 +124,19 @@ public class DynamoJobRepository implements JobRepository {
                 .setJobType(item.get(JobStructure.JOB_TYPE.key()).s())
                 .setStarted(OffsetDateTime.parse(item.get(JobStructure.STARTED.key()).s()))
                 .setStatus(JobInfo.JobStatus.valueOf(item.get(JobStructure.STATUS.key()).s()))
-                .setLastUpdated(OffsetDateTime.parse(item.get(JobStructure.LAST_UPDATED.key()).s()))
                 .setMessages(itemToJobMessages(item));
-        if(item.containsKey(JobStructure.STOPPED.key())){
+        if (item.containsKey(JobStructure.STOPPED.key())) {
             jobInfo.setStopped(OffsetDateTime.parse(item.get(JobStructure.STOPPED.key()).s()));
+        }
+
+        if (item.containsKey(JobStructure.LAST_UPDATED.key())) {
+            jobInfo.setLastUpdated(OffsetDateTime.parse(item.get(JobStructure.LAST_UPDATED.key()).s()));
         }
         return jobInfo.build();
     }
 
-    private List<JobMessage> itemToJobMessages(Map<String, AttributeValue> item){
-        if(!item.containsKey(JobStructure.MESSAGES.key())){
+    private List<JobMessage> itemToJobMessages(Map<String, AttributeValue> item) {
+        if (!item.containsKey(JobStructure.MESSAGES.key())) {
             return emptyList();
         }
 
@@ -150,6 +155,13 @@ public class DynamoJobRepository implements JobRepository {
     @Override
     public void removeIfStopped(String jobId) {
 
+        Map<String, AttributeValue> keyMap = new HashMap<>();
+        keyMap.put(JobStructure.ID.key(), toStringAttributeValue(jobId));
+        DeleteItemRequest deleteJobRequest = DeleteItemRequest.builder()
+                .tableName(JOBS_TABLENAME)
+                .key(keyMap)
+                .build();
+        dynamoDbClient.deleteItem(deleteJobRequest);
     }
 
     @Override
@@ -174,7 +186,22 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public long size() {
-        return 0;
+        Map<String, AttributeValue> lastKeyEvaluated = null;
+        long count = 0;
+        do {
+            ScanRequest counterQuery = ScanRequest.builder()
+                    .tableName(JOBS_TABLENAME)
+                    .select(Select.COUNT)
+                    .limit(2)
+                    .exclusiveStartKey(lastKeyEvaluated)
+                    .build();
+
+            final ScanResponse countResponse = dynamoDbClient.scan(counterQuery);
+            lastKeyEvaluated = countResponse.lastEvaluatedKey();
+            count = count + countResponse.count();
+        } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
+
+        return count;
     }
 
     @Override
