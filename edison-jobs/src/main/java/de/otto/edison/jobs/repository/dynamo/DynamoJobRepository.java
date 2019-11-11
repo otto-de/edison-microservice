@@ -65,7 +65,11 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public List<JobInfo> findLatestBy(String type, int maxCount) {
-        return null;
+        return findByType(type).stream()
+                .sorted(Comparator.<JobInfo>comparingLong(jobInfo ->
+                        jobInfo.getStarted().toInstant().toEpochMilli()).reversed())
+                .limit(maxCount)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -119,7 +123,26 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public List<JobInfo> findByType(String jobType) {
-        return null;
+        Map<String, AttributeValue> lastKeyEvaluated = null;
+        List<JobInfo> jobs = new ArrayList<>();
+        Map<String, AttributeValue> expressionAttributeValues = ImmutableMap.of(
+                ":jobType", AttributeValue.builder().s(jobType).build()
+        );
+        do {
+            final ScanRequest query = ScanRequest.builder()
+                    .tableName(JOBS_TABLENAME)
+                    .limit(pageSize)
+                    .exclusiveStartKey(lastKeyEvaluated)
+                    .expressionAttributeValues(expressionAttributeValues)
+                    .filterExpression(JobStructure.JOB_TYPE.key() + " = :jobType")
+                    .build();
+
+            final ScanResponse response = dynamoDbClient.scan(query);
+            lastKeyEvaluated = response.lastEvaluatedKey();
+            List<JobInfo> newJobsFromThisPage = response.items().stream().map(this::decode).collect(Collectors.toList());
+            jobs.addAll(newJobsFromThisPage);
+        } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
+        return jobs;
     }
 
     @Override

@@ -51,7 +51,6 @@ class DynamoJobRepositoryTest {
 
     @BeforeEach
     void setUpDynamo() {
-
         getDynamoDbClient().createTable(CreateTableRequest.builder()
                 .tableName(JOBS_TABLENAME)
                 .attributeDefinitions(AttributeDefinition.builder()
@@ -91,7 +90,6 @@ class DynamoJobRepositoryTest {
                 .credentialsProvider(StaticCredentialsProvider
                         .create(AwsBasicCredentials.create("acc", "sec"))).build();
     }
-
 
     private Clock clock = systemDefaultZone();
 
@@ -263,25 +261,25 @@ class DynamoJobRepositoryTest {
         assertThat(jobInfos.get(0).getJobId(), is("deadJob"));
     }
 
-//    @Test
-//    void shouldFindLatestByType() {
-//        // given
-//        final String type = "TEST";
-//        final String otherType = "OTHERTEST";
-//
-//
-//        testee.createOrUpdate(newJobInfo("oldest", type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
-//        testee.createOrUpdate(newJobInfo("other", otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
-//        testee.createOrUpdate(newJobInfo("youngest", type, fixed(Instant.now(), systemDefault()), "localhost"));
-//
-//        // when
-//        final List<JobInfo> jobInfos = testee.findLatestBy(type, 2);
-//
-//        // then
-//        assertThat(jobInfos.get(0).getJobId(), is("youngest"));
-//        assertThat(jobInfos.get(1).getJobId(), is("oldest"));
-//        assertThat(jobInfos, hasSize(2));
-//    }
+    @Test
+    void shouldFindLatestByType() {
+        // given
+        final String type = "TEST";
+        final String otherType = "OTHERTEST";
+
+
+        testee.createOrUpdate(newJobInfo("oldest", type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("other", otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youngest", type, fixed(Instant.now(), systemDefault()), "localhost"));
+
+        // when
+        final List<JobInfo> jobInfos = testee.findLatestBy(type, 2);
+
+        // then
+        assertThat(jobInfos.get(0).getJobId(), is("youngest"));
+        assertThat(jobInfos.get(1).getJobId(), is("oldest"));
+        assertThat(jobInfos, hasSize(2));
+    }
 //
 //    @Test
 //    void shouldFindLatest() {

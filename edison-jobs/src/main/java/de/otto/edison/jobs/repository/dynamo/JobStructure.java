@@ -5,7 +5,7 @@ enum JobStructure {
     ID("jobId"),
     STARTED("started"),
     STOPPED("stopped"),
-    JOB_TYPE("type"),
+    JOB_TYPE("jobType"),
     STATUS("status"),
     MESSAGES("messages"),
     MSG_TS("ts"),
