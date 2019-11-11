@@ -3,11 +3,7 @@ package de.otto.edison.jobs.repository.dynamo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
-import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
-import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
-import org.hamcrest.Matchers;
-import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -21,13 +17,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
@@ -40,7 +32,6 @@ import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
-import static org.assertj.core.util.Lists.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -52,7 +43,7 @@ public class DynamoJobRepositoryTest {
 
     @BeforeAll
     public static void initDbs() throws IOException {
-        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper);
+        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 10);
     }
 
     @Container
@@ -72,7 +63,7 @@ public class DynamoJobRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper);
+        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 10);
     }
 
     private static DynamoDbClient getDynamoDbClient() {
@@ -107,7 +98,7 @@ public class DynamoJobRepositoryTest {
     @Test
     public void shouldFindJobInfoByUri() {
         // given
-        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper);
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 10);
 
         // when
         JobInfo job = newJobInfo(randomUUID().toString(), "MYJOB", clock, "localhost");
@@ -119,7 +110,7 @@ public class DynamoJobRepositoryTest {
 
     @Test
     public void shouldReturnAbsentStatus() {
-        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper);
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 10);
         assertThat(repository.findOne("some-nonexisting-job-id"), isAbsent());
     }
 
@@ -175,6 +166,21 @@ public class DynamoJobRepositoryTest {
     }
 
     @Test
+    public void shouldFindAllWithPaging() {
+        // given
+        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 2);
+        testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youngest1", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youngest2", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youngest3", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+        // when
+        final List<JobInfo> jobInfos = testee.findAll();
+        // then
+        assertThat(jobInfos.size(), is(5));
+    }
+
+    @Test
     public void shouldFindAllinSizeOperation() {
         // given
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
@@ -188,6 +194,7 @@ public class DynamoJobRepositoryTest {
     @Test
     public void shouldFindAllinSizeOperationWithPageing() {
         // given
+        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 2);
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youn44444556gest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
@@ -197,8 +204,7 @@ public class DynamoJobRepositoryTest {
         // when
         final long count = testee.size();
         // then
-        //TODO write better test with paging enabled in scan
-        assertThat(count, is(7L));
+        assertThat(count, is(6L));
     }
 
 //

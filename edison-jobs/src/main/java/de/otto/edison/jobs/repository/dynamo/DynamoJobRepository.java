@@ -22,10 +22,12 @@ public class DynamoJobRepository implements JobRepository {
     public static final String JOBS_TABLENAME = "jobs";
     private final DynamoDbClient dynamoDbClient;
     private final ObjectMapper objectMapper;
+    private final int pageSize;
 
-    public DynamoJobRepository(DynamoDbClient dynamoDbClient, ObjectMapper objectMapper) {
+    public DynamoJobRepository(DynamoDbClient dynamoDbClient, ObjectMapper objectMapper, int pageSize) {
         this.dynamoDbClient = dynamoDbClient;
         this.objectMapper = objectMapper;
+        this.pageSize = pageSize;
     }
 
     @Override
@@ -71,6 +73,7 @@ public class DynamoJobRepository implements JobRepository {
     public List<JobInfo> findAll() {
         ScanRequest findAll = ScanRequest.builder()
                 .tableName(JOBS_TABLENAME)
+                .limit(pageSize)
                 .build();
         final ScanResponse scan = dynamoDbClient.scan(findAll);
         return scan.items().stream().map(this::decode).collect(Collectors.toList());
@@ -192,7 +195,7 @@ public class DynamoJobRepository implements JobRepository {
             ScanRequest counterQuery = ScanRequest.builder()
                     .tableName(JOBS_TABLENAME)
                     .select(Select.COUNT)
-                    .limit(2)
+                    .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
                     .build();
 
