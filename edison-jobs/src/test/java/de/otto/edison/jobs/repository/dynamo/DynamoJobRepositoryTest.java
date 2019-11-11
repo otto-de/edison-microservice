@@ -2,6 +2,7 @@ package de.otto.edison.jobs.repository.dynamo;
 
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
+import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsCollectionWithSize;
@@ -20,6 +21,7 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -280,67 +282,67 @@ class DynamoJobRepositoryTest {
         assertThat(jobInfos.get(1).getJobId(), is("oldest"));
         assertThat(jobInfos, hasSize(2));
     }
-//
-//    @Test
-//    void shouldFindLatest() {
-//        // given
-//        final String type = "TEST";
-//        final String otherType = "OTHERTEST";
-//        testee.createOrUpdate(newJobInfo("oldest", type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
-//        testee.createOrUpdate(newJobInfo("other", otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
-//        testee.createOrUpdate(newJobInfo("youngest", type, fixed(Instant.now(), systemDefault()), "localhost"));
-//
-//        // when
-//        final List<JobInfo> jobInfos = testee.findLatest(2);
-//
-//        // then
-//        assertThat(jobInfos.get(0).getJobId(), is("youngest"));
-//        assertThat(jobInfos.get(1).getJobId(), is("other"));
-//        assertThat(jobInfos, hasSize(2));
-//    }
-//
-//    @Test
-//    void shouldFindAllJobsOfSpecificType() throws Exception {
-//        // Given
-//        final String type = "TEST";
-//        final String otherType = "OTHERTEST";
-//        testee.createOrUpdate(builder()
-//                .setJobId("1")
-//                .setJobType(type)
-//                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
-//                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
-//                .setHostname("localhost")
-//                .setStatus(JobStatus.OK)
-//                .build());
-//        testee.createOrUpdate(newJobInfo("2", otherType, systemDefaultZone(), "localhost"));
-//        testee.createOrUpdate(newJobInfo("3", type, systemDefaultZone(), "localhost"));
-//
-//        // When
-//        final List<JobInfo> jobsType1 = testee.findByType(type);
-//        final List<JobInfo> jobsType2 = testee.findByType(otherType);
-//
-//        // Then
-//        assertThat(jobsType1.size(), is(2));
-//        assertThat(jobsType1.stream().anyMatch(job -> job.getJobId().equals("1")), is(true));
-//        assertThat(jobsType1.stream().anyMatch(job -> job.getJobId().equals("3")), is(true));
-//        assertThat(jobsType2.size(), is(1));
-//        assertThat(jobsType2.stream().anyMatch(job -> job.getJobId().equals("2")), is(true));
-//    }
-//
-//    @Test
-//    void shouldFindStatusOfJob() throws Exception {
-//        //Given
-//        final String type = "TEST";
-//        JobInfo jobInfo = newJobInfo("1", type, systemDefaultZone(), "localhost");
-//        testee.createOrUpdate(jobInfo);
-//
-//        //When
-//        JobStatus status = testee.findStatus("1");
-//
-//        //Then
-//        assertThat(status, is(JobStatus.OK));
-//    }
-//
+
+    @Test
+    void shouldFindLatest() {
+        // given
+        final String type = "TEST";
+        final String otherType = "OTHERTEST";
+        testee.createOrUpdate(newJobInfo("oldest", type, fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("other", otherType, fixed(Instant.now().minusSeconds(5), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("youngest", type, fixed(Instant.now(), systemDefault()), "localhost"));
+
+        // when
+        final List<JobInfo> jobInfos = testee.findLatest(2);
+
+        // then
+        assertThat(jobInfos.get(0).getJobId(), is("youngest"));
+        assertThat(jobInfos.get(1).getJobId(), is("other"));
+        assertThat(jobInfos, hasSize(2));
+    }
+
+    @Test
+    void shouldFindAllJobsOfSpecificType() throws Exception {
+        // Given
+        final String type = "TEST";
+        final String otherType = "OTHERTEST";
+        testee.createOrUpdate(builder()
+                .setJobId("1")
+                .setJobType(type)
+                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                .setHostname("localhost")
+                .setStatus(JobStatus.OK)
+                .build());
+        testee.createOrUpdate(newJobInfo("2", otherType, systemDefaultZone(), "localhost"));
+        testee.createOrUpdate(newJobInfo("3", type, systemDefaultZone(), "localhost"));
+
+        // When
+        final List<JobInfo> jobsType1 = testee.findByType(type);
+        final List<JobInfo> jobsType2 = testee.findByType(otherType);
+
+        // Then
+        assertThat(jobsType1.size(), is(2));
+        assertThat(jobsType1.stream().anyMatch(job -> job.getJobId().equals("1")), is(true));
+        assertThat(jobsType1.stream().anyMatch(job -> job.getJobId().equals("3")), is(true));
+        assertThat(jobsType2.size(), is(1));
+        assertThat(jobsType2.stream().anyMatch(job -> job.getJobId().equals("2")), is(true));
+    }
+
+    @Test
+    void shouldFindStatusOfJob() throws Exception {
+        //Given
+        final String type = "TEST";
+        JobInfo jobInfo = newJobInfo("1", type, systemDefaultZone(), "localhost");
+        testee.createOrUpdate(jobInfo);
+
+        //When
+        JobStatus status = testee.findStatus("1");
+
+        //Then
+        assertThat(status, is(JobStatus.OK));
+    }
+
 //    @Test
 //    void shouldAppendMessageToJobInfo() throws Exception {
 //
@@ -361,7 +363,6 @@ class DynamoJobRepositoryTest {
 //        assertThat(jobInfoFromRepo.getMessages().size(), is(1));
 //        assertThat(jobInfoFromRepo.getMessages().get(0), is(igelMessage));
 //        assertThat(jobInfoFromRepo.getLastUpdated(), is(now.truncatedTo(ChronoUnit.MILLIS)));
-//
 //    }
 //
 //    @Test

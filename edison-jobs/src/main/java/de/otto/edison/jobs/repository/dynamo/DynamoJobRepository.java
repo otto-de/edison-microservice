@@ -47,7 +47,10 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public List<JobInfo> findLatest(int maxCount) {
-        return null;
+        return findAll().stream()
+                .sorted(Comparator.<JobInfo>comparingLong(jobInfo -> jobInfo.getStarted().toInstant().toEpochMilli()).reversed())
+                .limit(maxCount)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -77,7 +80,7 @@ public class DynamoJobRepository implements JobRepository {
         Map<String, AttributeValue> lastKeyEvaluated = null;
         List<JobInfo> jobs = new ArrayList<>();
         Map<String, AttributeValue> expressionAttributeValues = ImmutableMap.of(
-                        ":val", AttributeValue.builder().n(String.valueOf(timeOffset.toInstant().toEpochMilli())).build()
+                ":val", AttributeValue.builder().n(String.valueOf(timeOffset.toInstant().toEpochMilli())).build()
         );
         do {
             final ScanRequest query = ScanRequest.builder()
@@ -229,12 +232,19 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public JobInfo.JobStatus findStatus(String jobId) {
-        return null;
+        final Optional<JobInfo> jobInfo = findOne(jobId);
+        if (!jobInfo.isPresent()) {
+            throw new RuntimeException();
+        }
+        return jobInfo.get().getStatus();
     }
 
     @Override
     public void appendMessage(String jobId, JobMessage jobMessage) {
+        findOne(jobId).ifPresent(jobInfo -> {
 
+
+        });
     }
 
     @Override
