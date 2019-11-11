@@ -9,10 +9,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -71,12 +68,22 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public List<JobInfo> findAll() {
-        ScanRequest findAll = ScanRequest.builder()
-                .tableName(JOBS_TABLENAME)
-                .limit(pageSize)
-                .build();
-        final ScanResponse scan = dynamoDbClient.scan(findAll);
-        return scan.items().stream().map(this::decode).collect(Collectors.toList());
+        Map<String, AttributeValue> lastKeyEvaluated = null;
+        List<JobInfo> jobs = new ArrayList<>();
+        do {
+            ScanRequest findAll = ScanRequest.builder()
+                    .tableName(JOBS_TABLENAME)
+                    .limit(pageSize)
+                    .exclusiveStartKey(lastKeyEvaluated)
+                    .build();
+
+            final ScanResponse scan = dynamoDbClient.scan(findAll);
+            lastKeyEvaluated = scan.lastEvaluatedKey();
+            List<JobInfo> newJobsFromThisPage = scan.items().stream().map(this::decode).collect(Collectors.toList());
+            jobs.addAll(newJobsFromThisPage);
+        } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
+
+        return jobs;
     }
 
     @Override
