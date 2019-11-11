@@ -1,10 +1,13 @@
 package de.otto.edison.jobs.repository.dynamo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.Level;
-import org.junit.jupiter.api.*;
+import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsCollectionWithSize;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -12,11 +15,12 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
-import java.io.IOException;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +28,7 @@ import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
+import static de.otto.edison.jobs.repository.dynamo.DynamoJobRepository.JOBS_TABLENAME;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isAbsent;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.time.Clock.fixed;
@@ -36,34 +41,44 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @Testcontainers
-public class DynamoJobRepositoryTest {
+class DynamoJobRepositoryTest {
 
     private static DynamoJobRepository testee;
-    private static ObjectMapper objectMapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void initDbs() throws IOException {
-        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 10);
-    }
 
     @Container
-    static GenericContainer dynamodb = new GenericContainer("amazon/dynamodb-local:latest")
+    private static GenericContainer dynamodb = new GenericContainer("amazon/dynamodb-local:latest")
             .withExposedPorts(8000);
 
-
     @BeforeEach
-    public void setUpDynamo() {
-        testee.setupSchema();
+    void setUpDynamo() {
+
+        getDynamoDbClient().createTable(CreateTableRequest.builder()
+                .tableName(JOBS_TABLENAME)
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName(JobStructure.ID.key())
+                        .attributeType(ScalarAttributeType.S)
+                        .build())
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName(JobStructure.ID.key())
+                        .keyType(KeyType.HASH)
+                        .build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
+                        .readCapacityUnits(10L)
+                        .writeCapacityUnits(10L)
+                        .build())
+                .build());
     }
 
     @AfterEach
-    public void tearDown() {
-        testee.deleteTable();
+    void tearDown() {
+        DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
+                .tableName(JOBS_TABLENAME).build();
+        getDynamoDbClient().deleteTable(deleteTableRequest);
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
-        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 10);
+    void setUp() throws Exception {
+        testee = new DynamoJobRepository(getDynamoDbClient(), 10);
     }
 
     private static DynamoDbClient getDynamoDbClient() {
@@ -81,7 +96,7 @@ public class DynamoJobRepositoryTest {
     private Clock clock = systemDefaultZone();
 
     @Test
-    public void shouldCreateOrUpdateJob() {
+    void shouldCreateOrUpdateJob() {
         //Given
         final JobInfo savedjobInfo = jobInfo("http://localhost/foo", "T_FOO");
         testee.createOrUpdate(savedjobInfo);
@@ -96,9 +111,9 @@ public class DynamoJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindJobInfoByUri() {
+    void shouldFindJobInfoByUri() {
         // given
-        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 10);
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), 10);
 
         // when
         JobInfo job = newJobInfo(randomUUID().toString(), "MYJOB", clock, "localhost");
@@ -109,33 +124,33 @@ public class DynamoJobRepositoryTest {
     }
 
     @Test
-    public void shouldReturnAbsentStatus() {
-        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 10);
+    void shouldReturnAbsentStatus() {
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), 10);
         assertThat(repository.findOne("some-nonexisting-job-id"), isAbsent());
     }
 
     @Test
-    public void shouldNotFailToRemoveMissingJob() {
+    void shouldNotFailToRemoveMissingJob() {
         // when
         testee.removeIfStopped("foo");
         // then
         // no Exception is thrown...
     }
 
-//    @Test
-//    public void shouldNotRemoveRunningJobs() {
-//        // given
-//        final String testUri = "test";
-//        testee.createOrUpdate(newJobInfo(testUri, "FOO", systemDefaultZone(), "localhost"));
-//        // when
-//        testee.removeIfStopped(testUri);
-//        // then
-//        assertThat(testee.size(), is(1L));
+    @Test
+    void shouldNotRemoveRunningJobs() {
+        // given
+        final String testUri = "test";
+        testee.createOrUpdate(newJobInfo(testUri, "FOO", systemDefaultZone(), "localhost"));
+        // when
+        testee.removeIfStopped(testUri);
+        // then
+        assertThat(testee.size(), is(1L));
 
-//    }
+    }
 
     @Test
-    public void shouldRemoveJob() throws Exception {
+    void shouldRemoveJob() throws Exception {
         JobInfo stoppedJob = builder()
                 .setJobId("some/job/stopped")
                 .setJobType("test")
@@ -153,7 +168,7 @@ public class DynamoJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindAll() {
+    void shouldFindAll() {
         // given
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
@@ -166,9 +181,9 @@ public class DynamoJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindAllWithPaging() {
+    void shouldFindAllWithPaging() {
         // given
-        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 2);
+        testee = new DynamoJobRepository(getDynamoDbClient(), 2);
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest1", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
@@ -181,7 +196,7 @@ public class DynamoJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindAllinSizeOperation() {
+    void shouldFindAllinSizeOperation() {
         // given
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
@@ -192,9 +207,9 @@ public class DynamoJobRepositoryTest {
     }
 
     @Test
-    public void shouldFindAllinSizeOperationWithPageing() {
+    void shouldFindAllinSizeOperationWithPageing() {
         // given
-        testee = new DynamoJobRepository(getDynamoDbClient(), objectMapper, 2);
+        testee = new DynamoJobRepository(getDynamoDbClient(), 2);
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youn44444556gest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
@@ -207,49 +222,49 @@ public class DynamoJobRepositoryTest {
         assertThat(count, is(6L));
     }
 
-//
+
+    @Test
+    void shouldFindLatestDistinct() throws Exception {
+        // Given
+        Instant now = Instant.now();
+        final JobInfo eins = newJobInfo("eins", "eins", fixed(now.plusSeconds(10), systemDefault()), "localhost");
+        final JobInfo zwei = newJobInfo("zwei", "eins", fixed(now.plusSeconds(20), systemDefault()), "localhost");
+        final JobInfo drei = newJobInfo("drei", "zwei", fixed(now.plusSeconds(30), systemDefault()), "localhost");
+        final JobInfo vier = newJobInfo("vier", "drei", fixed(now.plusSeconds(40), systemDefault()), "localhost");
+        final JobInfo fuenf = newJobInfo("fuenf", "drei", fixed(now.plusSeconds(50), systemDefault()), "localhost");
+
+        testee.createOrUpdate(eins);
+        testee.createOrUpdate(zwei);
+        testee.createOrUpdate(drei);
+        testee.createOrUpdate(vier);
+        testee.createOrUpdate(fuenf);
+
+        // When
+        List<JobInfo> latestDistinct = testee.findLatestJobsDistinct();
+
+        // Then
+        assertThat(latestDistinct, hasSize(3));
+        assertThat(latestDistinct, Matchers.containsInAnyOrder(fuenf, zwei, drei));
+    }
+
+
+
+    @Test
+    void shouldFindRunningJobsWithoutUpdatedSinceSpecificDate() throws Exception {
+        // given
+        testee.createOrUpdate(newJobInfo("deadJob", "FOO", fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
+        testee.createOrUpdate(newJobInfo("running", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
+
+        // when
+        final List<JobInfo> jobInfos = testee.findRunningWithoutUpdateSince(now().minus(5, ChronoUnit.SECONDS));
+
+        // then
+        assertThat(jobInfos, IsCollectionWithSize.hasSize(1));
+        assertThat(jobInfos.get(0).getJobId(), is("deadJob"));
+    }
+
 //    @Test
-//    public void shouldFindLatestDistinct() throws Exception {
-//        // Given
-//        Instant now = Instant.now();
-//        final JobInfo eins = newJobInfo("eins", "eins", fixed(now.plusSeconds(10), systemDefault()), "localhost");
-//        final JobInfo zwei = newJobInfo("zwei", "eins", fixed(now.plusSeconds(20), systemDefault()), "localhost");
-//        final JobInfo drei = newJobInfo("drei", "zwei", fixed(now.plusSeconds(30), systemDefault()), "localhost");
-//        final JobInfo vier = newJobInfo("vier", "drei", fixed(now.plusSeconds(40), systemDefault()), "localhost");
-//        final JobInfo fuenf = newJobInfo("fuenf", "drei", fixed(now.plusSeconds(50), systemDefault()), "localhost");
-//
-//        testee.createOrUpdate(eins);
-//        testee.createOrUpdate(zwei);
-//        testee.createOrUpdate(drei);
-//        testee.createOrUpdate(vier);
-//        testee.createOrUpdate(fuenf);
-//
-//        // When
-//        List<JobInfo> latestDistinct = testee.findLatestJobsDistinct();
-//
-//        // Then
-//        assertThat(latestDistinct, hasSize(3));
-//        assertThat(latestDistinct, Matchers.containsInAnyOrder(fuenf, zwei, drei));
-//    }
-//
-//
-//
-//    @Test
-//    public void shouldFindRunningJobsWithoutUpdatedSinceSpecificDate() throws Exception {
-//        // given
-//        testee.createOrUpdate(newJobInfo("deadJob", "FOO", fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
-//        testee.createOrUpdate(newJobInfo("running", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
-//
-//        // when
-//        final List<JobInfo> jobInfos = testee.findRunningWithoutUpdateSince(now().minus(5, ChronoUnit.SECONDS));
-//
-//        // then
-//        assertThat(jobInfos, IsCollectionWithSize.hasSize(1));
-//        assertThat(jobInfos.get(0).getJobId(), is("deadJob"));
-//    }
-//
-//    @Test
-//    public void shouldFindLatestByType() {
+//    void shouldFindLatestByType() {
 //        // given
 //        final String type = "TEST";
 //        final String otherType = "OTHERTEST";
@@ -269,7 +284,7 @@ public class DynamoJobRepositoryTest {
 //    }
 //
 //    @Test
-//    public void shouldFindLatest() {
+//    void shouldFindLatest() {
 //        // given
 //        final String type = "TEST";
 //        final String otherType = "OTHERTEST";
@@ -287,7 +302,7 @@ public class DynamoJobRepositoryTest {
 //    }
 //
 //    @Test
-//    public void shouldFindAllJobsOfSpecificType() throws Exception {
+//    void shouldFindAllJobsOfSpecificType() throws Exception {
 //        // Given
 //        final String type = "TEST";
 //        final String otherType = "OTHERTEST";
@@ -315,7 +330,7 @@ public class DynamoJobRepositoryTest {
 //    }
 //
 //    @Test
-//    public void shouldFindStatusOfJob() throws Exception {
+//    void shouldFindStatusOfJob() throws Exception {
 //        //Given
 //        final String type = "TEST";
 //        JobInfo jobInfo = newJobInfo("1", type, systemDefaultZone(), "localhost");
@@ -329,7 +344,7 @@ public class DynamoJobRepositoryTest {
 //    }
 //
 //    @Test
-//    public void shouldAppendMessageToJobInfo() throws Exception {
+//    void shouldAppendMessageToJobInfo() throws Exception {
 //
 //        String someUri = "someUri";
 //        OffsetDateTime now = now();
@@ -352,7 +367,7 @@ public class DynamoJobRepositoryTest {
 //    }
 //
 //    @Test
-//    public void shouldUpdateJobStatus() {
+//    void shouldUpdateJobStatus() {
 //        //Given
 //        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO"); //default jobStatus is 'OK'
 //        testee.createOrUpdate(foo);
@@ -368,7 +383,7 @@ public class DynamoJobRepositoryTest {
 //
 //
 //    @Test
-//    public void shouldUpdateJobLastUpdateTime() {
+//    void shouldUpdateJobLastUpdateTime() {
 //        //Given
 //        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO");
 //        testee.createOrUpdate(foo);
@@ -385,7 +400,7 @@ public class DynamoJobRepositoryTest {
 //    }
 //
 //    @Test
-//    public void shouldClearJobInfos() throws Exception {
+//    void shouldClearJobInfos() throws Exception {
 //        //Given
 //        JobInfo stoppedJob = builder()
 //                .setJobId("some/job/stopped")

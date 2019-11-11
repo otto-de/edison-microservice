@@ -1,29 +1,29 @@
 package de.otto.edison.jobs.repository.dynamo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.JobRepository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.utils.ImmutableMap;
 
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static java.util.Comparator.comparingLong;
+import static java.util.stream.Collectors.*;
 
 public class DynamoJobRepository implements JobRepository {
 
     public static final String JOBS_TABLENAME = "jobs";
     private final DynamoDbClient dynamoDbClient;
-    private final ObjectMapper objectMapper;
     private final int pageSize;
 
-    public DynamoJobRepository(DynamoDbClient dynamoDbClient, ObjectMapper objectMapper, int pageSize) {
+    public DynamoJobRepository(DynamoDbClient dynamoDbClient, int pageSize) {
         this.dynamoDbClient = dynamoDbClient;
-        this.objectMapper = objectMapper;
         this.pageSize = pageSize;
     }
 
@@ -45,7 +45,6 @@ public class DynamoJobRepository implements JobRepository {
 
     }
 
-
     @Override
     public List<JobInfo> findLatest(int maxCount) {
         return null;
@@ -53,7 +52,15 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public List<JobInfo> findLatestJobsDistinct() {
-        return null;
+        return findAll().stream().collect(
+                groupingBy(
+                        JobInfo::getJobType,
+                        maxBy(comparingLong(jobInfo -> jobInfo.getLastUpdated().toInstant().toEpochMilli()))
+                ))
+                .values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toList());
     }
 
     @Override
@@ -63,7 +70,26 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public List<JobInfo> findRunningWithoutUpdateSince(OffsetDateTime timeOffset) {
-        return null;
+        Map<String, AttributeValue> lastKeyEvaluated = null;
+        List<JobInfo> jobs = new ArrayList<>();
+        Map<String, AttributeValue> expressionAttributeValues = ImmutableMap.of(
+                        ":val", AttributeValue.builder().n(String.valueOf(timeOffset.toInstant().toEpochMilli())).build()
+        );
+        do {
+            final ScanRequest query = ScanRequest.builder()
+                    .tableName(JOBS_TABLENAME)
+                    .limit(pageSize)
+                    .exclusiveStartKey(lastKeyEvaluated)
+                    .expressionAttributeValues(expressionAttributeValues)
+                    .filterExpression(JobStructure.LAST_UPDATED_EPOCH.key() + " < :val and attribute_not_exists(" + JobStructure.STOPPED.key() + ")")
+                    .build();
+
+            final ScanResponse response = dynamoDbClient.scan(query);
+            lastKeyEvaluated = response.lastEvaluatedKey();
+            List<JobInfo> newJobsFromThisPage = response.items().stream().map(this::decode).collect(Collectors.toList());
+            jobs.addAll(newJobsFromThisPage);
+        } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
+        return jobs;
     }
 
     @Override
@@ -120,6 +146,7 @@ public class DynamoJobRepository implements JobRepository {
         jobInfo.getStopped().ifPresent(offsetDateTime -> jobAsItem.put(JobStructure.STOPPED.key(), toStringAttributeValue(offsetDateTime)));
         if (null != jobInfo.getLastUpdated()) {
             jobAsItem.put(JobStructure.LAST_UPDATED.key(), toStringAttributeValue(jobInfo.getLastUpdated()));
+            jobAsItem.put(JobStructure.LAST_UPDATED_EPOCH.key(), toNumberAttributeValue(jobInfo.getLastUpdated().toInstant().toEpochMilli()));
         }
         jobAsItem.put(JobStructure.MESSAGES.key(), messagesToAttributeValueList(jobInfo.getMessages()));
 
@@ -164,14 +191,17 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public void removeIfStopped(String jobId) {
-
-        Map<String, AttributeValue> keyMap = new HashMap<>();
-        keyMap.put(JobStructure.ID.key(), toStringAttributeValue(jobId));
-        DeleteItemRequest deleteJobRequest = DeleteItemRequest.builder()
-                .tableName(JOBS_TABLENAME)
-                .key(keyMap)
-                .build();
-        dynamoDbClient.deleteItem(deleteJobRequest);
+        findOne(jobId).ifPresent(jobInfo -> {
+            if (jobInfo.isStopped()) {
+                Map<String, AttributeValue> keyMap = new HashMap<>();
+                keyMap.put(JobStructure.ID.key(), toStringAttributeValue(jobId));
+                DeleteItemRequest deleteJobRequest = DeleteItemRequest.builder()
+                        .tableName(JOBS_TABLENAME)
+                        .key(keyMap)
+                        .build();
+                dynamoDbClient.deleteItem(deleteJobRequest);
+            }
+        });
     }
 
     @Override
@@ -227,6 +257,10 @@ public class DynamoJobRepository implements JobRepository {
         return AttributeValue.builder().s(value).build();
     }
 
+    private AttributeValue toNumberAttributeValue(long value) {
+        return AttributeValue.builder().n(String.valueOf(value)).build();
+    }
+
     private AttributeValue toMapAttributeValue(JobMessage jobMessage) {
         Map<String, AttributeValue> message = new HashMap<>();
         message.put(JobStructure.MSG_LEVEL.key(), toStringAttributeValue(jobMessage.getLevel().getKey()));
@@ -244,30 +278,6 @@ public class DynamoJobRepository implements JobRepository {
 
     private AttributeValue toAttributeValueList(List<AttributeValue> values) {
         return AttributeValue.builder().l(values).build();
-    }
-
-    public void setupSchema() {
-        dynamoDbClient.createTable(CreateTableRequest.builder()
-                .tableName(JOBS_TABLENAME)
-                .attributeDefinitions(AttributeDefinition.builder()
-                        .attributeName(JobStructure.ID.key())
-                        .attributeType(ScalarAttributeType.S)
-                        .build())
-                .keySchema(KeySchemaElement.builder()
-                        .attributeName(JobStructure.ID.key())
-                        .keyType(KeyType.HASH)
-                        .build())
-                .provisionedThroughput(ProvisionedThroughput.builder()
-                        .readCapacityUnits(10L)
-                        .writeCapacityUnits(10L)
-                        .build())
-                .build());
-    }
-
-    public void deleteTable() {
-        DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName(JOBS_TABLENAME).build();
-        dynamoDbClient.deleteTable(deleteTableRequest);
     }
 
 }

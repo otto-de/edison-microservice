@@ -12,11 +12,12 @@ enum JobStructure {
     MSG_TEXT("msg"),
     MSG_LEVEL("level"),
     HOSTNAME("hostname"),
-    LAST_UPDATED("lastUpdated");
+    LAST_UPDATED("lastUpdated"),
+    LAST_UPDATED_EPOCH("lastUpdatedEpoch");
 
     private final String key;
 
-    private JobStructure(final String key) {
+    JobStructure(final String key) {
         this.key = key;
     }
 
