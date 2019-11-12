@@ -9,15 +9,19 @@ import software.amazon.awssdk.utils.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
 
 public class DynamoJobMetaRepository implements JobMetaRepository {
 
-    private static final String KEY_DISABLED = "_e_disabled";
-    private static final String KEY_RUNNING = "_e_running";
+    private static final String KEY_PREFIX = "_e_";
+    private static final String KEY_DISABLED = KEY_PREFIX + "disabled";
+    private static final String KEY_RUNNING = KEY_PREFIX + "running";
     private static final String JOB_META_TABLE_NAME = "FT6_DynamoDB_JobMeta";
+    private static final String JOB_TYPE_KEY = "jobType";
+    private static final String ETAG_KEY = "etag";
     private final DynamoDbClient dynamoDbClient;
 
     public DynamoJobMetaRepository(DynamoDbClient dynamoDbClient) {
@@ -33,12 +37,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     @Override
     public JobMeta getJobMeta(String jobType) {
-        ImmutableMap<String, AttributeValue> key = ImmutableMap.of("jobType", toAttributeValue(jobType));
-        GetItemRequest itemRequest = GetItemRequest.builder()
-                .tableName(JOB_META_TABLE_NAME)
-                .key(key)
-                .build();
-        GetItemResponse response = dynamoDbClient.getItem(itemRequest);
+        GetItemResponse response = getItem(jobType);
         Map<String, AttributeValue> responseItem = response.item();
         if (!responseItem.isEmpty()) {
 
@@ -51,8 +50,9 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
             }
 
             Map<String, String> metaMap = responseItem.entrySet().stream()
-                    .filter(e -> !e.getKey().startsWith("_e_"))
-                    .filter(e -> !e.getKey().equals("jobType"))
+                    .filter(e -> !e.getKey().startsWith(KEY_PREFIX))
+                    .filter(e -> !e.getKey().equals(JOB_TYPE_KEY))
+                    .filter(e -> !e.getKey().equals(ETAG_KEY))
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().s()));
             return new JobMeta(jobType, isRunning, isDisabled, comment, metaMap);
         } else {
@@ -103,34 +103,39 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     }
 
     private String putValue(String jobType, String key, String value) {
-        ImmutableMap<String, AttributeValue> itemRequestKey = ImmutableMap.of("jobType", toAttributeValue(jobType));
-        GetItemRequest itemRequest = GetItemRequest.builder()
-                .tableName(JOB_META_TABLE_NAME)
-                .key(itemRequestKey)
-                .build();
-        GetItemResponse response = dynamoDbClient.getItem(itemRequest);
-        Map<String, AttributeValue> newEntry = new HashMap<>();
+        GetItemResponse getItemResponse = getItem(jobType);
 
-        AttributeValue previousAttributeValue = response.item().get(key);
-        String previous = null;
-        if (previousAttributeValue != null) {
-            previous = previousAttributeValue.s();
-        }
-
-        newEntry.putAll(response.item());
+        Map<String, AttributeValue> newEntry = new HashMap<>(getItemResponse.item());
         if (value == null) {
             newEntry.remove(key);
         } else {
             newEntry.put(key, toAttributeValue(value));
         }
+        newEntry.put(ETAG_KEY, AttributeValue.builder().s(UUID.randomUUID().toString()).build());
 
-        PutItemRequest putItemRequest = PutItemRequest.builder()
+        final PutItemRequest.Builder putItemRequestBuilder = PutItemRequest.builder()
                 .tableName(JOB_META_TABLE_NAME)
-                .item(newEntry)
-                .build();
-        dynamoDbClient.putItem(putItemRequest);
+                .item(newEntry);
 
-        return previous;
+        addEtagCondition(putItemRequestBuilder, getItemResponse);
+
+        dynamoDbClient.putItem(putItemRequestBuilder.build());
+
+        AttributeValue existingValueForKey = getItemResponse.item().get(key);
+        if (existingValueForKey == null) {
+            return null;
+        }
+        return existingValueForKey.s();
+    }
+
+    private void addEtagCondition(final PutItemRequest.Builder putItemRequestBuilder, final GetItemResponse getItemResponse) {
+        final AttributeValue existingEtag = getItemResponse.item().get(ETAG_KEY);
+        if (existingEtag != null) {
+            Map<String, AttributeValue> valueMap = new HashMap<>();
+            valueMap.put(":val", AttributeValue.builder().s(existingEtag.s()).build());
+            putItemRequestBuilder.expressionAttributeValues(valueMap);
+            putItemRequestBuilder.conditionExpression("contains(etag, :val)");
+        }
     }
 
     private AttributeValue toAttributeValue(String value) {
@@ -138,15 +143,10 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     }
 
     private void putIfAbsent(String jobType) {
-        ImmutableMap<String, AttributeValue> itemRequestKey = ImmutableMap.of("jobType", toAttributeValue(jobType));
-        GetItemRequest itemRequest = GetItemRequest.builder()
-                .tableName(JOB_META_TABLE_NAME)
-                .key(itemRequestKey)
-                .build();
-        GetItemResponse response = dynamoDbClient.getItem(itemRequest);
+        GetItemResponse response = getItem(jobType);
         if (response.item().isEmpty()) {
             Map<String, AttributeValue> item = new HashMap<>();
-            item.put("jobType", toAttributeValue(jobType));
+            item.put(JOB_TYPE_KEY, toAttributeValue(jobType));
             PutItemRequest putItemRequest = PutItemRequest.builder()
                     .tableName(JOB_META_TABLE_NAME)
                     .item(item)
@@ -157,12 +157,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     @Override
     public String getValue(String jobType, String key) {
-        ImmutableMap<String, AttributeValue> getItemRequestKey = ImmutableMap.of("jobType", toAttributeValue(jobType));
-        GetItemRequest itemRequest = GetItemRequest.builder()
-                .tableName(JOB_META_TABLE_NAME)
-                .key(getItemRequestKey)
-                .build();
-        GetItemResponse response = dynamoDbClient.getItem(itemRequest);
+        GetItemResponse response = getItem(jobType);
         AttributeValue value = response.item().get(key);
         if (value != null) {
             return value.s();
@@ -175,9 +170,9 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     public Set<String> findAllJobTypes() {
         ScanRequest scanRequest = ScanRequest.builder()
                 .tableName(JOB_META_TABLE_NAME)
-                .attributesToGet("jobType").build();
+                .attributesToGet(JOB_TYPE_KEY).build();
         ScanResponse scanResponse = dynamoDbClient.scan(scanRequest);
-        Set<String> jobTypes = scanResponse.items().stream().map(m -> m.get("jobType").s()).collect(Collectors.toSet());
+        Set<String> jobTypes = scanResponse.items().stream().map(m -> m.get(JOB_TYPE_KEY).s()).collect(Collectors.toSet());
         return jobTypes;
     }
 
@@ -191,11 +186,11 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
         dynamoDbClient.createTable(CreateTableRequest.builder()
                 .tableName(JOB_META_TABLE_NAME)
                 .attributeDefinitions(AttributeDefinition.builder()
-                        .attributeName("jobType")
+                        .attributeName(JOB_TYPE_KEY)
                         .attributeType(ScalarAttributeType.S)
                         .build())
                 .keySchema(KeySchemaElement.builder()
-                        .attributeName("jobType")
+                        .attributeName(JOB_TYPE_KEY)
                         .keyType(KeyType.HASH)
                         .build())
                 .provisionedThroughput(ProvisionedThroughput.builder()
@@ -209,5 +204,14 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
         DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
                 .tableName(JOB_META_TABLE_NAME).build();
         dynamoDbClient.deleteTable(deleteTableRequest);
+    }
+
+    private GetItemResponse getItem(String jobType) {
+        ImmutableMap<String, AttributeValue> itemRequestKey = ImmutableMap.of(JOB_TYPE_KEY, toAttributeValue(jobType));
+        GetItemRequest itemRequest = GetItemRequest.builder()
+                .tableName(JOB_META_TABLE_NAME)
+                .key(itemRequestKey)
+                .build();
+        return dynamoDbClient.getItem(itemRequest);
     }
 }
