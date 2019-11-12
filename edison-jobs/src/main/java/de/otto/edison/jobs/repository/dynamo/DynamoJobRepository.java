@@ -18,13 +18,20 @@ import static java.util.stream.Collectors.*;
 
 public class DynamoJobRepository implements JobRepository {
 
-    private static final String JOBS_TABLE_NAME = "jobs";
+    private static final String JOBS_TABLE_NAME = "FT6_DynamoDB_Jobs";
     private final DynamoDbClient dynamoDbClient;
     private final int pageSize;
 
     public DynamoJobRepository(DynamoDbClient dynamoDbClient, int pageSize) {
         this.dynamoDbClient = dynamoDbClient;
         this.pageSize = pageSize;
+        try {
+            dynamoDbClient.describeTable(DescribeTableRequest.builder()
+                    .tableName(JOBS_TABLE_NAME)
+                    .build());
+        } catch (ResourceNotFoundException e) {
+            createTable();
+        }
     }
 
     @Override

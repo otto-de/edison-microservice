@@ -16,7 +16,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
 import java.net.URI;
 import java.time.Clock;
@@ -47,32 +47,13 @@ import static org.hamcrest.Matchers.*;
 @Testcontainers
 class DynamoJobRepositoryTest {
 
-    private static final String JOBS_TABLE_NAME = "jobs";
+    private static final String JOBS_TABLE_NAME = "FT6_DynamoDB_Jobs";
 
     private static DynamoJobRepository testee;
 
     @Container
     private static GenericContainer dynamodb = new GenericContainer("amazon/dynamodb-local:latest")
             .withExposedPorts(8000);
-
-    @BeforeEach
-    void setUpDynamo() {
-        getDynamoDbClient().createTable(CreateTableRequest.builder()
-                .tableName(JOBS_TABLE_NAME)
-                .attributeDefinitions(AttributeDefinition.builder()
-                        .attributeName(JobStructure.ID.key())
-                        .attributeType(ScalarAttributeType.S)
-                        .build())
-                .keySchema(KeySchemaElement.builder()
-                        .attributeName(JobStructure.ID.key())
-                        .keyType(KeyType.HASH)
-                        .build())
-                .provisionedThroughput(ProvisionedThroughput.builder()
-                        .readCapacityUnits(10L)
-                        .writeCapacityUnits(10L)
-                        .build())
-                .build());
-    }
 
     @AfterEach
     void tearDown() {
@@ -82,7 +63,7 @@ class DynamoJobRepositoryTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         testee = new DynamoJobRepository(getDynamoDbClient(), 10);
     }
 
@@ -154,7 +135,7 @@ class DynamoJobRepositoryTest {
     }
 
     @Test
-    void shouldRemoveJob() throws Exception {
+    void shouldRemoveJob() {
         JobInfo stoppedJob = builder()
                 .setJobId("some/job/stopped")
                 .setJobType("test")
@@ -228,7 +209,7 @@ class DynamoJobRepositoryTest {
 
 
     @Test
-    void shouldFindLatestDistinct() throws Exception {
+    void shouldFindLatestDistinct() {
         // Given
         Instant now = Instant.now();
         final JobInfo eins = newJobInfo("eins", "eins", fixed(now.plusSeconds(10), systemDefault()), "localhost");
@@ -254,7 +235,7 @@ class DynamoJobRepositoryTest {
 
 
     @Test
-    void shouldFindRunningJobsWithoutUpdatedSinceSpecificDate() throws Exception {
+    void shouldFindRunningJobsWithoutUpdatedSinceSpecificDate() {
         // given
         testee.createOrUpdate(newJobInfo("deadJob", "FOO", fixed(Instant.now().minusSeconds(10), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("running", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
@@ -306,7 +287,7 @@ class DynamoJobRepositoryTest {
     }
 
     @Test
-    void shouldFindAllJobsOfSpecificType() throws Exception {
+    void shouldFindAllJobsOfSpecificType() {
         // Given
         final String type = "TEST";
         final String otherType = "OTHERTEST";
@@ -334,7 +315,7 @@ class DynamoJobRepositoryTest {
     }
 
     @Test
-    void shouldFindStatusOfJob() throws Exception {
+    void shouldFindStatusOfJob() {
         //Given
         final String type = "TEST";
         JobInfo jobInfo = newJobInfo("1", type, systemDefaultZone(), "localhost");
@@ -348,7 +329,7 @@ class DynamoJobRepositoryTest {
     }
 
     @Test
-    void shouldAppendMessageToJobInfo() throws Exception {
+    void shouldAppendMessageToJobInfo() {
 
         String someUri = "someUri";
         OffsetDateTime now = now();
@@ -401,7 +382,7 @@ class DynamoJobRepositoryTest {
     }
 
     @Test
-    void shouldClearJobInfos() throws Exception {
+    void shouldClearJobInfos() {
         //Given
         JobInfo stoppedJob = builder()
                 .setJobId("some/job/stopped")

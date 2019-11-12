@@ -19,11 +19,12 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
@@ -36,7 +37,7 @@ import static org.hamcrest.core.Is.is;
 @Testcontainers
 public class JobMetaRepositoryTest {
 
-    private static final String JOB_META_TABLE_NAME = "jobMeta";
+    private static final String DYNAMO_JOB_META_TABLE_NAME = "FT6_DynamoDB_JobMeta";
     private static DynamoJobMetaRepository dynamoTestee = null;
 
     @AfterAll
@@ -52,38 +53,21 @@ public class JobMetaRepositoryTest {
 
     @Container
     static GenericContainer dynamodb = new GenericContainer("amazon/dynamodb-local:latest")
-            .withExposedPorts(8000);
-
-    String dynamoTableName = "jobMeta";
+            .withExposedPorts(8000);;
 
     @BeforeEach
-    public void setUpDynamo() {
-        getDynamoDbClient().createTable(CreateTableRequest.builder()
-                .tableName(JOB_META_TABLE_NAME)
-                .attributeDefinitions(AttributeDefinition.builder()
-                        .attributeName("jobType")
-                        .attributeType(ScalarAttributeType.S)
-                        .build())
-                .keySchema(KeySchemaElement.builder()
-                        .attributeName("jobType")
-                        .keyType(KeyType.HASH)
-                        .build())
-                .provisionedThroughput(ProvisionedThroughput.builder()
-                        .readCapacityUnits(10L)
-                        .writeCapacityUnits(10L)
-                        .build())
-                .build());;
+    void setUp() {
+        dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient());
     }
 
     @AfterEach
     public void tearDown() {
         DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName(JOB_META_TABLE_NAME).build();
+                .tableName(DYNAMO_JOB_META_TABLE_NAME).build();
         getDynamoDbClient().deleteTable(deleteTableRequest);
     }
 
-    public static Collection<JobMetaRepository> data() {
-        DynamoDbClient dynamoBuilder = getDynamoDbClient();
+    private static Collection<JobMetaRepository> data() {
         return asList(
                 new MongoJobMetaRepository(EmbeddedMongoHelper.getMongoClient().getDatabase("jobmeta-" + UUID.randomUUID()),
                         "jobmeta",
@@ -96,7 +80,6 @@ public class JobMetaRepositoryTest {
     private static DynamoDbClient getDynamoDbClient() {
         String endpointUri = "http://" + dynamodb.getContainerIpAddress() + ":" +
                 dynamodb.getMappedPort(8000);
-
         return DynamoDbClient.builder()
                 .endpointOverride(URI.create(endpointUri))
                 .region(Region.EU_CENTRAL_1)
@@ -107,12 +90,15 @@ public class JobMetaRepositoryTest {
     @ParameterizedTest
     @MethodSource("data")
     public void shouldStoreAndGetValue(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
+        
+        //when
         testee.setValue("someJob", "someKey", "someValue");
         testee.setValue("someJob", "someOtherKey", "someDifferentValue");
-
         testee.setValue("someOtherJob", "someKey", "someOtherValue");
 
+        //then
         assertThat(testee.getValue("someJob", "someKey"), is("someValue"));
         assertThat(testee.getValue("someJob", "someOtherKey"), is("someDifferentValue"));
         assertThat(testee.getValue("someOtherJob", "someKey"), is("someOtherValue"));
@@ -121,9 +107,13 @@ public class JobMetaRepositoryTest {
     @ParameterizedTest
     @MethodSource("data")
     public void shouldGetEmptyJobMeta(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
+        
+        //when
         final JobMeta jobMeta = testee.getJobMeta("someJob");
 
+        //then
         assertThat(jobMeta.getAll(), is(emptyMap()));
         assertThat(jobMeta.isDisabled(), is(false));
         assertThat(jobMeta.getDisabledComment(), is(""));
@@ -131,14 +121,17 @@ public class JobMetaRepositoryTest {
         assertThat(jobMeta.getJobType(), is("someJob"));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldGetJobMetaForRunningJob(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
         testee.setRunningJob("someJob", "someId");
+        
+        //when
         final JobMeta jobMeta = testee.getJobMeta("someJob");
 
+        //then
         assertThat(jobMeta.getAll(), is(emptyMap()));
         assertThat(jobMeta.isDisabled(), is(false));
         assertThat(jobMeta.getDisabledComment(), is(""));
@@ -146,14 +139,17 @@ public class JobMetaRepositoryTest {
         assertThat(jobMeta.getJobType(), is("someJob"));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldGetJobMetaForDisabledJob(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
         testee.disable("someJob", "some comment");
+        
+        //when
         final JobMeta jobMeta = testee.getJobMeta("someJob");
 
+        //then
         assertThat(jobMeta.getAll(), is(emptyMap()));
         assertThat(jobMeta.isDisabled(), is(true));
         assertThat(jobMeta.getDisabledComment(), is("some comment"));
@@ -161,15 +157,18 @@ public class JobMetaRepositoryTest {
         assertThat(jobMeta.getJobType(), is("someJob"));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldGetJobMetaForDisabledJobWithProperties(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
         testee.disable("someJob", "some comment");
         testee.setValue("someJob", "someKey", "some value");
+        
+        //when
         final JobMeta jobMeta = testee.getJobMeta("someJob");
 
+        //then
         assertThat(jobMeta.getAll(), is(singletonMap("someKey", "some value")));
         assertThat(jobMeta.isDisabled(), is(true));
         assertThat(jobMeta.getDisabledComment(), is("some comment"));
@@ -177,35 +176,43 @@ public class JobMetaRepositoryTest {
         assertThat(jobMeta.getJobType(), is("someJob"));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldEnableJob(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
         testee.setValue("someJob", "_e_disabled", "foo");
 
+        //when
         testee.enable("someJob");
 
+        //then
         assertThat(testee.getValue("someJob", "_e_disabled"), is(nullValue()));
     }
-
 
     @ParameterizedTest
     @MethodSource("data")
     public void shouldDisableJob(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
+        
+        //when
         testee.disable("someJob", "some comment");
 
+        //then
         assertThat(testee.getValue("someJob", "_e_disabled"), is("some comment"));
     }
-
 
     @ParameterizedTest
     @MethodSource("data")
     public void shouldSetRunningJob(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
+        
+        //when
         testee.setRunningJob("someJob", "someId");
 
+        //then
         assertThat(testee.getRunningJob("someJob"), is("someId"));
         assertThat(testee.getValue("someJob", "_e_running"), is("someId"));
     }
@@ -213,59 +220,68 @@ public class JobMetaRepositoryTest {
     @ParameterizedTest
     @MethodSource("data")
     public void shouldDeleteAll(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
         testee.enable("foo");
         testee.enable("bar");
 
+        //when
         testee.deleteAll();
 
+        //then
         assertThat(testee.findAllJobTypes(), is(empty()));
     }
-
 
     @ParameterizedTest
     @MethodSource("data")
     public void shouldClearRunningJob(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
         testee.setValue("someJob", "_e_running", "someId");
 
+        //when
         testee.clearRunningJob("someJob");
 
+        //then
         assertThat(testee.getRunningJob("someJob"), is(nullValue()));
         assertThat(testee.getValue("someJob", "_e_runnin"), is(nullValue()));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldReturnNullForMissingKeys(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
         testee.setValue("someJob", "someKey", "someValue");
 
+        //when/then
         assertThat(testee.getValue("someJob", "someMissingKey"), is(nullValue()));
         assertThat(testee.getValue("someMissingJob", "someMissingKey"), is(nullValue()));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldFindJobTypes(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
         testee.setValue("someJob", "someKey", "someValue");
         testee.setValue("someOtherJob", "someKey", "someOtherValue");
 
-        assertThat(testee.findAllJobTypes(), containsInAnyOrder("someJob", "someOtherJob"));
+        //when
+        final Set<String> allJobTypes = testee.findAllJobTypes();
+        
+        //then
+        assertThat(allJobTypes, containsInAnyOrder("someJob", "someOtherJob"));
     }
-
 
     @ParameterizedTest
     @MethodSource("data")
     public void shouldNotCreateIfExists(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
-        // given
         testee.setValue("someJob", "someKey", "initialValue");
 
-        // when
+        //when
         final boolean value = testee.createValue("someJob", "someKey", "newValue");
 
         //then
@@ -273,12 +289,13 @@ public class JobMetaRepositoryTest {
         assertThat(testee.getValue("someJob", "someKey"), is("initialValue"));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldCreateIfNotExists(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
-        // when
+        
+        //when
         final boolean value = testee.createValue("someJob", "someKey", "someValue");
 
         //then
@@ -286,15 +303,14 @@ public class JobMetaRepositoryTest {
         assertThat(testee.getValue("someJob", "someKey"), is("someValue"));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldCreateTwoValuesWithoutException(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
-        // given
         testee.createValue("someJob", "someKey", "someValue");
 
-        // when
+        //when
         final boolean value = testee.createValue("someJob", "someOtherKey", "someOtherValue");
 
         //then
@@ -303,15 +319,14 @@ public class JobMetaRepositoryTest {
         assertThat(testee.getValue("someJob", "someOtherKey"), is("someOtherValue"));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldReturnFalseIfCreateWasCalledTwice(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
-        // given
         testee.createValue("someJob", "someKey", "someInitialValue");
 
-        // when
+        //when
         final boolean value = testee.createValue("someJob", "someKey", "someValue");
 
         //then
@@ -319,15 +334,14 @@ public class JobMetaRepositoryTest {
         assertThat(testee.getValue("someJob", "someKey"), is("someInitialValue"));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldNotKillOldFieldsOnCreate(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
-        // given
         testee.setValue("someJob", "someKey", "someInitialValue");
 
-        // when
+        //when
         final boolean value = testee.createValue("someJob", "someAtomicKey", "someValue");
 
         //then
@@ -336,18 +350,17 @@ public class JobMetaRepositoryTest {
         assertThat(testee.getValue("someJob", "someAtomicKey"), is("someValue"));
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void shouldUnsetKeyOnSetNullValue(final JobMetaRepository testee) {
+        //given
         testee.deleteAll();
-        // given
         testee.setValue("someJob", "someKey", "someValue");
 
-        // when
+        //when
         testee.setValue("someJob", "someKey", null);
 
-        // then
+        //then
         assertThat(testee.findAllJobTypes(), contains("someJob"));
         assertThat(testee.getValue("someJob", "someKey"), is(nullValue()));
     }

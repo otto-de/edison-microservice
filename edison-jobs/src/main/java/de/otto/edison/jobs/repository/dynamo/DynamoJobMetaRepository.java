@@ -17,11 +17,18 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     private static final String KEY_DISABLED = "_e_disabled";
     private static final String KEY_RUNNING = "_e_running";
-    private static final String JOB_META_TABLE_NAME = "jobMeta";
+    private static final String JOB_META_TABLE_NAME = "FT6_DynamoDB_JobMeta";
     private final DynamoDbClient dynamoDbClient;
 
     public DynamoJobMetaRepository(DynamoDbClient dynamoDbClient) {
         this.dynamoDbClient = dynamoDbClient;
+        try {
+            dynamoDbClient.describeTable(DescribeTableRequest.builder()
+                    .tableName(JOB_META_TABLE_NAME)
+                    .build());
+        } catch (ResourceNotFoundException e) {
+            createTable();
+        }
     }
 
     @Override
