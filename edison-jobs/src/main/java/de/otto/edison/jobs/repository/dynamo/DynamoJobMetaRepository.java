@@ -17,6 +17,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     private static final String KEY_DISABLED = "_e_disabled";
     private static final String KEY_RUNNING = "_e_running";
+    private static final String JOB_META_TABLE_NAME = "jobMeta";
     private final DynamoDbClient dynamoDbClient;
 
     public DynamoJobMetaRepository(DynamoDbClient dynamoDbClient) {
@@ -27,7 +28,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     public JobMeta getJobMeta(String jobType) {
         ImmutableMap<String, AttributeValue> key = ImmutableMap.of("jobType", toAttributeValue(jobType));
         GetItemRequest itemRequest = GetItemRequest.builder()
-                .tableName("jobMeta")
+                .tableName(JOB_META_TABLE_NAME)
                 .key(key)
                 .build();
         GetItemResponse response = dynamoDbClient.getItem(itemRequest);
@@ -97,7 +98,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     private String putValue(String jobType, String key, String value) {
         ImmutableMap<String, AttributeValue> itemRequestKey = ImmutableMap.of("jobType", toAttributeValue(jobType));
         GetItemRequest itemRequest = GetItemRequest.builder()
-                .tableName("jobMeta")
+                .tableName(JOB_META_TABLE_NAME)
                 .key(itemRequestKey)
                 .build();
         GetItemResponse response = dynamoDbClient.getItem(itemRequest);
@@ -117,7 +118,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
         }
 
         PutItemRequest putItemRequest = PutItemRequest.builder()
-                .tableName("jobMeta")
+                .tableName(JOB_META_TABLE_NAME)
                 .item(newEntry)
                 .build();
         dynamoDbClient.putItem(putItemRequest);
@@ -132,7 +133,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     private void putIfAbsent(String jobType) {
         ImmutableMap<String, AttributeValue> itemRequestKey = ImmutableMap.of("jobType", toAttributeValue(jobType));
         GetItemRequest itemRequest = GetItemRequest.builder()
-                .tableName("jobMeta")
+                .tableName(JOB_META_TABLE_NAME)
                 .key(itemRequestKey)
                 .build();
         GetItemResponse response = dynamoDbClient.getItem(itemRequest);
@@ -140,7 +141,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
             Map<String, AttributeValue> item = new HashMap<>();
             item.put("jobType", toAttributeValue(jobType));
             PutItemRequest putItemRequest = PutItemRequest.builder()
-                    .tableName("jobMeta")
+                    .tableName(JOB_META_TABLE_NAME)
                     .item(item)
                     .build();
             dynamoDbClient.putItem(putItemRequest);
@@ -151,7 +152,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     public String getValue(String jobType, String key) {
         ImmutableMap<String, AttributeValue> getItemRequestKey = ImmutableMap.of("jobType", toAttributeValue(jobType));
         GetItemRequest itemRequest = GetItemRequest.builder()
-                .tableName("jobMeta")
+                .tableName(JOB_META_TABLE_NAME)
                 .key(getItemRequestKey)
                 .build();
         GetItemResponse response = dynamoDbClient.getItem(itemRequest);
@@ -166,7 +167,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     @Override
     public Set<String> findAllJobTypes() {
         ScanRequest scanRequest = ScanRequest.builder()
-                .tableName("jobMeta")
+                .tableName(JOB_META_TABLE_NAME)
                 .attributesToGet("jobType").build();
         ScanResponse scanResponse = dynamoDbClient.scan(scanRequest);
         Set<String> jobTypes = scanResponse.items().stream().map(m -> m.get("jobType").s()).collect(Collectors.toSet());
@@ -176,12 +177,12 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     @Override
     public void deleteAll() {
         deleteTable();
-        setupSchema();
+        createTable();
     }
 
-    public void setupSchema() {
+    private void createTable() {
         dynamoDbClient.createTable(CreateTableRequest.builder()
-                .tableName("jobMeta")
+                .tableName(JOB_META_TABLE_NAME)
                 .attributeDefinitions(AttributeDefinition.builder()
                         .attributeName("jobType")
                         .attributeType(ScalarAttributeType.S)
@@ -197,11 +198,9 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
                 .build());
     }
 
-    public void deleteTable() {
+    private void deleteTable() {
         DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName("jobMeta").build();
+                .tableName(JOB_META_TABLE_NAME).build();
         dynamoDbClient.deleteTable(deleteTableRequest);
     }
-
-
 }

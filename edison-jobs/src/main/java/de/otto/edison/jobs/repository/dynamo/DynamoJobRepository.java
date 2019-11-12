@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.*;
 
 public class DynamoJobRepository implements JobRepository {
 
-    public static final String JOBS_TABLENAME = "jobs";
+    private static final String JOBS_TABLE_NAME = "jobs";
     private final DynamoDbClient dynamoDbClient;
     private final int pageSize;
 
@@ -33,7 +33,7 @@ public class DynamoJobRepository implements JobRepository {
         keyMap.put(JobStructure.ID.key(), toStringAttributeValue(jobId));
 
         GetItemRequest jobInfoRequest = GetItemRequest.builder()
-                .tableName(JOBS_TABLENAME)
+                .tableName(JOBS_TABLE_NAME)
                 .key(keyMap)
                 .build();
         final GetItemResponse jobInfoResponse = dynamoDbClient.getItem(jobInfoRequest);
@@ -84,7 +84,7 @@ public class DynamoJobRepository implements JobRepository {
         );
         do {
             final ScanRequest query = ScanRequest.builder()
-                    .tableName(JOBS_TABLENAME)
+                    .tableName(JOBS_TABLE_NAME)
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
                     .expressionAttributeValues(expressionAttributeValues)
@@ -105,7 +105,7 @@ public class DynamoJobRepository implements JobRepository {
         List<JobInfo> jobs = new ArrayList<>();
         do {
             ScanRequest findAll = ScanRequest.builder()
-                    .tableName(JOBS_TABLENAME)
+                    .tableName(JOBS_TABLE_NAME)
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
                     .build();
@@ -133,7 +133,7 @@ public class DynamoJobRepository implements JobRepository {
         );
         do {
             final ScanRequest query = ScanRequest.builder()
-                    .tableName(JOBS_TABLENAME)
+                    .tableName(JOBS_TABLE_NAME)
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
                     .expressionAttributeValues(expressionAttributeValues)
@@ -153,7 +153,7 @@ public class DynamoJobRepository implements JobRepository {
 
         Map<String, AttributeValue> jobAsItem = encode(job);
         PutItemRequest putItemRequest = PutItemRequest.builder()
-                .tableName(JOBS_TABLENAME)
+                .tableName(JOBS_TABLE_NAME)
                 .item(jobAsItem)
                 .build();
         dynamoDbClient.putItem(putItemRequest);
@@ -222,7 +222,7 @@ public class DynamoJobRepository implements JobRepository {
                 Map<String, AttributeValue> keyMap = new HashMap<>();
                 keyMap.put(JobStructure.ID.key(), toStringAttributeValue(jobId));
                 DeleteItemRequest deleteJobRequest = DeleteItemRequest.builder()
-                        .tableName(JOBS_TABLENAME)
+                        .tableName(JOBS_TABLE_NAME)
                         .key(keyMap)
                         .build();
                 dynamoDbClient.deleteItem(deleteJobRequest);
@@ -232,29 +232,34 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public JobInfo.JobStatus findStatus(String jobId) {
-        final Optional<JobInfo> jobInfo = findOne(jobId);
-        if (!jobInfo.isPresent()) {
-            throw new RuntimeException();
-        }
-        return jobInfo.get().getStatus();
+        return findOne(jobId)
+                .orElseThrow(RuntimeException::new)
+                .getStatus();
     }
 
     @Override
     public void appendMessage(String jobId, JobMessage jobMessage) {
-        findOne(jobId).ifPresent(jobInfo -> {
-
-
-        });
+        JobInfo jobInfo = findOne(jobId).orElseThrow(RuntimeException::new);
+        createOrUpdate(jobInfo.copy()
+                .addMessage(jobMessage)
+                .setLastUpdated(jobMessage.getTimestamp())
+                .build());
     }
 
     @Override
     public void setJobStatus(String jobId, JobInfo.JobStatus jobStatus) {
-
+        JobInfo jobInfo = findOne(jobId).orElseThrow(RuntimeException::new);
+        createOrUpdate(jobInfo.copy()
+                .setStatus(jobStatus)
+                .build());
     }
 
     @Override
     public void setLastUpdate(String jobId, OffsetDateTime lastUpdate) {
-
+        JobInfo jobInfo = findOne(jobId).orElseThrow(RuntimeException::new);
+        createOrUpdate(jobInfo.copy()
+                .setLastUpdated(lastUpdate)
+                .build());
     }
 
     @Override
@@ -263,7 +268,7 @@ public class DynamoJobRepository implements JobRepository {
         long count = 0;
         do {
             ScanRequest counterQuery = ScanRequest.builder()
-                    .tableName(JOBS_TABLENAME)
+                    .tableName(JOBS_TABLE_NAME)
                     .select(Select.COUNT)
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
@@ -279,7 +284,32 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public void deleteAll() {
+        deleteTable();
+        createTable();
+    }
 
+    private void deleteTable() {
+        DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
+                .tableName(JOBS_TABLE_NAME).build();
+        dynamoDbClient.deleteTable(deleteTableRequest);
+    }
+
+    private void createTable() {
+        dynamoDbClient.createTable(CreateTableRequest.builder()
+                .tableName(JOBS_TABLE_NAME)
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName(JobStructure.ID.key())
+                        .attributeType(ScalarAttributeType.S)
+                        .build())
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName(JobStructure.ID.key())
+                        .keyType(KeyType.HASH)
+                        .build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
+                        .readCapacityUnits(10L)
+                        .writeCapacityUnits(10L)
+                        .build())
+                .build());
     }
 
     private AttributeValue toStringAttributeValue(OffsetDateTime value) {

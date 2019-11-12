@@ -19,6 +19,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -35,6 +36,7 @@ import static org.hamcrest.core.Is.is;
 @Testcontainers
 public class JobMetaRepositoryTest {
 
+    private static final String JOB_META_TABLE_NAME = "jobMeta";
     private static DynamoJobMetaRepository dynamoTestee = null;
 
     @AfterAll
@@ -56,12 +58,28 @@ public class JobMetaRepositoryTest {
 
     @BeforeEach
     public void setUpDynamo() {
-        dynamoTestee.setupSchema();
+        getDynamoDbClient().createTable(CreateTableRequest.builder()
+                .tableName(JOB_META_TABLE_NAME)
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName("jobType")
+                        .attributeType(ScalarAttributeType.S)
+                        .build())
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName("jobType")
+                        .keyType(KeyType.HASH)
+                        .build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
+                        .readCapacityUnits(10L)
+                        .writeCapacityUnits(10L)
+                        .build())
+                .build());;
     }
 
     @AfterEach
     public void tearDown() {
-        dynamoTestee.deleteTable();
+        DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
+                .tableName(JOB_META_TABLE_NAME).build();
+        getDynamoDbClient().deleteTable(deleteTableRequest);
     }
 
     public static Collection<JobMetaRepository> data() {

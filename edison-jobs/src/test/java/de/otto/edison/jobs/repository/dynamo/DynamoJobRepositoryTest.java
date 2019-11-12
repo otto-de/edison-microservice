@@ -22,15 +22,16 @@ import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+import static de.otto.edison.jobs.domain.JobInfo.JobStatus.ERROR;
 import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
-import static de.otto.edison.jobs.repository.dynamo.DynamoJobRepository.JOBS_TABLENAME;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isAbsent;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.time.Clock.fixed;
@@ -38,12 +39,15 @@ import static java.time.Clock.systemDefaultZone;
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @Testcontainers
 class DynamoJobRepositoryTest {
+
+    private static final String JOBS_TABLE_NAME = "jobs";
 
     private static DynamoJobRepository testee;
 
@@ -54,7 +58,7 @@ class DynamoJobRepositoryTest {
     @BeforeEach
     void setUpDynamo() {
         getDynamoDbClient().createTable(CreateTableRequest.builder()
-                .tableName(JOBS_TABLENAME)
+                .tableName(JOBS_TABLE_NAME)
                 .attributeDefinitions(AttributeDefinition.builder()
                         .attributeName(JobStructure.ID.key())
                         .attributeType(ScalarAttributeType.S)
@@ -73,7 +77,7 @@ class DynamoJobRepositoryTest {
     @AfterEach
     void tearDown() {
         DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName(JOBS_TABLENAME).build();
+                .tableName(JOBS_TABLE_NAME).build();
         getDynamoDbClient().deleteTable(deleteTableRequest);
     }
 
@@ -343,80 +347,78 @@ class DynamoJobRepositoryTest {
         assertThat(status, is(JobStatus.OK));
     }
 
-//    @Test
-//    void shouldAppendMessageToJobInfo() throws Exception {
-//
-//        String someUri = "someUri";
-//        OffsetDateTime now = now();
-//
-//        //Given
-//        JobInfo jobInfo = newJobInfo(someUri, "TEST", systemDefaultZone(), "localhost");
-//        testee.createOrUpdate(jobInfo);
-//
-//        //When
-//        JobMessage igelMessage = JobMessage.jobMessage(Level.WARNING, "Der Igel ist froh.", now);
-//        testee.appendMessage(someUri, igelMessage);
-//
-//        //Then
-//        JobInfo jobInfoFromRepo = testee.findOne(someUri).get();
-//
-//        assertThat(jobInfoFromRepo.getMessages().size(), is(1));
-//        assertThat(jobInfoFromRepo.getMessages().get(0), is(igelMessage));
-//        assertThat(jobInfoFromRepo.getLastUpdated(), is(now.truncatedTo(ChronoUnit.MILLIS)));
-//    }
-//
-//    @Test
-//    void shouldUpdateJobStatus() {
-//        //Given
-//        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO"); //default jobStatus is 'OK'
-//        testee.createOrUpdate(foo);
-//
-//        //When
-//        testee.setJobStatus(foo.getJobId(), ERROR);
-//        JobStatus status = testee.findStatus("http://localhost/foo");
-//
-//        //Then
-//        assertThat(status, is(ERROR));
-//    }
-//
-//
-//
-//    @Test
-//    void shouldUpdateJobLastUpdateTime() {
-//        //Given
-//        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO");
-//        testee.createOrUpdate(foo);
-//
-//        OffsetDateTime myTestTime = OffsetDateTime.of(1979, 2, 5, 1, 2, 3, 1_000_000, ZoneOffset.UTC);
-//
-//        //When
-//        testee.setLastUpdate(foo.getJobId(), myTestTime);
-//
-//        final Optional<JobInfo> jobInfo = testee.findOne(foo.getJobId());
-//
-//        //Then
-//        assertThat(jobInfo.get().getLastUpdated(), is(myTestTime));
-//    }
-//
-//    @Test
-//    void shouldClearJobInfos() throws Exception {
-//        //Given
-//        JobInfo stoppedJob = builder()
-//                .setJobId("some/job/stopped")
-//                .setJobType("test")
-//                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
-//                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
-//                .setHostname("localhost")
-//                .setStatus(JobStatus.OK)
-//                .build();
-//        testee.createOrUpdate(stoppedJob);
-//
-//        //When
-//        testee.deleteAll();
-//
-//        //Then
-//        assertThat(testee.findAll(), is(emptyList()));
-//    }
+    @Test
+    void shouldAppendMessageToJobInfo() throws Exception {
+
+        String someUri = "someUri";
+        OffsetDateTime now = now();
+
+        //Given
+        JobInfo jobInfo = newJobInfo(someUri, "TEST", systemDefaultZone(), "localhost");
+        testee.createOrUpdate(jobInfo);
+
+        //When
+        JobMessage igelMessage = JobMessage.jobMessage(Level.WARNING, "Der Igel ist froh.", now);
+        testee.appendMessage(someUri, igelMessage);
+
+        //Then
+        JobInfo jobInfoFromRepo = testee.findOne(someUri).get();
+
+        assertThat(jobInfoFromRepo.getMessages().size(), is(1));
+        assertThat(jobInfoFromRepo.getMessages().get(0), is(igelMessage));
+        assertThat(jobInfoFromRepo.getLastUpdated(), is(now.truncatedTo(ChronoUnit.MILLIS)));
+    }
+
+    @Test
+    void shouldUpdateJobStatus() {
+        //Given
+        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO"); //default jobStatus is 'OK'
+        testee.createOrUpdate(foo);
+
+        //When
+        testee.setJobStatus(foo.getJobId(), ERROR);
+        JobStatus status = testee.findStatus("http://localhost/foo");
+
+        //Then
+        assertThat(status, is(ERROR));
+    }
+
+    @Test
+    void shouldUpdateJobLastUpdateTime() {
+        //Given
+        final JobInfo foo = jobInfo("http://localhost/foo", "T_FOO");
+        testee.createOrUpdate(foo);
+
+        OffsetDateTime myTestTime = OffsetDateTime.of(1979, 2, 5, 1, 2, 3, 1_000_000, ZoneOffset.UTC);
+
+        //When
+        testee.setLastUpdate(foo.getJobId(), myTestTime);
+
+        final Optional<JobInfo> jobInfo = testee.findOne(foo.getJobId());
+
+        //Then
+        assertThat(jobInfo.get().getLastUpdated(), is(myTestTime));
+    }
+
+    @Test
+    void shouldClearJobInfos() throws Exception {
+        //Given
+        JobInfo stoppedJob = builder()
+                .setJobId("some/job/stopped")
+                .setJobType("test")
+                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                .setHostname("localhost")
+                .setStatus(JobStatus.OK)
+                .build();
+        testee.createOrUpdate(stoppedJob);
+
+        //When
+        testee.deleteAll();
+
+        //Then
+        assertThat(testee.findAll(), is(emptyList()));
+    }
 
     private JobInfo jobInfo(final String jobId, final String type) {
         return JobInfo.newJobInfo(
