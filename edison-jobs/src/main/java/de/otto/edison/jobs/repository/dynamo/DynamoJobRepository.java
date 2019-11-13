@@ -20,6 +20,7 @@ import static java.util.stream.Collectors.*;
 public class DynamoJobRepository implements JobRepository {
 
     private static final String JOBS_TABLE_NAME = "FT6_DynamoDB_Jobs";
+    private static final String ETAG_KEY = "etag";
     private final DynamoDbClient dynamoDbClient;
     private final int pageSize;
 
@@ -37,6 +38,10 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public Optional<JobInfo> findOne(String jobId) {
+        return findOneItem(jobId).map(this::decode);
+    }
+
+    private Optional<Map<String, AttributeValue>> findOneItem(final String jobId) {
         Map<String, AttributeValue> keyMap = new HashMap<>();
         keyMap.put(ID.key(), toStringAttributeValue(jobId));
         GetItemRequest jobInfoRequest = GetItemRequest.builder()
@@ -48,7 +53,7 @@ public class DynamoJobRepository implements JobRepository {
         if (jobInfoResponse.item().isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(decode(jobInfoResponse.item()));
+        return Optional.of(jobInfoResponse.item());
     }
 
     @Override
@@ -170,15 +175,28 @@ public class DynamoJobRepository implements JobRepository {
     }
 
     @Override
-    public JobInfo createOrUpdate(JobInfo job) {
-
+    public JobInfo createOrUpdate(final JobInfo job) {
         Map<String, AttributeValue> jobAsItem = encode(job);
         PutItemRequest putItemRequest = PutItemRequest.builder()
                 .tableName(JOBS_TABLE_NAME)
                 .item(jobAsItem)
                 .build();
         dynamoDbClient.putItem(putItemRequest);
+        return job;
+    }
 
+    public JobInfo createOrUpdate(final JobInfo job, final AttributeValue etag) {
+        Map<String, AttributeValue> jobAsItem = encode(job);
+        final PutItemRequest.Builder putItemRequestBuilder = PutItemRequest.builder()
+                .tableName(JOBS_TABLE_NAME)
+                .item(jobAsItem);
+        if (etag != null) {
+            Map<String, AttributeValue> valueMap = new HashMap<>();
+            valueMap.put(":val", AttributeValue.builder().s(etag.s()).build());
+            putItemRequestBuilder.expressionAttributeValues(valueMap);
+            putItemRequestBuilder.conditionExpression("contains(etag, :val)");
+        }
+        dynamoDbClient.putItem(putItemRequestBuilder.build());
         return job;
     }
 
@@ -257,27 +275,34 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public void appendMessage(String jobId, JobMessage jobMessage) {
-        JobInfo jobInfo = findOne(jobId).orElseThrow(RuntimeException::new);
-        createOrUpdate(jobInfo.copy()
+        final Map<String, AttributeValue> item = findOneItem(jobId).orElseThrow(RuntimeException::new);
+        JobInfo jobInfo = decode(item);
+        createOrUpdate(
+                jobInfo.copy()
                 .addMessage(jobMessage)
                 .setLastUpdated(jobMessage.getTimestamp())
-                .build());
+                .build(),
+                item.get(ETAG_KEY));
     }
 
     @Override
     public void setJobStatus(String jobId, JobInfo.JobStatus jobStatus) {
-        JobInfo jobInfo = findOne(jobId).orElseThrow(RuntimeException::new);
+        final Map<String, AttributeValue> item = findOneItem(jobId).orElseThrow(RuntimeException::new);
+        JobInfo jobInfo = decode(item);
         createOrUpdate(jobInfo.copy()
                 .setStatus(jobStatus)
-                .build());
+                .build(),
+                item.get(ETAG_KEY));
     }
 
     @Override
     public void setLastUpdate(String jobId, OffsetDateTime lastUpdate) {
-        JobInfo jobInfo = findOne(jobId).orElseThrow(RuntimeException::new);
+        final Map<String, AttributeValue> item = findOneItem(jobId).orElseThrow(RuntimeException::new);
+        JobInfo jobInfo = decode(item);
         createOrUpdate(jobInfo.copy()
                 .setLastUpdated(lastUpdate)
-                .build());
+                .build(),
+                item.get(ETAG_KEY));
     }
 
     @Override
