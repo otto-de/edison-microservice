@@ -12,6 +12,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.otto.edison.jobs.repository.dynamo.JobStructure.*;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.*;
@@ -37,19 +38,17 @@ public class DynamoJobRepository implements JobRepository {
     @Override
     public Optional<JobInfo> findOne(String jobId) {
         Map<String, AttributeValue> keyMap = new HashMap<>();
-        keyMap.put(JobStructure.ID.key(), toStringAttributeValue(jobId));
-
+        keyMap.put(ID.key(), toStringAttributeValue(jobId));
         GetItemRequest jobInfoRequest = GetItemRequest.builder()
                 .tableName(JOBS_TABLE_NAME)
                 .key(keyMap)
                 .build();
+
         final GetItemResponse jobInfoResponse = dynamoDbClient.getItem(jobInfoRequest);
         if (jobInfoResponse.item().isEmpty()) {
             return Optional.empty();
         }
-        final JobInfo jobInfo = decode(jobInfoResponse.item());
-        return Optional.of(jobInfo);
-
+        return Optional.of(decode(jobInfoResponse.item()));
     }
 
     @Override
@@ -95,7 +94,7 @@ public class DynamoJobRepository implements JobRepository {
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
                     .expressionAttributeValues(expressionAttributeValues)
-                    .filterExpression(JobStructure.LAST_UPDATED_EPOCH.key() + " < :val and attribute_not_exists(" + JobStructure.STOPPED.key() + ")")
+                    .filterExpression(LAST_UPDATED_EPOCH.key() + " < :val and attribute_not_exists(" + STOPPED.key() + ")")
                     .build();
 
             final ScanResponse response = dynamoDbClient.scan(query);
@@ -106,29 +105,45 @@ public class DynamoJobRepository implements JobRepository {
         return jobs;
     }
 
-    @Override
-    public List<JobInfo> findAll() {
+
+    private List<JobInfo> findAll(final boolean withMessages) {
         Map<String, AttributeValue> lastKeyEvaluated = null;
         List<JobInfo> jobs = new ArrayList<>();
         do {
-            ScanRequest findAll = ScanRequest.builder()
+            final ScanRequest.Builder findAllRequestBuilder = ScanRequest.builder()
                     .tableName(JOBS_TABLE_NAME)
                     .limit(pageSize)
-                    .exclusiveStartKey(lastKeyEvaluated)
-                    .build();
+                    .exclusiveStartKey(lastKeyEvaluated);
 
-            final ScanResponse scan = dynamoDbClient.scan(findAll);
+            if (!withMessages) {
+                String projectionExpressionBuilder = ID.key() +
+                        ", " + STARTED.key() +
+                        ", " + STOPPED.key() +
+                        ", " + JOB_TYPE.key() +
+                        ", #" + STATUS.key() +
+                        ", " + HOSTNAME.key() +
+                        ", " + LAST_UPDATED.key() +
+                        ", " + LAST_UPDATED_EPOCH.key();
+                findAllRequestBuilder.projectionExpression(projectionExpressionBuilder)
+                        .expressionAttributeNames(ImmutableMap.of("#" + STATUS.key(), STATUS.key()));
+            }
+
+            final ScanResponse scan = dynamoDbClient.scan(findAllRequestBuilder.build());
             lastKeyEvaluated = scan.lastEvaluatedKey();
             List<JobInfo> newJobsFromThisPage = scan.items().stream().map(this::decode).collect(Collectors.toList());
             jobs.addAll(newJobsFromThisPage);
         } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
-
         return jobs;
     }
 
     @Override
+    public List<JobInfo> findAll() {
+        return findAll(true);
+    }
+
+    @Override
     public List<JobInfo> findAllJobInfoWithoutMessages() {
-        return null;
+        return findAll(false);
     }
 
     @Override
@@ -144,7 +159,7 @@ public class DynamoJobRepository implements JobRepository {
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
                     .expressionAttributeValues(expressionAttributeValues)
-                    .filterExpression(JobStructure.JOB_TYPE.key() + " = :jobType")
+                    .filterExpression(JOB_TYPE.key() + " = :jobType")
                     .build();
 
             final ScanResponse response = dynamoDbClient.scan(query);
@@ -166,59 +181,56 @@ public class DynamoJobRepository implements JobRepository {
         dynamoDbClient.putItem(putItemRequest);
 
         return job;
-
     }
 
     private Map<String, AttributeValue> encode(JobInfo jobInfo) {
         Map<String, AttributeValue> jobAsItem = new HashMap<>();
-        jobAsItem.put(JobStructure.ID.key(), toStringAttributeValue(jobInfo.getJobId()));
-        jobAsItem.put(JobStructure.HOSTNAME.key(), toStringAttributeValue(jobInfo.getHostname()));
-        jobAsItem.put(JobStructure.JOB_TYPE.key(), toStringAttributeValue(jobInfo.getJobType()));
-        jobAsItem.put(JobStructure.STARTED.key(), toStringAttributeValue(jobInfo.getStarted()));
-        jobAsItem.put(JobStructure.STATUS.key(), toStringAttributeValue(jobInfo.getStatus().name()));
-        jobInfo.getStopped().ifPresent(offsetDateTime -> jobAsItem.put(JobStructure.STOPPED.key(), toStringAttributeValue(offsetDateTime)));
+        jobAsItem.put(ID.key(), toStringAttributeValue(jobInfo.getJobId()));
+        jobAsItem.put(HOSTNAME.key(), toStringAttributeValue(jobInfo.getHostname()));
+        jobAsItem.put(JOB_TYPE.key(), toStringAttributeValue(jobInfo.getJobType()));
+        jobAsItem.put(STARTED.key(), toStringAttributeValue(jobInfo.getStarted()));
+        jobAsItem.put(STATUS.key(), toStringAttributeValue(jobInfo.getStatus().name()));
+        jobInfo.getStopped().ifPresent(offsetDateTime -> jobAsItem.put(STOPPED.key(), toStringAttributeValue(offsetDateTime)));
         if (null != jobInfo.getLastUpdated()) {
-            jobAsItem.put(JobStructure.LAST_UPDATED.key(), toStringAttributeValue(jobInfo.getLastUpdated()));
-            jobAsItem.put(JobStructure.LAST_UPDATED_EPOCH.key(), toNumberAttributeValue(jobInfo.getLastUpdated().toInstant().toEpochMilli()));
+            jobAsItem.put(LAST_UPDATED.key(), toStringAttributeValue(jobInfo.getLastUpdated()));
+            jobAsItem.put(LAST_UPDATED_EPOCH.key(), toNumberAttributeValue(jobInfo.getLastUpdated().toInstant().toEpochMilli()));
         }
-        jobAsItem.put(JobStructure.MESSAGES.key(), messagesToAttributeValueList(jobInfo.getMessages()));
-
-
+        jobAsItem.put(MESSAGES.key(), messagesToAttributeValueList(jobInfo.getMessages()));
         return jobAsItem;
     }
 
     private JobInfo decode(Map<String, AttributeValue> item) {
         final JobInfo.Builder jobInfo = JobInfo.builder()
-                .setJobId(item.get(JobStructure.ID.key()).s())
-                .setHostname(item.get(JobStructure.HOSTNAME.key()).s())
-                .setJobType(item.get(JobStructure.JOB_TYPE.key()).s())
-                .setStarted(OffsetDateTime.parse(item.get(JobStructure.STARTED.key()).s()))
-                .setStatus(JobInfo.JobStatus.valueOf(item.get(JobStructure.STATUS.key()).s()))
+                .setJobId(item.get(ID.key()).s())
+                .setHostname(item.get(HOSTNAME.key()).s())
+                .setJobType(item.get(JOB_TYPE.key()).s())
+                .setStarted(OffsetDateTime.parse(item.get(STARTED.key()).s()))
+                .setStatus(JobInfo.JobStatus.valueOf(item.get(STATUS.key()).s()))
                 .setMessages(itemToJobMessages(item));
-        if (item.containsKey(JobStructure.STOPPED.key())) {
-            jobInfo.setStopped(OffsetDateTime.parse(item.get(JobStructure.STOPPED.key()).s()));
+        if (item.containsKey(STOPPED.key())) {
+            jobInfo.setStopped(OffsetDateTime.parse(item.get(STOPPED.key()).s()));
         }
 
-        if (item.containsKey(JobStructure.LAST_UPDATED.key())) {
-            jobInfo.setLastUpdated(OffsetDateTime.parse(item.get(JobStructure.LAST_UPDATED.key()).s()));
+        if (item.containsKey(LAST_UPDATED.key())) {
+            jobInfo.setLastUpdated(OffsetDateTime.parse(item.get(LAST_UPDATED.key()).s()));
         }
         return jobInfo.build();
     }
 
     private List<JobMessage> itemToJobMessages(Map<String, AttributeValue> item) {
-        if (!item.containsKey(JobStructure.MESSAGES.key())) {
+        if (!item.containsKey(MESSAGES.key())) {
             return emptyList();
         }
 
-        final AttributeValue attributeValue = item.get(JobStructure.MESSAGES.key());
+        final AttributeValue attributeValue = item.get(MESSAGES.key());
         return attributeValue.l().stream().map(this::attributeValueToMessage).collect(Collectors.toList());
     }
 
     private JobMessage attributeValueToMessage(AttributeValue attributeValue) {
         final Map<String, AttributeValue> messageMap = attributeValue.m();
-        final Level level = Level.ofKey(messageMap.get(JobStructure.MSG_LEVEL.key()).s());
-        final String text = messageMap.get(JobStructure.MSG_TEXT.key()).s();
-        final OffsetDateTime timestamp = OffsetDateTime.parse(messageMap.get(JobStructure.MSG_TS.key()).s());
+        final Level level = Level.ofKey(messageMap.get(MSG_LEVEL.key()).s());
+        final String text = messageMap.get(MSG_TEXT.key()).s();
+        final OffsetDateTime timestamp = OffsetDateTime.parse(messageMap.get(MSG_TS.key()).s());
         return JobMessage.jobMessage(level, text, timestamp);
     }
 
@@ -227,7 +239,7 @@ public class DynamoJobRepository implements JobRepository {
         findOne(jobId).ifPresent(jobInfo -> {
             if (jobInfo.isStopped()) {
                 Map<String, AttributeValue> keyMap = new HashMap<>();
-                keyMap.put(JobStructure.ID.key(), toStringAttributeValue(jobId));
+                keyMap.put(ID.key(), toStringAttributeValue(jobId));
                 DeleteItemRequest deleteJobRequest = DeleteItemRequest.builder()
                         .tableName(JOBS_TABLE_NAME)
                         .key(keyMap)
@@ -305,11 +317,11 @@ public class DynamoJobRepository implements JobRepository {
         dynamoDbClient.createTable(CreateTableRequest.builder()
                 .tableName(JOBS_TABLE_NAME)
                 .attributeDefinitions(AttributeDefinition.builder()
-                        .attributeName(JobStructure.ID.key())
+                        .attributeName(ID.key())
                         .attributeType(ScalarAttributeType.S)
                         .build())
                 .keySchema(KeySchemaElement.builder()
-                        .attributeName(JobStructure.ID.key())
+                        .attributeName(ID.key())
                         .keyType(KeyType.HASH)
                         .build())
                 .provisionedThroughput(ProvisionedThroughput.builder()
@@ -333,9 +345,9 @@ public class DynamoJobRepository implements JobRepository {
 
     private AttributeValue toMapAttributeValue(JobMessage jobMessage) {
         Map<String, AttributeValue> message = new HashMap<>();
-        message.put(JobStructure.MSG_LEVEL.key(), toStringAttributeValue(jobMessage.getLevel().getKey()));
-        message.put(JobStructure.MSG_TEXT.key(), toStringAttributeValue(jobMessage.getMessage()));
-        message.put(JobStructure.MSG_TS.key(), toStringAttributeValue(jobMessage.getTimestamp()));
+        message.put(MSG_LEVEL.key(), toStringAttributeValue(jobMessage.getLevel().getKey()));
+        message.put(MSG_TEXT.key(), toStringAttributeValue(jobMessage.getMessage()));
+        message.put(MSG_TS.key(), toStringAttributeValue(jobMessage.getTimestamp()));
         return AttributeValue.builder()
                 .m(message)
                 .build();

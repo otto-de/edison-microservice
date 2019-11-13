@@ -401,6 +401,44 @@ class DynamoJobRepositoryTest {
         assertThat(testee.findAll(), is(emptyList()));
     }
 
+    @Test
+    public void shouldStoreAndRetrieveAllJobInfoWithoutMessages() {
+        // given
+        JobInfo job1 = builder()
+                .setJobId("someJobId1")
+                .setJobType("someJobType1")
+                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                .setHostname("localhost")
+                .setStatus(JobStatus.OK)
+                .setLastUpdated(OffsetDateTime.now())
+                .setClock(clock)
+                .addMessage(JobMessage.jobMessage(Level.INFO, "someInfoMessage", OffsetDateTime.now()))
+                .addMessage(JobMessage.jobMessage(Level.ERROR, "someErrorMessage", OffsetDateTime.now().plusSeconds(5L)))
+                .build();
+        JobInfo job2 = builder()
+                .setJobId("someJobId2")
+                .setJobType("someJobType2")
+                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                .setHostname("localhost")
+                .setStatus(JobStatus.OK)
+                .setLastUpdated(OffsetDateTime.now())
+                .setClock(clock)
+                .addMessage(JobMessage.jobMessage(Level.INFO, "someInfoMessage", OffsetDateTime.now()))
+                .addMessage(JobMessage.jobMessage(Level.ERROR, "someErrorMessage", OffsetDateTime.now().plusSeconds(5L)))
+                .build();
+        testee.createOrUpdate(job1);
+        testee.createOrUpdate(job2);
+
+        // when
+        final List<JobInfo> jobInfos = testee.findAllJobInfoWithoutMessages();
+        // then
+        assertThat(jobInfos, hasSize(2));
+        assertThat(jobInfos.get(0), is(job2.copy().setMessages(emptyList()).build()));
+        assertThat(jobInfos.get(1), is(job1.copy().setMessages(emptyList()).build()));
+    }
+
     private JobInfo jobInfo(final String jobId, final String type) {
         return JobInfo.newJobInfo(
                 jobId,
