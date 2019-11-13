@@ -412,21 +412,18 @@ class DynamoJobRepositoryTest {
                 .setHostname("localhost")
                 .setStatus(JobStatus.OK)
                 .setLastUpdated(OffsetDateTime.now())
-                .setClock(clock)
-                .addMessage(JobMessage.jobMessage(Level.INFO, "someInfoMessage", OffsetDateTime.now()))
-                .addMessage(JobMessage.jobMessage(Level.ERROR, "someErrorMessage", OffsetDateTime.now().plusSeconds(5L)))
+                .addMessage(JobMessage.jobMessage(Level.INFO, "someInfoMessage1", OffsetDateTime.now()))
+                .addMessage(JobMessage.jobMessage(Level.ERROR, "someErrorMessage1", OffsetDateTime.now().plusSeconds(5L)))
                 .build();
         JobInfo job2 = builder()
                 .setJobId("someJobId2")
                 .setJobType("someJobType2")
                 .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
-                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
                 .setHostname("localhost")
-                .setStatus(JobStatus.OK)
+                .setStatus(JobStatus.DEAD)
                 .setLastUpdated(OffsetDateTime.now())
-                .setClock(clock)
-                .addMessage(JobMessage.jobMessage(Level.INFO, "someInfoMessage", OffsetDateTime.now()))
-                .addMessage(JobMessage.jobMessage(Level.ERROR, "someErrorMessage", OffsetDateTime.now().plusSeconds(5L)))
+                .addMessage(JobMessage.jobMessage(Level.INFO, "someInfoMessage2", OffsetDateTime.now()))
+                .addMessage(JobMessage.jobMessage(Level.ERROR, "someErrorMessage2", OffsetDateTime.now().plusSeconds(5L)))
                 .build();
         testee.createOrUpdate(job1);
         testee.createOrUpdate(job2);

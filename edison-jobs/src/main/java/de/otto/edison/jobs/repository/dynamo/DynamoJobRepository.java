@@ -122,8 +122,7 @@ public class DynamoJobRepository implements JobRepository {
                         ", " + JOB_TYPE.key() +
                         ", #" + STATUS.key() +
                         ", " + HOSTNAME.key() +
-                        ", " + LAST_UPDATED.key() +
-                        ", " + LAST_UPDATED_EPOCH.key();
+                        ", " + LAST_UPDATED.key();
                 findAllRequestBuilder.projectionExpression(projectionExpressionBuilder)
                         .expressionAttributeNames(ImmutableMap.of("#" + STATUS.key(), STATUS.key()));
             }
