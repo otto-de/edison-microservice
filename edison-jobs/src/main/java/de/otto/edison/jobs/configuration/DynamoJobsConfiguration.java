@@ -15,7 +15,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
-@ConditionalOnProperty(prefix = "edison.jobs", name = "dynamo.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "edison.jobs", name = "dynamo.enabled", havingValue = "true")
 @ConditionalOnBean(type = "software.amazon.awssdk.services.dynamodb.DynamoDbClient")
 public class DynamoJobsConfiguration {
 
