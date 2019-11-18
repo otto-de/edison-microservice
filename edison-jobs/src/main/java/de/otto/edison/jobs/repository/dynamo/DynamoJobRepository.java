@@ -19,17 +19,18 @@ import static java.util.stream.Collectors.*;
 
 public class DynamoJobRepository implements JobRepository {
 
-    private static final String JOBS_TABLE_NAME = "FT6_DynamoDB_Jobs";
     private static final String ETAG_KEY = "etag";
     private final DynamoDbClient dynamoDbClient;
+    private final String tableName;
     private final int pageSize;
 
-    public DynamoJobRepository(DynamoDbClient dynamoDbClient, int pageSize) {
+    public DynamoJobRepository(DynamoDbClient dynamoDbClient, final String tableName, int pageSize) {
         this.dynamoDbClient = dynamoDbClient;
+        this.tableName = tableName;
         this.pageSize = pageSize;
         try {
             dynamoDbClient.describeTable(DescribeTableRequest.builder()
-                    .tableName(JOBS_TABLE_NAME)
+                    .tableName(tableName)
                     .build());
         } catch (ResourceNotFoundException e) {
             createTable();
@@ -45,10 +46,9 @@ public class DynamoJobRepository implements JobRepository {
         Map<String, AttributeValue> keyMap = new HashMap<>();
         keyMap.put(ID.key(), toStringAttributeValue(jobId));
         GetItemRequest jobInfoRequest = GetItemRequest.builder()
-                .tableName(JOBS_TABLE_NAME)
+                .tableName(tableName)
                 .key(keyMap)
                 .build();
-
         final GetItemResponse jobInfoResponse = dynamoDbClient.getItem(jobInfoRequest);
         if (jobInfoResponse.item().isEmpty()) {
             return Optional.empty();
@@ -95,7 +95,7 @@ public class DynamoJobRepository implements JobRepository {
         );
         do {
             final ScanRequest query = ScanRequest.builder()
-                    .tableName(JOBS_TABLE_NAME)
+                    .tableName(tableName)
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
                     .expressionAttributeValues(expressionAttributeValues)
@@ -116,7 +116,7 @@ public class DynamoJobRepository implements JobRepository {
         List<JobInfo> jobs = new ArrayList<>();
         do {
             final ScanRequest.Builder findAllRequestBuilder = ScanRequest.builder()
-                    .tableName(JOBS_TABLE_NAME)
+                    .tableName(tableName)
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated);
 
@@ -131,7 +131,6 @@ public class DynamoJobRepository implements JobRepository {
                 findAllRequestBuilder.projectionExpression(projectionExpressionBuilder)
                         .expressionAttributeNames(ImmutableMap.of("#" + STATUS.key(), STATUS.key()));
             }
-
             final ScanResponse scan = dynamoDbClient.scan(findAllRequestBuilder.build());
             lastKeyEvaluated = scan.lastEvaluatedKey();
             List<JobInfo> newJobsFromThisPage = scan.items().stream().map(this::decode).collect(Collectors.toList());
@@ -159,7 +158,7 @@ public class DynamoJobRepository implements JobRepository {
         );
         do {
             final ScanRequest query = ScanRequest.builder()
-                    .tableName(JOBS_TABLE_NAME)
+                    .tableName(tableName)
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
                     .expressionAttributeValues(expressionAttributeValues)
@@ -178,7 +177,7 @@ public class DynamoJobRepository implements JobRepository {
     public JobInfo createOrUpdate(final JobInfo job) {
         Map<String, AttributeValue> jobAsItem = encode(job);
         PutItemRequest putItemRequest = PutItemRequest.builder()
-                .tableName(JOBS_TABLE_NAME)
+                .tableName(tableName)
                 .item(jobAsItem)
                 .build();
         dynamoDbClient.putItem(putItemRequest);
@@ -188,7 +187,7 @@ public class DynamoJobRepository implements JobRepository {
     public JobInfo createOrUpdate(final JobInfo job, final AttributeValue etag) {
         Map<String, AttributeValue> jobAsItem = encode(job);
         final PutItemRequest.Builder putItemRequestBuilder = PutItemRequest.builder()
-                .tableName(JOBS_TABLE_NAME)
+                .tableName(tableName)
                 .item(jobAsItem);
         if (etag != null) {
             Map<String, AttributeValue> valueMap = new HashMap<>();
@@ -227,7 +226,6 @@ public class DynamoJobRepository implements JobRepository {
         if (item.containsKey(STOPPED.key())) {
             jobInfo.setStopped(OffsetDateTime.parse(item.get(STOPPED.key()).s()));
         }
-
         if (item.containsKey(LAST_UPDATED.key())) {
             jobInfo.setLastUpdated(OffsetDateTime.parse(item.get(LAST_UPDATED.key()).s()));
         }
@@ -238,7 +236,6 @@ public class DynamoJobRepository implements JobRepository {
         if (!item.containsKey(MESSAGES.key())) {
             return emptyList();
         }
-
         final AttributeValue attributeValue = item.get(MESSAGES.key());
         return attributeValue.l().stream().map(this::attributeValueToMessage).collect(Collectors.toList());
     }
@@ -258,7 +255,7 @@ public class DynamoJobRepository implements JobRepository {
                 Map<String, AttributeValue> keyMap = new HashMap<>();
                 keyMap.put(ID.key(), toStringAttributeValue(jobId));
                 DeleteItemRequest deleteJobRequest = DeleteItemRequest.builder()
-                        .tableName(JOBS_TABLE_NAME)
+                        .tableName(tableName)
                         .key(keyMap)
                         .build();
                 dynamoDbClient.deleteItem(deleteJobRequest);
@@ -311,7 +308,7 @@ public class DynamoJobRepository implements JobRepository {
         long count = 0;
         do {
             ScanRequest counterQuery = ScanRequest.builder()
-                    .tableName(JOBS_TABLE_NAME)
+                    .tableName(tableName)
                     .select(Select.COUNT)
                     .limit(pageSize)
                     .exclusiveStartKey(lastKeyEvaluated)
@@ -321,7 +318,6 @@ public class DynamoJobRepository implements JobRepository {
             lastKeyEvaluated = countResponse.lastEvaluatedKey();
             count = count + countResponse.count();
         } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
-
         return count;
     }
 
@@ -333,13 +329,13 @@ public class DynamoJobRepository implements JobRepository {
 
     private void deleteTable() {
         DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName(JOBS_TABLE_NAME).build();
+                .tableName(tableName).build();
         dynamoDbClient.deleteTable(deleteTableRequest);
     }
 
     private void createTable() {
         dynamoDbClient.createTable(CreateTableRequest.builder()
-                .tableName(JOBS_TABLE_NAME)
+                .tableName(tableName)
                 .attributeDefinitions(AttributeDefinition.builder()
                         .attributeName(ID.key())
                         .attributeType(ScalarAttributeType.S)

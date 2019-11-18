@@ -64,7 +64,7 @@ class DynamoJobRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        testee = new DynamoJobRepository(getDynamoDbClient(), 10);
+        testee = new DynamoJobRepository(getDynamoDbClient(), JOBS_TABLE_NAME, 10);
     }
 
     private static DynamoDbClient getDynamoDbClient() {
@@ -98,7 +98,7 @@ class DynamoJobRepositoryTest {
     @Test
     void shouldFindJobInfoByUri() {
         // given
-        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), 10);
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), JOBS_TABLE_NAME,  10);
 
         // when
         JobInfo job = newJobInfo(randomUUID().toString(), "MYJOB", clock, "localhost");
@@ -110,7 +110,7 @@ class DynamoJobRepositoryTest {
 
     @Test
     void shouldReturnAbsentStatus() {
-        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), 10);
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(),JOBS_TABLE_NAME,  10);
         assertThat(repository.findOne("some-nonexisting-job-id"), isAbsent());
     }
 
@@ -168,7 +168,7 @@ class DynamoJobRepositoryTest {
     @Test
     void shouldFindAllWithPaging() {
         // given
-        testee = new DynamoJobRepository(getDynamoDbClient(), 2);
+        testee = new DynamoJobRepository(getDynamoDbClient(),JOBS_TABLE_NAME,  2);
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest1", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
@@ -194,7 +194,7 @@ class DynamoJobRepositoryTest {
     @Test
     void shouldFindAllinSizeOperationWithPageing() {
         // given
-        testee = new DynamoJobRepository(getDynamoDbClient(), 2);
+        testee = new DynamoJobRepository(getDynamoDbClient(),JOBS_TABLE_NAME,  2);
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youn44444556gest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));

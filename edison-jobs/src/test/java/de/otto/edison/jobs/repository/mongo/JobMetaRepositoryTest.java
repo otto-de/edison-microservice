@@ -48,7 +48,7 @@ public class JobMetaRepositoryTest {
     @BeforeAll
     public static void initDbs() throws IOException {
         EmbeddedMongoHelper.startMongoDB();
-        dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient());
+        dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient(), DYNAMO_JOB_META_TABLE_NAME);
     }
 
     @Container
@@ -57,7 +57,7 @@ public class JobMetaRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient());
+        dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient(), DYNAMO_JOB_META_TABLE_NAME);
     }
 
     @AfterEach
