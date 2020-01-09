@@ -1,5 +1,14 @@
 # Release Notes
 
+## 2.2.2
+* **[edison-jobs]**: add DynamoDb Support for Edison-Jobs
+    * Properties for enabling DynamoDb:
+        * **edison.jobs.dynamo.enabled**: Enable DynamoDb (disabled by default)
+        * **edison.jobs.mongo.enabled**: MongoDb needs to be disabled
+        * **edison.jobs.dynamo.jobinfo.tableName**: Name for JobInfo table (gets created if non-existent)
+        * **edison.jobs.dynamo.jobinfo.pageSize**: PageSize for scan-requests against JobInfo table
+        * **edison.jobs.dynamo.jobmeta.tableName**: Name for JobMeta table (gets created if non-existent)
+
 ## 2.2.1
 * **[general]**: upgrade aws sdk
 * **[edison-core]**: Fix basic auth credentials retrieval on wrong format

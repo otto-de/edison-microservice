@@ -35,7 +35,7 @@ ext {
             jsonassert    : '1.5.0',
             rest_assured  : '4.1.2',
             embedded_mongo: '2.2.0',
-            testcontainers: '1.12.1'
+            testcontainers: '1.12.3'
     ]
     plugin_versions = [
             versions     : '0.25.0',
@@ -58,6 +58,7 @@ ext {
             spring_security_jwt                : "org.springframework.security:spring-security-jwt:${versions.spring_security_jwt}",
             aws_sdk_s3                         : "software.amazon.awssdk:s3:${versions.aws_sdk}",
             aws_sdk_ssm                        : "software.amazon.awssdk:ssm:${versions.aws_sdk}",
+            aws_sdk_dynamodb                   : "software.amazon.awssdk:dynamodb:${versions.aws_sdk}",
             async_http_client                  : "org.asynchttpclient:async-http-client:${versions.async_http_client}",
             jcip_annotations                   : "net.jcip:jcip-annotations:${versions.jcip_annotations}",
             logback_classic                    : "ch.qos.logback:logback-classic:${versions.logback_classic}",
@@ -97,7 +98,8 @@ ext {
             embedded_mongo          : "de.flapdoodle.embed:de.flapdoodle.embed.mongo:${test_versions.embedded_mongo}",
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
             rest_assured            : "io.rest-assured:rest-assured:${test_versions.rest_assured}",
-            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}"
+//            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}",
+            testcontainers          : "org.testcontainers:junit-jupiter:${test_versions.testcontainers}"
 
     ]
     gradle_plugins = [

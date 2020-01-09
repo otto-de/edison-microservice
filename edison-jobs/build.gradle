@@ -1,6 +1,8 @@
 dependencies {
     compile libraries.async_http_client
 
+    compile libraries.aws_sdk_dynamodb
+
     compile project(":edison-core")
 
     compileOnly libraries.mongodb_driver
@@ -11,6 +13,7 @@ dependencies {
     testCompile test_libraries.json_path
     testCompile test_libraries.jsonassert
     testCompile test_libraries.embedded_mongo
+    testImplementation test_libraries.testcontainers
 }
 
 artifacts {
