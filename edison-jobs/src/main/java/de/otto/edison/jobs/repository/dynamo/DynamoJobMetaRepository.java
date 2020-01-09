@@ -17,9 +17,9 @@ import static java.util.Collections.emptyMap;
 public class DynamoJobMetaRepository implements JobMetaRepository {
 
     private static final String KEY_PREFIX = "_e_";
-    private static final String KEY_DISABLED = KEY_PREFIX + "disabled";
+    static final String KEY_DISABLED = KEY_PREFIX + "disabled";
     private static final String KEY_RUNNING = KEY_PREFIX + "running";
-    private static final String JOB_TYPE_KEY = "jobType";
+    static final String JOB_TYPE_KEY = "jobType";
     private static final String ETAG_KEY = "etag";
     private final DynamoDbClient dynamoDbClient;
     private final String tableName;
@@ -86,7 +86,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     @Override
     public void disable(String jobType, String comment) {
-        setValue(jobType, KEY_DISABLED, comment != null ? comment : "");
+        setValue(jobType, KEY_DISABLED, comment);
     }
 
     @Override
@@ -103,22 +103,17 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     private String putValue(String jobType, String key, String value) {
         GetItemResponse getItemResponse = getItem(jobType);
         Map<String, AttributeValue> newEntry = new HashMap<>(getItemResponse.item());
-        if (value == null) {
-            newEntry.remove(key);
-        } else {
-            newEntry.put(key, toAttributeValue(value));
-        }
+        newEntry.put(key, toAttributeValue(value));
         newEntry.put(ETAG_KEY, AttributeValue.builder().s(UUID.randomUUID().toString()).build());
+
         final PutItemRequest.Builder putItemRequestBuilder = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(newEntry);
         addEtagCondition(putItemRequestBuilder, getItemResponse);
         dynamoDbClient.putItem(putItemRequestBuilder.build());
+
         AttributeValue existingValueForKey = getItemResponse.item().get(key);
-        if (existingValueForKey == null) {
-            return null;
-        }
-        return existingValueForKey.s();
+        return existingValueForKey == null ? null : existingValueForKey.s();
     }
 
     private void addEtagCondition(final PutItemRequest.Builder putItemRequestBuilder, final GetItemResponse getItemResponse) {
@@ -132,7 +127,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
     }
 
     private AttributeValue toAttributeValue(String value) {
-        return AttributeValue.builder().s(value).build();
+        return value == null || value.isEmpty() ? AttributeValue.builder().nul(true).build() : AttributeValue.builder().s(value).build();
     }
 
     private void putIfAbsent(String jobType) {
