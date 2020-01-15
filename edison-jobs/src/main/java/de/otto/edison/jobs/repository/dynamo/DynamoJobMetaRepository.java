@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
+import static software.amazon.awssdk.services.dynamodb.model.AttributeAction.*;
 
 public class DynamoJobMetaRepository extends AbstractDynamoRepository implements JobMetaRepository {
 
@@ -72,7 +73,7 @@ public class DynamoJobMetaRepository extends AbstractDynamoRepository implements
 
     @Override
     public void clearRunningJob(String jobType) {
-        setValue(jobType, KEY_RUNNING, null);
+        removeAttribute(jobType, KEY_RUNNING);
     }
 
     @Override
@@ -82,13 +83,22 @@ public class DynamoJobMetaRepository extends AbstractDynamoRepository implements
 
     @Override
     public void enable(String jobType) {
-        setValue(jobType, KEY_DISABLED, null);
+        removeAttribute(jobType, KEY_DISABLED);
     }
 
     @Override
     public String setValue(String jobType, String key, String value) {
         putIfAbsent(jobType);
         return putValue(jobType, key, value);
+    }
+
+    private void removeAttribute(String jobType, String attributeKey) {
+        dynamoDbClient.updateItem(UpdateItemRequest.builder()
+                .tableName(tableName)
+                .key(ImmutableMap.of(JOB_TYPE_KEY, AttributeValue.builder().s(jobType).build()))
+                .attributeUpdates(ImmutableMap.of(attributeKey, AttributeValueUpdate.builder()
+                        .action(DELETE).build()))
+                .build());
     }
 
     private String putValue(String jobType, String key, String value) {
