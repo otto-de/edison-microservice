@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.repository.dynamo;
 
 import de.otto.edison.jobs.domain.JobMeta;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 import static de.otto.edison.jobs.repository.dynamo.DynamoJobMetaRepository.JOB_TYPE_KEY;
 import static de.otto.edison.jobs.repository.dynamo.DynamoJobMetaRepository.KEY_DISABLED;
+import static java.util.Collections.emptySet;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -271,5 +273,23 @@ public class DynamoJobMetaRepositoryTest {
         assertThat(jobMeta.getDisabledComment(), is(""));
         assertThat(jobMeta.isRunning(), is(false));
         assertThat(jobMeta.getAll(), is(Collections.emptyMap()));
+    }
+
+    @Test
+    void shouldDeleteAll() {
+        //given
+        // 25 is the max delete batch size
+        for (int i = 0; i < 26; i++) {
+            String jobType = "someJobType" + i;
+            String key = "someKey" + i;
+            String value = "someValue" + i;
+            dynamoJobMetaRepository.createValue(jobType, key, value);
+        }
+
+        //when
+        dynamoJobMetaRepository.deleteAll();
+
+        //then
+        MatcherAssert.assertThat(dynamoJobMetaRepository.findAllJobTypes(), is(emptySet()));
     }
 }
