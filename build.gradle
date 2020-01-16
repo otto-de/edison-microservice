@@ -2,8 +2,8 @@ buildscript {
     apply from: "${rootDir}/gradle/dependencies.gradle"
 
     repositories {
-        maven { url 'http://repo.spring.io/libs-snapshot' }
-        maven { url 'http://repo.spring.io/plugins-release' }
+        mavenCentral()
+        jcenter()
         mavenLocal()
     }
 
