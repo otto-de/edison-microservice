@@ -29,12 +29,16 @@ import static org.junit.Assert.assertThat;
 public class DynamoJobMetaRepositoryTest {
 
     @Container
-    private static GenericContainer dynamodb = new GenericContainer("amazon/dynamodb-local:latest")
+    private static GenericContainer<?> dynamodb = createTestContainer()
             .withExposedPorts(8000);
 
     private static final String TABLE_NAME = "jobMeta";
 
     private static DynamoJobMetaRepository dynamoJobMetaRepository;
+
+    public static GenericContainer<?> createTestContainer() {
+        return new GenericContainer<>("amazon/dynamodb-local:latest");
+    }
 
     @BeforeEach
     public void before() {

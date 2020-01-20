@@ -48,17 +48,17 @@ public class JobMetaRepositoryTest {
     @BeforeAll
     public static void initDbs() throws IOException {
         EmbeddedMongoHelper.startMongoDB();
-        createDynamoTableTable();
+        createDynamoTable();
         dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient(), DYNAMO_JOB_META_TABLE_NAME);
     }
 
     @Container
-    static GenericContainer dynamodb = new GenericContainer("amazon/dynamodb-local:latest")
+    private static GenericContainer<?> dynamodb = createTestContainer()
             .withExposedPorts(8000);;
 
     @BeforeEach
     void setUp() {
-        createDynamoTableTable();
+        createDynamoTable();
         dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient(), DYNAMO_JOB_META_TABLE_NAME);
     }
 
@@ -67,7 +67,11 @@ public class JobMetaRepositoryTest {
         deleteDynamoTable();
     }
 
-    private static void createDynamoTableTable() {
+    private static GenericContainer<?> createTestContainer() {
+        return new GenericContainer<>("amazon/dynamodb-local:latest");
+    }
+
+    private static void createDynamoTable() {
         try {
             getDynamoDbClient().describeTable(DescribeTableRequest.builder()
                     .tableName(DYNAMO_JOB_META_TABLE_NAME)
