@@ -16,7 +16,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.net.URI;
 import java.time.Clock;
@@ -32,6 +32,7 @@ import static de.otto.edison.jobs.domain.JobInfo.JobStatus.OK;
 import static de.otto.edison.jobs.domain.JobInfo.builder;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
+import static de.otto.edison.jobs.repository.dynamo.JobStructure.ID;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isAbsent;
 import static de.otto.edison.testsupport.matcher.OptionalMatchers.isPresent;
 import static java.time.Clock.fixed;
@@ -43,6 +44,7 @@ import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType.S;
 
 @Testcontainers
 class DynamoJobRepositoryTest {
@@ -59,11 +61,12 @@ class DynamoJobRepositoryTest {
     void tearDown() {
         DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
                 .tableName(JOBS_TABLE_NAME).build();
-        getDynamoDbClient().deleteTable(deleteTableRequest);
+        deleteJobInfoTable();
     }
 
     @BeforeEach
     void setUp() {
+        createJobInfoTable();
         testee = new DynamoJobRepository(getDynamoDbClient(), JOBS_TABLE_NAME, 10);
     }
 
@@ -98,7 +101,7 @@ class DynamoJobRepositoryTest {
     @Test
     void shouldFindJobInfoByUri() {
         // given
-        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), JOBS_TABLE_NAME,  10);
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), JOBS_TABLE_NAME, 10);
 
         // when
         JobInfo job = newJobInfo(randomUUID().toString(), "MYJOB", clock, "localhost");
@@ -110,7 +113,7 @@ class DynamoJobRepositoryTest {
 
     @Test
     void shouldReturnAbsentStatus() {
-        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(),JOBS_TABLE_NAME,  10);
+        DynamoJobRepository repository = new DynamoJobRepository(getDynamoDbClient(), JOBS_TABLE_NAME, 10);
         assertThat(repository.findOne("some-nonexisting-job-id"), isAbsent());
     }
 
@@ -168,7 +171,7 @@ class DynamoJobRepositoryTest {
     @Test
     void shouldFindAllWithPaging() {
         // given
-        testee = new DynamoJobRepository(getDynamoDbClient(),JOBS_TABLE_NAME,  2);
+        testee = new DynamoJobRepository(getDynamoDbClient(), JOBS_TABLE_NAME, 2);
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest1", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
@@ -194,7 +197,7 @@ class DynamoJobRepositoryTest {
     @Test
     void shouldFindAllinSizeOperationWithPageing() {
         // given
-        testee = new DynamoJobRepository(getDynamoDbClient(),JOBS_TABLE_NAME,  2);
+        testee = new DynamoJobRepository(getDynamoDbClient(), JOBS_TABLE_NAME, 2);
         testee.createOrUpdate(newJobInfo("oldest", "FOO", fixed(Instant.now().minusSeconds(1), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youngest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
         testee.createOrUpdate(newJobInfo("youn44444556gest", "FOO", fixed(Instant.now(), systemDefault()), "localhost"));
@@ -231,7 +234,6 @@ class DynamoJobRepositoryTest {
         assertThat(latestDistinct, hasSize(3));
         assertThat(latestDistinct, Matchers.containsInAnyOrder(fuenf, zwei, drei));
     }
-
 
 
     @Test
@@ -384,16 +386,18 @@ class DynamoJobRepositoryTest {
     @Test
     void shouldClearJobInfos() {
         //Given
-        JobInfo stoppedJob = builder()
-                .setJobId("some/job/stopped")
-                .setJobType("test")
-                .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
-                .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
-                .setHostname("localhost")
-                .setStatus(JobStatus.OK)
-                .build();
-        testee.createOrUpdate(stoppedJob);
-
+        // 25 is the max delete batch size
+        for (int i = 0; i < 26; i++) {
+            JobInfo stoppedJob = builder()
+                    .setJobId("some/job/stopped" + i)
+                    .setJobType("test")
+                    .setStarted(now(fixed(Instant.now().minusSeconds(10), systemDefault())))
+                    .setStopped(now(fixed(Instant.now().minusSeconds(7), systemDefault())))
+                    .setHostname("localhost")
+                    .setStatus(JobStatus.OK)
+                    .build();
+            testee.createOrUpdate(stoppedJob);
+        }
         //When
         testee.deleteAll();
 
@@ -447,5 +451,27 @@ class DynamoJobRepositoryTest {
                 systemDefaultZone(),
                 "localhost"
         );
+    }
+
+    private void createJobInfoTable() {
+        getDynamoDbClient().createTable(CreateTableRequest.builder()
+                .tableName(JOBS_TABLE_NAME)
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName(ID.key())
+                        .attributeType(S)
+                        .build())
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName(ID.key())
+                        .keyType(KeyType.HASH)
+                        .build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
+                        .readCapacityUnits(1L)
+                        .writeCapacityUnits(1L)
+                        .build())
+                .build());
+    }
+
+    private void deleteJobInfoTable() {
+        getDynamoDbClient().deleteTable(DeleteTableRequest.builder().tableName(JOBS_TABLE_NAME).build());
     }
 }

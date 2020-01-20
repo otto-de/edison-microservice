@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.2.3
+* **[edison-jobs]**: DynamoDb Support
+    * creation of tables removed
+    * Fixes for Enabling Jobs and ClearRunningJob
+    * Clear table when calling deleteAll instead of deleting and recreating table
+
 ## 2.2.2
 * **[edison-jobs]**: add DynamoDb Support for Edison-Jobs
     * Properties for enabling DynamoDb:

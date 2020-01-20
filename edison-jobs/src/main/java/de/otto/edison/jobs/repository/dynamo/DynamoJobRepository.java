@@ -17,24 +17,17 @@ import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.*;
 
-public class DynamoJobRepository implements JobRepository {
+public class DynamoJobRepository extends AbstractDynamoRepository implements JobRepository {
 
     private static final String ETAG_KEY = "etag";
-    private final DynamoDbClient dynamoDbClient;
-    private final String tableName;
     private final int pageSize;
 
     public DynamoJobRepository(DynamoDbClient dynamoDbClient, final String tableName, int pageSize) {
-        this.dynamoDbClient = dynamoDbClient;
-        this.tableName = tableName;
+        super(dynamoDbClient, tableName);
         this.pageSize = pageSize;
-        try {
-            dynamoDbClient.describeTable(DescribeTableRequest.builder()
-                    .tableName(tableName)
-                    .build());
-        } catch (ResourceNotFoundException e) {
-            createTable();
-        }
+        dynamoDbClient.describeTable(DescribeTableRequest.builder()
+                .tableName(tableName)
+                .build());
     }
 
     @Override
@@ -61,7 +54,7 @@ public class DynamoJobRepository implements JobRepository {
         return findAll().stream()
                 .sorted(Comparator.<JobInfo>comparingLong(jobInfo -> jobInfo.getStarted().toInstant().toEpochMilli()).reversed())
                 .limit(maxCount)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
@@ -83,7 +76,7 @@ public class DynamoJobRepository implements JobRepository {
                 .sorted(Comparator.<JobInfo>comparingLong(jobInfo ->
                         jobInfo.getStarted().toInstant().toEpochMilli()).reversed())
                 .limit(maxCount)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
@@ -104,12 +97,11 @@ public class DynamoJobRepository implements JobRepository {
 
             final ScanResponse response = dynamoDbClient.scan(query);
             lastKeyEvaluated = response.lastEvaluatedKey();
-            List<JobInfo> newJobsFromThisPage = response.items().stream().map(this::decode).collect(Collectors.toList());
+            List<JobInfo> newJobsFromThisPage = response.items().stream().map(this::decode).collect(toList());
             jobs.addAll(newJobsFromThisPage);
         } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
         return jobs;
     }
-
 
     private List<JobInfo> findAll(final boolean withMessages) {
         Map<String, AttributeValue> lastKeyEvaluated = null;
@@ -167,7 +159,7 @@ public class DynamoJobRepository implements JobRepository {
 
             final ScanResponse response = dynamoDbClient.scan(query);
             lastKeyEvaluated = response.lastEvaluatedKey();
-            List<JobInfo> newJobsFromThisPage = response.items().stream().map(this::decode).collect(Collectors.toList());
+            List<JobInfo> newJobsFromThisPage = response.items().stream().map(this::decode).collect(toList());
             jobs.addAll(newJobsFromThisPage);
         } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
         return jobs;
@@ -237,7 +229,7 @@ public class DynamoJobRepository implements JobRepository {
             return emptyList();
         }
         final AttributeValue attributeValue = item.get(MESSAGES.key());
-        return attributeValue.l().stream().map(this::attributeValueToMessage).collect(Collectors.toList());
+        return attributeValue.l().stream().map(this::attributeValueToMessage).collect(toList());
     }
 
     private JobMessage attributeValueToMessage(AttributeValue attributeValue) {
@@ -276,9 +268,9 @@ public class DynamoJobRepository implements JobRepository {
         JobInfo jobInfo = decode(item);
         createOrUpdate(
                 jobInfo.copy()
-                .addMessage(jobMessage)
-                .setLastUpdated(jobMessage.getTimestamp())
-                .build(),
+                        .addMessage(jobMessage)
+                        .setLastUpdated(jobMessage.getTimestamp())
+                        .build(),
                 item.get(ETAG_KEY));
     }
 
@@ -287,8 +279,8 @@ public class DynamoJobRepository implements JobRepository {
         final Map<String, AttributeValue> item = findOneItem(jobId).orElseThrow(RuntimeException::new);
         JobInfo jobInfo = decode(item);
         createOrUpdate(jobInfo.copy()
-                .setStatus(jobStatus)
-                .build(),
+                        .setStatus(jobStatus)
+                        .build(),
                 item.get(ETAG_KEY));
     }
 
@@ -297,8 +289,8 @@ public class DynamoJobRepository implements JobRepository {
         final Map<String, AttributeValue> item = findOneItem(jobId).orElseThrow(RuntimeException::new);
         JobInfo jobInfo = decode(item);
         createOrUpdate(jobInfo.copy()
-                .setLastUpdated(lastUpdate)
-                .build(),
+                        .setLastUpdated(lastUpdate)
+                        .build(),
                 item.get(ETAG_KEY));
     }
 
@@ -323,32 +315,17 @@ public class DynamoJobRepository implements JobRepository {
 
     @Override
     public void deleteAll() {
-        deleteTable();
-        createTable();
-    }
+        final List<WriteRequest> deleteRequests = findAll().stream()
+                .map(JobInfo::getJobId)
+                .map(jobId -> WriteRequest.builder()
+                        .deleteRequest(
+                                DeleteRequest.builder()
+                                        .key(ImmutableMap.of(ID.key(), AttributeValue.builder().s(jobId).build()))
+                                        .build()
+                        ).build()
+                ).collect(toList());
 
-    private void deleteTable() {
-        DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName(tableName).build();
-        dynamoDbClient.deleteTable(deleteTableRequest);
-    }
-
-    private void createTable() {
-        dynamoDbClient.createTable(CreateTableRequest.builder()
-                .tableName(tableName)
-                .attributeDefinitions(AttributeDefinition.builder()
-                        .attributeName(ID.key())
-                        .attributeType(ScalarAttributeType.S)
-                        .build())
-                .keySchema(KeySchemaElement.builder()
-                        .attributeName(ID.key())
-                        .keyType(KeyType.HASH)
-                        .build())
-                .provisionedThroughput(ProvisionedThroughput.builder()
-                        .readCapacityUnits(10L)
-                        .writeCapacityUnits(10L)
-                        .build())
-                .build());
+        deleteEntriesPerBatch(deleteRequests);
     }
 
     private AttributeValue toStringAttributeValue(OffsetDateTime value) {
@@ -374,7 +351,7 @@ public class DynamoJobRepository implements JobRepository {
     }
 
     private AttributeValue messagesToAttributeValueList(List<JobMessage> jobeMessages) {
-        final List<AttributeValue> messageAttributes = jobeMessages.stream().map(this::toMapAttributeValue).collect(Collectors.toList());
+        final List<AttributeValue> messageAttributes = jobeMessages.stream().map(this::toMapAttributeValue).collect(toList());
         return toAttributeValueList(messageAttributes);
     }
 

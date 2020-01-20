@@ -6,34 +6,26 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 import software.amazon.awssdk.utils.ImmutableMap;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toList;
+import static software.amazon.awssdk.services.dynamodb.model.AttributeAction.*;
 
-public class DynamoJobMetaRepository implements JobMetaRepository {
+public class DynamoJobMetaRepository extends AbstractDynamoRepository implements JobMetaRepository {
 
     private static final String KEY_PREFIX = "_e_";
     static final String KEY_DISABLED = KEY_PREFIX + "disabled";
     private static final String KEY_RUNNING = KEY_PREFIX + "running";
     static final String JOB_TYPE_KEY = "jobType";
     private static final String ETAG_KEY = "etag";
-    private final DynamoDbClient dynamoDbClient;
-    private final String tableName;
 
     public DynamoJobMetaRepository(final DynamoDbClient dynamoDbClient, final String tableName) {
-        this.dynamoDbClient = dynamoDbClient;
-        this.tableName = tableName;
-        try {
-            dynamoDbClient.describeTable(DescribeTableRequest.builder()
-                    .tableName(tableName)
-                    .build());
-        } catch (ResourceNotFoundException e) {
-            createTable();
-        }
+        super(dynamoDbClient, tableName);
+        dynamoDbClient.describeTable(DescribeTableRequest.builder()
+                .tableName(tableName)
+                .build());
     }
 
     @Override
@@ -81,7 +73,7 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     @Override
     public void clearRunningJob(String jobType) {
-        setValue(jobType, KEY_RUNNING, null);
+        removeAttribute(jobType, KEY_RUNNING);
     }
 
     @Override
@@ -91,13 +83,22 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     @Override
     public void enable(String jobType) {
-        setValue(jobType, KEY_DISABLED, null);
+        removeAttribute(jobType, KEY_DISABLED);
     }
 
     @Override
     public String setValue(String jobType, String key, String value) {
         putIfAbsent(jobType);
         return putValue(jobType, key, value);
+    }
+
+    private void removeAttribute(String jobType, String attributeKey) {
+        dynamoDbClient.updateItem(UpdateItemRequest.builder()
+                .tableName(tableName)
+                .key(ImmutableMap.of(JOB_TYPE_KEY, AttributeValue.builder().s(jobType).build()))
+                .attributeUpdates(ImmutableMap.of(attributeKey, AttributeValueUpdate.builder()
+                        .action(DELETE).build()))
+                .build());
     }
 
     private String putValue(String jobType, String key, String value) {
@@ -166,32 +167,16 @@ public class DynamoJobMetaRepository implements JobMetaRepository {
 
     @Override
     public void deleteAll() {
-        deleteTable();
-        createTable();
-    }
+        final List<WriteRequest> deleteRequests = findAllJobTypes().stream()
+                .map(jobId -> WriteRequest.builder()
+                        .deleteRequest(
+                                DeleteRequest.builder()
+                                        .key(ImmutableMap.of(JOB_TYPE_KEY, AttributeValue.builder().s(jobId).build()))
+                                        .build()
+                        ).build()
+                ).collect(toList());
 
-    private void createTable() {
-        dynamoDbClient.createTable(CreateTableRequest.builder()
-                .tableName(tableName)
-                .attributeDefinitions(AttributeDefinition.builder()
-                        .attributeName(JOB_TYPE_KEY)
-                        .attributeType(ScalarAttributeType.S)
-                        .build())
-                .keySchema(KeySchemaElement.builder()
-                        .attributeName(JOB_TYPE_KEY)
-                        .keyType(KeyType.HASH)
-                        .build())
-                .provisionedThroughput(ProvisionedThroughput.builder()
-                        .readCapacityUnits(10L)
-                        .writeCapacityUnits(10L)
-                        .build())
-                .build());
-    }
-
-    private void deleteTable() {
-        DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName(tableName).build();
-        dynamoDbClient.deleteTable(deleteTableRequest);
+        deleteEntriesPerBatch(deleteRequests);
     }
 
     private GetItemResponse getItem(String jobType) {
