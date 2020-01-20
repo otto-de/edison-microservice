@@ -54,13 +54,11 @@ class DynamoJobRepositoryTest {
     private static DynamoJobRepository testee;
 
     @Container
-    private static GenericContainer dynamodb = new GenericContainer("amazon/dynamodb-local:latest")
+    private static GenericContainer<?> dynamodb = createTestContainer()
             .withExposedPorts(8000);
 
     @AfterEach
     void tearDown() {
-        DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName(JOBS_TABLE_NAME).build();
         deleteJobInfoTable();
     }
 
@@ -68,6 +66,10 @@ class DynamoJobRepositoryTest {
     void setUp() {
         createJobInfoTable();
         testee = new DynamoJobRepository(getDynamoDbClient(), JOBS_TABLE_NAME, 10);
+    }
+
+    public static GenericContainer<?> createTestContainer() {
+        return new GenericContainer<>("amazon/dynamodb-local:latest");
     }
 
     private static DynamoDbClient getDynamoDbClient() {
