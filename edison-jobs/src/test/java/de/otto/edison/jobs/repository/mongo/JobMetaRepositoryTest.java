@@ -19,7 +19,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -48,6 +48,7 @@ public class JobMetaRepositoryTest {
     @BeforeAll
     public static void initDbs() throws IOException {
         EmbeddedMongoHelper.startMongoDB();
+        createDynamoTableTable();
         dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient(), DYNAMO_JOB_META_TABLE_NAME);
     }
 
@@ -57,11 +58,40 @@ public class JobMetaRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        createDynamoTableTable();
         dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient(), DYNAMO_JOB_META_TABLE_NAME);
     }
 
     @AfterEach
     public void tearDown() {
+        deleteDynamoTable();
+    }
+
+    private static void createDynamoTableTable() {
+        try {
+            getDynamoDbClient().describeTable(DescribeTableRequest.builder()
+                    .tableName(DYNAMO_JOB_META_TABLE_NAME)
+                    .build());
+        } catch (ResourceNotFoundException e) {
+            getDynamoDbClient().createTable(CreateTableRequest.builder()
+                    .tableName(DYNAMO_JOB_META_TABLE_NAME)
+                    .attributeDefinitions(AttributeDefinition.builder()
+                            .attributeName("jobType")
+                            .attributeType(ScalarAttributeType.S)
+                            .build())
+                    .keySchema(KeySchemaElement.builder()
+                            .attributeName("jobType")
+                            .keyType(KeyType.HASH)
+                            .build())
+                    .provisionedThroughput(ProvisionedThroughput.builder()
+                            .readCapacityUnits(10L)
+                            .writeCapacityUnits(10L)
+                            .build())
+                    .build());
+        }
+    }
+
+    private static void deleteDynamoTable() {
         DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
                 .tableName(DYNAMO_JOB_META_TABLE_NAME).build();
         getDynamoDbClient().deleteTable(deleteTableRequest);
