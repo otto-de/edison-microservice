@@ -168,19 +168,11 @@ public class DynamoJobRepository extends AbstractDynamoRepository implements Job
     @Override
     public JobInfo createOrUpdate(final JobInfo job) {
         Map<String, AttributeValue> jobAsItem = encode(job);
-        PutItemRequest putItemRequest = PutItemRequest.builder()
-                .tableName(tableName)
-                .item(jobAsItem)
-                .build();
-        dynamoDbClient.putItem(putItemRequest);
-        return job;
-    }
-
-    public JobInfo createOrUpdate(final JobInfo job, final AttributeValue etag) {
-        Map<String, AttributeValue> jobAsItem = encode(job);
         final PutItemRequest.Builder putItemRequestBuilder = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(jobAsItem);
+        final Map<String, AttributeValue> jobInfo = findOneItem(job.getJobId()).orElse(Collections.emptyMap());
+        final AttributeValue etag = jobInfo.get(ETAG_KEY);
         if (etag != null) {
             Map<String, AttributeValue> valueMap = new HashMap<>();
             valueMap.put(":val", AttributeValue.builder().s(etag.s()).build());
@@ -204,6 +196,7 @@ public class DynamoJobRepository extends AbstractDynamoRepository implements Job
             jobAsItem.put(LAST_UPDATED_EPOCH.key(), toNumberAttributeValue(jobInfo.getLastUpdated().toInstant().toEpochMilli()));
         }
         jobAsItem.put(MESSAGES.key(), messagesToAttributeValueList(jobInfo.getMessages()));
+        jobAsItem.put(ETAG_KEY, toStringAttributeValue(UUID.randomUUID().toString()));
         return jobAsItem;
     }
 
@@ -266,12 +259,10 @@ public class DynamoJobRepository extends AbstractDynamoRepository implements Job
     public void appendMessage(String jobId, JobMessage jobMessage) {
         final Map<String, AttributeValue> item = findOneItem(jobId).orElseThrow(RuntimeException::new);
         JobInfo jobInfo = decode(item);
-        createOrUpdate(
-                jobInfo.copy()
+        createOrUpdate(jobInfo.copy()
                         .addMessage(jobMessage)
                         .setLastUpdated(jobMessage.getTimestamp())
-                        .build(),
-                item.get(ETAG_KEY));
+                        .build());
     }
 
     @Override
@@ -280,8 +271,7 @@ public class DynamoJobRepository extends AbstractDynamoRepository implements Job
         JobInfo jobInfo = decode(item);
         createOrUpdate(jobInfo.copy()
                         .setStatus(jobStatus)
-                        .build(),
-                item.get(ETAG_KEY));
+                        .build());
     }
 
     @Override
@@ -290,8 +280,7 @@ public class DynamoJobRepository extends AbstractDynamoRepository implements Job
         JobInfo jobInfo = decode(item);
         createOrUpdate(jobInfo.copy()
                         .setLastUpdated(lastUpdate)
-                        .build(),
-                item.get(ETAG_KEY));
+                        .build());
     }
 
     @Override
