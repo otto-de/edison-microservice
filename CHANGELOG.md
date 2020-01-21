@@ -1,5 +1,7 @@
 # Release Notes
 
+## 2.2.4 - SNAPSHOT
+
 ## 2.2.3
 * **[edison-jobs]**: DynamoDb Support
     * creation of tables removed
