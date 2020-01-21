@@ -2,8 +2,8 @@ buildscript {
     apply from: "${rootDir}/gradle/dependencies.gradle"
 
     repositories {
-        maven { url 'http://repo.spring.io/libs-snapshot' }
-        maven { url 'http://repo.spring.io/plugins-release' }
+        mavenCentral()
+        jcenter()
         mavenLocal()
     }
 
@@ -37,6 +37,7 @@ subprojects {
     // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
+
     version = '2.2.4'
     group = 'de.otto.edison'
 
