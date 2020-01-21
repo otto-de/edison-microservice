@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.2.4
+* **[edison-jobs]**: DynamoDb Support
+    * fix ETag handling for DynamoJobRepository
+
 ## 2.2.3
 * **[edison-jobs]**: DynamoDb Support
     * creation of tables removed
