@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.2.5
+* **[general]**: Use latest AWS SDK 2.10.56 as per AWS recommendation (important bugfixes)
+
 ## 2.2.4
 * **[edison-jobs]**: DynamoDb Support
     * fix ETag handling for DynamoJobRepository
