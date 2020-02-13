@@ -37,7 +37,7 @@ public class Credentials {
      */
     public static Optional<Credentials> readFrom(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
-        if (!StringUtils.isEmpty(authorizationHeader)) {
+        if (!StringUtils.isEmpty(authorizationHeader) && authorizationHeader.contains("Basic")) {
             String credentials = authorizationHeader.substring(6, authorizationHeader.length());
             Optional<String> decodedCredentials = base64Decode(credentials);
             String[] decodedCredentialParts = decodedCredentials
@@ -46,6 +46,7 @@ public class Credentials {
             if (decodedCredentialParts.length >= 2
                     && !decodedCredentialParts[0].isEmpty()
                     && !decodedCredentialParts[1].isEmpty()) {
+
                 return Optional.of(new Credentials(decodedCredentialParts[0], decodedCredentialParts[1]));
             }
         }

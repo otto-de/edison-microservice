@@ -2,8 +2,8 @@ buildscript {
     apply from: "${rootDir}/gradle/dependencies.gradle"
 
     repositories {
-        maven { url 'http://repo.spring.io/libs-snapshot' }
-        maven { url 'http://repo.spring.io/plugins-release' }
+        mavenCentral()
+        jcenter()
         mavenLocal()
     }
 
@@ -37,7 +37,8 @@ subprojects {
     // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-    version = '2.1.3'
+
+    version = '2.2.6-SNAPSHOT'
     group = 'de.otto.edison'
 
     repositories {
@@ -50,6 +51,7 @@ subprojects {
     // Override some Spring Boot default versions
     // see https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-customize-dependency-versions
     ext['mockito.version'] = test_versions.mockito_core
+    ext['jackson.version'] = versions.jackson
 
     task allDeps(type: DependencyReportTask) {}
 

@@ -3,8 +3,8 @@ function getLog(logIndex) {
         type: "GET",
         url: $('.logWindow').data("job-url"),
         headers: {
-            Accept: "application/json; charset=utf-8",
-            "Content-Type": "application/json; charset=utf-8"
+            Accept: "application/json",
+            "Content-Type": "application/json"
         },
         data: {},
         dataType: "json",

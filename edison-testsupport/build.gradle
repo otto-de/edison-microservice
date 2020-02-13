@@ -4,6 +4,8 @@ dependencies {
     compileOnly libraries.togglz_spring_boot_starter
     compileOnly libraries.aws_sdk_ssm
     compileOnly libraries.aws_sdk_s3
+    compileOnly libraries.jackson_databind
+    compileOnly libraries.jackson_annotations
     compileOnly libraries.mongodb_driver
     compileOnly test_libraries.togglz_testing
     compileOnly test_libraries.embedded_mongo

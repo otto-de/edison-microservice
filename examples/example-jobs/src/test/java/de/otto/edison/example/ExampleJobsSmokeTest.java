@@ -43,21 +43,21 @@ public class ExampleJobsSmokeTest {
     public void shouldHaveStatusEndpoint() {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/status?format=json", String.class);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
-        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.getBody()).startsWith("{");
     }
 
     @Test
     public void shouldHaveHealthCheck() {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/actuator/health", String.class);
-        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
     }
 
     @Test
     public void shouldHaveJobDefinitions() throws JSONException {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions?format=json", String.class);
-        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         JSONAssert.assertEquals("{\n" +
                 "  \"links\" : [ {\n" +
@@ -91,7 +91,7 @@ public class ExampleJobsSmokeTest {
     @Test
     public void shouldHaveFooJobDefinition() throws JSONException {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions/foo?format=json", String.class);
-        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         JSONAssert.assertEquals("{\n" +
                 "  \"type\" : \"Foo\",\n" +

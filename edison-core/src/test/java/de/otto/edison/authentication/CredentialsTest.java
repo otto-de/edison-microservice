@@ -102,4 +102,29 @@ public class CredentialsTest {
         assertThat(credentials.get().getUsername(), is("user"));
         assertThat(credentials.get().getPassword(), is("pass:word"));
     }
+
+    @Test
+    public void shouldReturnEmptyCredentialsIfColonDoesNotExist() {
+        // given
+        mockHttpServletRequestWithAuthentication("userpass");
+
+        // when
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+
+        // then
+        assertThat(credentials.isPresent(), is(false));
+    }
+
+    @Test
+    public void shouldReturnEmptyCredentialsIfAuthenticationNotBasic() {
+        // given
+        when(httpServletRequest.getHeader("Authorization"))
+                .thenReturn("Bearer someToken");
+
+        // when
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+
+        // then
+        assertThat(credentials.isPresent(), is(false));
+    }
 }

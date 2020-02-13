@@ -32,14 +32,14 @@ public class ExampleStatusSmokeTest {
     public void shouldHaveStatusEndpoint() {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/status", String.class);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
-        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.getBody()).startsWith("{");
     }
 
     @Test
     public void shouldHaveHealthCheck() {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/actuator/health", String.class);
-        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.getStatusCodeValue()).isIn(200, 503);
     }
 

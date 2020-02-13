@@ -1,5 +1,36 @@
 # Release Notes
 
+## 2.2.5
+* **[general]**: Use latest AWS SDK 2.10.56 as per AWS recommendation (important bugfixes)
+
+## 2.2.4
+* **[edison-jobs]**: DynamoDb Support
+    * fix ETag handling for DynamoJobRepository
+
+## 2.2.3
+* **[edison-jobs]**: DynamoDb Support
+    * creation of tables removed
+    * Fixes for Enabling Jobs and ClearRunningJob
+    * Clear table when calling deleteAll instead of deleting and recreating table
+
+## 2.2.2
+* **[edison-jobs]**: add DynamoDb Support for Edison-Jobs
+    * Properties for enabling DynamoDb:
+        * **edison.jobs.dynamo.enabled**: Enable DynamoDb (disabled by default)
+        * **edison.jobs.mongo.enabled**: MongoDb needs to be disabled
+        * **edison.jobs.dynamo.jobinfo.tableName**: Name for JobInfo table (gets created if non-existent)
+        * **edison.jobs.dynamo.jobinfo.pageSize**: PageSize for scan-requests against JobInfo table
+        * **edison.jobs.dynamo.jobmeta.tableName**: Name for JobMeta table (gets created if non-existent)
+
+## 2.2.1
+* **[general]**: upgrade aws sdk
+* **[edison-core]**: Fix basic auth credentials retrieval on wrong format
+
+## 2.2.0
+* **[general]**: Update to Spring Boot 2.2
+
+See https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2-Release-Notes for a migration guide 
+
 ## 2.1.3
 * **[general]**: Update dependencies
 
@@ -43,10 +74,13 @@ Suppress unnecessary warning on startup
 Block query of public keys until keys have been initially fetched from server 
 
 ## 2.0.0-rc5
+
 * **[edison-jobs]**: 
-Reimplement the JobEventPublisher from Edison 1.x for backwards compatibility
+    - Reimplement the JobEventPublisher from Edison 1.x for backwards compatibility
+
 * **[edison-oauth]**: 
-Add dependency to org.springframework.security:spring-security-web:5.1.4.RELEASE
+    - Add dependency to org.springframework.security:spring-security-web:5.1.4.RELEASE
+    - Fixes thread-safety issue in OAuthPublicKeyInMemoryRepository
 
 ## 2.0.0-rc4
 
