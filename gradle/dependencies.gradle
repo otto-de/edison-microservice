@@ -4,18 +4,18 @@
  */
 ext {
     versions = [
-            spring_boot                      : '2.2.0.RELEASE',
-            spring                           : '5.2.0.RELEASE',
-            spring_security_core             : '5.2.0.RELEASE',
-            spring_security_web              : '5.2.0.RELEASE',
+            spring_boot                      : '2.2.4.RELEASE',
+            spring                           : '5.2.3.RELEASE',
+            spring_security_core             : '5.2.2.RELEASE',
+            spring_security_web              : '5.2.2.RELEASE',
             spring_security_oauth            : '2.3.7.RELEASE',
             spring_security_jwt              : '1.0.11.RELEASE',
-            async_http_client                : '2.10.4',
+            async_http_client                : '2.10.5',
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.3',
             javax_servlet_api                : '3.1.0',
             togglz                           : '2.6.1.Final',
-            mongodb_driver                   : '3.11.0',
+            mongodb_driver                   : '3.12.1',
             caffeine                         : '2.8.0',
             json_path                        : '2.4.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
@@ -23,13 +23,13 @@ ext {
             edison_hal                       : '2.0.2',
             validator_collection             : '2.2.0',
             slf4j                            : '1.7.26',
-            aws_sdk                          : '2.10.56',
+            aws_sdk                          : '2.10.69',
             java_validation_api              : '2.0.1.Final',
             java_xml                         : '2.3.0',
-            jackson                          : '2.10.0'
+            jackson                          : '2.10.2'
     ]
     test_versions = [
-            junit         : '5.5.2',
+            junit         : '5.6.0',
             hamcrest      : '2.1',
             mockito_core  : '2.28.2',
             jsonassert    : '1.5.0',
