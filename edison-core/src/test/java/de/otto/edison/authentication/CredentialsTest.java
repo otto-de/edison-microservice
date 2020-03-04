@@ -76,6 +76,20 @@ public class CredentialsTest {
     }
 
     @Test
+    public void shouldReturnEmptyCredentialsIfAnotherAuthorizationSchemeThanBasicIsUsed() {
+        // given
+        when(httpServletRequest.getHeader("Authorization"))
+                .thenReturn(
+                        "Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+
+        // when
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+
+        // then
+        assertThat(credentials.isPresent(), is(false));
+    }
+
+    @Test
     public void shouldReturnCorrectCredentialsIfPasswordContainsColons() {
         // given
         mockHttpServletRequestWithAuthentication("user:pass:word");
@@ -87,5 +101,30 @@ public class CredentialsTest {
         assertThat(credentials.isPresent(), is(true));
         assertThat(credentials.get().getUsername(), is("user"));
         assertThat(credentials.get().getPassword(), is("pass:word"));
+    }
+
+    @Test
+    public void shouldReturnEmptyCredentialsIfColonDoesNotExist() {
+        // given
+        mockHttpServletRequestWithAuthentication("userpass");
+
+        // when
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+
+        // then
+        assertThat(credentials.isPresent(), is(false));
+    }
+
+    @Test
+    public void shouldReturnEmptyCredentialsIfAuthenticationNotBasic() {
+        // given
+        when(httpServletRequest.getHeader("Authorization"))
+                .thenReturn("Bearer someToken");
+
+        // when
+        final Optional<Credentials> credentials = Credentials.readFrom(httpServletRequest);
+
+        // then
+        assertThat(credentials.isPresent(), is(false));
     }
 }
