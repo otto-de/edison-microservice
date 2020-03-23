@@ -1,10 +1,10 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    compile project(":edison-oauth")
+    implementation project(":edison-oauth")
 
-    compile libraries.togglz_spring_web
-    testCompile project(":edison-testsupport")
+    implementation libraries.togglz_spring_web
+    testImplementation project(":edison-testsupport")
 }
 
 artifacts {

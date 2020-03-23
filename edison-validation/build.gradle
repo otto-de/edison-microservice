@@ -1,9 +1,11 @@
+apply plugin: 'java-library'
+
 dependencies {
     implementation project(":edison-core")
     implementation libraries.hibernate_validator
     implementation libraries.edison_hal
     implementation libraries.validator_collection
-    implementation libraries.java_validation_api
+    api libraries.java_validation_api
 
     testImplementation project(":edison-testsupport")
     testImplementation test_libraries.rest_assured

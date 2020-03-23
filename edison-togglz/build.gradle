@@ -1,31 +1,32 @@
+apply plugin: 'java-library'
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.50'
 }
+
 dependencies {
-    compile project(":edison-core")
-    compile libraries.togglz_console
-    compile libraries.togglz_spring_web
+    implementation project(":edison-core")
+    api libraries.togglz_console
+    api libraries.togglz_spring_web
 
-    compileOnly libraries.aws_sdk_s3
-    compileOnly libraries.mongodb_driver
-    compileOnly project(":edison-mongo")
+    implementation libraries.aws_sdk_s3
+    implementation libraries.mongodb_driver
+    implementation project(":edison-mongo")
 
-    compile libraries.unboundid_ldapsdk_minimal_edition
+    implementation libraries.unboundid_ldapsdk_minimal_edition
+    implementation libraries.jcip_annotations
 
-    testCompile project(":edison-testsupport")
-    testCompile project(":edison-mongo")
+    testImplementation project(":edison-testsupport")
+    testImplementation project(":edison-mongo")
+    testImplementation test_libraries.togglz_testing
 
-    testCompile libraries.aws_sdk_s3
-    testCompile test_libraries.embedded_mongo
-    testCompile test_libraries.testcontainers
-    testCompile test_libraries.junit
-    testCompile test_libraries.mockito_core
-    testCompile test_libraries.hamcrest_core
-    testCompile test_libraries.hamcrest_library
-    testCompile test_libraries.spring_boot_starter_test
-    testCompile test_libraries.togglz_testing
-
-
+    testImplementation libraries.aws_sdk_s3
+    testImplementation test_libraries.embedded_mongo
+    testImplementation test_libraries.testcontainers
+    testImplementation test_libraries.junit
+    testImplementation test_libraries.mockito_core
+    testImplementation test_libraries.hamcrest_core
+    testImplementation test_libraries.hamcrest_library
+    testImplementation test_libraries.spring_boot_starter_test
 }
 
 artifacts {
