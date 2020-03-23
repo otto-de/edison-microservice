@@ -11,8 +11,8 @@ function update() {
         type: "GET",
         url: jobsUrl + "?humanReadable=true" + (typeFilter === '' ? '' : "&type=" + typeFilter),
         headers: {
-            Accept: "application/json; charset=utf-8",
-            "Content-Type": "application/json; charset=utf-8"
+            Accept: "application/json",
+            "Content-Type": "application/json"
         },
         data: {},
         dataType: "json",

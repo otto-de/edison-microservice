@@ -46,7 +46,7 @@ public class DisableEndpointPostProcessorTest {
     @Configuration
     static class TestEndpointConfiguration {
         @Bean
-        Object someTestMvcEndpoint() {
+        static Object someTestMvcEndpoint() {
             return new Object();
         }
     }
@@ -54,7 +54,7 @@ public class DisableEndpointPostProcessorTest {
     @Configuration
     static class RemoveTestEndpointConfiguration {
         @Bean
-        DisableEndpointPostProcessor withoutSomeBean() {
+        static DisableEndpointPostProcessor withoutSomeBean() {
             return new DisableEndpointPostProcessor("someTest");
         }
     }

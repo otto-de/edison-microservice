@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -49,13 +50,13 @@ public class ApiControllerIntegrationTest {
                 .prepareGet(baseUrl + "/api/hello")
                 .addQueryParam("context", "mode")
                 .addHeader(AUTHORIZATION, bearerToken)
-                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .execute()
                 .get();
 
         // Then
         assertThat(response.getStatusCode(), is(200));
-        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_UTF8_VALUE));
+        assertThat(response.getContentType(), containsString(MediaType.APPLICATION_JSON_VALUE));
         assertThat(response.getResponseBody(), is("{\"hello\": \"world\"}"));
     }
 
@@ -69,13 +70,13 @@ public class ApiControllerIntegrationTest {
                 .prepareGet(baseUrl + "/api/hello")
                 .addQueryParam("context", "mode")
                 .addHeader(AUTHORIZATION, bearerToken)
-                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .execute()
                 .get();
 
         // Then
         assertThat(response.getStatusCode(), is(403));
-        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_UTF8_VALUE));
+        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_VALUE));
     }
 
     @Test
@@ -88,13 +89,13 @@ public class ApiControllerIntegrationTest {
                 .prepareGet(baseUrl + "/api/hello")
                 .addQueryParam("context", "mode")
                 .addHeader(AUTHORIZATION, bearerToken)
-                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .execute()
                 .get();
 
         // Then
         assertThat(response.getStatusCode(), is(403));
-        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_UTF8_VALUE));
+        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_VALUE));
     }
 
     @Test
@@ -105,13 +106,13 @@ public class ApiControllerIntegrationTest {
         final Response response = asyncHttpClient
                 .prepareGet(baseUrl + "/api/hello")
                 .addQueryParam("context", "mode")
-                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .execute()
                 .get();
 
         // Then
         assertThat(response.getStatusCode(), is(403));
-        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_UTF8_VALUE));
+        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_VALUE));
     }
 
 

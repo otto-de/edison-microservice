@@ -67,7 +67,7 @@ Afterwards, you can use an annotation at the controller method that checks the r
 for a certain `scope` inside the JWT Data:
 
 ```java
-    @RequestMapping(method = GET, value = "/secured/path", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = GET, value = "/secured/path", produces = MediaType.APPLICATION_JSON)
     @ResponseBody
     @PreAuthorize("#oauth2.hasScope('some.oauth.scope')")
     public List<Object> getObjects() {

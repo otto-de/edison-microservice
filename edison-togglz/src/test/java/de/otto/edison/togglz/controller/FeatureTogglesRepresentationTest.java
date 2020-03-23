@@ -3,6 +3,8 @@ package de.otto.edison.togglz.controller;
 import de.otto.edison.togglz.EmptyFeatures;
 import de.otto.edison.togglz.TestFeatures;
 import org.junit.jupiter.api.Test;
+import org.togglz.core.manager.FeatureManager;
+import org.togglz.testing.TestFeatureManager;
 
 import java.util.Map;
 
@@ -17,15 +19,17 @@ public class FeatureTogglesRepresentationTest {
 
     @Test
     public void testGetFeatureRepresentation() {
-        testee = togglzRepresentation(() -> TestFeatures.class);
+        FeatureManager featureManager = new TestFeatureManager(TestFeatures.class);
+        testee = togglzRepresentation(featureManager);
 
         final Map<String, FeatureToggleRepresentation> features = testee.features;
-        assertThat(features.get("TEST_FEATURE"), is(new FeatureToggleRepresentation("a test feature toggle", true, null)));
+        assertThat(features.get("TEST_FEATURE"), is(new FeatureToggleRepresentation("a test feature toggle", false, null)));
     }
 
     @Test
     public void testGetEmptyFeatureRepresentation() {
-        testee = togglzRepresentation(() -> EmptyFeatures.class);
+        FeatureManager featureManager = new TestFeatureManager(EmptyFeatures.class);
+        testee = togglzRepresentation(featureManager);
 
         final Map<String, FeatureToggleRepresentation> features = testee.features;
         assertThat(features, is(notNullValue()));

@@ -60,10 +60,10 @@ public class ValidationExceptionHandlerAcceptanceTest {
         .then()
                 .assertThat()
                 .statusCode(is(422)).and()
-                .header("Content-type", Matchers.containsString(";charset=utf-8"))
-                .content("errors.id[0].key", Collections.emptyList(), is("id.invalid"))
-                .content("errors.id[0].message", Collections.emptyList(), is("Ungueltiger Id-Wert."))
-                .content("errors.id[0].rejected", Collections.emptyList(), is("_!NON_SAFE_ID!!?**"));
+                .header("Content-type", Matchers.containsString("application/hal+json"))
+                .body("errors.id[0].key", Collections.emptyList(), is("id.invalid"))
+                .body("errors.id[0].message", Collections.emptyList(), is("Ungueltiger Id-Wert."))
+                .body("errors.id[0].rejected", Collections.emptyList(), is("_!NON_SAFE_ID!!?**"));
     }
 
     public static class TestConfiguration {

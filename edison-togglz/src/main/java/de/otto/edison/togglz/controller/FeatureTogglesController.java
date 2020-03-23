@@ -1,9 +1,9 @@
 package de.otto.edison.togglz.controller;
 
-import de.otto.edison.togglz.FeatureClassProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.togglz.core.manager.FeatureManager;
 
 import static de.otto.edison.togglz.controller.FeatureTogglesRepresentation.togglzRepresentation;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -11,11 +11,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RestController
 public class FeatureTogglesController {
 
-    private final FeatureClassProvider featureClassProvider;
+    private final FeatureManager featureManager;
 
     @Autowired
-    public FeatureTogglesController(final FeatureClassProvider featureClassProvider) {
-        this.featureClassProvider = featureClassProvider;
+    public FeatureTogglesController(final FeatureManager featureManager) {
+        this.featureManager = featureManager;
     }
 
     @RequestMapping(
@@ -26,6 +26,6 @@ public class FeatureTogglesController {
             method = GET
     )
     public FeatureTogglesRepresentation getStatusAsJson() {
-        return togglzRepresentation(featureClassProvider);
+        return togglzRepresentation(featureManager);
     }
 }

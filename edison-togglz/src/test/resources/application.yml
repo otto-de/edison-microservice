@@ -8,3 +8,12 @@ server:
     servlet:
         context-path: /togglztest
     port: 8085
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: '*'
+    endpoint:
+        loggers:
+            enabled: true

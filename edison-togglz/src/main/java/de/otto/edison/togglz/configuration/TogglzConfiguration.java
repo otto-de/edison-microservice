@@ -67,6 +67,7 @@ public class TogglzConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(FeatureManager.class)
     public FeatureManager featureManager(final TogglzConfig togglzConfig) throws Exception {
         final FeatureManagerFactory featureManagerFactory = new FeatureManagerFactory();
         featureManagerFactory.setTogglzConfig(togglzConfig);

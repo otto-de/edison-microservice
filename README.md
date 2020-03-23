@@ -4,20 +4,15 @@ Collection of independent libraries on top of Spring Boot to provide a faster se
 
 > "I never did anything by accident, nor did any of my inventions come by accident; they came by work." - Thomas Edison
 
-
 ## Status
 
-[![Next Selected Stories](https://badge.waffle.io/otto-de/edison-microservice.svg?label=Ready&title=Selected)](http://waffle.io/otto-de/edison-microservice)
-[![Active Stories](https://badge.waffle.io/otto-de/edison-microservice.svg?label=In%20Progress&title=Doing)](http://waffle.io/otto-de/edison-microservice)
-
-[![build](https://travis-ci.org/otto-de/edison-microservice.svg)](https://travis-ci.org/otto-de/edison-microservice) 
+[![build](https://travis-ci.org/otto-de/edison-microservice.svg?branch=master)](https://travis-ci.org/otto-de/edison-microservice) 
 [![codecov](https://codecov.io/gh/otto-de/edison-microservice/branch/master/graph/badge.svg)](https://codecov.io/gh/otto-de/edison-microservice)
 [![Known Vulnerabilities](https://snyk.io/test/github/otto-de/edison-microservice/badge.svg)](https://snyk.io/test/github/otto-de/edison-microservice)
 [![release](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-core)
 [![license](https://img.shields.io/github/license/otto-de/edison-microservice.svg)](./LICENSE)
 
 Have a look at the [release notes](CHANGELOG.md) for details about updates and changes.
-
 
 ## About
 
@@ -45,7 +40,7 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 
 **[1.x.0](https://github.com/otto-de/edison-microservice/milestone/2)**: Edison Microservices for Spring Boot 1.5 &#10004;
 
-**[2.0.0](https://github.com/otto-de/edison-microservice/milestone/3)**: Edison Microservices for Spring Boot 2.0
+**[2.0.0](https://github.com/otto-de/edison-microservice/milestone/3)**: Edison Microservices for Spring Boot 2.x
 
 
 ## Migration from Edison 1.x to Edison 2

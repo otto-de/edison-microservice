@@ -9,7 +9,10 @@ import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static de.otto.edison.togglz.util.FeatureManagerSupport.getFeatureFromName;
 
 /**
  * Togglz state repository, that fetches the s3 state async
@@ -20,7 +23,7 @@ public class S3TogglzRepository implements StateRepository {
     private final static Logger LOG = LoggerFactory.getLogger(S3TogglzRepository.class);
     private static final int SCHEDULE_RATE_IN_MILLISECONDS = 60000;
 
-    private final Map<Feature, CacheEntry> cache = new ConcurrentHashMap<>();
+    private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
     private final FeatureStateConverter featureStateConverter;
 
     public S3TogglzRepository(final FeatureStateConverter featureStateConverter) {
@@ -30,7 +33,7 @@ public class S3TogglzRepository implements StateRepository {
     @Override
     public FeatureState getFeatureState(final Feature feature) {
 
-        final CacheEntry cachedEntry = cache.get(feature);
+        final CacheEntry cachedEntry = cache.get(feature.name());
 
         if (cachedEntry != null) {
             return cachedEntry.getState();
@@ -38,7 +41,7 @@ public class S3TogglzRepository implements StateRepository {
 
         // no cache hit - refresh state from delegate
         final FeatureState featureState = featureStateConverter.retrieveFeatureStateFromS3(feature);
-        cache.put(feature, new CacheEntry(featureState));
+        cache.put(feature.name(), new CacheEntry(featureState));
 
         return featureState;
     }
@@ -46,7 +49,7 @@ public class S3TogglzRepository implements StateRepository {
     @Override
     public void setFeatureState(final FeatureState featureState) {
         featureStateConverter.persistFeatureStateToS3(featureState);
-        cache.put(featureState.getFeature(), new CacheEntry(featureState));
+        cache.put(featureState.getFeature().name(), new CacheEntry(featureState));
     }
 
     @Scheduled(initialDelay = 0, fixedRate = SCHEDULE_RATE_IN_MILLISECONDS)
@@ -56,7 +59,14 @@ public class S3TogglzRepository implements StateRepository {
             initializeFeatureStates();
         } else {
             LOG.debug("Refreshing state for features");
-            cache.replaceAll((feature, cacheEntry) -> new CacheEntry(featureStateConverter.retrieveFeatureStateFromS3(feature)));
+
+            cache.replaceAll((featureName, cacheEntry) -> {
+                Optional<Feature> featureFromName = getFeatureFromName(featureName);
+                if (featureFromName.isPresent()) {
+                    return new CacheEntry(featureStateConverter.retrieveFeatureStateFromS3(featureFromName.get()));
+                }
+                return null;
+            });
         }
     }
 

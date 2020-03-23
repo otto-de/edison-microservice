@@ -44,6 +44,27 @@ public final class DefaultJobDefinition implements JobDefinition {
     }
 
     /**
+     * Create a JobDefinition for a job that will not be triggered automatically by a job trigger.
+     *
+     * @param jobType     The type of the Job
+     * @param jobName     A human readable name of the Job
+     * @param description A short description of the job's purpose
+     * @param restarts    The number of restarts if the job failed because of errors or exceptions
+     * @param retries     Specifies how often a job trigger should retry to start the job if triggering fails for some reason.
+     * @param maxAge      Optional maximum age of a job. When the job is not run for longer than this duration,
+     *                    a warning is displayed on the status page
+     * @return JobDefinition
+     */
+    public static JobDefinition manuallyTriggerableJobDefinition(final String jobType,
+                                                                 final String jobName,
+                                                                 final String description,
+                                                                 final int restarts,
+                                                                 final int retries,
+                                                                 final Optional<Duration> maxAge) {
+        return new DefaultJobDefinition(jobType, jobName, description, maxAge, Optional.empty(), Optional.empty(), restarts, retries, Optional.empty());
+    }
+
+    /**
      * Create a JobDefinition that is using a cron expression to specify, when and how often the job should be triggered.
      *
      * @param jobType     The type of the Job

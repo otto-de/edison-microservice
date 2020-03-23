@@ -3,7 +3,7 @@ package de.otto.edison.status.scheduler;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import org.springframework.scheduling.annotation.Scheduled;
 
-public final class CronScheduler implements Scheduler {
+public class CronScheduler implements Scheduler {
 
     private final ApplicationStatusAggregator aggregator;
 

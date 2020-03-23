@@ -44,7 +44,7 @@ public class StatusControllerAcceptanceTest {
 
         then(
                 assertThat(the_status_code().value(), is(200)),
-                assertThat(the_response_headers().get("Content-Type"), contains("application/vnd.otto.monitoring.status+json;charset=UTF-8"))
+                assertThat(the_response_headers().get("Content-Type"), contains("application/vnd.otto.monitoring.status+json"))
         );
     }
 

@@ -5,11 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.otto.edison.hal.HalRepresentation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static de.otto.edison.hal.Link.profile;
@@ -18,14 +14,12 @@ import static de.otto.edison.hal.Links.linkingTo;
 @JsonDeserialize(builder = ErrorHalRepresentation.Builder.class)
 public class ErrorHalRepresentation extends HalRepresentation {
 
-    private static final String PROFILE_ERROR = "http://spec.otto.de/profiles/error";
-
     private final String errorMessage;
     private final Map<String, List<Map<String, String>>> errors;
 
     private ErrorHalRepresentation(Builder builder) {
         super(linkingTo()
-                .array(profile(PROFILE_ERROR))
+                .array(profile(builder.profile))
                 .build()
         );
         this.errors = builder.errors;
@@ -74,12 +68,18 @@ public class ErrorHalRepresentation extends HalRepresentation {
     public static final class Builder {
         private Map<String, List<Map<String, String>>> errors = new HashMap<>();
         private String errorMessage;
+        private String profile = "";
 
         private Builder() {
         }
 
         public ErrorHalRepresentation build() {
             return new ErrorHalRepresentation(this);
+        }
+
+        public Builder withProfile(String profile) {
+            this.profile = profile;
+            return this;
         }
 
         public Builder withErrors(Map<String, List<Map<String, String>>> errors) {

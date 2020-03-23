@@ -15,7 +15,7 @@ import static org.springframework.http.ResponseEntity.unprocessableEntity;
 public class ValidationExceptionHandler {
 
     private static final MediaType APPLICATION_HAL_JSON_ERROR = MediaType.parseMediaType("application/hal+json; " +
-            "profiles=\"http://spec.otto.de/profiles/error\"; charset=utf-8");
+            "profiles=\"http://spec.otto.de/profiles/error\"");
     private final ErrorHalRepresentationFactory errorHalRepresentationFactory;
 
     @Autowired

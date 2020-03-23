@@ -32,9 +32,26 @@ public class ErrorHalRepresentationFactoryTest {
     }
 
     @Test
+    public void shouldBuildRepresentationForErrorMessage() {
+        // given
+        String someErrorProfile = "someErrorProfile";
+        String someErrorMessage = "someErrorMessage";
+        final ErrorHalRepresentationFactory factory = new ErrorHalRepresentationFactory(messageSource, new ObjectMapper(), someErrorProfile);
+
+        // when
+        ErrorHalRepresentation errorHalRepresentation = factory.halRepresentationForErrorMessage(someErrorMessage);
+
+        // then
+        assertThat(errorHalRepresentation.getErrors().isEmpty(), is(true));
+        assertThat(errorHalRepresentation.getErrorMessage(), is(someErrorMessage));
+        assertThat(errorHalRepresentation.getLinks().getLinkBy("profile").isPresent(), is(true));
+        assertThat(errorHalRepresentation.getLinks().getLinkBy("profile").get().getHref(), is(someErrorProfile));
+    }
+
+    @Test
     public void shouldBuildRepresentationForValidationResults() {
         // given
-        final ErrorHalRepresentationFactory factory = new ErrorHalRepresentationFactory(messageSource, new ObjectMapper());
+        final ErrorHalRepresentationFactory factory = new ErrorHalRepresentationFactory(messageSource, new ObjectMapper(), "someErrorProfile");
 
         // when
         final Errors mockErrors = mock(Errors.class);
@@ -51,6 +68,8 @@ public class ErrorHalRepresentationFactoryTest {
 
         // then
         assertThat(errorHalRepresentation.getErrorMessage(), is("Validation failed. 1 error(s)"));
+        assertThat(errorHalRepresentation.getLinks().getLinkBy("profile").isPresent(), is(true));
+        assertThat(errorHalRepresentation.getLinks().getLinkBy("profile").get().getHref(), is("someErrorProfile"));
         final List<Map<String, String>> listOfViolations = errorHalRepresentation.getErrors().get("xyzField");
         assertThat(listOfViolations, hasSize(1));
         assertThat(listOfViolations.get(0), hasEntry("key", "text.not_empty"));
@@ -61,7 +80,7 @@ public class ErrorHalRepresentationFactoryTest {
     @Test
     public void shouldNotCrashOnNullValues() {
         // given
-        final ErrorHalRepresentationFactory factory = new ErrorHalRepresentationFactory(messageSource, new ObjectMapper());
+        final ErrorHalRepresentationFactory factory = new ErrorHalRepresentationFactory(messageSource, new ObjectMapper(), "someErrorProfile");
 
         // when
         final Errors mockErrors = mock(Errors.class);
@@ -78,6 +97,8 @@ public class ErrorHalRepresentationFactoryTest {
 
         // then
         assertThat(errorHalRepresentation.getErrorMessage(), is("Validation failed. 1 error(s)"));
+        assertThat(errorHalRepresentation.getLinks().getLinkBy("profile").isPresent(), is(true));
+        assertThat(errorHalRepresentation.getLinks().getLinkBy("profile").get().getHref(), is("someErrorProfile"));
         final List<Map<String, String>> listOfViolations = errorHalRepresentation.getErrors().get("xyzField");
         assertThat(listOfViolations, hasSize(1));
         assertThat(listOfViolations.get(0), hasEntry("key", "text.not_empty"));

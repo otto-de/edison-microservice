@@ -1,5 +1,7 @@
 package de.otto.edison.togglz;
 
+import de.otto.edison.testsupport.togglz.FeatureManagerSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,11 @@ public class DefaultTogglzConfigTest {
 
     @Autowired
     private TogglzConfig togglzConfig;
+
+    @BeforeEach
+    void setUp() {
+        FeatureManagerSupport.allEnabledFeatureConfig(TestFeatures.class);
+    }
 
     @Test
     public void shouldCreateTogglzConfigBySpring() {
