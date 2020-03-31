@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.2.6
+* **[edison-jobs]**: Format job timestamps in local browser time on client side
+
 ## 2.2.5
 * **[general]**: Use latest AWS SDK 2.10.56 as per AWS recommendation (important bugfixes)
 
