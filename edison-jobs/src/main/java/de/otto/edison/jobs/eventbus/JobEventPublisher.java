@@ -10,9 +10,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.Objects;
 import java.util.Optional;
 
-import static de.otto.edison.jobs.domain.Level.ERROR;
-import static de.otto.edison.jobs.domain.Level.INFO;
-import static de.otto.edison.jobs.domain.Level.WARNING;
+import static de.otto.edison.jobs.domain.Level.*;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 

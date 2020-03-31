@@ -13,11 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.KEEP_ALIVE;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.RESTART;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.SKIPPED;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.START;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;

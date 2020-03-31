@@ -8,9 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import static de.otto.edison.testsupport.util.Sets.hashSet;
 import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 public class JobMutexGroupsTest {
 

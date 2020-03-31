@@ -5,9 +5,7 @@ import de.otto.edison.jobs.eventbus.events.StateChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static de.otto.edison.jobs.domain.Level.ERROR;
-import static de.otto.edison.jobs.domain.Level.INFO;
-import static de.otto.edison.jobs.domain.Level.WARNING;
+import static de.otto.edison.jobs.domain.Level.*;
 
 public class LogJobStateChangeListener implements JobStateChangeListener {
 

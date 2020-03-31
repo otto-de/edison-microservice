@@ -10,7 +10,6 @@ import de.otto.edison.testsupport.matcher.OptionalMatchers;
 import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import org.assertj.core.util.Lists;
 import org.bson.Document;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
