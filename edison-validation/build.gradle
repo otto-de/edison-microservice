@@ -3,8 +3,10 @@ apply plugin: 'java-library'
 dependencies {
     implementation project(":edison-core")
     implementation libraries.hibernate_validator
+    implementation (libraries.validator_collection) {
+        exclude group: 'org.hibernate', module: 'hibernate-validator'
+    }
     implementation libraries.edison_hal
-    implementation libraries.validator_collection
     api libraries.java_validation_api
 
     testImplementation project(":edison-testsupport")
