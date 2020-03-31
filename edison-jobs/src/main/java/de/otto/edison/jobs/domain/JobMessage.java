@@ -1,13 +1,18 @@
 package de.otto.edison.jobs.domain;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+
+import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
 /**
  * @author Guido Steinacker
  * @since 23.02.15
  */
 public final class JobMessage {
+
+    private static final ZoneId UTC_ZONE = ZoneId.of("Z");
 
     private final Level level;
     private final String message;
@@ -34,6 +39,10 @@ public final class JobMessage {
 
     public OffsetDateTime getTimestamp() {
         return timestamp;
+    }
+
+    public String getTimestampUTCIsoString() {
+        return ISO_DATE_TIME.format(timestamp.atZoneSameInstant(UTC_ZONE));
     }
 
     @Override

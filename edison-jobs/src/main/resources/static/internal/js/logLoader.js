@@ -23,7 +23,7 @@ function getLog(logIndex) {
                 if (logIndex === 0) {
                     logWindow.empty();
                 }
-                logWindow.append("<div>" + data.messages[logIndex] + "</div>");
+                logWindow.append("<div><span>[" + formatUTCToLocalTime(data.rawMessages[logIndex].timestampUTCIsoString) + "]</span> <span>[" + data.rawMessages[logIndex].level + "] " + data.rawMessages[logIndex].message + "</span></div>");
                 logIndex++;
             }
 
@@ -58,10 +58,10 @@ function getLog(logIndex) {
                     jobStatus.attr("style", "width:10em; height:2em; background: rgba(230, 110, 30, 1);");
                     jobStatus.html("<span>" + data.status + "</span>");
                 }
-                $("#job-stopped").text(data.stopped);
+                $("#job-stopped").text(formatUTCToLocalDateTime(data.stoppedIso));
                 $(".triggerButton").prop('disabled', false);
             }
-            $("#job-last-updated").text(data.lastUpdated);
+            $("#job-last-updated").text(formatUTCToLocalDateTime(data.lastUpdatedIso));
         }
     });
 }
@@ -73,6 +73,7 @@ $(".logWindow").bind("scroll mousedown DOMMouseScroll mousewheel keyup", functio
     }
 });
 
+formatInitialDates();
 setTimeout(function () {
     getLog(0)
 }, 1000);

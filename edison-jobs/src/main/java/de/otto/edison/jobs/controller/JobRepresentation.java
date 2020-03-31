@@ -1,25 +1,27 @@
 package de.otto.edison.jobs.controller;
 
 import de.otto.edison.jobs.domain.JobInfo;
+import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.status.domain.Link;
 
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.otto.edison.status.domain.Link.link;
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
-import static java.time.format.DateTimeFormatter.ofLocalizedTime;
-import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.time.format.DateTimeFormatter.*;
 import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
 import static java.util.Arrays.asList;
 
 public class JobRepresentation {
+
+    static final ZoneId UTC_ZONE = ZoneId.of("Z");
 
     private final JobInfo job;
     private final String baseUri;
@@ -33,7 +35,7 @@ public class JobRepresentation {
                               final String baseUri,
                               final String edisonManagementBasePath) {
         this.job = job;
-        this.humanReadable=humanReadable;
+        this.humanReadable = humanReadable;
         this.baseUri = baseUri;
         this.jobMeta = jobMeta;
         this.edisonManagementBasePath = edisonManagementBasePath;
@@ -68,10 +70,19 @@ public class JobRepresentation {
         return formatDateTime(started);
     }
 
+    public String getStartedIso() {
+        return ISO_DATE_TIME.format(job.getStarted().atZoneSameInstant(UTC_ZONE));
+    }
+
     public String getStopped() {
         return job.isStopped()
                 ? formatTime(job.getStopped().get())
                 : "";
+    }
+
+    public String getStoppedIso() {
+        return job.isStopped()
+                ? ISO_DATE_TIME.format(job.getStopped().get().atZoneSameInstant(UTC_ZONE)) : "";
     }
 
     public String getRuntime() {
@@ -80,8 +91,12 @@ public class JobRepresentation {
                 : formatRuntime(job.getStarted(), OffsetDateTime.now());
     }
 
-	public String getLastUpdated() {
+    public String getLastUpdated() {
         return formatTime(job.getLastUpdated());
+    }
+
+    public String getLastUpdatedIso() {
+        return ISO_DATE_TIME.format(job.getLastUpdated().atZoneSameInstant(UTC_ZONE));
     }
 
     public String getHostname() {
@@ -102,8 +117,12 @@ public class JobRepresentation {
 
     public List<String> getMessages() {
         return job.getMessages().stream().map((jobMessage) ->
-            "[" + formatTime(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()
+                "[" + formatTime(jobMessage.getTimestamp()) + "] [" + jobMessage.getLevel().getKey() + "] " + jobMessage.getMessage()
         ).collect(Collectors.toList());
+    }
+
+    public List<JobMessage> getRawMessages() {
+        return job.getMessages();
     }
 
     public List<Link> getLinks() {
@@ -127,10 +146,10 @@ public class JobRepresentation {
         return humanReadable
                 ? ofPattern("HH:mm:ss").format(dateTime)
                 : ofPattern("HH:mm:ss").format(dateTime);
-	}
+    }
 
     private String formatDateTime(final OffsetDateTime dateTime) {
-        if (dateTime==null) {
+        if (dateTime == null) {
             return null;
         } else {
             return humanReadable
@@ -140,7 +159,7 @@ public class JobRepresentation {
     }
 
     private String formatTime(final OffsetDateTime dateTime) {
-        if (dateTime==null) {
+        if (dateTime == null) {
             return null;
         } else {
             return humanReadable
@@ -149,7 +168,11 @@ public class JobRepresentation {
         }
     }
 
-   @Override
+    private String formatTimeIso(final OffsetDateTime dateTime) {
+        return ISO_DATE_TIME.format(dateTime.atZoneSameInstant(UTC_ZONE));
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
