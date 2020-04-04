@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.2.7
+* **[edison-jobs]**: Load MongoJobRepository conditionally on class MongoClient instead of on bean MongoClient.
+    
+    Current spring boot 2.2.6 seems to have a different order in which beans are instantiated and the MongoClient bean is created after the condition check for MongoJobsRepository.
+    
 ## 2.2.6
 * **[edison-jobs]**: Format job timestamps in local browser time on client side
 
