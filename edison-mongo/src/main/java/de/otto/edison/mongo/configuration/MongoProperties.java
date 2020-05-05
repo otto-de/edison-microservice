@@ -1,6 +1,7 @@
 package de.otto.edison.mongo.configuration;
 
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCompressor;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import de.otto.edison.status.domain.Datasource;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -106,6 +108,13 @@ public class MongoProperties {
      */
     @Valid
     private Connectionpool connectionpool = new Connectionpool();
+
+    /**
+     * Sets whether client server connections will be compressed or not.
+     * Compression algorithms are negotiated with the server in this order:
+     * ZstdCompressor, ZlibCompressor, SnappyCompressor
+     */
+    private boolean clientServerCompressionEnabled = false;
 
     public Status getStatus() {
         return status;
@@ -233,8 +242,16 @@ public class MongoProperties {
         this.connectionpool = connectionpool;
     }
 
+    public boolean isClientServerCompressionEnabled() {
+        return clientServerCompressionEnabled;
+    }
+
+    public void setClientServerCompressionEnabled(boolean clientServerCompressionEnabled) {
+        this.clientServerCompressionEnabled = clientServerCompressionEnabled;
+    }
+
     public MongoClientOptions toMongoClientOptions(final CodecRegistry codecRegistry) {
-        return builder()
+        MongoClientOptions.Builder clientOptionsBuilder = builder()
                 .sslEnabled(sslEnabled)
                 .codecRegistry(codecRegistry)
                 .readPreference(ReadPreference.valueOf(readPreference))
@@ -246,8 +263,11 @@ public class MongoProperties {
                 .threadsAllowedToBlockForConnectionMultiplier(connectionpool.getBlockedConnectionMultiplier())
                 .maxConnectionIdleTime(connectionpool.getMaxIdleTime())
                 .minConnectionsPerHost(connectionpool.getMinSize())
-                .connectionsPerHost(connectionpool.getMaxSize())
-                .build();
+                .connectionsPerHost(connectionpool.getMaxSize());
+        if (isClientServerCompressionEnabled()) {
+            clientOptionsBuilder.compressorList(Arrays.asList(MongoCompressor.createZstdCompressor(), MongoCompressor.createZlibCompressor(), MongoCompressor.createSnappyCompressor()));
+        }
+        return clientOptionsBuilder.build();
     }
 
     private ServerAddress toServerAddress(final String server) {
@@ -277,6 +297,7 @@ public class MongoProperties {
         public boolean isEnabled() {
             return enabled;
         }
+
         public void setEnabled(final boolean enabled) {
             this.enabled = enabled;
         }

@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.2.8
+* **[edison-mongo]**: Add configuration property `clientServerCompressionEnabled` to enable client-server compression
+
 ## 2.2.7
 * **[edison-jobs]**: Load MongoJobRepository conditionally on class MongoClient instead of on bean MongoClient.
     
