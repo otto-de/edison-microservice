@@ -15,7 +15,7 @@ ext {
             logback_classic                  : '1.2.3',
             javax_servlet_api                : '3.1.0',
             togglz                           : '2.6.1.Final',
-            mongodb_driver                   : '3.12.1',
+            mongodb_driver                   : '3.12.3',
             caffeine                         : '2.8.0',
             json_path                        : '2.4.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
