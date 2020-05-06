@@ -6,7 +6,6 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCompressor;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,10 +27,10 @@ public class MongoPropertiesTest {
 
         //when
         props.setClientServerCompressionEnabled(true);
-        MongoClientOptions mongoClientOptions = props.toMongoClientOptions(MongoClient.getDefaultCodecRegistry());
+        MongoClientOptions mongoClientOptions = props.toMongoClientOptions(MongoClient.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()));
 
         //then
-        assertThat(mongoClientOptions.getCompressorList(), is(Arrays.asList(MongoCompressor.createZstdCompressor(), MongoCompressor.createZlibCompressor(), MongoCompressor.createSnappyCompressor())));
+        assertThat(mongoClientOptions.getCompressorList(), is(Collections.singletonList(MongoCompressor.createZlibCompressor())));
     }
 
     @Test
@@ -41,7 +40,7 @@ public class MongoPropertiesTest {
 
         //when
         props.setClientServerCompressionEnabled(false);
-        MongoClientOptions mongoClientOptions = props.toMongoClientOptions(MongoClient.getDefaultCodecRegistry());
+        MongoClientOptions mongoClientOptions = props.toMongoClientOptions(MongoClient.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()));
 
         //then
         assertThat(mongoClientOptions.getCompressorList(), is(Collections.emptyList()));

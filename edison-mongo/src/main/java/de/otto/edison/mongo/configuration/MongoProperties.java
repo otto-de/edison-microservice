@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -110,9 +109,14 @@ public class MongoProperties {
     private Connectionpool connectionpool = new Connectionpool();
 
     /**
-     * Sets whether client server connections will be compressed or not.
-     * Compression algorithms are negotiated with the server in this order:
-     * ZstdCompressor, ZlibCompressor, SnappyCompressor
+     * Sets whether client server connections will be compressed.
+     * Set to "true", to enable.
+     * <p>
+     * You need to add dependencies to your application in order to use certain compression algorithms:
+     * <ul>
+     *  <li>for ZstdCompressor, add the dependency to com.github.luben:zstd-jni:1.4.4-9</li>
+     *  <li>for SnappyCompressor, add the dependency to org.xerial.snappy:snappy-java:1.1.7.4</li>
+     * </ul>
      */
     private boolean clientServerCompressionEnabled = false;
 
@@ -250,7 +254,7 @@ public class MongoProperties {
         this.clientServerCompressionEnabled = clientServerCompressionEnabled;
     }
 
-    public MongoClientOptions toMongoClientOptions(final CodecRegistry codecRegistry) {
+    public MongoClientOptions toMongoClientOptions(final CodecRegistry codecRegistry, List<MongoCompressor> possibleCompressors) {
         MongoClientOptions.Builder clientOptionsBuilder = builder()
                 .sslEnabled(sslEnabled)
                 .codecRegistry(codecRegistry)
@@ -265,7 +269,7 @@ public class MongoProperties {
                 .minConnectionsPerHost(connectionpool.getMinSize())
                 .connectionsPerHost(connectionpool.getMaxSize());
         if (isClientServerCompressionEnabled()) {
-            clientOptionsBuilder.compressorList(Arrays.asList(MongoCompressor.createZstdCompressor(), MongoCompressor.createZlibCompressor(), MongoCompressor.createSnappyCompressor()));
+            clientOptionsBuilder.compressorList(possibleCompressors);
         }
         return clientOptionsBuilder.build();
     }

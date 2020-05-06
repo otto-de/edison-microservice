@@ -1,12 +1,10 @@
 package de.otto.edison.mongo.configuration;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -52,14 +50,31 @@ public class MongoConfiguration {
         return MongoClient.getDefaultCodecRegistry();
     }
 
+    @ConditionalOnClass(name = "com.github.luben.zstd.Zstd")
+    @Bean
+    public MongoCompressor zsdtCompressor() {
+        return MongoCompressor.createZstdCompressor();
+    }
+
+    @ConditionalOnClass(name = "org.xerial.snappy.Snappy")
+    @Bean
+    public MongoCompressor snappyCompressor() {
+        return MongoCompressor.createSnappyCompressor();
+    }
+
+    @Bean
+    public MongoCompressor zlibCompressor() {
+        return MongoCompressor.createZlibCompressor();
+    }
+
     @Bean
     @Primary
     @ConditionalOnMissingBean(name = "mongoClient", value = MongoClient.class)
-    public MongoClient mongoClient(final MongoProperties mongoProperties) {
+    public MongoClient mongoClient(final MongoProperties mongoProperties, List<MongoCompressor> possibleCompressors) {
         LOG.info("Creating MongoClient");
 
         List<ServerAddress> mongoServers = mongoProperties.getServers();
-        MongoClientOptions mongoClientOptions = mongoProperties.toMongoClientOptions(codecRegistry());
+        MongoClientOptions mongoClientOptions = mongoProperties.toMongoClientOptions(codecRegistry(), possibleCompressors);
 
         if (!useUnauthorizedConnection(mongoProperties)) {
             return new MongoClient(mongoServers, getMongoCredentials(mongoProperties), mongoClientOptions);
