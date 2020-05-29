@@ -1,4 +1,22 @@
 # Release Notes
+## 2.2.9
+* **[edison-mongo]**: Discover available compression algorithms for mongodb client-server-compression.
+Certain compression algorithms require extra dependencies. Edison-mongo does not provide them.  
+You need to add the following dependencies to your application in order to use certain compression algorithms:
+     
+    * for **ZstdCompressor**, add the dependency to com.github.luben:zstd-jni:1.4.4-9</li>
+    * for **SnappyCompressor**, add the dependency to org.xerial.snappy:snappy-java:1.1.7.4</li>
+
+## 2.2.8
+* **[edison-mongo]**: Add configuration property `clientServerCompressionEnabled` to enable client-server compression
+
+## 2.2.7
+* **[edison-jobs]**: Load MongoJobRepository conditionally on class MongoClient instead of on bean MongoClient.
+    
+    Current spring boot 2.2.6 seems to have a different order in which beans are instantiated and the MongoClient bean is created after the condition check for MongoJobsRepository.
+    
+## 2.2.6
+* **[edison-jobs]**: Format job timestamps in local browser time on client side
 
 ## 2.2.5
 * **[general]**: Use latest AWS SDK 2.10.56 as per AWS recommendation (important bugfixes)

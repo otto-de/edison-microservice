@@ -50,8 +50,6 @@ the actual changes, please take a look at the [Changelog](CHANGELOG.md).
 
 When migrating, take care of the following adjustments:
 
-* Starting with Edison 2.0, the minimal Java version will be Java10. So install and configure your application and 
-  CI-Systems to use Java10 for running and building.
 * Follow the [Spring Boot 2.0 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide)
   to fix the most common problems.
     * If you want to use the behaviour of Edison 1.x, which hosts all management endpoints below `/internal`, you have to 
@@ -129,7 +127,7 @@ Examples:
 
 ## Setup
 
-Make sure you have Java 10 or later and gradle 4.x installed on your computer.
+Make sure you have Java 8 or later and gradle 5.x installed on your computer.
 
 ### Testing
 

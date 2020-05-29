@@ -1,18 +1,20 @@
+apply plugin: 'java-library'
+
 dependencies {
-    compile libraries.aws_sdk_ssm
-    compile libraries.async_http_client
+    implementation libraries.aws_sdk_ssm
+    implementation libraries.async_http_client
 
-    compile libraries.spring_boot_starter_web
-    compile libraries.spring_boot_starter_actuator
-    compile libraries.spring_boot_starter_thymeleaf
-    compile libraries.jcip_annotations
-    compile libraries.logback_classic
-    compile libraries.spring_context_support
-    compile libraries.unboundid_ldapsdk_minimal_edition
+    api libraries.spring_boot_starter_web
+    implementation libraries.spring_boot_starter_actuator
+    implementation libraries.spring_boot_starter_thymeleaf
+    implementation libraries.jcip_annotations
+    implementation libraries.logback_classic
+    implementation libraries.spring_context_support
+    implementation libraries.unboundid_ldapsdk_minimal_edition
 
-    testCompile project(":edison-testsupport")
-    testCompile libraries.aws_sdk_ssm
-    testCompile libraries.async_http_client
+    testImplementation project(":edison-testsupport")
+    testImplementation libraries.aws_sdk_ssm
+    testImplementation libraries.async_http_client
 }
 
 artifacts {

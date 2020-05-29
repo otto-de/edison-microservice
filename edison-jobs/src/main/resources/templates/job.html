@@ -29,11 +29,11 @@
                         <dt><br/>Executed by:</dt>
                         <dd th:text="${job.hostname}">&nbsp;</dd>
                         <dt>Started:</dt>
-                        <dd th:text="${job.started}">&nbsp;</dd>
+                        <dd class="job-started" th:data-datetime="${job.startedIso}" th:text="${job.started}">&nbsp;</dd>
                         <dt>Stopped:</dt>
-                        <dd id="job-stopped" th:text="${job.stopped}">&nbsp;</dd>
+                        <dd class="job-stopped" id="job-stopped" th:data-datetime="${job.stoppedIso}" th:text="${job.stopped}">&nbsp;</dd>
                         <dt>Last Update:</dt>
-                        <dd id="job-last-updated" th:text="${job.lastUpdated}">&nbsp;</dd>
+                        <dd class="job-updated" id="job-last-updated" th:data-datetime="${job.lastUpdatedIso}" th:text="${job.lastUpdated}">&nbsp;</dd>
                     </dl>
                     <div class="form-group">
                         <a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}" class="btn btn-sm btn-default btn-block">Open Definition</a>
@@ -51,7 +51,7 @@
                         <input type="checkbox" class="form-check-input" id="follow-log" checked="checked" />
                         <label class="form-check-label" for="follow-log">Follow log</label>
                     </div>
-                    <pre class="logWindow pre-scrollable" th:attr="data-job-url=${job.jobUri} + '?humanReadable=true'"><div th:each="message : ${job.messages}" th:text="${message}" ></div></pre>
+                    <pre class="logWindow pre-scrollable" th:attr="data-job-url=${job.jobUri} + '?humanReadable=true'"><div th:each="message : ${job.getRawMessages()}"><span class="job-messagedate" th:data-datetime="${message.getTimestampUTCIsoString()}"></span> <span th:text="'[' + ${message.getLevel()} + '] ' + ${message.getMessage()}"></span></div></pre>
                 </div>
             </div>
         </div>
@@ -61,6 +61,7 @@
 <span th:replace="fragments/footer :: footer" />
 
 <script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
+<script th:src="${baseUri} + '/internal/js/datetime.js'"></script>
 <script th:src="${baseUri} + '/internal/js/logLoader.js'"></script>
 
 </body>

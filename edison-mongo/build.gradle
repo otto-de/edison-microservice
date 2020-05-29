@@ -1,11 +1,17 @@
-dependencies {
-    compile project(":edison-core")
-    compile libraries.spring_boot
-    compile libraries.spring_boot_autoconfigure
-    compile libraries.mongodb_driver
+apply plugin: 'java-library'
 
-    testCompile project(":edison-testsupport")
-    testCompile test_libraries.embedded_mongo
+dependencies {
+    implementation project(":edison-core")
+    implementation libraries.spring_boot
+    implementation libraries.spring_boot_autoconfigure
+    implementation libraries.mongodb_driver
+    implementation libraries.javax_servlet_api
+    implementation libraries.hibernate_validator
+    implementation libraries.java_validation_api
+    implementation "org.slf4j:slf4j-api:1.7.27"
+
+    testImplementation project(":edison-testsupport")
+    testImplementation test_libraries.embedded_mongo
 }
 
 artifacts {

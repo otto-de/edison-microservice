@@ -19,20 +19,12 @@ import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.ERROR;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.eventbus.events.MessageEvent.newMessageEvent;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.DEAD;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.FAILED;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.KEEP_ALIVE;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.RESTART;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.SKIPPED;
-import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.STOP;
+import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 import static java.time.Instant.ofEpochMilli;
 import static java.time.OffsetDateTime.ofInstant;
 import static java.time.ZoneId.systemDefault;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PersistenceJobStateChangeListenerTest {

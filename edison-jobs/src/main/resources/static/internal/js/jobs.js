@@ -51,7 +51,8 @@ function update() {
                     }
                     $("#trigger-button-" + dataRow.id).prop('disabled', false);
                 }
-                $("#job-stopped-" + dataRow.id).text(dataRow.stopped);
+                $("#job-started-" + dataRow.id).text(formatUTCToLocalDateTime(dataRow.startedIso));
+                $("#job-stopped-" + dataRow.id).text(formatUTCToLocalDateTime(dataRow.stoppedIso));
                 $("#job-runtime-" + dataRow.id).text(dataRow.runtime);
                 $("#job-last-updated-" + dataRow.id).text(dataRow.lastUpdated);
             }
@@ -60,6 +61,7 @@ function update() {
     });
 }
 
+formatInitialDates();
 setTimeout(function () {
     update();
 }, 1000);

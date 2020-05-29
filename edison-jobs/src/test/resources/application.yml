@@ -16,3 +16,8 @@ management:
     endpoint:
         loggers:
             enabled: true
+
+edison:
+    jobs:
+        mongo:
+            enabled: false

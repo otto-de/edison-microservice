@@ -28,12 +28,8 @@ import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static de.otto.edison.util.UrlHelper.baseUriOf;
 import static java.util.stream.Collectors.toList;
-import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static javax.servlet.http.HttpServletResponse.*;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @Controller
 @ConditionalOnProperty(prefix = "edison.jobs", name = "external-trigger", havingValue = "true", matchIfMissing = true)

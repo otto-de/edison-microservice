@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
-import static software.amazon.awssdk.services.dynamodb.model.AttributeAction.*;
+import static software.amazon.awssdk.services.dynamodb.model.AttributeAction.DELETE;
 
 public class DynamoJobMetaRepository extends AbstractDynamoRepository implements JobMetaRepository {
 

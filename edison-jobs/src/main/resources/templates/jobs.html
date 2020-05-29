@@ -36,8 +36,8 @@
                         </th:block>
                         <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:80%; height:2em;" th:id="'job-status-' + ${job.id}">RUNNING</span></th:block>
                     </td>
-                    <td th:text="${job.started}" th:id="'job-started-' + ${job.id}">&nbsp;</td>
-                    <td th:text="${job.stopped}" th:id="'job-stopped-' + ${job.id}">&nbsp;</td>
+                    <td class="job-started" th:text="${job.started}" th:data-datetime="${job.startedIso}" th:id="'job-started-' + ${job.id}">&nbsp;</td>
+                    <td class="job-stopped" th:text="${job.stopped}" th:data-datetime="${job.stoppedIso}" th:id="'job-stopped-' + ${job.id}">&nbsp;</td>
                     <td th:text="${job.runtime}" th:id="'job-runtime-' + ${job.id}">&nbsp;</td>
                     <td>
                         <div class="btn-group">
@@ -74,6 +74,7 @@
 <span th:replace="fragments/footer :: footer" />
 
 <script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
+<script th:src="${baseUri} + '/internal/js/datetime.js'"></script>
 <script th:src="${baseUri} + '/internal/js/jobs.js'"></script>
 
 </body>

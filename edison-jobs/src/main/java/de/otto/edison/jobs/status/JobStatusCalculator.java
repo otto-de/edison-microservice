@@ -6,7 +6,6 @@ import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import org.slf4j.Logger;
@@ -18,9 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static de.otto.edison.status.domain.Link.link;
-import static de.otto.edison.status.domain.Status.ERROR;
-import static de.otto.edison.status.domain.Status.OK;
-import static de.otto.edison.status.domain.Status.WARNING;
+import static de.otto.edison.status.domain.Status.*;
 import static java.lang.String.format;
 import static java.time.OffsetDateTime.now;
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;

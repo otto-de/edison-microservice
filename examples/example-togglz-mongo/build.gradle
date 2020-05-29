@@ -1,11 +1,14 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    compile project(":edison-togglz")
-    compile project(":edison-mongo")
-    compile test_libraries.embedded_mongo // In-Memory impl of MongoDB; not intended for production
+    implementation project(":edison-core")
+    implementation project(":edison-togglz")
+    implementation project(":edison-mongo")
 
-    testCompile project(":edison-testsupport")
+    implementation libraries.mongodb_driver
+    implementation test_libraries.embedded_mongo // In-Memory impl of MongoDB; not intended for production
+
+    testImplementation project(":edison-testsupport")
 }
 
 artifacts {
