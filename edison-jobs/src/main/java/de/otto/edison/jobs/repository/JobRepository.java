@@ -43,4 +43,6 @@ public interface JobRepository {
     long size();
 
     void deleteAll();
+
+    default void keepJobMessagesWithinMaximumSize(String jobId) {};
 }

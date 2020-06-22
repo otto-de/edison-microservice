@@ -4,6 +4,7 @@ import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.JobRepository;
+import de.otto.edison.jobs.repository.cleanup.CleanupMessagesOfTooBigJobLogs;
 import de.otto.edison.jobs.repository.cleanup.DeleteSkippedJobs;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
@@ -110,6 +111,12 @@ public class JobsConfiguration {
     @ConditionalOnMissingBean(DeleteSkippedJobs.class)
     public DeleteSkippedJobs deleteSkippedJobsStrategy(final JobRepository jobRepository) {
         return new DeleteSkippedJobs(jobRepository, jobsProperties.getCleanup().getNumberOfSkippedJobsToKeep());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(CleanupMessagesOfTooBigJobLogs.class)
+    public CleanupMessagesOfTooBigJobLogs cleanupMessagesOfTooBigJobLogs(final JobService jobService) {
+        return new CleanupMessagesOfTooBigJobLogs(jobService);
     }
 
     @Bean

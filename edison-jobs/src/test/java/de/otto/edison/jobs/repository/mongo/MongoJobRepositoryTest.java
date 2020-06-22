@@ -1,5 +1,6 @@
 package de.otto.edison.jobs.repository.mongo;
 
+import ch.qos.logback.classic.Logger;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -339,6 +341,34 @@ public class MongoJobRepositoryTest {
 
         // then
         assertThat(repo.findAll(), is(Lists.emptyList()));
+    }
+
+    @Test
+    public void shouldTruncateTooBigJobMessagesArray() throws Exception {
+        // given
+        final String jobId = "idOfTooBigJob";
+        final JobInfo jobInfo = jobInfo(jobId, "BIG_JOB");
+        repo.createOrUpdate(jobInfo);
+
+        ch.qos.logback.classic.Level oldLevel = ((Logger) (LoggerFactory.getLogger("org.mongodb.driver"))).getLevel();
+        ((Logger)(LoggerFactory.getLogger("org.mongodb.driver"))).setLevel(ch.qos.logback.classic.Level.ERROR);
+        // when
+        char[] chars = new char[1024 * 1024 * 15 / 1500];
+        Arrays.fill(chars, 't');
+        for (int i = 0; i < 1500; i++) {
+            final JobMessage jobMessage = jobMessage(Level.INFO, new String(chars), now());
+            repo.appendMessage(jobId, jobMessage);
+        }
+        ((Logger)(LoggerFactory.getLogger("org.mongodb.driver"))).setLevel(oldLevel);
+
+        // when
+        repo.keepJobMessagesWithinMaximumSize(jobId);
+
+        // then
+        final JobInfo jobInfoFromDB = repo.findOne(jobId).orElse(null);
+        assertThat(jobInfoFromDB.getMessages(), hasSize(1000));
+        assertThat(jobInfoFromDB.getMessages().get(999).getMessage(), containsString("The messages array for this job is growing towards MongoDBs limit for single documents, so I'll drop all messages but the last 1000."));
+        assertThat(jobInfoFromDB.getStatus(), is(OK));
     }
 
     private JobInfo someJobInfo(final String jobId) {
