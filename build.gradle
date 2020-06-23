@@ -38,7 +38,7 @@ subprojects {
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
 
-    version = '2.2.10'
+    version = '2.2.11-SNAPSHOT'
     group = 'de.otto.edison'
 
     repositories {
