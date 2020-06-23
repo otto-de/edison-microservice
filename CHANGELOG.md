@@ -1,4 +1,9 @@
 # Release Notes
+
+## 2.2.10
+* **[edison-jobs]** / **[edison-mongo]**: Introduce a JobCleanupStrategy that looks for too big MongoDB documents
+that may originate from running jobs with many messages.
+
 ## 2.2.9
 * **[edison-mongo]**: Discover available compression algorithms for mongodb client-server-compression.
 Certain compression algorithms require extra dependencies. Edison-mongo does not provide them.  

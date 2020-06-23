@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class CleanupMessagesOfTooBigJobLogs implements JobCleanupStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(CleanupMessagesOfTooBigJobLogs.class);
-    private static final long FIND_TOO_LONG_LOGS_INTERVAL = 1L * 60L * 1000L;
+    private static final long FIND_TOO_LONG_LOGS_INTERVAL = 5L * 60L * 1000L; // Every 5 minutes
 
     private final JobService jobService;
 

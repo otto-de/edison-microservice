@@ -10,11 +10,8 @@ import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.repository.JobRepository;
-import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.mongo.AbstractMongoRepository;
 import de.otto.edison.mongo.configuration.MongoProperties;
-import org.bson.BsonDocument;
-import org.bson.BsonDocumentWrapper;
 import org.bson.Document;
 import org.bson.RawBsonDocument;
 import org.slf4j.Logger;
@@ -32,7 +29,6 @@ import static com.mongodb.client.model.Updates.*;
 import static de.otto.edison.jobs.domain.JobInfo.newJobInfo;
 import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static java.time.Clock.systemDefaultZone;
-import static java.time.OffsetDateTime.MAX;
 import static java.time.OffsetDateTime.ofInstant;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Collections.emptyList;
@@ -288,8 +284,11 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                 JobInfo jobInfo = jobInfoOptional.get();
                 RawBsonDocument rawBsonDocument = RawBsonDocument.parse(encode(jobInfo).toJson());
                 int bsonSize = rawBsonDocument.getByteBuffer().remaining();
+                int averageMessageSize = bsonSize / jobInfo.getMessages().size();
 
-                LOG.debug("Bson size of running job with jobId {} is {} bytes.", jobId, bsonSize);
+
+
+                LOG.debug("Bson size of running job with jobId {} is {} bytes. Average message size is {} bytes. Total messages: {}", jobId, bsonSize, averageMessageSize, jobInfo.getMessages().size());
 
                 //Is document taking more than 3/4 of the allowed space?
                 if (bsonSize > (MAX_DOCUMENT_SIZE - (MAX_DOCUMENT_SIZE / 4))) {
