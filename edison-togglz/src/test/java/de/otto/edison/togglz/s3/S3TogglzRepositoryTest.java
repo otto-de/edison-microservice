@@ -8,10 +8,8 @@ import org.togglz.core.repository.FeatureState;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class S3TogglzRepositoryTest {
@@ -59,5 +57,11 @@ public class S3TogglzRepositoryTest {
         final FeatureState featureStateFromCache = s3TogglzRepository.getFeatureState(feature);
         assertThat(featureStateFromCache, is(featureState));
         verifyZeroInteractions(featureStateConverter);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenFeatureIsNotPresent() {
+        s3TogglzRepository.getFeatureState(feature);
+        assertThrows(IllegalArgumentException.class, () -> s3TogglzRepository.prefetchFeatureStates());
     }
 }
