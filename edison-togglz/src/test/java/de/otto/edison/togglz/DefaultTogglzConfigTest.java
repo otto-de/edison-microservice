@@ -19,7 +19,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestServer.class})
 @Profile("test")
-public class DefaultTogglzConfigTest {
+class DefaultTogglzConfigTest {
 
     @Autowired
     private TogglzConfig togglzConfig;
@@ -30,7 +30,7 @@ public class DefaultTogglzConfigTest {
     }
 
     @Test
-    public void shouldCreateTogglzConfigBySpring() {
+    void shouldCreateTogglzConfigBySpring() {
         assertThat(togglzConfig, is(not(nullValue())));
         assertThat(togglzConfig.getFeatureClass(), typeCompatibleWith(TestFeatures.class));
         assertThat(togglzConfig.getStateRepository(), is(not(nullValue())));
@@ -39,7 +39,7 @@ public class DefaultTogglzConfigTest {
     }
 
     @Test
-    public void shouldProvideToggleStateWhichIsActiveByDefaultInTests() {
+    void shouldProvideToggleStateWhichIsActiveByDefaultInTests() {
         assertThat(TestFeatures.TEST_FEATURE.isActive(), is(true));
     }
 }

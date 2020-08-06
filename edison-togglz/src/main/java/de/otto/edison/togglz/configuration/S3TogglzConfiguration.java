@@ -14,12 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.UserProvider;
-import org.togglz.core.util.FeatureStateStorageWrapper;
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
-
-import java.io.IOException;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 
 @Configuration
 @EnableConfigurationProperties(TogglzProperties.class)

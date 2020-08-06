@@ -13,12 +13,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class FeatureTogglesRepresentationTest {
+class FeatureTogglesRepresentationTest {
 
     private FeatureTogglesRepresentation testee;
 
     @Test
-    public void testGetFeatureRepresentation() {
+    void testGetFeatureRepresentation() {
         FeatureManager featureManager = new TestFeatureManager(TestFeatures.class);
         testee = togglzRepresentation(featureManager);
 
@@ -27,7 +27,7 @@ public class FeatureTogglesRepresentationTest {
     }
 
     @Test
-    public void testGetEmptyFeatureRepresentation() {
+    void testGetEmptyFeatureRepresentation() {
         FeatureManager featureManager = new TestFeatureManager(EmptyFeatures.class);
         testee = togglzRepresentation(featureManager);
 

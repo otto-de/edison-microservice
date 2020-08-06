@@ -32,7 +32,7 @@ class MongoTogglzConfigurationTest {
     }
 
     @Test
-    public void shouldUseMongoStateRepositoryIfEnabled() {
+    void shouldUseMongoStateRepositoryIfEnabled() {
         this.context.register(MongoTogglzTestConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.mongo.enabled=true")
@@ -47,7 +47,7 @@ class MongoTogglzConfigurationTest {
     }
 
     @Test
-    public void shouldUseInMemoryStateRepositoryIfMongoDisabled() {
+    void shouldUseInMemoryStateRepositoryIfMongoDisabled() {
         this.context.register(MongoTogglzTestConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.mongo.enabled=false")
@@ -62,7 +62,7 @@ class MongoTogglzConfigurationTest {
     }
 
     @Test
-    public void shouldUseInMemoryStateRepositoryIfMissingMongoClient() {
+    void shouldUseInMemoryStateRepositoryIfMissingMongoClient() {
         this.context.register(TogglzTestConfiguration.class);
         TestPropertyValues
                 .of("edison.togglz.mongo.enabled=true")
