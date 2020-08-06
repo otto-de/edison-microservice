@@ -14,7 +14,7 @@ ext {
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.3',
             javax_servlet_api                : '3.1.0',
-            togglz                           : '2.6.1.Final',
+            togglz                           : '2.7.2',
             mongodb_driver                   : '3.12.3',
             caffeine                         : '2.8.0',
             json_path                        : '2.4.0',
@@ -29,9 +29,9 @@ ext {
             jackson                          : '2.10.2'
     ]
     test_versions = [
-            junit         : '5.6.0',
+            junit         : '5.6.2',
             hamcrest      : '2.1',
-            mockito_core  : '2.28.2',
+            mockito_core  : '3.4.6',
             jsonassert    : '1.5.0',
             rest_assured  : '4.2.0',
             embedded_mongo: '2.2.0',
