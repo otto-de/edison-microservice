@@ -3,22 +3,19 @@ package de.otto.edison.togglz.s3;
 import de.otto.edison.togglz.configuration.TogglzProperties;
 import de.otto.edison.togglz.s3.testsupport.LocalS3Client;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.BucketCannedACL;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.CreateBucketResponse;
 
 import java.util.HashSet;
 import java.util.UUID;
 
-import static de.otto.edison.togglz.s3.S3TestHelper.createS3Client;
-import static de.otto.edison.togglz.s3.S3TestHelper.createTestContainer;
-import static java.lang.Thread.sleep;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -46,7 +43,7 @@ public class S3TogglzRepositoryIntegrationTest {
     }
 
     @BeforeEach
-    public void setup() throws InterruptedException {
+    void setup() throws InterruptedException {
         //final Integer mappedPort = localstackContainer.getMappedPort(TEST_PORT_S3);
         s3Client = new LocalS3Client();
 
@@ -66,7 +63,7 @@ public class S3TogglzRepositoryIntegrationTest {
     }
 
     @Test
-    public void testGetSetFeatureState() throws InterruptedException {
+    void testGetSetFeatureState() throws InterruptedException {
         assertNull(repository.getFeatureState(TestFeature.FEATURE_1));
         final FeatureState initState = new FeatureState(TestFeature.FEATURE_1)
                 .setEnabled(true)
@@ -88,7 +85,7 @@ public class S3TogglzRepositoryIntegrationTest {
     }
 
     @Test
-    public void testUpdateFeatureState() throws InterruptedException {
+    void testUpdateFeatureState() throws InterruptedException {
         final FeatureState initState = new FeatureState(TestFeature.FEATURE_1)
                 .setEnabled(true)
                 .setStrategyId("abc")
