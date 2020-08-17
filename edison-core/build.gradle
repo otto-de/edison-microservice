@@ -2,7 +2,6 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation libraries.aws_sdk_ssm
-    implementation libraries.async_http_client
 
     api libraries.spring_boot_starter_web
     implementation libraries.spring_boot_starter_actuator
@@ -14,7 +13,6 @@ dependencies {
 
     testImplementation project(":edison-testsupport")
     testImplementation libraries.aws_sdk_ssm
-    testImplementation libraries.async_http_client
 }
 
 artifacts {

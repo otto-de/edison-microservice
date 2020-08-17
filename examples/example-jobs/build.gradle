@@ -4,7 +4,6 @@ dependencies {
     implementation project(":edison-core")
     implementation project(":edison-jobs")
 //  compile project(":edison-mongo")  // Enable to get persistent job information
-    implementation libraries.async_http_client
 
     testImplementation project(":edison-testsupport")
 }

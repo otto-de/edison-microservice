@@ -4,10 +4,6 @@ import de.otto.edison.oauth.KeyExchangeJwtAccessTokenConverter;
 import de.otto.edison.oauth.OAuthPublicKey;
 import de.otto.edison.oauth.OAuthPublicKeyRepository;
 import de.otto.edison.oauth.OAuthPublicKeyStore;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.AsyncHttpClientConfig;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +15,12 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
 
+import java.net.http.HttpClient;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
@@ -34,12 +32,8 @@ public class OAuthPublicKeyTestConfiguration {
 
     @Bean
     @Profile("test")
-    public AsyncHttpClient asyncHttpClient() {
-        final AsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig.Builder()
-                .setRequestTimeout(1000)
-                .setReadTimeout(1000)
-                .build();
-        return new DefaultAsyncHttpClient(httpClientConfig);
+    public HttpClient asyncHttpClient() {
+        return HttpClient.newBuilder().connectTimeout(Duration.ofMillis(1000)).build();
     }
 
     @Bean
@@ -51,7 +45,7 @@ public class OAuthPublicKeyTestConfiguration {
 
     @Bean
     @Profile("test")
-    public OAuthPublicKeyStore testOAuthPublicKeyStore(AsyncHttpClient asyncHttpClient, OAuthPublicKeyRepository inMemoryTestRepository) {
+    public OAuthPublicKeyStore testOAuthPublicKeyStore(HttpClient asyncHttpClient, OAuthPublicKeyRepository inMemoryTestRepository) {
         return new OAuthPublicKeyStore("http://localhost/access/publicKeys", asyncHttpClient, inMemoryTestRepository);
     }
 
@@ -99,5 +93,4 @@ public class OAuthPublicKeyTestConfiguration {
             }
         };
     }
-
 }

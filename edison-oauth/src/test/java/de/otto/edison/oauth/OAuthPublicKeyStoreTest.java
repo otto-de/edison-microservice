@@ -1,27 +1,26 @@
 package de.otto.edison.oauth;
 
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.BoundRequestBuilder;
-import org.asynchttpclient.ListenableFuture;
-import org.asynchttpclient.Response;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.io.IOException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import static de.otto.edison.oauth.OAuthPublicKey.oAuthPublicKeyBuilder;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 class OAuthPublicKeyStoreTest {
 
-    private static final String PUBLIC_KEY_URL = "somePublicKeyUrl";
+    private static final String PUBLIC_KEY_URL = String.format("http://localhost:%d", 8080);
 
     private static final ZonedDateTime now = ZonedDateTime.now();
     private static final ZonedDateTime oneDayAgo = now.minusDays(1);
@@ -31,22 +30,15 @@ class OAuthPublicKeyStoreTest {
     private OAuthPublicKeyStore keyStore;
 
     @Mock
-    private AsyncHttpClient asyncHttpClient;
-
-
-    @Mock
-    private BoundRequestBuilder boundRequestBuilder;
-
-    @Mock
-    private ListenableFuture<Response> future;
+    private HttpClient asyncHttpClient;
 
     private OAuthPublicKeyRepository oAuthPublicKeyRepository = new OAuthPublicKeyInMemoryRepository();
 
     @Mock
-    private Response response;
+    private HttpResponse response;
 
     @BeforeEach
-    void setUp() throws ExecutionException, InterruptedException {
+    void setUp() throws InterruptedException, IOException {
         initMocks(this);
         keyStore = new OAuthPublicKeyStore(PUBLIC_KEY_URL, asyncHttpClient, oAuthPublicKeyRepository);
         withPublicKeyResponse("[\n" +
@@ -92,7 +84,7 @@ class OAuthPublicKeyStoreTest {
     }
 
     @Test
-    void shouldAddKeysToInitiallyFetchedOned() throws ExecutionException, InterruptedException {
+    void shouldAddKeysToInitiallyFetchedOned() throws InterruptedException, IOException {
         //given
         keyStore.refreshPublicKeys();
 
@@ -133,13 +125,9 @@ class OAuthPublicKeyStoreTest {
         assertThat(activePublicKeys, Matchers.containsInAnyOrder(publicKeyOne, publicKeyTwo, publicKeyThree));
     }
 
-    private void withPublicKeyResponse(String publicKeyData) throws InterruptedException, ExecutionException {
-        when(asyncHttpClient.prepareGet(PUBLIC_KEY_URL)).thenReturn(boundRequestBuilder);
-        when(boundRequestBuilder.setRequestTimeout(anyInt())).thenReturn(boundRequestBuilder);
-        when(boundRequestBuilder.execute()).thenReturn(future);
-        when(future.get()).thenReturn(response);
-        when(response.getStatusCode()).thenReturn(200);
-        when(response.getResponseBody()).thenReturn(publicKeyData);
+    private void withPublicKeyResponse(String publicKeyData) throws InterruptedException, IOException {
+        when(asyncHttpClient.send(any(HttpRequest.class), any())).thenReturn(response);
+        when(response.statusCode()).thenReturn(200);
+        when(response.body()).thenReturn(publicKeyData);
     }
-
 }

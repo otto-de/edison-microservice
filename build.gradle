@@ -66,6 +66,6 @@ subprojects {
         compileOnly "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}"
     }
 
-    targetCompatibility = '1.8'
-    sourceCompatibility = '1.8'
+    targetCompatibility = '11'
+    sourceCompatibility = '11'
 }

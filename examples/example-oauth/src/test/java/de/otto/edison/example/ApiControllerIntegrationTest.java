@@ -1,10 +1,9 @@
 package de.otto.edison.example;
 
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -12,7 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -23,10 +26,11 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @SpringBootTest(classes = ExampleOauthServer.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 public class ApiControllerIntegrationTest {
+
     private String baseUrl;
 
     @Autowired
-    private AsyncHttpClient asyncHttpClient;
+    private HttpClient asyncHttpClient;
 
     @Autowired
     private OAuthTestHelper oAuthTestHelper;
@@ -46,18 +50,17 @@ public class ApiControllerIntegrationTest {
         final String bearerToken = oAuthTestHelper.getBearerToken("hello.read");
 
         // When
-        final Response response = asyncHttpClient
-                .prepareGet(baseUrl + "/api/hello")
-                .addQueryParam("context", "mode")
-                .addHeader(AUTHORIZATION, bearerToken)
-                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .execute()
-                .get();
+        final HttpResponse response = asyncHttpClient
+                .send(HttpRequest.newBuilder()
+                        .GET()
+                        .uri(URI.create(baseUrl + "/api/hello?context=mode"))
+                        .header(AUTHORIZATION, bearerToken)
+                        .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                        .build(), HttpResponse.BodyHandlers.ofString());
 
         // Then
-        assertThat(response.getStatusCode(), is(200));
-        assertThat(response.getContentType(), containsString(MediaType.APPLICATION_JSON_VALUE));
-        assertThat(response.getResponseBody(), is("{\"hello\": \"world\"}"));
+        assertThat(response.statusCode(), is(200));
+        assertThat(response.body(), is("{\"hello\": \"world\"}"));
     }
 
     @Test
@@ -66,17 +69,22 @@ public class ApiControllerIntegrationTest {
         final String bearerToken = oAuthTestHelper.getBearerToken("hello.write");
 
         // When
-        final Response response = asyncHttpClient
-                .prepareGet(baseUrl + "/api/hello")
-                .addQueryParam("context", "mode")
-                .addHeader(AUTHORIZATION, bearerToken)
-                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .execute()
-                .get();
+        final HttpResponse response = asyncHttpClient
+                .send(HttpRequest.newBuilder()
+                        .GET()
+                        .uri(URI.create(baseUrl + "/api/hello?context=mode"))
+                        .header(AUTHORIZATION, bearerToken)
+                        .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                        .build(), HttpResponse.BodyHandlers.ofString());
 
         // Then
-        assertThat(response.getStatusCode(), is(403));
-        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_VALUE));
+        assertThat(response.statusCode(), is(403));
+
+        String expectedJson = "{\n" +
+                "  \"error_description\" : \"Insufficient scope for this resource\",\n" +
+                "  \"error\" : \"forbidden\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedJson, response.body().toString(), false);
     }
 
     @Test
@@ -85,17 +93,21 @@ public class ApiControllerIntegrationTest {
         final String bearerToken = "someInvalidBearerToken";
 
         // When
-        final Response response = asyncHttpClient
-                .prepareGet(baseUrl + "/api/hello")
-                .addQueryParam("context", "mode")
-                .addHeader(AUTHORIZATION, bearerToken)
-                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .execute()
-                .get();
+        final HttpResponse response = asyncHttpClient
+                .send(HttpRequest.newBuilder()
+                        .GET()
+                        .uri(URI.create(baseUrl + "/api/hello?context=mode"))
+                        .header(AUTHORIZATION, bearerToken)
+                        .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                        .build(), HttpResponse.BodyHandlers.ofString());
 
         // Then
-        assertThat(response.getStatusCode(), is(403));
-        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_VALUE));
+        assertThat(response.statusCode(), is(403));
+        String expectedJson = "{\n" +
+                "  \"error_description\" : \"Insufficient scope for this resource\",\n" +
+                "  \"error\" : \"forbidden\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedJson, response.body().toString(), false);
     }
 
     @Test
@@ -103,17 +115,19 @@ public class ApiControllerIntegrationTest {
         // Given
 
         // When
-        final Response response = asyncHttpClient
-                .prepareGet(baseUrl + "/api/hello")
-                .addQueryParam("context", "mode")
-                .addHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .execute()
-                .get();
+        final HttpResponse response = asyncHttpClient
+                .send(HttpRequest.newBuilder()
+                        .GET()
+                        .uri(URI.create(baseUrl + "/api/hello?context=mode"))
+                        .header(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                        .build(), HttpResponse.BodyHandlers.ofString());
 
         // Then
-        assertThat(response.getStatusCode(), is(403));
-        assertThat(response.getContentType(), is(MediaType.APPLICATION_JSON_VALUE));
+        assertThat(response.statusCode(), is(403));
+        String expectedJson = "{\n" +
+                "  \"error_description\" : \"Insufficient scope for this resource\",\n" +
+                "  \"error\" : \"forbidden\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedJson, response.body().toString(), false);
     }
-
-
 }
