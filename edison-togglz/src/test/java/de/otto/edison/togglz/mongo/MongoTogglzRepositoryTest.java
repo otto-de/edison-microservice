@@ -1,18 +1,18 @@
 package de.otto.edison.togglz.mongo;
 
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.mongo.configuration.MongoProperties;
-import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import de.otto.edison.togglz.FeatureClassProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.MongoDBContainer;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,20 +26,21 @@ public class MongoTogglzRepositoryTest {
 
     private MongoTogglzRepository testee;
 
+    static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.2.5");
+
     @BeforeAll
-    public static void setupMongo() throws IOException {
-        EmbeddedMongoHelper.startMongoDB();
+    public static void setupMongo() {
+        mongoDBContainer.start();
     }
 
     @AfterAll
     public static void teardownMongo() {
-        EmbeddedMongoHelper.stopMongoDB();
+        mongoDBContainer.stop();
     }
-
 
     @BeforeEach
     public void setUp() {
-        final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("features-" + UUID.randomUUID());
+        final MongoDatabase mongoDatabase = MongoClients.create(mongoDBContainer.getReplicaSetUrl()).getDatabase("features-" + UUID.randomUUID());
         final FeatureClassProvider featureClassProvider = new TestFeatureClassProvider();
         final UserProvider userProvider = mock(UserProvider.class);
         when(userProvider.getCurrentUser()).thenReturn(new SimpleFeatureUser("someUser"));

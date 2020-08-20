@@ -1,9 +1,9 @@
 package de.otto.edison.jobs.configuration;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import de.otto.edison.jobs.repository.mongo.MongoJobRepository;
 import de.otto.edison.mongo.configuration.MongoConfiguration;
-import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.testcontainers.containers.MongoDBContainer;
 
 import java.io.IOException;
 
@@ -23,18 +24,20 @@ class MongoJobsConfigurationTest {
 
     private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
+    static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.2.5");
+
     @ImportAutoConfiguration({MongoConfiguration.class, MongoJobsConfiguration.class})
     private static class JobsAutoConfiguration {
     }
 
     @BeforeAll
     public static void setupMongo() throws IOException {
-        EmbeddedMongoHelper.startMongoDB();
+        mongoDBContainer.start();
     }
 
     @AfterAll
     public static void teardownMongo() {
-        EmbeddedMongoHelper.stopMongoDB();
+        mongoDBContainer.stop();
     }
 
     @AfterEach
@@ -45,7 +48,7 @@ class MongoJobsConfigurationTest {
     static class MongoTestConfiguration {
         @Bean
         public MongoClient mongoClient() {
-            return EmbeddedMongoHelper.getMongoClient();
+            return MongoClients.create(mongoDBContainer.getReplicaSetUrl());
         }
 
     }

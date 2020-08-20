@@ -39,7 +39,7 @@ public abstract class AbstractMongoRepository<K, V> {
     protected final MongoProperties mongoProperties;
 
     private static final boolean DISABLE_PARALLEL_STREAM_PROCESSING = false;
-    private static final UpdateOptions BULK_UPSERT_OPERATION = new UpdateOptions().upsert(true);
+    private static final ReplaceOptions BULK_UPSERT_OPERATION = new ReplaceOptions().upsert(true);
     private static final BulkWriteOptions BULK_WRITE_OPTIONS = new BulkWriteOptions().ordered(false);
 
     public AbstractMongoRepository(final MongoProperties mongoProperties) {
@@ -249,24 +249,21 @@ public abstract class AbstractMongoRepository<K, V> {
                                              final long maxTime,
                                              final TimeUnit timeUnit) {
         final K key = keyOf(value);
-        if (key != null) {
-            final Bson query = and(eq(AbstractMongoRepository.ID, key), eq(ETAG, eTag));
-
-            final Document updatedETaggable = collectionWithWriteTimeout(maxTime, timeUnit).findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
-            if (isNull(updatedETaggable)) {
-                final boolean documentExists = collection()
-                        .countDocuments(eq(AbstractMongoRepository.ID, key), new CountOptions().maxTime(maxTime, timeUnit)) != 0;
-                if (documentExists) {
-                    return CONCURRENTLY_MODIFIED;
-                }
-
-                return NOT_FOUND;
-            }
-
-            return OK;
-        } else {
+        if (key == null) {
             throw new IllegalArgumentException("Key must not be null");
         }
+        final Bson query = and(eq(AbstractMongoRepository.ID, key), eq(ETAG, eTag));
+
+        final Document updatedETaggable = collectionWithWriteTimeout(maxTime, timeUnit).findOneAndReplace(query, encode(value), new FindOneAndReplaceOptions().returnDocument(AFTER));
+        if (isNull(updatedETaggable)) {
+            final boolean documentExists = collection()
+                    .countDocuments(eq(AbstractMongoRepository.ID, key), new CountOptions().maxTime(maxTime, timeUnit)) != 0;
+            if (documentExists) {
+                return CONCURRENTLY_MODIFIED;
+            }
+            return NOT_FOUND;
+        }
+        return OK;
     }
 
     public long size() {

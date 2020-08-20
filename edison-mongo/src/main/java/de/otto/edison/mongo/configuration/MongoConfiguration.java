@@ -1,6 +1,8 @@
 package de.otto.edison.mongo.configuration;
 
 import com.mongodb.*;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
@@ -24,30 +26,10 @@ public class MongoConfiguration {
 
     private static final Logger LOG = getLogger(MongoConfiguration.class);
 
-    private static MongoCredential getMongoCredentials(final MongoProperties mongoProperties) {
-        return createCredential(
-                mongoProperties.getUser(),
-                getAuthenticationDb(mongoProperties),
-                mongoProperties.getPassword().toCharArray()
-        );
-    }
-
-    private static boolean useUnauthorizedConnection(final MongoProperties mongoProperties) {
-        return mongoProperties.getUser().isEmpty() || mongoProperties.getPassword().isEmpty();
-    }
-
-    private static String getAuthenticationDb(final MongoProperties mongoProperties) {
-        final String authenticationDb = mongoProperties.getAuthenticationDb();
-        if (authenticationDb != null && !authenticationDb.isEmpty()) {
-            return authenticationDb;
-        }
-        return mongoProperties.getDb();
-    }
-
     @Bean
     @ConditionalOnMissingBean(CodecRegistry.class)
     public CodecRegistry codecRegistry() {
-        return MongoClient.getDefaultCodecRegistry();
+        return MongoClientSettings.getDefaultCodecRegistry();
     }
 
     @ConditionalOnClass(name = "com.github.luben.zstd.Zstd")
@@ -73,14 +55,9 @@ public class MongoConfiguration {
     public MongoClient mongoClient(final MongoProperties mongoProperties, List<MongoCompressor> possibleCompressors) {
         LOG.info("Creating MongoClient");
 
-        List<ServerAddress> mongoServers = mongoProperties.getServers();
-        MongoClientOptions mongoClientOptions = mongoProperties.toMongoClientOptions(codecRegistry(), possibleCompressors);
+        MongoClientSettings mongoClientSettings = mongoProperties.toMongoClientSettings(codecRegistry(), possibleCompressors);
 
-        if (!useUnauthorizedConnection(mongoProperties)) {
-            return new MongoClient(mongoServers, getMongoCredentials(mongoProperties), mongoClientOptions);
-        } else {
-            return new MongoClient(mongoServers, mongoClientOptions);
-        }
+        return MongoClients.create(mongoClientSettings);
     }
 
     @Bean

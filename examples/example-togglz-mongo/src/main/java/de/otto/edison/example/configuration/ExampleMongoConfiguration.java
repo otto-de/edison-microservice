@@ -1,16 +1,7 @@
 package de.otto.edison.example.configuration;
 
-import com.mongodb.MongoClient;
-import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.runtime.Network;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import de.otto.edison.mongo.configuration.MongoProperties;
 import de.otto.edison.status.domain.Criticality;
 import de.otto.edison.status.domain.DatasourceDependency;
@@ -40,18 +31,7 @@ public class ExampleMongoConfiguration {
 
     @Bean
     public MongoClient mongoClient(final MongoProperties mongoProperties) throws IOException {
-        String bindIp = mongoProperties.getHost()[0];
-        int port = Network.getFreeServerPort();
-        IMongodConfig mongodConfig = new MongodConfigBuilder()
-                .version(Version.Main.PRODUCTION)
-                .net(new Net(bindIp, port, Network.localhostIsIPv6()))
-                .build();
-        final MongodStarter runtime = MongodStarter.getInstance(new RuntimeConfigBuilder()
-                .defaultsWithLogger(Command.MongoD, LOG)
-                .build());
-        MongodExecutable mongodExecutable = runtime.prepare(mongodConfig, Distribution.detectFor(Version.Main.PRODUCTION));
-        mongodExecutable.start();
-        return new MongoClient(bindIp, port);
+        return MongoClients.create();
     }
 
     @Bean

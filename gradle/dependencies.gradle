@@ -14,7 +14,7 @@ ext {
             logback_classic                  : '1.2.3',
             javax_servlet_api                : '3.1.0',
             togglz                           : '2.7.2',
-            mongodb_driver                   : '3.12.3',
+            mongodb_driver                   : '4.1.0',
             caffeine                         : '2.8.0',
             json_path                        : '2.4.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
@@ -33,8 +33,7 @@ ext {
             mockito_core  : '3.4.6',
             jsonassert    : '1.5.0',
             rest_assured  : '4.2.0',
-            embedded_mongo: '2.2.0',
-            testcontainers: '1.12.3'
+            testcontainers: '1.14.3'
     ]
     plugin_versions = [
             versions     : '0.25.0',
@@ -66,7 +65,9 @@ ext {
             togglz_spring_web                  : "org.togglz:togglz-spring-web:${versions.togglz}",
             togglz_spring_boot_starter         : "org.togglz:togglz-spring-boot-starter:${versions.togglz}",
             togglz_testing                     : "org.togglz:togglz-testing:${versions.togglz}",
-            mongodb_driver                     : "org.mongodb:mongodb-driver:${versions.mongodb_driver}",
+            mongodb_driver_core                : "org.mongodb:mongodb-driver-core:${versions.mongodb_driver}",
+            mongodb_driver_sync                : "org.mongodb:mongodb-driver-sync:${versions.mongodb_driver}",
+            mongodb_bson                       : "org.mongodb:bson:${versions.mongodb_driver}",
             caffeine                           : "com.github.ben-manes.caffeine:caffeine:${versions.caffeine}",
             unboundid_ldapsdk_minimal_edition  : "com.unboundid:unboundid-ldapsdk-minimal-edition:${versions.unboundid_ldapsdk_minimal_edition}",
             hibernate_validator                : "org.hibernate.validator:hibernate-validator:${versions.hibernate_validator}",
@@ -93,11 +94,10 @@ ext {
             spring_boot_starter_test: "org.springframework.boot:spring-boot-starter-test:${versions.spring_boot}",
             jsonassert              : "org.skyscreamer:jsonassert:${test_versions.jsonassert}",
             togglz_testing          : "org.togglz:togglz-testing:${versions.togglz}",
-            embedded_mongo          : "de.flapdoodle.embed:de.flapdoodle.embed.mongo:${test_versions.embedded_mongo}",
+            testcontainers_mongo    : "org.testcontainers:mongodb:${test_versions.testcontainers}",
+            testcontainers_junit    : "org.testcontainers:junit-jupiter:${test_versions.testcontainers}",
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
             rest_assured            : "io.rest-assured:rest-assured:${test_versions.rest_assured}",
-//            testcontainers          : "org.testcontainers:testcontainers:${test_versions.testcontainers}",
-            testcontainers          : "org.testcontainers:junit-jupiter:${test_versions.testcontainers}"
 
     ]
     gradle_plugins = [
