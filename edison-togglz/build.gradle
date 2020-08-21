@@ -15,6 +15,7 @@ dependencies {
 
     implementation libraries.unboundid_ldapsdk_minimal_edition
     implementation libraries.jcip_annotations
+    implementation libraries.java_validation_api
 
     testImplementation project(":edison-testsupport")
     testImplementation project(":edison-mongo")

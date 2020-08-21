@@ -10,6 +10,7 @@ dependencies {
     implementation libraries.logback_classic
     implementation libraries.spring_context_support
     implementation libraries.unboundid_ldapsdk_minimal_edition
+    implementation libraries.hibernate_validator
 
     testImplementation project(":edison-testsupport")
     testImplementation libraries.aws_sdk_ssm

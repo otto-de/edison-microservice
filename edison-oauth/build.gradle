@@ -6,6 +6,7 @@ dependencies {
     compile libraries.spring_security_oauth
     compile libraries.spring_security_jwt
     compile java_xml
+    implementation libraries.hibernate_validator
 
     testCompile project(":edison-testsupport")
 }

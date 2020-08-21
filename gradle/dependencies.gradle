@@ -4,10 +4,10 @@
  */
 ext {
     versions = [
-            spring_boot                      : '2.2.6.RELEASE',
-            spring                           : '5.2.5.RELEASE',
-            spring_security_core             : '5.2.2.RELEASE',
-            spring_security_web              : '5.2.2.RELEASE',
+            spring_boot                      : '2.3.3.RELEASE',
+            spring                           : '5.2.8.RELEASE',
+            spring_security_core             : '5.3.4.RELEASE',
+            spring_security_web              : '5.3.4.RELEASE',
             spring_security_oauth            : '2.3.7.RELEASE',
             spring_security_jwt              : '1.0.11.RELEASE',
             jcip_annotations                 : '1.0',
