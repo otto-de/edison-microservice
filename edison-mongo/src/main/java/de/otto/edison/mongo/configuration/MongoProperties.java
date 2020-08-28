@@ -1,9 +1,6 @@
 package de.otto.edison.mongo.configuration;
 
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCompressor;
-import com.mongodb.ReadPreference;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 import de.otto.edison.status.domain.Datasource;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
@@ -17,8 +14,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static com.mongodb.MongoClientOptions.builder;
+import static com.mongodb.MongoCredential.createCredential;
 import static de.otto.edison.status.domain.Datasource.datasource;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -254,24 +252,44 @@ public class MongoProperties {
         this.clientServerCompressionEnabled = clientServerCompressionEnabled;
     }
 
-    public MongoClientOptions toMongoClientOptions(final CodecRegistry codecRegistry, List<MongoCompressor> possibleCompressors) {
-        MongoClientOptions.Builder clientOptionsBuilder = builder()
-                .sslEnabled(sslEnabled)
+    public MongoClientSettings toMongoClientSettings(final CodecRegistry codecRegistry, List<MongoCompressor> possibleCompressors) {
+        MongoClientSettings.Builder clientOptionsBuilder = MongoClientSettings.builder()
+                .applyToSslSettings(builder -> builder.enabled(sslEnabled))
                 .codecRegistry(codecRegistry)
                 .readPreference(ReadPreference.valueOf(readPreference))
-                .connectTimeout(connectTimeout)
-                .serverSelectionTimeout(serverSelectionTimeout)
-                .cursorFinalizerEnabled(true)
-                .maxWaitTime(maxWaitTime)
-                .maxConnectionLifeTime(connectionpool.getMaxLifeTime())
-                .threadsAllowedToBlockForConnectionMultiplier(connectionpool.getBlockedConnectionMultiplier())
-                .maxConnectionIdleTime(connectionpool.getMaxIdleTime())
-                .minConnectionsPerHost(connectionpool.getMinSize())
-                .connectionsPerHost(connectionpool.getMaxSize());
+                .applyToConnectionPoolSettings(pool -> pool
+                        .minSize(connectionpool.getMinSize())
+                        .maxSize(connectionpool.getMaxSize())
+                        .maxConnectionIdleTime(connectionpool.getMaxIdleTime(), MILLISECONDS)
+                        .maxConnectionLifeTime(connectionpool.getMaxLifeTime(), MILLISECONDS)
+                        .maxWaitTime(maxWaitTime, MILLISECONDS))
+                .applyToSocketSettings(socket -> socket
+                        .connectTimeout(connectTimeout, MILLISECONDS))
+                .applyToClusterSettings(cluster -> cluster
+                        .hosts(getServers())
+                        .serverSelectionTimeout(serverSelectionTimeout, MILLISECONDS));
+
         if (isClientServerCompressionEnabled()) {
             clientOptionsBuilder.compressorList(possibleCompressors);
         }
+
+        if(useUnauthorizedConnection()) {
+            clientOptionsBuilder.credential(getMongoCredentials());
+        }
+
         return clientOptionsBuilder.build();
+    }
+
+    private boolean useUnauthorizedConnection() {
+        return getUser().isEmpty() || getPassword().isEmpty();
+    }
+
+    private MongoCredential getMongoCredentials() {
+        return createCredential(
+                getUser(),
+                getAuthenticationDb(),
+                getPassword().toCharArray()
+        );
     }
 
     private ServerAddress toServerAddress(final String server) {
@@ -305,7 +323,6 @@ public class MongoProperties {
         public void setEnabled(final boolean enabled) {
             this.enabled = enabled;
         }
-
 
     }
 

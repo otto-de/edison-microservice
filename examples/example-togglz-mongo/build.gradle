@@ -5,8 +5,10 @@ dependencies {
     implementation project(":edison-togglz")
     implementation project(":edison-mongo")
 
-    implementation libraries.mongodb_driver
-    implementation test_libraries.embedded_mongo // In-Memory impl of MongoDB; not intended for production
+    implementation libraries.mongodb_driver_core
+    implementation libraries.mongodb_driver_sync
+    testImplementation test_libraries.testcontainers_mongo
+    testImplementation test_libraries.testcontainers_junit
 
     testImplementation project(":edison-testsupport")
 }

@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.repository.mongo;
 
 import ch.qos.logback.classic.Logger;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
@@ -8,7 +9,6 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.mongo.configuration.MongoProperties;
 import de.otto.edison.testsupport.matcher.OptionalMatchers;
-import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import org.assertj.core.util.Lists;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
@@ -16,8 +16,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.MongoDBContainer;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -36,21 +36,23 @@ import static org.hamcrest.Matchers.*;
 
 public class MongoJobRepositoryTest {
 
+    static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.2.5");
+
     @BeforeAll
-    public static void startMongo() throws IOException {
-        EmbeddedMongoHelper.startMongoDB();
+    public static void startMongo() {
+        mongoDBContainer.start();
     }
 
     @AfterAll
     public static void teardownMongo() {
-        EmbeddedMongoHelper.stopMongoDB();
+        mongoDBContainer.stop();
     }
 
     private MongoJobRepository repo;
 
     @BeforeEach
     public void setup() {
-        final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("jobsinfo-" + UUID.randomUUID());
+        final MongoDatabase mongoDatabase = MongoClients.create(mongoDBContainer.getReplicaSetUrl()).getDatabase("jobsinfo-" + UUID.randomUUID());
         repo = new MongoJobRepository(mongoDatabase, "jobsinfo", new MongoProperties());
     }
 

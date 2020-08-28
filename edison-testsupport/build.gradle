@@ -6,9 +6,11 @@ dependencies {
     compileOnly libraries.aws_sdk_s3
     compileOnly libraries.jackson_databind
     compileOnly libraries.jackson_annotations
-    compileOnly libraries.mongodb_driver
+    compileOnly libraries.mongodb_driver_core
+    compileOnly libraries.mongodb_driver_sync
     compileOnly test_libraries.togglz_testing
-    compileOnly test_libraries.embedded_mongo
+    testImplementation test_libraries.testcontainers_mongo
+    testImplementation test_libraries.testcontainers_junit
 
     compile libraries.spring_boot
     compile libraries.spring_boot_autoconfigure

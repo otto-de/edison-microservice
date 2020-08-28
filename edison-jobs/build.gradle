@@ -1,11 +1,10 @@
 apply plugin: 'java-library'
 
 dependencies {
-    implementation libraries.async_http_client
-
     implementation project(":edison-core")
 
-    implementation libraries.mongodb_driver
+    implementation libraries.mongodb_driver_core
+    implementation libraries.mongodb_driver_sync
     implementation project(":edison-mongo")
     implementation libraries.aws_sdk_dynamodb
 
@@ -22,8 +21,8 @@ dependencies {
     testImplementation project(":edison-testsupport")
     testImplementation test_libraries.json_path
     testImplementation test_libraries.jsonassert
-    testImplementation test_libraries.embedded_mongo
-    testImplementation test_libraries.testcontainers
+    testImplementation test_libraries.testcontainers_junit
+    testImplementation test_libraries.testcontainers_mongo
 
 }
 

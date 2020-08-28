@@ -3,8 +3,6 @@ package de.otto.edison.oauth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +13,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -28,17 +30,17 @@ public class OAuthPublicKeyStore {
     private static final Logger LOG = LoggerFactory.getLogger(OAuthPublicKeyStore.class);
     private final ObjectMapper objectMapper;
     private final String publicKeyUrl;
-    private final AsyncHttpClient asyncHttpClient;
+    private final HttpClient httpClient;
     private final OAuthPublicKeyRepository oAuthPublicKeyRepository;
     private final CountDownLatch publicKeysRetrievedCountDownLatch = new CountDownLatch(1);
 
     @Autowired
     public OAuthPublicKeyStore(@Value("${edison.oauth.public-key.url}") final String publicKeyUrl,
-                               final AsyncHttpClient asyncHttpClient,
+                               final HttpClient asyncHttpClient,
                                final OAuthPublicKeyRepository oAuthPublicKeyRepository) {
         this.publicKeyUrl = publicKeyUrl;
         this.oAuthPublicKeyRepository = oAuthPublicKeyRepository;
-        this.asyncHttpClient = asyncHttpClient;
+        this.httpClient = asyncHttpClient;
 
         this.objectMapper = createObjectMapper();
     }
@@ -67,18 +69,19 @@ public class OAuthPublicKeyStore {
 
     List<OAuthPublicKey> fetchOAuthPublicKeysFromServer() {
         try {
-            final Response response = asyncHttpClient
-                    .prepareGet(publicKeyUrl)
-                    .setRequestTimeout(5000)
-                    .execute()
-                    .get();
+            final HttpResponse response = httpClient
+                    .send(HttpRequest.newBuilder()
+                            .GET()
+                            .uri(URI.create(publicKeyUrl))
+                            .timeout(Duration.ofMillis(5000))
+                            .build(), HttpResponse.BodyHandlers.ofString());
 
-            if (response.getStatusCode() == HttpStatus.OK.value()) {
-                return objectMapper.readValue(response.getResponseBody(), TypeFactory.defaultInstance().constructCollectionType(List.class, OAuthPublicKey.class));
+            if (response.statusCode() == HttpStatus.OK.value()) {
+                return objectMapper.readValue(response.body().toString(), TypeFactory.defaultInstance().constructCollectionType(List.class, OAuthPublicKey.class));
             } else {
-                LOG.warn("Unable to retrieve list of public keys. Got status code {} and message {}", response.getStatusCode(), response.getStatusText());
+                LOG.warn("Unable to retrieve list of public keys. Got status code {}", response.statusCode());
             }
-        } catch (IOException | ExecutionException e) {
+        } catch (IOException e) {
             LOG.error("Unable to retrieve list of public keys. ", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

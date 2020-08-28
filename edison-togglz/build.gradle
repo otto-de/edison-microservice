@@ -9,19 +9,21 @@ dependencies {
     api libraries.togglz_spring_web
 
     implementation libraries.aws_sdk_s3
-    implementation libraries.mongodb_driver
+    implementation libraries.mongodb_driver_core
+    implementation libraries.mongodb_driver_sync
     implementation project(":edison-mongo")
 
     implementation libraries.unboundid_ldapsdk_minimal_edition
     implementation libraries.jcip_annotations
+    implementation libraries.java_validation_api
 
     testImplementation project(":edison-testsupport")
     testImplementation project(":edison-mongo")
     testImplementation test_libraries.togglz_testing
 
     testImplementation libraries.aws_sdk_s3
-    testImplementation test_libraries.embedded_mongo
-    testImplementation test_libraries.testcontainers
+    testImplementation test_libraries.testcontainers_mongo
+    testImplementation test_libraries.testcontainers_junit
     testImplementation test_libraries.junit
     testImplementation test_libraries.mockito_core
     testImplementation test_libraries.hamcrest_core

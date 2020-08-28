@@ -16,7 +16,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
 @ConditionalOnProperty(prefix = "edison.togglz", name = "mongo.enabled", havingValue = "true", matchIfMissing = true)
-@ConditionalOnBean(type = "com.mongodb.MongoClient")
+@ConditionalOnBean(type = "com.mongodb.client.MongoClient")
 public class MongoTogglzConfiguration {
 
     private static final Logger LOG = getLogger(MongoTogglzConfiguration.class);

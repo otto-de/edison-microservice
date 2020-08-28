@@ -1,8 +1,6 @@
 package de.otto.edison.mongo.configuration;
 
-
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCompressor;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +25,7 @@ public class MongoPropertiesTest {
 
         //when
         props.setClientServerCompressionEnabled(true);
-        MongoClientOptions mongoClientOptions = props.toMongoClientOptions(MongoClient.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()));
+        MongoClientSettings mongoClientOptions = props.toMongoClientSettings(MongoClientSettings.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()));
 
         //then
         assertThat(mongoClientOptions.getCompressorList(), is(Collections.singletonList(MongoCompressor.createZlibCompressor())));
@@ -40,7 +38,7 @@ public class MongoPropertiesTest {
 
         //when
         props.setClientServerCompressionEnabled(false);
-        MongoClientOptions mongoClientOptions = props.toMongoClientOptions(MongoClient.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()));
+        MongoClientSettings mongoClientOptions = props.toMongoClientSettings(MongoClientSettings.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()));
 
         //then
         assertThat(mongoClientOptions.getCompressorList(), is(Collections.emptyList()));
