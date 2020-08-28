@@ -1,5 +1,18 @@
 # Release Notes
 
+## 2.3.0
+**Breaking Change:**
+
+Edison 2.3.x requires Java 11 or higher.
+
+* **[edison-core]**:
+    * Update to Spring Boot 2.3.0
+    * Remove AsyncHttpClient and use native Java HTTP Client
+
+* **[edison-mongo]** 
+    * Update to Mongo 4 drivers
+    * Replace embedded mongo in tests
+
 ## 2.2.10
 * **[edison-jobs]** / **[edison-mongo]**: Introduce a JobCleanupStrategy that looks for too big MongoDB documents
 that may originate from running jobs with many messages.
