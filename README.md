@@ -30,17 +30,19 @@ It's purpose is to provide a common implementation for cross-cutting requirement
 ... plus all the features of [Spring Boot](http://projects.spring.io/spring-boot/).
 
 
-## Future Releases aka Roadmap
+## Releases
 
 [Semantic Versioning v2.0.0](http://semver.org/spec/v2.0.0.html) is used to specify the version numbers.
 
 This project maintains its roadmap with [issues](https://github.com/otto-de/edison-microservice/issues) and [milestones](https://github.com/otto-de/edison-microservice/milestones).
 
-**[1.0.0](https://github.com/otto-de/edison-microservice/milestone/1)**: Edison Microservices for Spring Boot 1.4 &#10004;
+**1.0.0**: Edison Microservices for Spring Boot 1.4 &#10004;
 
-**[1.x.0](https://github.com/otto-de/edison-microservice/milestone/2)**: Edison Microservices for Spring Boot 1.5 &#10004;
+**1.x.0**: Edison Microservices for Spring Boot 1.5 &#10004;
 
-**[2.0.0](https://github.com/otto-de/edison-microservice/milestone/3)**: Edison Microservices for Spring Boot 2.x
+**2.0.0**: Edison Microservices for Spring Boot 2.x &#10004;
+
+**2.3.0**: Edison Microservices for Spring Boot 2.3.x &#10004; - Compatible with Java 11 and greater
 
 
 ## Migration from Edison 1.x to Edison 2
@@ -127,7 +129,7 @@ Examples:
 
 ## Setup
 
-Make sure you have Java 8 or later and gradle 5.x installed on your computer.
+Make sure you have Java 11 or later and gradle 6.x installed on your computer.
 
 ### Testing
 
