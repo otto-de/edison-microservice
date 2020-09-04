@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.3.1
+
+* **[edison-mongo]**: Fix bug in Mongo properties that prevented credentials from being used
+
 ## 2.3.0
 **Breaking Change:**
 
