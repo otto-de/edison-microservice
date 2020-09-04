@@ -273,15 +273,15 @@ public class MongoProperties {
             clientOptionsBuilder.compressorList(possibleCompressors);
         }
 
-        if(useUnauthorizedConnection()) {
+        if(useAuthorizedConnection()) {
             clientOptionsBuilder.credential(getMongoCredentials());
         }
 
         return clientOptionsBuilder.build();
     }
 
-    private boolean useUnauthorizedConnection() {
-        return getUser().isEmpty() || getPassword().isEmpty();
+    private boolean useAuthorizedConnection() {
+        return !getUser().isEmpty() && !getPassword().isEmpty();
     }
 
     private MongoCredential getMongoCredentials() {
