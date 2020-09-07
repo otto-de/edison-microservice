@@ -142,7 +142,7 @@ public class JobService {
 
     public void killJobsDeadSince(final int seconds) {
         final OffsetDateTime timeToMarkJobAsStopped = now(clock).minusSeconds(seconds);
-        LOG.info(format("JobCleanup: Looking for jobs older than %s ", timeToMarkJobAsStopped));
+        LOG.debug("JobCleanup: Looking for jobs older than {}.", timeToMarkJobAsStopped);
         final List<JobInfo> deadJobs = jobRepository.findRunningWithoutUpdateSince(timeToMarkJobAsStopped);
         deadJobs.forEach(deadJob -> killJob(deadJob.getJobId()));
         clearRunLocks();
