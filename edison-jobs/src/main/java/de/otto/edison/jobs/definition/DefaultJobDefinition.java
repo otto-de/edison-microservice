@@ -1,6 +1,7 @@
 package de.otto.edison.jobs.definition;
 
 
+import org.springframework.scheduling.support.CronExpression;
 import org.springframework.scheduling.support.CronSequenceGenerator;
 
 import java.time.Duration;
@@ -187,7 +188,7 @@ public final class DefaultJobDefinition implements JobDefinition {
     public static void validateCron(String cron) {
         //Internally, we use the org.springframework.scheduling.support.CronTrigger which has a different syntax than the official crontab syntax.
         //Therefore we use the internal validation of CronTrigger
-        new CronSequenceGenerator(cron);
+        CronExpression.parse(cron);
     }
 
     /**

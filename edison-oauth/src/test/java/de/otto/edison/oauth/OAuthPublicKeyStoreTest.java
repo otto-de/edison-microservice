@@ -16,7 +16,7 @@ import static de.otto.edison.oauth.OAuthPublicKey.oAuthPublicKeyBuilder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 class OAuthPublicKeyStoreTest {
 
@@ -39,7 +39,7 @@ class OAuthPublicKeyStoreTest {
 
     @BeforeEach
     void setUp() throws InterruptedException, IOException {
-        initMocks(this);
+        openMocks(this);
         keyStore = new OAuthPublicKeyStore(PUBLIC_KEY_URL, asyncHttpClient, oAuthPublicKeyRepository);
         withPublicKeyResponse("[\n" +
                 "{\n" +

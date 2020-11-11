@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.4.0-RC1
+
+* **[edison-core]**:
+    * Update to Spring Boot 2.4.0-RC1
+
 ## 2.3.1
 
 * **[edison-mongo]**: Fix bug in Mongo properties that prevented credentials from being used

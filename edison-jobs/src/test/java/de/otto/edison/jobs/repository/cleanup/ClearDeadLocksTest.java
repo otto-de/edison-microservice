@@ -18,7 +18,7 @@ public class ClearDeadLocksTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        openMocks(this);
         fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
         subject = new ClearDeadLocks(jobLockRepository, jobRepository);
 

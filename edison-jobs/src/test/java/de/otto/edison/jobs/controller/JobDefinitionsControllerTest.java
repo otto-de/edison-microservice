@@ -26,16 +26,14 @@ import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class JobDefinitionsControllerTest {
 
-    private JobDefinitionsController controller;
-
-    private EdisonApplicationProperties webEndpointProperties = new EdisonApplicationProperties();
+    private final EdisonApplicationProperties webEndpointProperties = new EdisonApplicationProperties();
 
     @Mock
     private NavBar navBar;
@@ -48,13 +46,13 @@ public class JobDefinitionsControllerTest {
 
     private MockMvc mockMvc;
 
-    private static String MANAGEMENT_CONTEXT = "/someManagementContext";
+    private static final String MANAGEMENT_CONTEXT = "/someManagementContext";
 
     @BeforeEach
-    public void setUp() throws Exception {
-        initMocks(this);
+    public void setUp() {
+        openMocks(this);
         webEndpointProperties.getManagement().setBasePath(MANAGEMENT_CONTEXT);
-        controller = new JobDefinitionsController(jobDefinitionService, jobMetaService, navBar, webEndpointProperties);
+        JobDefinitionsController controller = new JobDefinitionsController(jobDefinitionService, jobMetaService, navBar, webEndpointProperties);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .addPlaceholderValue("edison.application.management.base-path", MANAGEMENT_CONTEXT)
                 .build();

@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class S3TogglzRepositoryTest {
 
@@ -27,7 +27,7 @@ public class S3TogglzRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        initMocks(this);
+        openMocks(this);
         s3TogglzRepository = new S3TogglzRepository(featureStateConverter);
         when(feature.name()).thenReturn("someToggleName");
     }
@@ -56,7 +56,7 @@ public class S3TogglzRepositoryTest {
 
         final FeatureState featureStateFromCache = s3TogglzRepository.getFeatureState(feature);
         assertThat(featureStateFromCache, is(featureState));
-        verifyZeroInteractions(featureStateConverter);
+        verifyNoMoreInteractions(featureStateConverter);
     }
 
     @Test

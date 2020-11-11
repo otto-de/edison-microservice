@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class ZonedDateTimeDeserializerTest {
 
@@ -23,7 +23,7 @@ public class ZonedDateTimeDeserializerTest {
 
     @BeforeEach
     public void setUp() {
-        initMocks(this);
+        openMocks(this);
         zonedDateTimeDeserializer = new ZonedDateTimeDeserializer();
     }
 

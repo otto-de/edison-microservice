@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import static java.util.Arrays.stream;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
  * Simple implementation of a RegistryClient using HttpClient to register the service.

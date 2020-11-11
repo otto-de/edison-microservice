@@ -3,6 +3,7 @@ buildscript {
 
     repositories {
         mavenCentral()
+        maven { url "https://repo.spring.io/milestone" }
         jcenter()
         mavenLocal()
     }
@@ -15,6 +16,7 @@ apply plugin: 'java'
 
 repositories {
     mavenCentral()
+    maven { url "https://repo.spring.io/milestone" }
     maven { url 'http://repo.spring.io/libs-snapshot' }
 }
 
@@ -38,12 +40,13 @@ subprojects {
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
 
-    version = '2.3.2-SNAPSHOT'
+    version = '2.4.0-SNAPSHOT'
     group = 'de.otto.edison'
 
     repositories {
         mavenCentral()
         mavenLocal()
+        maven { url "https://repo.spring.io/milestone" }
         maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }

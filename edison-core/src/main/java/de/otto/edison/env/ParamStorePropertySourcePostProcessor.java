@@ -11,6 +11,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParametersByPathRequest;
@@ -52,7 +53,7 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
         addParametersToPropertiesSource(propertiesSource, firstPage.parameters());
         String nextToken = firstPage.nextToken();
 
-        while (!StringUtils.isEmpty(nextToken)) {
+        while (!ObjectUtils.isEmpty(nextToken)) {
             final GetParametersByPathResponse nextPage = ssmClient.getParametersByPath(requestBuilder
                     .nextToken(nextToken)
                     .build()

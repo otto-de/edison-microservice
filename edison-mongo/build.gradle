@@ -7,7 +7,6 @@ dependencies {
     implementation libraries.mongodb_driver_core
     implementation libraries.mongodb_driver_sync
     implementation libraries.mongodb_bson
-    implementation libraries.javax_servlet_api
     implementation libraries.hibernate_validator
     implementation libraries.java_validation_api
     implementation "org.slf4j:slf4j-api:1.7.27"
