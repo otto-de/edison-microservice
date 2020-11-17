@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.4.0
+
+* **[edison-core]**:
+    * Update to Spring Boot 2.4.0
+
 ## 2.4.0-RC1
 
 * **[edison-core]**:
