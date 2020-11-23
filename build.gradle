@@ -38,7 +38,7 @@ subprojects {
     //
     // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
 
-    version = '2.4.0'
+    version = '2.4.1-SNAPSHOT'
     group = 'de.otto.edison'
 
     repositories {
@@ -64,6 +64,9 @@ subprojects {
 
     dependencies {
         compileOnly "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}"
+        constraints {
+            implementation 'junit:junit:4.13.1'  // some dependencies bring junit 4.12 which has a security vulnerability
+        }
     }
 
     targetCompatibility = '11'
