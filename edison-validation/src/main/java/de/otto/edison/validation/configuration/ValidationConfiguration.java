@@ -1,6 +1,6 @@
 package de.otto.edison.validation.configuration;
 
-import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
+import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -19,8 +19,11 @@ public class ValidationConfiguration {
 
     @Bean
     public LocalValidatorFactoryBean validator() {
+        PlatformResourceBundleLocator resourceBundleLocator =
+                new PlatformResourceBundleLocator(NonELResourceBundleMessageInterpolator.USER_VALIDATION_MESSAGES, null, true);
+
         LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
-        factoryBean.setMessageInterpolator(new ParameterMessageInterpolator());
+        factoryBean.setMessageInterpolator(new NonELResourceBundleMessageInterpolator(resourceBundleLocator));
         return factoryBean;
     }
 
