@@ -1,5 +1,12 @@
 # Release Notes
 
+## 2.4.1
+* **[all]**
+    * add dependency constraint to junit 4.13.1 because some dependencies bring an old version which has a security vulnerability
+  
+* **[edison-validation]**  
+    * disable evaluation of EL in bean validation to prevent injection vulnerability (see https://securitylab.github.com/research/bean-validation-RCE)
+
 ## 2.4.0
 
 * **[edison-core]**:
