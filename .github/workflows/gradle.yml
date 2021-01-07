@@ -24,7 +24,5 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew check
-#    - name: Generate Jacoco Report
-#      run: ./gradlew jacocoRootReport
     - name: Upload Jacoco Report
       run: bash <(curl -s https://codecov.io/bash)
