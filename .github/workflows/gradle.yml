@@ -4,6 +4,7 @@
 name: Build Edison Microservice with Gradle
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master, 1.2.x ]
   pull_request:
