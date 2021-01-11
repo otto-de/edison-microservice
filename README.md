@@ -6,7 +6,7 @@ Collection of independent libraries on top of Spring Boot to provide a faster se
 
 ## Status
 
-[![build](https://travis-ci.org/otto-de/edison-microservice.svg?branch=master)](https://travis-ci.org/otto-de/edison-microservice) 
+[![Build](https://github.com/otto-de/edison-microservice/workflows/Build/badge.svg?branch=master)](https://github.com/otto-de/edison-microservice/actions?query=workflow%3ABuild)
 [![codecov](https://codecov.io/gh/otto-de/edison-microservice/branch/master/graph/badge.svg)](https://codecov.io/gh/otto-de/edison-microservice)
 [![Known Vulnerabilities](https://snyk.io/test/github/otto-de/edison-microservice/badge.svg)](https://snyk.io/test/github/otto-de/edison-microservice)
 [![release](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-core)
@@ -43,6 +43,8 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 **2.0.0**: Edison Microservices for Spring Boot 2.x &#10004;
 
 **2.3.0**: Edison Microservices for Spring Boot 2.3.x &#10004; - Compatible with Java 11 and greater
+
+**2.4.x**: Edison Microservices for Spring Boot 2.4.x &#10004; - Compatible with Java 11 and greater
 
 
 ## Migration from Edison 1.x to Edison 2

@@ -373,6 +373,22 @@ public class MongoJobRepositoryTest {
         assertThat(jobInfoFromDB.getStatus(), is(OK));
     }
 
+    @Test
+    public void shouldNotFailIfJobHasNoMessages() throws Exception {
+        // given
+        final String jobId = "idOfJobWithoutMessages";
+        final JobInfo jobInfo = someJobInfoWithoutMessages(jobId, "EMPTY_JOB");
+        repo.createOrUpdate(jobInfo);
+
+        // when
+        repo.keepJobMessagesWithinMaximumSize(jobId);
+
+        // then
+        final JobInfo jobInfoFromDB = repo.findOne(jobId).orElse(null);
+        assertThat(jobInfoFromDB.getMessages(), hasSize(0));
+        assertThat(jobInfoFromDB.getStatus(), is(OK));
+    }
+
     private JobInfo someJobInfo(final String jobId) {
         return JobInfo.newJobInfo(
                 jobId,
@@ -394,6 +410,17 @@ public class MongoJobRepositoryTest {
                 asList(
                         jobMessage(Level.INFO, "foo", now()),
                         jobMessage(Level.WARNING, "bar", now())),
+                systemDefaultZone(),
+                "localhost"
+        );
+    }
+
+    private JobInfo someJobInfoWithoutMessages(final String jobId, final String type) {
+        return JobInfo.newJobInfo(
+                jobId,
+                type,
+                now(), now(), Optional.of(now()), OK,
+                Collections.emptyList(),
                 systemDefaultZone(),
                 "localhost"
         );

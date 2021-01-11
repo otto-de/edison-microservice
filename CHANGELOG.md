@@ -1,5 +1,11 @@
 # Release Notes
 
+## Next release
+* **[edison-core]**:
+    * Update to Spring Boot 2.4.1
+* **[edison-jobs]** 
+    * Fix possible ArithmeticException in MongoJobRepository
+
 ## 2.4.1
 * **[all]**
     * add dependency constraint to junit 4.13.1 because some dependencies bring an old version which has a security vulnerability

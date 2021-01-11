@@ -284,12 +284,8 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
                 JobInfo jobInfo = jobInfoOptional.get();
                 RawBsonDocument rawBsonDocument = RawBsonDocument.parse(encode(jobInfo).toJson());
                 int bsonSize = rawBsonDocument.getByteBuffer().remaining();
-                int averageMessageSize = bsonSize / jobInfo.getMessages().size();
-
-
-
+                int averageMessageSize = bsonSize / Math.max(jobInfo.getMessages().size(), 1);
                 LOG.debug("Bson size of running job with jobId {} is {} bytes. Average message size is {} bytes. Total messages: {}", jobId, bsonSize, averageMessageSize, jobInfo.getMessages().size());
-
                 //Is document taking more than 3/4 of the allowed space?
                 if (bsonSize > (MAX_DOCUMENT_SIZE - (MAX_DOCUMENT_SIZE / 4))) {
                     LOG.info("Bson size of running job with jobId {} is {} bytes. The size of this job's document is growing towards MongoDBs limit for single documents, so I'll drop all messages but the last 1000.", jobId, bsonSize);
