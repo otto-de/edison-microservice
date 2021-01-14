@@ -1,8 +1,7 @@
 apply plugin: 'java-library'
 
 dependencies {
-    implementation libraries.aws_sdk_ssm
-
+    compileOnly libraries.aws_sdk_ssm
     api libraries.spring_boot_starter_web
     implementation libraries.spring_boot_starter_actuator
     implementation libraries.spring_boot_starter_thymeleaf

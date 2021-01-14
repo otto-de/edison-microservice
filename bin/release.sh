@@ -26,4 +26,18 @@ check_configuration() {
 
 check_configuration
 
-${SCRIPT_DIR}/../gradlew clean build uploadArchives closeAndReleaseRepository
+set +e
+grep 'def edison_version = ".*-SNAPSHOT"' "$SCRIPT_DIR/../build.gradle"
+SNAPSHOT=$?
+set -e
+
+"${SCRIPT_DIR}"/gradlew clean
+"${SCRIPT_DIR}"/gradlew check
+"${SCRIPT_DIR}"/gradlew -Dorg.gradle.internal.http.socketTimeout=200000 -Dorg.gradle.internal.http.connectionTimeout=200000 clean build uploadArchives
+
+if [[ $SNAPSHOT == 1 ]]; then
+  echo "Closing and releasing into Sonatype OSS repository"
+  "${SCRIPT_DIR}"/gradlew closeAndReleaseRepository
+else
+  echo "This is a snapshot release, closing in sonatype is not necessary"
+fi

@@ -11,6 +11,21 @@ buildscript {
         classpath gradle_plugins.values()
     }
 }
+
+// USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
+//
+// Major Release: X.0.0-RELEASE: Breaking Changes. Should be avoided if possible, or planned for future release.
+// Minor Release: 0.X.0-RELEASE: Additional Features, updates from minor releases in Spring
+// Micro Release: 0.0.X-RELEASE: Bugfixes, non-breaking changes, updates from micro releases in Spring
+//
+// DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
+//
+// Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
+def edison_version = "2.4.2-SNAPSHOT"
+//
+//
+//
+
 apply plugin: 'java'
 
 repositories {
@@ -28,17 +43,7 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'project-report'
 
-    // USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
-    //
-    // Major Release: X.0.0-RELEASE: Breaking Changes. Should be avoided if possible, or planned for future release.
-    // Minor Release: 0.X.0-RELEASE: Additional Features, updates from minor releases in Spring
-    // Micro Release: 0.0.X-RELEASE: Bugfixes, non-breaking changes, updates from micro releases in Spring
-    //
-    // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
-    //
-    // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-
-    version = '2.4.1'
+    version = edison_version
     group = 'de.otto.edison'
 
     repositories {
