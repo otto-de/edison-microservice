@@ -27,13 +27,13 @@ check_configuration() {
 check_configuration
 
 set +e
-grep 'def edison_version = ".*-SNAPSHOT"' "$SCRIPT_DIR/../build.gradle"
+grep 'def edison_version = ".*-SNAPSHOT"' "$SCRIPT_DIR/build.gradle"
 SNAPSHOT=$?
 set -e
 
 "${SCRIPT_DIR}"/gradlew clean
 "${SCRIPT_DIR}"/gradlew check
-"${SCRIPT_DIR}"/gradlew -Dorg.gradle.internal.http.socketTimeout=200000 -Dorg.gradle.internal.http.connectionTimeout=200000 clean build uploadArchives
+"${SCRIPT_DIR}"/gradlew -Dorg.gradle.internal.http.socketTimeout=200000 -Dorg.gradle.internal.http.connectionTimeout=200000 build uploadArchives
 
 if [[ $SNAPSHOT == 1 ]]; then
   echo "Closing and releasing into Sonatype OSS repository"
