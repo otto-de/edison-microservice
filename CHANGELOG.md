@@ -4,6 +4,7 @@
 * **[edison-core]**:
     * Update to Spring Boot 2.4.1
     * Catch errors in StatusDetailIndicators when aggregating them, so that aggregation is not aborted completely
+    * Change transient dependency for AWS SDK SSM to compileOnly
 * **[edison-jobs]** 
     * Fix possible ArithmeticException in MongoJobRepository
 
