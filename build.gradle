@@ -76,4 +76,22 @@ subprojects {
 
     targetCompatibility = '11'
     sourceCompatibility = '11'
+
+    project.afterEvaluate {
+        tasks.withType(JavaCompile) {
+            def version = compat(sourceCompatibility)
+            project.logger.info("Configuring $name to use javac parameter --release $version")
+            println("Configuring $name to use javac parameter --release $version")
+            options.compilerArgs.addAll(['--release', version])
+        }
+    }
+}
+
+// This function converts Java version string '1.8' to '8'
+static String compat(String src) {
+    if (src.contains('.')) {
+        src.substring(src.lastIndexOf('.')+1)
+    } else {
+        src
+    }
 }
