@@ -3,6 +3,7 @@
 ## Next release
 * **[edison-core]**:
     * Update to Spring Boot 2.4.1
+    * Catch errors in StatusDetailIndicators when aggregating them, so that aggregation is not aborted completely
 * **[edison-jobs]** 
     * Fix possible ArithmeticException in MongoJobRepository
 
