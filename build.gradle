@@ -44,7 +44,6 @@ subprojects {
     apply plugin: 'project-report'
 
     version = edison_version
-    group = 'de.otto.edison'
 
     repositories {
         mavenCentral()
