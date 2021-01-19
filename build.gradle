@@ -21,7 +21,7 @@ buildscript {
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
 // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-def edison_version = "2.4.3-SNAPSHOT"
+def edison_version = "2.4.3"
 //
 //
 //
@@ -44,6 +44,7 @@ subprojects {
     apply plugin: 'project-report'
 
     version = edison_version
+    group = 'de.otto.edison'
 
     repositories {
         mavenCentral()

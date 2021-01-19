@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.4.3
+* **[edison-testsupport]**:
+    * Add support for full featureState to edison-testsupport/togglz
+
 ## 2.4.2
 * **[edison-core]**:
     * Update to Spring Boot 2.4.2
@@ -10,7 +14,7 @@
 
 ## 2.4.1
 * **[all]**
-    * add dependency constraint to junit 4.13.1 because some dependencies bring an old version which has a security vulnerability
+    * Add dependency constraint to junit 4.13.1 because some dependencies bring an old version which has a security vulnerability
   
 * **[edison-validation]**  
     * disable evaluation of EL in bean validation to prevent injection vulnerability (see https://securitylab.github.com/research/bean-validation-RCE)

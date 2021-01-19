@@ -31,6 +31,12 @@ grep 'def edison_version = ".*-SNAPSHOT"' "$SCRIPT_DIR/build.gradle"
 SNAPSHOT=$?
 set -e
 
+if [[ $SNAPSHOT == 1 ]]; then
+  echo "INFO: This is not a SNAPSHOT, I'll release after upload."
+else
+  echo "INFO: This is a SNAPSHOT release."
+fi
+
 "${SCRIPT_DIR}"/gradlew clean
 "${SCRIPT_DIR}"/gradlew check
 "${SCRIPT_DIR}"/gradlew -Dorg.gradle.internal.http.socketTimeout=200000 -Dorg.gradle.internal.http.connectionTimeout=200000 build uploadArchives
