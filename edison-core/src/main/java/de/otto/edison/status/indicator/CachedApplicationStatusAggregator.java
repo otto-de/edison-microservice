@@ -1,8 +1,11 @@
 package de.otto.edison.status.indicator;
 
 import de.otto.edison.status.domain.ApplicationStatus;
+import de.otto.edison.status.domain.Status;
+import de.otto.edison.status.domain.StatusDetail;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static de.otto.edison.status.domain.ApplicationStatus.applicationStatus;
 import static java.util.stream.Collectors.toList;
@@ -40,7 +43,13 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
                 cachedStatus.team,
                 indicators
                         .stream()
-                        .flatMap(i -> i.statusDetails().stream())
+                        .flatMap(i -> {
+                            try {
+                                return i.statusDetails().stream();
+                            } catch (RuntimeException e) {
+                                return Stream.of(StatusDetail.statusDetail(i.getClass().getSimpleName(), Status.ERROR, "got exception: " + e.getLocalizedMessage()));
+                            }
+                        })
                         .collect(toList()));
     }
 
