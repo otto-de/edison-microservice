@@ -17,7 +17,7 @@ import org.togglz.core.user.UserProvider;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 @ConditionalOnMissingBean(StateRepository.class)
 public class MongoTogglzRepository extends AbstractMongoRepository<String, FeatureState> implements StateRepository {

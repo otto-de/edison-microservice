@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class MongoStatusDetailIndicatorTest {
 
@@ -26,7 +26,7 @@ public class MongoStatusDetailIndicatorTest {
 
     @BeforeEach
     public void setup() {
-        initMocks(this);
+        openMocks(this);
         testee = new MongoStatusDetailIndicator(mongoDatabase);
     }
 

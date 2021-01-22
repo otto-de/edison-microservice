@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.PushOptions;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
 import de.otto.edison.jobs.domain.JobMessage;
@@ -12,6 +13,9 @@ import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.mongo.AbstractMongoRepository;
 import de.otto.edison.mongo.configuration.MongoProperties;
 import org.bson.Document;
+import org.bson.RawBsonDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
@@ -35,9 +39,13 @@ import static java.util.stream.Collectors.toList;
 
 public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo> implements JobRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MongoJobRepository.class);
+
     private static final int DESCENDING = -1;
     private static final String NO_LOG_MESSAGE_FOUND = "No log message found";
     public static final String ID = "_id";
+
+    private final static int MAX_DOCUMENT_SIZE = 16777216;
 
     private final MongoCollection<Document> jobInfoCollection;
     private final Clock clock;
@@ -268,4 +276,23 @@ public class MongoJobRepository extends AbstractMongoRepository<String, JobInfo>
     private OffsetDateTime toOffsetDateTime(final Date date) {
         return date == null ? null : ofInstant(date.toInstant(), systemDefault());
     }
+
+    @Override
+    public void keepJobMessagesWithinMaximumSize(String jobId) {
+            final Optional<JobInfo> jobInfoOptional = this.findOne(jobId);
+            if (jobInfoOptional.isPresent()) {
+                JobInfo jobInfo = jobInfoOptional.get();
+                RawBsonDocument rawBsonDocument = RawBsonDocument.parse(encode(jobInfo).toJson());
+                int bsonSize = rawBsonDocument.getByteBuffer().remaining();
+                int averageMessageSize = bsonSize / Math.max(jobInfo.getMessages().size(), 1);
+                LOG.debug("Bson size of running job with jobId {} is {} bytes. Average message size is {} bytes. Total messages: {}", jobId, bsonSize, averageMessageSize, jobInfo.getMessages().size());
+                //Is document taking more than 3/4 of the allowed space?
+                if (bsonSize > (MAX_DOCUMENT_SIZE - (MAX_DOCUMENT_SIZE / 4))) {
+                    LOG.info("Bson size of running job with jobId {} is {} bytes. The size of this job's document is growing towards MongoDBs limit for single documents, so I'll drop all messages but the last 1000.", jobId, bsonSize);
+                    JobMessage jobMessage = JobMessage.jobMessage(Level.INFO, "The messages array for this job is growing towards MongoDBs limit for single documents, so I'll drop all messages but the last 1000.", OffsetDateTime.now());
+                    collectionWithWriteTimeout(mongoProperties.getDefaultWriteTimeout(), TimeUnit.MILLISECONDS).updateOne(eq(ID, jobId), combine(pushEach(JobStructure.MESSAGES.key(), Collections.singletonList(encodeJobMessage(jobMessage)), new PushOptions().slice(-1000)), set(JobStructure.LAST_UPDATED.key(), Date.from(jobMessage.getTimestamp().toInstant()))));
+                }
+            }
+    }
+
 }

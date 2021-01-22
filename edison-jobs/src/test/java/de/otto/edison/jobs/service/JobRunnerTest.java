@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class JobRunnerTest {
     @Mock
@@ -39,7 +39,7 @@ public class JobRunnerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        initMocks(this);
+        openMocks(this);
 
         doReturn(scheduledJob)
                 .when(executor)

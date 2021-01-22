@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class JobMetaServiceTest {
 
@@ -32,7 +32,7 @@ public class JobMetaServiceTest {
     @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
-        initMocks(this);
+        openMocks(this);
         when(jobMutexGroups.mutexJobTypesFor(anyString()))
                 .thenReturn(emptySet());
         jobMetaService = new JobMetaService(jobMetaRepository, jobMutexGroups);

@@ -1,9 +1,7 @@
 apply plugin: 'java-library'
 
 dependencies {
-    implementation libraries.aws_sdk_ssm
-    implementation libraries.async_http_client
-
+    compileOnly libraries.aws_sdk_ssm
     api libraries.spring_boot_starter_web
     implementation libraries.spring_boot_starter_actuator
     implementation libraries.spring_boot_starter_thymeleaf
@@ -11,10 +9,10 @@ dependencies {
     implementation libraries.logback_classic
     implementation libraries.spring_context_support
     implementation libraries.unboundid_ldapsdk_minimal_edition
+    implementation libraries.hibernate_validator
 
     testImplementation project(":edison-testsupport")
     testImplementation libraries.aws_sdk_ssm
-    testImplementation libraries.async_http_client
 }
 
 artifacts {

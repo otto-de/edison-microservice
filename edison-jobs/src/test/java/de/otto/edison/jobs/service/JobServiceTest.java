@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class JobServiceTest {
 
@@ -67,7 +67,7 @@ public class JobServiceTest {
     @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
-        initMocks(this);
+        openMocks(this);
         this.systemInfo = systemInfo(HOSTNAME, 8080);
 
         this.clock = fixed(now(), systemDefault());
@@ -96,7 +96,7 @@ public class JobServiceTest {
         Optional<String> jobId = jobService.startAsyncJob("BAR");
         // then:
         assertThat(jobId.isPresent(), is(true));
-        assertThat(jobId.get(), not(isEmptyOrNullString()));
+        assertThat(jobId.get(), not(is(emptyOrNullString())));
     }
 
 

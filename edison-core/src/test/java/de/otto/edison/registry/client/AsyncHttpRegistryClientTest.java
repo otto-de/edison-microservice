@@ -1,7 +1,6 @@
 package de.otto.edison.registry.client;
 
 import de.otto.edison.status.configuration.ApplicationInfoConfiguration;
-import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,6 @@ public class AsyncHttpRegistryClientTest {
     public void shouldDoNothingIfNotEnabled() {
         // given
         TestPropertyValues.of("edison.serviceregistry.enabled=false").applyTo(context);
-        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -42,7 +40,6 @@ public class AsyncHttpRegistryClientTest {
         assertThat(bean.isRunning(), is(false));
     }
 
-
     @Test
     public void shouldHaveRegistryIfServersAndServicePresent() {
         // given
@@ -50,7 +47,6 @@ public class AsyncHttpRegistryClientTest {
                 .of("edison.serviceregistry.servers=http://foo")
                 .and("edison.serviceregistry.service=http://test")
                 .applyTo(context);
-        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -65,7 +61,6 @@ public class AsyncHttpRegistryClientTest {
                 .of("edison.serviceregistry.enabled=true")
                 .and("edison.serviceregistry.servers=")
                 .applyTo(context);
-        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -82,7 +77,6 @@ public class AsyncHttpRegistryClientTest {
                 .of("edison.serviceregistry.enabled=true")
                 .and("edison.serviceregistry.service=")
                 .applyTo(context);
-        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -100,7 +94,6 @@ public class AsyncHttpRegistryClientTest {
                 .and("edison.serviceregistry.servers=http://foo")
                 .and("edison.serviceregistry.service=http://test")
                 .applyTo(context);
-        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
@@ -113,7 +106,6 @@ public class AsyncHttpRegistryClientTest {
     @Test
     public void shouldDoNothingIfNothingConfigured() {
         // given
-        context.register(DefaultAsyncHttpClient.class);
         context.register(ApplicationInfoConfiguration.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();

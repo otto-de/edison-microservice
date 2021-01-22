@@ -1,5 +1,7 @@
 package de.otto.edison.jobs.repository.mongo;
 
+import ch.qos.logback.classic.Logger;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobInfo.JobStatus;
@@ -7,15 +9,15 @@ import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.mongo.configuration.MongoProperties;
 import de.otto.edison.testsupport.matcher.OptionalMatchers;
-import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import org.assertj.core.util.Lists;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.MongoDBContainer;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -34,21 +36,23 @@ import static org.hamcrest.Matchers.*;
 
 public class MongoJobRepositoryTest {
 
+    static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.2.5");
+
     @BeforeAll
-    public static void startMongo() throws IOException {
-        EmbeddedMongoHelper.startMongoDB();
+    public static void startMongo() {
+        mongoDBContainer.start();
     }
 
     @AfterAll
     public static void teardownMongo() {
-        EmbeddedMongoHelper.stopMongoDB();
+        mongoDBContainer.stop();
     }
 
     private MongoJobRepository repo;
 
     @BeforeEach
     public void setup() {
-        final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("jobsinfo-" + UUID.randomUUID());
+        final MongoDatabase mongoDatabase = MongoClients.create(mongoDBContainer.getReplicaSetUrl()).getDatabase("jobsinfo-" + UUID.randomUUID());
         repo = new MongoJobRepository(mongoDatabase, "jobsinfo", new MongoProperties());
     }
 
@@ -341,6 +345,50 @@ public class MongoJobRepositoryTest {
         assertThat(repo.findAll(), is(Lists.emptyList()));
     }
 
+    @Test
+    public void shouldTruncateTooBigJobMessagesArray() throws Exception {
+        // given
+        final String jobId = "idOfTooBigJob";
+        final JobInfo jobInfo = jobInfo(jobId, "BIG_JOB");
+        repo.createOrUpdate(jobInfo);
+
+        ch.qos.logback.classic.Level oldLevel = ((Logger) (LoggerFactory.getLogger("org.mongodb.driver"))).getLevel();
+        ((Logger)(LoggerFactory.getLogger("org.mongodb.driver"))).setLevel(ch.qos.logback.classic.Level.ERROR);
+        // when
+        char[] chars = new char[1024 * 1024 * 15 / 1500];
+        Arrays.fill(chars, 't');
+        for (int i = 0; i < 1500; i++) {
+            final JobMessage jobMessage = jobMessage(Level.INFO, new String(chars), now());
+            repo.appendMessage(jobId, jobMessage);
+        }
+        ((Logger)(LoggerFactory.getLogger("org.mongodb.driver"))).setLevel(oldLevel);
+
+        // when
+        repo.keepJobMessagesWithinMaximumSize(jobId);
+
+        // then
+        final JobInfo jobInfoFromDB = repo.findOne(jobId).orElse(null);
+        assertThat(jobInfoFromDB.getMessages(), hasSize(1000));
+        assertThat(jobInfoFromDB.getMessages().get(999).getMessage(), containsString("The messages array for this job is growing towards MongoDBs limit for single documents, so I'll drop all messages but the last 1000."));
+        assertThat(jobInfoFromDB.getStatus(), is(OK));
+    }
+
+    @Test
+    public void shouldNotFailIfJobHasNoMessages() throws Exception {
+        // given
+        final String jobId = "idOfJobWithoutMessages";
+        final JobInfo jobInfo = someJobInfoWithoutMessages(jobId, "EMPTY_JOB");
+        repo.createOrUpdate(jobInfo);
+
+        // when
+        repo.keepJobMessagesWithinMaximumSize(jobId);
+
+        // then
+        final JobInfo jobInfoFromDB = repo.findOne(jobId).orElse(null);
+        assertThat(jobInfoFromDB.getMessages(), hasSize(0));
+        assertThat(jobInfoFromDB.getStatus(), is(OK));
+    }
+
     private JobInfo someJobInfo(final String jobId) {
         return JobInfo.newJobInfo(
                 jobId,
@@ -362,6 +410,17 @@ public class MongoJobRepositoryTest {
                 asList(
                         jobMessage(Level.INFO, "foo", now()),
                         jobMessage(Level.WARNING, "bar", now())),
+                systemDefaultZone(),
+                "localhost"
+        );
+    }
+
+    private JobInfo someJobInfoWithoutMessages(final String jobId, final String type) {
+        return JobInfo.newJobInfo(
+                jobId,
+                type,
+                now(), now(), Optional.of(now()), OK,
+                Collections.emptyList(),
                 systemDefaultZone(),
                 "localhost"
         );

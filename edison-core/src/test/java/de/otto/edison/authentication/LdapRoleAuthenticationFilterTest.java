@@ -15,10 +15,7 @@ import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class LdapRoleAuthenticationFilterTest {
 
@@ -36,7 +33,7 @@ public class LdapRoleAuthenticationFilterTest {
         filter.doFilterInternal(request, response, filterChain);
 
         // then
-        verifyZeroInteractions(filterChain);
+        verifyNoInteractions(filterChain);
         verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
@@ -55,7 +52,7 @@ public class LdapRoleAuthenticationFilterTest {
 
         // then
         verify(filterChain).doFilter(request, response);
-        verifyZeroInteractions(response);
+        verifyNoInteractions(response);
     }
 
     @Test

@@ -25,7 +25,7 @@ import static java.time.Instant.ofEpochMilli;
 import static java.time.OffsetDateTime.ofInstant;
 import static java.time.ZoneId.systemDefault;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class PersistenceJobStateChangeListenerTest {
 
@@ -43,7 +43,7 @@ public class PersistenceJobStateChangeListenerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        initMocks(this);
+        openMocks(this);
 
         when(jobRunnableMock.getJobDefinition()).thenReturn(mock(JobDefinition.class));
 

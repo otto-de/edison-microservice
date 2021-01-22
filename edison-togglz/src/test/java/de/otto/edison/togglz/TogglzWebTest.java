@@ -16,7 +16,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestServer.class})
 @ActiveProfiles("test")
-public class TogglzWebTest {
+class TogglzWebTest {
 
     private final static RestTemplate restTemplate = new RestTemplate();
 
@@ -24,13 +24,13 @@ public class TogglzWebTest {
     private int port;
 
     @Test
-    public void shouldRegisterTogglzConsole() {
+    void shouldRegisterTogglzConsole() {
         final ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:" + port + "/togglztest/internal/toggles/", String.class);
         assertThat(response.getStatusCode().is2xxSuccessful(), is(true));
     }
 
     @Test
-    public void shouldAllowToggleStateToBeRetrievedInRequests() {
+    void shouldAllowToggleStateToBeRetrievedInRequests() {
         final ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:" + port + "/togglztest/featurestate/test", String.class);
         assertThat(response.getStatusCode().is2xxSuccessful(), is(true));
         assertThat(response.getBody(), is("feature is active"));

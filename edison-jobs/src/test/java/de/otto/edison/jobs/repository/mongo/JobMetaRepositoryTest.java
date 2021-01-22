@@ -1,11 +1,11 @@
 package de.otto.edison.jobs.repository.mongo;
 
+import com.mongodb.client.MongoClients;
 import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.dynamo.DynamoJobMetaRepository;
 import de.otto.edison.jobs.repository.inmem.InMemJobMetaRepository;
 import de.otto.edison.mongo.configuration.MongoProperties;
-import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -40,21 +41,23 @@ public class JobMetaRepositoryTest {
     private static final String DYNAMO_JOB_META_TABLE_NAME = "FT6_DynamoDB_JobMeta";
     private static DynamoJobMetaRepository dynamoTestee = null;
 
+    static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.2.5");
+
     @AfterAll
     public static void teardownMongo() {
-        EmbeddedMongoHelper.stopMongoDB();
+        mongoDBContainer.stop();
     }
 
     @BeforeAll
-    public static void initDbs() throws IOException {
-        EmbeddedMongoHelper.startMongoDB();
+    public static void initDbs() {
+        mongoDBContainer.start();
         createDynamoTable();
         dynamoTestee = new DynamoJobMetaRepository(getDynamoDbClient(), DYNAMO_JOB_META_TABLE_NAME);
     }
 
     @Container
     private static GenericContainer<?> dynamodb = createTestContainer()
-            .withExposedPorts(8000);;
+            .withExposedPorts(8000);
 
     @BeforeEach
     void setUp() {
@@ -103,7 +106,7 @@ public class JobMetaRepositoryTest {
 
     private static Collection<JobMetaRepository> data() {
         return asList(
-                new MongoJobMetaRepository(EmbeddedMongoHelper.getMongoClient().getDatabase("jobmeta-" + UUID.randomUUID()),
+                new MongoJobMetaRepository(MongoClients.create(mongoDBContainer.getReplicaSetUrl()).getDatabase("jobmeta-" + UUID.randomUUID()),
                         "jobmeta",
                         new MongoProperties()),
                 new InMemJobMetaRepository(),

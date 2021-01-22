@@ -11,23 +11,18 @@ import org.togglz.core.user.FeatureUser;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.util.Validate;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Collections.emptyList;
 
 /**
- *
  * A {@link FeatureManager} implementation that allows easy manipulation of features in testing environments.
- *
  */
 public class TestFeatureManager implements FeatureManager {
 
     private final Class<? extends Feature> featureEnum;
 
-    private final Set<String> activeFeatures = new HashSet<String>();
+    private final Map<String, FeatureState> featureStates = new HashMap<>();
 
     public TestFeatureManager(Class<? extends Feature> featureEnum) {
         Validate.notNull(featureEnum, "The featureEnum argument is required");
@@ -52,7 +47,10 @@ public class TestFeatureManager implements FeatureManager {
 
     @Override
     public boolean isActive(Feature feature) {
-        return activeFeatures.contains(feature.name());
+        if (featureStates.containsKey(feature.name())) {
+            return featureStates.get(feature.name()).isEnabled();
+        }
+        return false;
     }
 
     @Override
@@ -63,16 +61,18 @@ public class TestFeatureManager implements FeatureManager {
 
     @Override
     public FeatureState getFeatureState(Feature feature) {
-        return new FeatureState(feature, isActive(feature));
+        if(featureStates.containsKey(feature.name())){
+            return featureStates.get(feature.name());
+        }
+        return new FeatureState(feature, false);
     }
 
     @Override
     public void setFeatureState(FeatureState state) {
-        if (state.isEnabled()) {
-            activeFeatures.add(state.getFeature().name());
-        } else {
-            activeFeatures.remove(state.getFeature().name());
+        if (state.getFeature() == null) {
+            throw new RuntimeException("missing feature in state");
         }
+        featureStates.put(state.getFeature().name(), state);
     }
 
     @Override
@@ -80,25 +80,34 @@ public class TestFeatureManager implements FeatureManager {
         return emptyList();
     }
 
-    public TestFeatureManager enable(Feature feature) {
-        activeFeatures.add(feature.name());
+    public TestFeatureManager setEnabled(Feature feature, boolean enabled) {
+        if (featureStates.containsKey(feature.name())) {
+            featureStates.get(feature.name()).setEnabled(enabled);
+        } else {
+            featureStates.put(feature.name(), new FeatureState(feature, false));
+        }
         return this;
+    }
+
+    public TestFeatureManager enable(Feature feature) {
+        return setEnabled(feature, true);
     }
 
     public TestFeatureManager disable(Feature feature) {
-        activeFeatures.remove(feature.name());
-        return this;
+        return setEnabled(feature, false);
     }
 
     public TestFeatureManager enableAll() {
-        for (Feature feature : featureEnum.getEnumConstants()) {
-            enable(feature);
+        for (FeatureState featureState : featureStates.values()) {
+            featureState.setEnabled(false);
         }
         return this;
     }
 
     public TestFeatureManager disableAll() {
-        activeFeatures.clear();
+        for (FeatureState featureState : featureStates.values()) {
+            featureState.setEnabled(false);
+        }
         return this;
     }
 

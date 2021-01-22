@@ -11,6 +11,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParametersByPathRequest;
 import software.amazon.awssdk.services.ssm.model.GetParametersByPathResponse;
@@ -19,7 +21,6 @@ import software.amazon.awssdk.services.ssm.model.Parameter;
 import java.util.List;
 import java.util.Properties;
 
-import static io.netty.util.internal.StringUtil.isNullOrEmpty;
 import static java.lang.Boolean.parseBoolean;
 import static java.util.Objects.requireNonNull;
 import static software.amazon.awssdk.services.ssm.model.ParameterType.SECURE_STRING;
@@ -52,7 +53,7 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
         addParametersToPropertiesSource(propertiesSource, firstPage.parameters());
         String nextToken = firstPage.nextToken();
 
-        while (!isNullOrEmpty(nextToken)) {
+        while (!ObjectUtils.isEmpty(nextToken)) {
             final GetParametersByPathResponse nextPage = ssmClient.getParametersByPath(requestBuilder
                     .nextToken(nextToken)
                     .build()
@@ -90,5 +91,4 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
                 parseBoolean(environment.getProperty("edison.env.paramstore.addWithLowestPrecedence", "false")));
         properties.setPath(path);
     }
-
 }

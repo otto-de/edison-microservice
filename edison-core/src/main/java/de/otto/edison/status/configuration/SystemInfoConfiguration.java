@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.net.InetAddress;
@@ -38,10 +39,10 @@ public class SystemInfoConfiguration {
     }
 
     private String hostname() {
-        if (!StringUtils.isEmpty(envhostname)) {
+        if (!ObjectUtils.isEmpty(envhostname)) {
             return envhostname;
         }
-        if (!StringUtils.isEmpty(hostname)) {
+        if (!ObjectUtils.isEmpty(hostname)) {
             return hostname;
         }
         return defaultHostname;

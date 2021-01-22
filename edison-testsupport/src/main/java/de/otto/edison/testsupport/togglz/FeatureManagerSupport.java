@@ -5,6 +5,8 @@ import org.togglz.core.context.FeatureContext;
 import org.togglz.core.manager.FeatureManager;
 import org.togglz.core.repository.FeatureState;
 
+import java.util.Map;
+
 import static org.togglz.core.context.FeatureContext.clearCache;
 import static org.togglz.core.context.FeatureContext.getFeatureManager;
 
@@ -56,6 +58,26 @@ public class FeatureManagerSupport {
 
     public static void enable(final Feature feature) {
         getFeatureManager().setFeatureState(new FeatureState(feature, true));
+    }
+
+    public static void setParameter(final Feature feature, String name, String value) {
+        final FeatureState newFeatureState = new FeatureState(feature, true);
+        newFeatureState.setParameter(name, value);
+        getFeatureManager().setFeatureState(newFeatureState);
+    }
+
+    public static Map<String, String> getParameterMap(final Feature feature) {
+        return getFeatureManager().getFeatureState(feature).getParameterMap();
+    }
+
+    public static void setStrategyId(final Feature feature, String strategyId) {
+        final FeatureState newFeatureState = new FeatureState(feature, true);
+        newFeatureState.setStrategyId(strategyId);
+        getFeatureManager().setFeatureState(newFeatureState);
+    }
+
+    public static String getStrategyId(final Feature feature) {
+        return getFeatureManager().getFeatureState(feature).getStrategyId();
     }
 
 }

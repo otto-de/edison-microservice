@@ -1,4 +1,55 @@
 # Release Notes
+
+## 2.4.3
+* **[edison-testsupport]**:
+    * Add support for full featureState to edison-testsupport/togglz
+
+## 2.4.2
+* **[edison-core]**:
+    * Update to Spring Boot 2.4.2
+    * Catch errors in StatusDetailIndicators when aggregating them, so that aggregation is not aborted completely
+    * Change transient dependency for AWS SDK SSM to compileOnly
+* **[edison-jobs]** 
+    * Fix possible ArithmeticException in MongoJobRepository
+
+## 2.4.1
+* **[all]**
+    * Add dependency constraint to junit 4.13.1 because some dependencies bring an old version which has a security vulnerability
+  
+* **[edison-validation]**  
+    * disable evaluation of EL in bean validation to prevent injection vulnerability (see https://securitylab.github.com/research/bean-validation-RCE)
+
+## 2.4.0
+
+* **[edison-core]**:
+    * Update to Spring Boot 2.4.0
+
+## 2.4.0-RC1
+
+* **[edison-core]**:
+    * Update to Spring Boot 2.4.0-RC1
+
+## 2.3.1
+
+* **[edison-mongo]**: Fix bug in Mongo properties that prevented credentials from being used
+
+## 2.3.0
+**Breaking Change:**
+
+Edison 2.3.x requires Java 11 or higher.
+
+* **[edison-core]**:
+    * Update to Spring Boot 2.3.0
+    * Remove AsyncHttpClient and use native Java HTTP Client
+
+* **[edison-mongo]** 
+    * Update to Mongo 4 drivers
+    * Replace embedded mongo in tests
+
+## 2.2.10
+* **[edison-jobs]** / **[edison-mongo]**: Introduce a JobCleanupStrategy that looks for too big MongoDB documents
+that may originate from running jobs with many messages.
+
 ## 2.2.9
 * **[edison-mongo]**: Discover available compression algorithms for mongodb client-server-compression.
 Certain compression algorithms require extra dependencies. Edison-mongo does not provide them.  

@@ -61,7 +61,7 @@ To ensure a unified view to the changes please format the [CHANGELOG.md](CHANGEL
 Open a pull request, and reference the initial issue in the pull request message (e.g. fixes #). 
 Write a good description and title, so everybody will know what is fixed/improved.
 
-A travis-ci build will automatically be triggered to check everything.
+A Github Action will automatically be triggered to check everything.
 
 
 ### Wait for feedback

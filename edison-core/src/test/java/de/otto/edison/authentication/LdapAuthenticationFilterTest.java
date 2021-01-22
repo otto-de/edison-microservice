@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Base64Utils;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -192,6 +193,7 @@ public class LdapAuthenticationFilterTest {
 
     private HttpServletRequest requestWithoutAuthorizationHeader() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getDispatcherType()).thenReturn(DispatcherType.REQUEST);
         when(request.getServletPath()).thenReturn("/internal");
         return request;
     }
@@ -199,6 +201,7 @@ public class LdapAuthenticationFilterTest {
     private HttpServletRequest requestWithAuthorizationHeader() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader(AUTHORIZATION)).thenReturn("Basic " + Base64Utils.encodeToString("someUsername:somePassword".getBytes()));
+        when(request.getDispatcherType()).thenReturn(DispatcherType.REQUEST);
         when(request.getServletPath()).thenReturn("/internal");
         return request;
     }

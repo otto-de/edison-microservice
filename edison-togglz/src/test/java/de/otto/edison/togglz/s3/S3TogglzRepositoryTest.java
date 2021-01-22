@@ -8,11 +8,9 @@ import org.togglz.core.repository.FeatureState;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class S3TogglzRepositoryTest {
 
@@ -29,7 +27,7 @@ public class S3TogglzRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        initMocks(this);
+        openMocks(this);
         s3TogglzRepository = new S3TogglzRepository(featureStateConverter);
         when(feature.name()).thenReturn("someToggleName");
     }
@@ -58,6 +56,12 @@ public class S3TogglzRepositoryTest {
 
         final FeatureState featureStateFromCache = s3TogglzRepository.getFeatureState(feature);
         assertThat(featureStateFromCache, is(featureState));
-        verifyZeroInteractions(featureStateConverter);
+        verifyNoMoreInteractions(featureStateConverter);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenFeatureIsNotPresent() {
+        s3TogglzRepository.getFeatureState(feature);
+        assertThrows(IllegalArgumentException.class, () -> s3TogglzRepository.prefetchFeatureStates());
     }
 }

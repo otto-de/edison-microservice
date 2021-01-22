@@ -1,6 +1,7 @@
 package de.otto.edison.authentication;
 
 import org.springframework.util.Base64Utils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +38,7 @@ public class Credentials {
      */
     public static Optional<Credentials> readFrom(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
-        if (!StringUtils.isEmpty(authorizationHeader) && authorizationHeader.contains("Basic")) {
+        if (!ObjectUtils.isEmpty(authorizationHeader) && authorizationHeader.contains("Basic")) {
             String credentials = authorizationHeader.substring(6, authorizationHeader.length());
             Optional<String> decodedCredentials = base64Decode(credentials);
             String[] decodedCredentialParts = decodedCredentials

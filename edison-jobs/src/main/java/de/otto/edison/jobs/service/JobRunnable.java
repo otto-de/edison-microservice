@@ -35,6 +35,7 @@ public interface JobRunnable {
      * @return false, if the job was skipped without doing anything, true otherwise
      * @deprecated use execute, don't remove this method
      */
+    @Deprecated
     default boolean execute(JobEventPublisher jobEventPublisher) {
         return execute();
     }

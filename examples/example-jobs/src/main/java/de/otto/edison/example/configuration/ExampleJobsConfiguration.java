@@ -5,12 +5,11 @@ import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
 import de.otto.edison.jobs.service.JobMutexGroup;
 import de.otto.edison.jobs.service.JobService;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.net.http.HttpClient;
 
 /**
  * @author Guido Steinacker
@@ -23,8 +22,8 @@ public class ExampleJobsConfiguration {
     JobService jobService;
 
     @Bean
-    public AsyncHttpClient httpClient() {
-        return new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder().build());
+    public HttpClient httpClient() {
+        return HttpClient.newBuilder().build();
     }
 
     @Bean
@@ -41,5 +40,4 @@ public class ExampleJobsConfiguration {
     public JobMutexGroup mutualExclusion() {
         return new JobMutexGroup("barFizzle", "Bar", "Fizzle");
     }
-
 }

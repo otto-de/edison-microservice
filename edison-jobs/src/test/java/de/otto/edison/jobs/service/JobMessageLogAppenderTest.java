@@ -35,7 +35,7 @@ public class JobMessageLogAppenderTest {
         jobEventAppender.append(loggingEvent);
 
         //then
-        verifyZeroInteractions(jobService);
+        verifyNoInteractions(jobService);
     }
 
     @Test

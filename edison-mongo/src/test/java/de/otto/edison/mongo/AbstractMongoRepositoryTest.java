@@ -1,9 +1,9 @@
 package de.otto.edison.mongo;
 
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.otto.edison.mongo.configuration.MongoProperties;
-import de.otto.edison.testsupport.mongo.EmbeddedMongoHelper;
 import org.bson.Document;
 import org.hamcrest.CustomMatcher;
 import org.hamcrest.Matchers;
@@ -12,8 +12,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.testcontainers.containers.MongoDBContainer;
 
-import java.io.IOException;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -28,19 +28,21 @@ public class AbstractMongoRepositoryTest {
 
     private TestRepository testee;
 
+    static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.2.5");
+
     @BeforeAll
-    public static void setupMongo() throws IOException {
-        EmbeddedMongoHelper.startMongoDB();
+    public static void setupMongo() {
+        mongoDBContainer.start();
     }
 
     @AfterAll
     public static void teardownMongo() {
-        EmbeddedMongoHelper.stopMongoDB();
+        mongoDBContainer.stop();
     }
 
     @BeforeEach
     public void setUp() {
-        final MongoDatabase mongoDatabase = EmbeddedMongoHelper.getMongoClient().getDatabase("test-" + UUID.randomUUID());
+        final MongoDatabase mongoDatabase = MongoClients.create(mongoDBContainer.getReplicaSetUrl()).getDatabase("test-" + UUID.randomUUID());
         testee = new TestRepository(mongoDatabase);
     }
 

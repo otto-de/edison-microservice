@@ -142,7 +142,7 @@ public class JobService {
 
     public void killJobsDeadSince(final int seconds) {
         final OffsetDateTime timeToMarkJobAsStopped = now(clock).minusSeconds(seconds);
-        LOG.info(format("JobCleanup: Looking for jobs older than %s ", timeToMarkJobAsStopped));
+        LOG.debug("JobCleanup: Looking for jobs older than {}.", timeToMarkJobAsStopped);
         final List<JobInfo> deadJobs = jobRepository.findRunningWithoutUpdateSince(timeToMarkJobAsStopped);
         deadJobs.forEach(deadJob -> killJob(deadJob.getJobId()));
         clearRunLocks();
@@ -214,10 +214,10 @@ public class JobService {
 
     private void writeMessageAndStatus(final String jobId, Level messageLevel, String message, @Nullable final JobStatus jobStatus, OffsetDateTime timestamp) {
         // TODO: Refactor JobRepository so only a single update is required
-        jobRepository.appendMessage(jobId, jobMessage(messageLevel, message, timestamp));
         if (jobStatus != null) {
             jobRepository.setJobStatus(jobId, jobStatus);
         }
+        jobRepository.appendMessage(jobId, jobMessage(messageLevel, message, timestamp));
     }
 
     private JobInfo createJobInfo(final String jobType) {
@@ -263,4 +263,10 @@ public class JobService {
         };
     }
 
+    public void handleTooBigJobLogs() {
+        jobMetaService.runningJobs().forEach((RunningJob runningJob) -> {
+            LOG.debug("Keeping job messages small for job id {}", runningJob.jobId);
+            jobRepository.keepJobMessagesWithinMaximumSize(runningJob.jobId);
+        });
+    }
 }

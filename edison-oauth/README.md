@@ -1,4 +1,4 @@
-# Edison OAuth Capabilities
+## Edison OAuth Capabilities
 
 Basic set of functionality to use OAuth for securing APIs
 
