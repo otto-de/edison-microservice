@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.togglz.core.manager.FeatureManager;
 import org.togglz.testing.TestFeatureManager;
 
+import java.util.List;
 import java.util.Map;
 
 import static de.otto.edison.togglz.controller.FeatureTogglesRepresentation.togglzRepresentation;
@@ -23,7 +24,10 @@ class FeatureTogglesRepresentationTest {
         testee = togglzRepresentation(featureManager);
 
         final Map<String, FeatureToggleRepresentation> features = testee.features;
-        assertThat(features.get("TEST_FEATURE"), is(new FeatureToggleRepresentation("a test feature toggle", false, null)));
+        assertThat(features.get("TEST_FEATURE"), is(FeatureToggleRepresentation.newBuilder()
+                .withDescription("a test feature toggle")
+                .withEnabled(false)
+                .build()));
     }
 
     @Test
@@ -34,5 +38,18 @@ class FeatureTogglesRepresentationTest {
         final Map<String, FeatureToggleRepresentation> features = testee.features;
         assertThat(features, is(notNullValue()));
         assertThat(features.isEmpty(), is(true));
+    }
+
+    @Test
+    void shouldResolveFeatureGroups() {
+        FeatureManager featureManager = new TestFeatureManager(TestFeatures.class);
+        testee = togglzRepresentation(featureManager);
+
+        final Map<String, FeatureToggleRepresentation> features = testee.features;
+        assertThat(features.get("TEST_FEATURE_2"), is(FeatureToggleRepresentation.newBuilder()
+                .withDescription("TEST_FEATURE_2")
+                .withEnabled(false)
+                .withGroups(List.of("TestToggleGroup"))
+                .build()));
     }
 }
