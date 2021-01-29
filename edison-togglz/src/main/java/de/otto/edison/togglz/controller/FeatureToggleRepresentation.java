@@ -2,6 +2,10 @@ package de.otto.edison.togglz.controller;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonInclude(NON_NULL)
@@ -10,13 +14,19 @@ public class FeatureToggleRepresentation {
     public final String description;
     public final boolean enabled;
     public final String value;
+    public final List<String> groups;
 
-
-    FeatureToggleRepresentation(final String description, final boolean enabled, final String value) {
-        this.description = description;
-        this.enabled = enabled;
-        this.value = value;
+    private FeatureToggleRepresentation(Builder builder) {
+        description = builder.description;
+        enabled = builder.enabled;
+        value = builder.value;
+        groups = builder.groups;
     }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -26,8 +36,8 @@ public class FeatureToggleRepresentation {
         FeatureToggleRepresentation that = (FeatureToggleRepresentation) o;
 
         if (enabled != that.enabled) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        return value != null ? value.equals(that.value) : that.value == null;
+        if (!Objects.equals(description, that.description)) return false;
+        return Objects.equals(value, that.value);
 
     }
 
@@ -46,5 +56,39 @@ public class FeatureToggleRepresentation {
                 ", enabled=" + enabled +
                 ", value='" + value + '\'' +
                 '}';
+    }
+
+    public static final class Builder {
+        private String description;
+        private boolean enabled;
+        private String value;
+        private List<String> groups = new ArrayList<>();
+
+        private Builder() {
+        }
+
+        public Builder withDescription(String val) {
+            description = val;
+            return this;
+        }
+
+        public Builder withEnabled(boolean val) {
+            enabled = val;
+            return this;
+        }
+
+        public Builder withValue(String val) {
+            value = val;
+            return this;
+        }
+
+        public Builder withGroups(List<String> val) {
+            groups = val;
+            return this;
+        }
+
+        public FeatureToggleRepresentation build() {
+            return new FeatureToggleRepresentation(this);
+        }
     }
 }
