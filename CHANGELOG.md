@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.4.4
+* **[edison-togglz]**:
+    * Add support for feature groups
+
 ## 2.4.3
 * **[edison-testsupport]**:
     * Add support for full featureState to edison-testsupport/togglz
