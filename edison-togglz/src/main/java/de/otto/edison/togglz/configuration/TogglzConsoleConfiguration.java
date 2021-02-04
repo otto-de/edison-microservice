@@ -19,6 +19,12 @@ public class TogglzConsoleConfiguration {
 
     public static final String TOGGLES_URL_PATTERN = "/toggles/console/*";
 
+    private TogglzProperties properties;
+
+    public TogglzConsoleConfiguration(TogglzProperties properties) {
+        this.properties = properties;
+    }
+
     @Bean
     public ServletRegistrationBean<?> togglzServlet(final @Value("${edison.application.management.base-path:/internal}") String prefix,
                                                     final NavBar rightNavBar) {
@@ -26,6 +32,8 @@ public class TogglzConsoleConfiguration {
         // Register Togglz Console in the right "Admin" navigation bar:
         rightNavBar.register(navBarItem(bottom(), "Feature Toggles", prefix + "/toggles/console"));
         // Register TogglzConsoleServlet:
-        return new ServletRegistrationBean<>(new TogglzConsoleServlet(), prefix + TOGGLES_URL_PATTERN);
+        TogglzConsoleServlet togglzConsoleServlet = new TogglzConsoleServlet();
+        togglzConsoleServlet.setValidateCSRFToken(properties.getConsole().isValidateCSRFToken());
+        return new ServletRegistrationBean<>(togglzConsoleServlet, prefix + TOGGLES_URL_PATTERN);
     }
 }

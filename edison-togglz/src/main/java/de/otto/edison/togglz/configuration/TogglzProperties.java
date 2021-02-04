@@ -67,6 +67,10 @@ public class TogglzProperties {
          * Enable / disable the Togglz web console.
          */
         private boolean enabled = true;
+        /**
+         * Validate CSRF Token before update of toggle.
+         */
+        private boolean validateCSRFToken = true;
 
         public boolean isEnabled() {
             return enabled;
@@ -74,6 +78,14 @@ public class TogglzProperties {
 
         public void setEnabled(final boolean enabled) {
             this.enabled = enabled;
+        }
+
+        public boolean isValidateCSRFToken() {
+            return validateCSRFToken;
+        }
+
+        public void setValidateCSRFToken(boolean validateCSRFToken) {
+            this.validateCSRFToken = validateCSRFToken;
         }
     }
 

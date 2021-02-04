@@ -1,4 +1,8 @@
 # Release Notes
+## 2.4.5
+* **[edison-togglz]**:
+    * update to togglz 2.9.5
+    * Add property to bypass CSRFToken validation under `edison.togglz.console.validateCSRFToken` which defaults to true
 
 ## 2.4.4
 * **[edison-togglz]**:
