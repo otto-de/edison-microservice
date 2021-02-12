@@ -65,7 +65,7 @@ public class S3TogglzRepository implements StateRepository {
                 if (featureFromName.isPresent()) {
                     return new CacheEntry(featureStateConverter.retrieveFeatureStateFromS3(featureFromName.get()));
                 }
-                throw new IllegalArgumentException("Can not find feature name");
+                throw new IllegalArgumentException("Can not find feature with name: " + featureName);
             });
         }
     }
