@@ -1,7 +1,14 @@
 apply plugin: 'maven'
 
 jar {
-    manifest.attributes provider: 'gradle'
+    manifest {
+        attributes(
+                provider: 'gradle',
+                'Implementation-Vendor': project.group,
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
