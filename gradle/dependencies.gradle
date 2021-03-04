@@ -4,16 +4,16 @@
  */
 ext {
     versions = [
-            spring_boot                      : '2.4.2',
-            spring                           : '5.3.3',
-            spring_security_core             : '5.4.2',
-            spring_security_web              : '5.4.2',
+            spring_boot                      : '2.4.3',
+            spring                           : '5.3.4',
+            spring_security_core             : '5.4.5',
+            spring_security_web              : '5.4.5',
             spring_security_oauth            : '2.5.0.RELEASE',
             spring_security_jwt              : '1.1.1.RELEASE',
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.3',
             togglz                           : '2.9.6',
-            mongodb_driver                   : '4.1.0',
+            mongodb_driver                   : '4.2.2',
             caffeine                         : '2.8.0',
             json_path                        : '2.4.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
@@ -21,13 +21,13 @@ ext {
             edison_hal                       : '2.0.2',
             validator_collection             : '2.2.0',
             slf4j                            : '1.7.26',
-            aws_sdk                          : '2.15.64',
+            aws_sdk                          : '2.16.11',
             java_validation_api              : '2.0.1.Final',
             java_xml                         : '2.3.0',
             jackson                          : '2.12.1'
     ]
     test_versions = [
-            junit         : '5.7.0',
+            junit         : '5.7.1',
             hamcrest      : '2.1',
             mockito_core  : '3.4.6',
             jsonassert    : '1.5.0',
