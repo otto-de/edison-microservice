@@ -23,7 +23,7 @@ ext {
             caffeine                         : '2.8.0',
             json_path                        : '2.5.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
-            hibernate_validator              : '6.0.18.Final',
+            hibernate_validator              : '6.1.7.Final', //last version with @SafeHtml
             edison_hal                       : '2.1.0',
             validator_collection             : '2.2.0',
             slf4j                            : '1.7.26',

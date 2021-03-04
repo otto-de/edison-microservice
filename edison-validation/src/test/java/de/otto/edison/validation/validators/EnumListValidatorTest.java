@@ -90,7 +90,7 @@ public class EnumListValidatorTest {
     }
 
     private ConstraintValidatorContext createContext() {
-        return new ConstraintValidatorContextImpl(Collections.emptyList(), DefaultClockProvider.INSTANCE, PathImpl.createPathFromString("target"), mock(ConstraintDescriptor.class), null);
+        return new ConstraintValidatorContextImpl(DefaultClockProvider.INSTANCE, PathImpl.createPathFromString("target"), mock(ConstraintDescriptor.class), null);
     }
 
     @SuppressWarnings("unchecked")
