@@ -43,7 +43,7 @@ ext {
     plugin_versions = [
             versions     : '0.25.0',
             jacoco       : '0.8.6',
-            nexus_staging: '0.21.1'
+            nexus_staging: '0.30.0'
     ]
 
     libraries = [
