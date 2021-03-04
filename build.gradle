@@ -75,7 +75,7 @@ subprojects {
     dependencies {
         compileOnly "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}"
         constraints {
-            implementation 'junit:junit:4.13.1'  // some dependencies bring junit 4.12 which has a security vulnerability
+            implementation 'junit:junit:4.13.2'  // some dependencies bring junit 4.12 which has a security vulnerability
         }
     }
 
