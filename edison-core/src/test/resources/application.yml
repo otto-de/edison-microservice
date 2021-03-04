@@ -14,7 +14,7 @@ spring:
 server:
     servlet:
         context-path: /testcore
-    port: 8084
+    port: 18084
 
 
 
