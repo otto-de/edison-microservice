@@ -1,5 +1,5 @@
 buildscript {
-    apply from: "${rootDir}/gradle/dependencies.gradle"
+    apply from: "${rootDir}/gradle/build.gradle"
 
     repositories {
         mavenCentral()
