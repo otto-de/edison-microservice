@@ -1,6 +1,12 @@
 /**
  * For an example
  * @see https://raw.githubusercontent.com/ben-manes/caffeine/master/gradle/dependencies.gradle
+ *
+ * Dependabot currently only scans gradle files that are named build.gradle - the old "dependencies.gradle" file was
+ * renamed into build.gradle until dependabot fixes this issue:
+ *
+ *  https://github.com/dependabot/dependabot-core/issues/1428
+ *
  */
 ext {
     versions = [
