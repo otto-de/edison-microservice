@@ -36,9 +36,9 @@ ext {
             embedded_mongo: '2.1.1'
     ]
     plugin_versions = [
-            versions     : '0.25.0',
-            jacoco       : '0.8.6',
-            nexus_staging: '0.21.1'
+            versions     : '0.15.0',
+            jacoco       : '0.7.9',
+            nexus_staging: '0.11.0'
     ]
 
     libraries = [
