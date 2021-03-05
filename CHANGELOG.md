@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.2.25
+
+**Maintenance:**
+* **[edison-mongo]** add writeConcern to MongoProperties
+
 ## 1.2.34
 * **[edison-jobs]** bugfix: skip only for job with state ok
 

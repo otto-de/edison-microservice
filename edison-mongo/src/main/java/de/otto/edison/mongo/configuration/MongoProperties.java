@@ -4,6 +4,7 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientOptions.Builder;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 import de.otto.edison.status.domain.Datasource;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -76,6 +77,12 @@ public class MongoProperties {
      */
     @NotEmpty
     private String readPreference = "primaryPreferred";
+
+    /**
+     * Represents preferred write concern to which a query or command can be sent.
+     */
+    @NotEmpty
+    private String writeConcern = "writeConcern";
 
     /**
      * Maximum time that a thread will block waiting for a connection.
@@ -240,6 +247,10 @@ public class MongoProperties {
         this.readPreference = readPreference;
     }
 
+    public String getWriteConcern() { return writeConcern; }
+
+    public void setWriteConcern(final String writeConcern) { this.writeConcern = writeConcern; }
+
     public int getMaxWaitTime() {
         return maxWaitTime;
     }
@@ -328,6 +339,7 @@ public class MongoProperties {
                 .sslEnabled(sslEnabled)
                 .codecRegistry(codecRegistry)
                 .readPreference(ReadPreference.valueOf(readPreference))
+                .writeConcern(WriteConcern.valueOf(writeConcern))
                 .connectTimeout(connectTimeout)
                 .socketTimeout(socketTimeout)
                 .serverSelectionTimeout(serverSelectionTimeout)
