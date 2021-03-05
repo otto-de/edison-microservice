@@ -1,7 +1,6 @@
 # Release Notes
 
-## 1.2.25
-
+## 1.2.35
 **Maintenance:**
 * **[edison-mongo]** add writeConcern to MongoProperties
 
