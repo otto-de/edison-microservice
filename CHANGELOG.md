@@ -1,10 +1,10 @@
 # Release Notes
 
 ## 2.4.6
-
 * **[all]**
   * add Maven `groupId`, `artifactId` and `version` as 
    `Implementation-Vendor`, `Implementation-Title` and `Implementation-Version` to `META-INF/MANIFEST.MF` for each submodule.
+  * Dependency updates (Introduce dependabot)
 
 ## 2.4.5
 * **[edison-togglz]**:
