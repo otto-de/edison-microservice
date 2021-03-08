@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.2.11
+**Maintenance:**
+* **[edison-mongo]** add writeConcern to MongoProperties
+
 ## 2.2.10
 * **[edison-jobs]** / **[edison-mongo]**: Introduce a JobCleanupStrategy that looks for too big MongoDB documents
 that may originate from running jobs with many messages.
