@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.2.12
+* **[edison-mongo]** Bugfix add null check for writeConcern in MongoProperties
+
 ## 2.2.11
 **Maintenance:**
 * **[edison-mongo]** add writeConcern to MongoProperties
