@@ -3,8 +3,11 @@ package de.otto.edison.togglz.controller;
 import net.jcip.annotations.Immutable;
 import org.togglz.core.Feature;
 import org.togglz.core.manager.FeatureManager;
+import org.togglz.core.metadata.FeatureGroup;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
@@ -33,9 +36,13 @@ public class FeatureTogglesRepresentation {
     private FeatureToggleRepresentation toFeatureToggleRepresentation(final Feature feature, FeatureManager featureManager) {
 
         final String label = featureManager.getMetaData(feature).getLabel();
-        return new FeatureToggleRepresentation(
-                label != null ? label : feature.name(),
-                featureManager.getFeatureState(feature).isEnabled(),
-                null);
+        final List<String> featureGroups = featureManager.getMetaData(feature).getGroups().stream()
+                .map(FeatureGroup::getLabel)
+                .collect(Collectors.toList());
+        return FeatureToggleRepresentation.newBuilder()
+                .withDescription(label != null ? label : feature.name())
+                .withGroups(featureGroups)
+                .withEnabled(featureManager.getFeatureState(feature).isEnabled())
+                .build();
     }
 }

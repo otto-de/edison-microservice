@@ -21,11 +21,13 @@ public class TogglzConsoleConfiguration {
 
     @Bean
     public ServletRegistrationBean<?> togglzServlet(final @Value("${edison.application.management.base-path:/internal}") String prefix,
-                                                    final NavBar rightNavBar) {
+                                                    final NavBar rightNavBar, final TogglzProperties properties) {
 
         // Register Togglz Console in the right "Admin" navigation bar:
         rightNavBar.register(navBarItem(bottom(), "Feature Toggles", prefix + "/toggles/console"));
         // Register TogglzConsoleServlet:
-        return new ServletRegistrationBean<>(new TogglzConsoleServlet(), prefix + TOGGLES_URL_PATTERN);
+        TogglzConsoleServlet togglzConsoleServlet = new TogglzConsoleServlet();
+        togglzConsoleServlet.setValidateCSRFToken(properties.getConsole().isValidateCSRFToken());
+        return new ServletRegistrationBean<>(togglzConsoleServlet, prefix + TOGGLES_URL_PATTERN);
     }
 }

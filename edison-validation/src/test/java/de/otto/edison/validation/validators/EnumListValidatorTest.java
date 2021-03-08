@@ -3,6 +3,7 @@ package de.otto.edison.validation.validators;
 import org.hibernate.validator.internal.engine.DefaultClockProvider;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
 import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
@@ -90,7 +91,7 @@ public class EnumListValidatorTest {
     }
 
     private ConstraintValidatorContext createContext() {
-        return new ConstraintValidatorContextImpl(Collections.emptyList(), DefaultClockProvider.INSTANCE, PathImpl.createPathFromString("target"), mock(ConstraintDescriptor.class), null);
+        return new ConstraintValidatorContextImpl(DefaultClockProvider.INSTANCE, PathImpl.createPathFromString("target"), mock(ConstraintDescriptor.class), null, ExpressionLanguageFeatureLevel.DEFAULT, ExpressionLanguageFeatureLevel.DEFAULT);
     }
 
     @SuppressWarnings("unchecked")

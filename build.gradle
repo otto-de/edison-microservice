@@ -1,5 +1,5 @@
 buildscript {
-    apply from: "${rootDir}/gradle/dependencies.gradle"
+    apply from: "${rootDir}/gradle/build.gradle"
 
     repositories {
         mavenCentral()
@@ -21,7 +21,7 @@ buildscript {
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
 // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-def edison_version = "2.4.4-SNAPSHOT"
+def edison_version = "2.4.7-SNAPSHOT"
 //
 //
 //
@@ -38,6 +38,11 @@ apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
 apply from: "${rootDir}/gradle/root/jacoco.gradle"
 apply from: "${rootDir}/gradle/root/nexusstaging.gradle"
+
+nexusStaging {
+    numberOfRetries = 20
+    delayBetweenRetriesInMillis = 5000
+}
 
 subprojects {
     apply plugin: 'eclipse'
@@ -70,7 +75,7 @@ subprojects {
     dependencies {
         compileOnly "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}"
         constraints {
-            implementation 'junit:junit:4.13.1'  // some dependencies bring junit 4.12 which has a security vulnerability
+            implementation 'junit:junit:4.13.2'  // some dependencies bring junit 4.12 which has a security vulnerability
         }
     }
 

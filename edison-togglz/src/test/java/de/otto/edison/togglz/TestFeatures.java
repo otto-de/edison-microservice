@@ -8,6 +8,7 @@ public enum TestFeatures implements Feature {
 
     @Label("a test feature toggle")
     TEST_FEATURE,
+    @TestToggleGroup
     TEST_FEATURE_2;
 
     public boolean isActive() {

@@ -1,7 +1,22 @@
 # Release Notes
 
+## 2.4.7
+* **[edison-mongo]** add writeConcern to MongoPropert
+
+## 2.4.6
+* **[all]**
+  * add Maven `groupId`, `artifactId` and `version` as 
+   `Implementation-Vendor`, `Implementation-Title` and `Implementation-Version` to `META-INF/MANIFEST.MF` for each submodule.
+  * Dependency updates (Introduce dependabot)
+
+## 2.4.5
+* **[edison-togglz]**:
+    * update to togglz 2.9.5
+    * Add property to bypass CSRFToken validation under `edison.togglz.console.validateCSRFToken` which defaults to true
+
 ## 2.4.4
-* **[edison-mongo]** add writeConcern to MongoProperties
+* **[edison-togglz]**:
+    * Add support for feature groups
 
 ## 2.4.3
 * **[edison-testsupport]**:
@@ -102,9 +117,6 @@ You need to add the following dependencies to your application in order to use c
 * **[general]**: Update to Spring Boot 2.2
 
 See https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2-Release-Notes for a migration guide 
-
-## 2.1.4
-* **[edison-oauth]**: Bugfix Bean Creation when inactivate public key exchange
 
 ## 2.1.3
 * **[general]**: Update dependencies
