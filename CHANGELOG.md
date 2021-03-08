@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.4.4
+* **[edison-mongo]** add writeConcern to MongoProperties
+
 ## 2.4.3
 * **[edison-testsupport]**:
     * Add support for full featureState to edison-testsupport/togglz

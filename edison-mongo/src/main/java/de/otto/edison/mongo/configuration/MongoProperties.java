@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static com.mongodb.MongoCredential.createCredential;
 import static de.otto.edison.status.domain.Datasource.datasource;
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -67,6 +68,11 @@ public class MongoProperties {
      */
     @NotEmpty
     private String readPreference = "primaryPreferred";
+
+    /**
+     * Represents preferred write concern to which a query or command can be sent.
+     */
+    private String writeConcern;
 
     /**
      * Maximum time that a thread will block waiting for a connection.
@@ -212,6 +218,10 @@ public class MongoProperties {
         this.readPreference = readPreference;
     }
 
+    public String getWriteConcern() { return writeConcern; }
+
+    public void setWriteConcern(final String writeConcern) { this.writeConcern = writeConcern; }
+
     public int getMaxWaitTime() {
         return maxWaitTime;
     }
@@ -272,9 +282,8 @@ public class MongoProperties {
         if (isClientServerCompressionEnabled()) {
             clientOptionsBuilder.compressorList(possibleCompressors);
         }
-
-        if(useAuthorizedConnection()) {
-            clientOptionsBuilder.credential(getMongoCredentials());
+        if (nonNull(writeConcern)) {
+            clientOptionsBuilder.writeConcern(WriteConcern.valueOf(writeConcern));
         }
 
         return clientOptionsBuilder.build();
