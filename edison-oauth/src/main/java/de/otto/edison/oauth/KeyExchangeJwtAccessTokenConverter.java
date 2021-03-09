@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@ConditionalOnExpression("${edison.oauth.public-key.enabled:false")
+@ConditionalOnExpression("${edison.oauth.public-key.enabled:false}")
 public class KeyExchangeJwtAccessTokenConverter extends JwtAccessTokenConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyExchangeJwtAccessTokenConverter.class);
