@@ -1,7 +1,7 @@
 edison:
     oauth:
         public-key:
-            enabled: false
+            enabled: true
         authorization:
             resource:
                 patterns: "/"

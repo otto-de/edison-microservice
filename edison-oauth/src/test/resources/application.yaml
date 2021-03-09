@@ -1,4 +1,0 @@
-edison:
-  oauth:
-    public-key:
-      enabled: true
