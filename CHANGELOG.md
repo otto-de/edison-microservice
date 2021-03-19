@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.2.1
+* **[edison-mongo]** add writeConcern to MongoProperties
+
 ## 2.2.0
 * **[general]**: Update to Spring Boot 2.2
 
