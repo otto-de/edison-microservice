@@ -350,7 +350,7 @@ public class MongoProperties {
                 .minConnectionsPerHost(connectionpool.getMinSize())
                 .connectionsPerHost(connectionpool.getMaxSize());
         if (nonNull(writeConcern)) {
-            builder.writeConcern(WriteConcern.valueOf(writeConcern));
+            //builder.writeConcern(WriteConcern.valueOf(writeConcern));
         }
         return builder;
     }
