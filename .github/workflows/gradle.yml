@@ -24,6 +24,6 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x bin/gradlew
     - name: Build with Gradle
-      run: ./bin/gradlew check
+      run: ./bin/gradlew -S check
     - name: Upload Jacoco Report
       run: bash <(curl -s https://codecov.io/bash)
