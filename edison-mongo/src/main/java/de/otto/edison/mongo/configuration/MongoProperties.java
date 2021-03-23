@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import static com.mongodb.MongoClientOptions.builder;
 import static de.otto.edison.status.domain.Datasource.datasource;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -81,8 +82,7 @@ public class MongoProperties {
     /**
      * Represents preferred write concern to which a query or command can be sent.
      */
-    @NotEmpty
-    private String writeConcern = "writeConcern";
+    private String writeConcern;
 
     /**
      * Maximum time that a thread will block waiting for a connection.
@@ -335,11 +335,10 @@ public class MongoProperties {
     }
 
     private Builder getMongoClientOptionsBuilder(final CodecRegistry codecRegistry) {
-        return builder()
+        final Builder builder = builder()
                 .sslEnabled(sslEnabled)
                 .codecRegistry(codecRegistry)
                 .readPreference(ReadPreference.valueOf(readPreference))
-                .writeConcern(WriteConcern.valueOf(writeConcern))
                 .connectTimeout(connectTimeout)
                 .socketTimeout(socketTimeout)
                 .serverSelectionTimeout(serverSelectionTimeout)
@@ -350,6 +349,10 @@ public class MongoProperties {
                 .maxConnectionIdleTime(connectionpool.getMaxIdleTime())
                 .minConnectionsPerHost(connectionpool.getMinSize())
                 .connectionsPerHost(connectionpool.getMaxSize());
+        if (nonNull(writeConcern)) {
+            builder.writeConcern(WriteConcern.valueOf(writeConcern));
+        }
+        return builder;
     }
 
     private ServerAddress toServerAddress(final String server) {
