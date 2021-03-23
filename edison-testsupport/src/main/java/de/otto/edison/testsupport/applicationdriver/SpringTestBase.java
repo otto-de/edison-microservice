@@ -10,6 +10,11 @@ public class SpringTestBase {
     }
 
     public static ApplicationContext applicationContext() {
-        return TestServer.applicationContext();
+        try {
+            return TestServer.applicationContext();
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }
