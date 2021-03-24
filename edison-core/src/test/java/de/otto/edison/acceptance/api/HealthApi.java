@@ -43,12 +43,12 @@ public class HealthApi extends SpringTestBase {
     }
 
     public static When the_internal_status_is_retrieved_as(final String mediaType) throws IOException {
-        getResource("http://localhost:8084/testcore/internal/status", of(mediaType));
+        getResource("http://localhost:18084/testcore/internal/status", of(mediaType));
         return When.INSTANCE;
     }
 
     public static When the_internal_health_is_retrieved() throws IOException {
-        getResource("http://localhost:8084/testcore/internal/health", Optional.<String>empty());
+        getResource("http://localhost:18084/testcore/internal/health", Optional.<String>empty());
         return When.INSTANCE;
     }
 

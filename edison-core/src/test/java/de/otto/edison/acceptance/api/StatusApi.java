@@ -28,18 +28,18 @@ public class StatusApi extends SpringTestBase {
     private static HttpHeaders responseHeaders;
 
     public static When internal_is_retrieved_as(final String mediaType) throws IOException {
-        getResource("http://localhost:8084/testcore/internal", of(mediaType));
+        getResource("http://localhost:18084/testcore/internal", of(mediaType));
         return When.INSTANCE;
     }
 
     public static When internal_status_is_retrieved_as(final String mediaType) throws IOException {
-        getResource("http://localhost:8084/testcore/internal/status", of(mediaType));
+        getResource("http://localhost:18084/testcore/internal/status", of(mediaType));
         return When.INSTANCE;
     }
 
     public static When internal_status_is_retrieved_as(final String mediaType, final HttpHeaders headers) throws IOException {
         requestHeaders = headers;
-        getResource("http://localhost:8084/testcore/internal/status", of(mediaType));
+        getResource("http://localhost:18084/testcore/internal/status", of(mediaType));
         return When.INSTANCE;
     }
 
