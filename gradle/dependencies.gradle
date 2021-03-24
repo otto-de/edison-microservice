@@ -93,6 +93,7 @@ ext {
     gradle_plugins = [
             versions     : "com.github.ben-manes:gradle-versions-plugin:${plugin_versions.versions}",
             spring_boot  : "org.springframework.boot:spring-boot-gradle-plugin:${versions.spring_boot}",
-            nexus_staging: "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:${plugin_versions.nexus_staging}"
+            nexus_staging: "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:${plugin_versions.nexus_staging}",
+            test_logger  : "com.adarshr:gradle-test-logger-plugin:1.7.1"
     ]
 }
