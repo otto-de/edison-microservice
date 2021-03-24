@@ -32,6 +32,14 @@ subprojects {
     apply plugin: 'project-report'
     apply plugin: "com.adarshr.test-logger"
 
+    testlogger {
+        showStandardStreams true
+        showPassedStandardStreams false
+        showSkippedStandardStreams false
+        showFailedStandardStreams true
+        showFullStackTraces true
+    }
+
     // USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
     //
     // Major Release: X.0.0-RELEASE: Breaking Changes. Should be avoided if possible, or planned for future release.
