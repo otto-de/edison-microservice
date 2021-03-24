@@ -4,6 +4,7 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientOptions.Builder;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 import de.otto.edison.status.domain.Datasource;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 
 import static com.mongodb.MongoClientOptions.builder;
 import static de.otto.edison.status.domain.Datasource.datasource;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -76,6 +78,11 @@ public class MongoProperties {
      */
     @NotEmpty
     private String readPreference = "primaryPreferred";
+
+    /**
+     * Represents preferred write concern to which a query or command can be sent.
+     */
+    private String writeConcern;
 
     /**
      * Maximum time that a thread will block waiting for a connection.
@@ -240,6 +247,10 @@ public class MongoProperties {
         this.readPreference = readPreference;
     }
 
+    public String getWriteConcern() { return writeConcern; }
+
+    public void setWriteConcern(final String writeConcern) { this.writeConcern = writeConcern; }
+
     public int getMaxWaitTime() {
         return maxWaitTime;
     }
@@ -324,7 +335,7 @@ public class MongoProperties {
     }
 
     private Builder getMongoClientOptionsBuilder(final CodecRegistry codecRegistry) {
-        return builder()
+        final Builder builder = builder()
                 .sslEnabled(sslEnabled)
                 .codecRegistry(codecRegistry)
                 .readPreference(ReadPreference.valueOf(readPreference))
@@ -338,6 +349,10 @@ public class MongoProperties {
                 .maxConnectionIdleTime(connectionpool.getMaxIdleTime())
                 .minConnectionsPerHost(connectionpool.getMinSize())
                 .connectionsPerHost(connectionpool.getMaxSize());
+        if (nonNull(writeConcern)) {
+            builder.writeConcern(WriteConcern.valueOf(writeConcern));
+        }
+        return builder;
     }
 
     private ServerAddress toServerAddress(final String server) {
