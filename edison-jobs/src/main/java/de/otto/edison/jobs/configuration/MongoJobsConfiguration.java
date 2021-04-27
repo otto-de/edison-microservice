@@ -6,9 +6,11 @@ import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.jobs.repository.mongo.MongoJobMetaRepository;
 import de.otto.edison.jobs.repository.mongo.MongoJobRepository;
+import de.otto.edison.mongo.configuration.MongoConfiguration;
 import de.otto.edison.mongo.configuration.MongoProperties;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
+@AutoConfigureAfter(MongoConfiguration.class)
 @ConditionalOnProperty(prefix = "edison.jobs", name = "mongo.enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnClass(MongoClient.class)
 public class MongoJobsConfiguration {
