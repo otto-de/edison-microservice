@@ -2,6 +2,7 @@
 
 ## 2.4.7
 * **[edison-mongo]** add writeConcern to MongoPropert
+* **[edison-togglz]** add AutoConfigureAfter(MongoConfiguration.class)
 
 ## 2.4.6
 * **[all]**
