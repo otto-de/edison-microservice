@@ -282,6 +282,9 @@ public class MongoProperties {
         if (isClientServerCompressionEnabled()) {
             clientOptionsBuilder.compressorList(possibleCompressors);
         }
+        if(useAuthorizedConnection()) {
+            clientOptionsBuilder.credential(getMongoCredentials());
+        }
         if (nonNull(writeConcern)) {
             clientOptionsBuilder.writeConcern(WriteConcern.valueOf(writeConcern));
         }
