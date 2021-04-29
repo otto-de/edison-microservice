@@ -1,8 +1,9 @@
 # Release Notes
 
 ## 2.4.7
-* **[edison-mongo]** add writeConcern to MongoPropert
-* **[edison-togglz]** add AutoConfigureAfter(MongoConfiguration.class)
+* **[edison-mongo]** add writeConcern to MongoProperties
+* **[edison-togglz]** change ConditionalOnBean(MongoClient) to ConditionalOnClass(MongoClient) for MongoTogglzConfiguration  
+  MongoTogglzConfiguration must be disabled by `edison.togglz.mongo.enabled=false`
 
 ## 2.4.6
 * **[all]**

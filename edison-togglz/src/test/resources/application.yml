@@ -17,3 +17,8 @@ management:
     endpoint:
         loggers:
             enabled: true
+
+edison:
+    togglz:
+        mongo:
+            enabled: false

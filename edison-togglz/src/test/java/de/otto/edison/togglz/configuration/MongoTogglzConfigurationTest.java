@@ -65,7 +65,7 @@ class MongoTogglzConfigurationTest {
     void shouldUseInMemoryStateRepositoryIfMissingMongoClient() {
         this.context.register(TogglzTestConfiguration.class);
         TestPropertyValues
-                .of("edison.togglz.mongo.enabled=true")
+                .of("edison.togglz.mongo.enabled=false")
                 .and("edison.mongo.db=db")
                 .and("edison.mongo.user=test")
                 .and("edison.mongo.password=test")
