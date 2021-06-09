@@ -20,7 +20,7 @@ ext {
             logback_classic                  : '1.2.3',
             togglz                           : '2.9.8',
             mongodb_driver                   : '4.2.3',
-            caffeine                         : '2.8.0',
+            caffeine                         : '3.0.2',
             json_path                        : '2.6.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
             hibernate_validator              : '6.2.0.Final', //last version with @SafeHtml
