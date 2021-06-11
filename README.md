@@ -46,6 +46,8 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 
 **2.4.x**: Edison Microservices for Spring Boot 2.4.x &#10004; - Compatible with Java 11 and greater
 
+**2.5.x**: Edison Microservices for Spring Boot 2.5.x &#10004; - Compatible with Java 11 and greater
+
 
 ## Migration from Edison 1.x to Edison 2
 
