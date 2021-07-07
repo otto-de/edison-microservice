@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.5.2
+* **[edison-core]**
+    * Update to Spring Boot 2.5.2
+    * Dependency updates
+
 ## 2.5.1
 * **[edison-core]**
     * Update to Spring Boot 2.5.1
