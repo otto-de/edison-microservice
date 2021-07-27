@@ -17,7 +17,7 @@ ext {
             spring_security_oauth            : '2.5.1.RELEASE',
             spring_security_jwt              : '1.1.1.RELEASE',
             jcip_annotations                 : '1.0',
-            logback_classic                  : '1.2.3',
+            logback_classic                  : '1.2.5',
             togglz                           : '2.9.8',
             mongodb_driver                   : '4.3.1',
             caffeine                         : '3.0.3',
