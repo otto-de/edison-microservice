@@ -2,6 +2,7 @@ package de.otto.edison.togglz.configuration;
 
 import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
+import de.otto.edison.togglz.RemoteTogglzConfig;
 import de.otto.edison.togglz.s3.FeatureStateConverter;
 import de.otto.edison.togglz.s3.S3TogglzRepository;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 @EnableConfigurationProperties(TogglzProperties.class)
 @ConditionalOnProperty(prefix = "edison.togglz", name = "s3.enabled", havingValue = "true")
 @ConditionalOnBean(type = "software.amazon.awssdk.services.s3.S3Client")
-public class S3TogglzConfiguration {
+public class S3TogglzConfiguration implements RemoteTogglzConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3TogglzConfiguration.class);
 

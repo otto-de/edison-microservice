@@ -3,9 +3,11 @@ package de.otto.edison.togglz.configuration;
 import de.otto.edison.authentication.Credentials;
 import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
+import de.otto.edison.togglz.RemoteTogglzConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.togglz.core.Feature;
@@ -21,6 +23,7 @@ import org.togglz.servlet.util.HttpServletRequestHolder;
 import org.togglz.spring.manager.FeatureManagerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 import java.util.Optional;
 
 @Configuration
@@ -54,6 +57,18 @@ public class TogglzConfiguration {
 
             return new SimpleFeatureUser((credentials.isPresent() ? credentials.get().getUsername() : null), isAdmin);
         };
+    }
+
+    @Bean
+    public Boolean validateRemoteConfigs(ApplicationContext applicationContext) {
+        Map<String, RemoteTogglzConfig> remoteToggleConfigs = applicationContext.getBeansOfType(RemoteTogglzConfig.class);
+
+        if (remoteToggleConfigs.size() > 1) {
+            String names = String.join(",", remoteToggleConfigs.keySet());
+            throw new RuntimeException("multiple remote togglz configs exist, make sure only one of them is used: " + names);
+        }
+
+        return true;
     }
 
     @Bean
