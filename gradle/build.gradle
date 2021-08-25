@@ -35,7 +35,7 @@ ext {
     test_versions = [
             junit         : '5.7.2',
             hamcrest      : '2.2',
-            mockito_core  : '3.11.2',
+            mockito_core  : '3.12.4',
             jsonassert    : '1.5.0',
             rest_assured  : '4.4.0',
             testcontainers: '1.16.0'
