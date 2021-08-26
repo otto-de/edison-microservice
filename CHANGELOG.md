@@ -1,4 +1,7 @@
 # Release Notes
+## 2.5.3
+* **[edison-togglz]**
+    * add a check that prevents the service to start if both a mongo and an s3 togglz config are applying
 
 ## 2.5.2
 * **[edison-core]**
