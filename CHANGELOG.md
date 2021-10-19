@@ -2,7 +2,7 @@
 
 ## 2.5.4
 * **[all]**
-    * Update to Spring Boot 2.5.4
+    * Update to Spring Boot 2.5.5
 
 ## 2.5.3
 * **[edison-togglz]**
