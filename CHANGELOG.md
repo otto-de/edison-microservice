@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.5.5
+* **[all]**
+    * Update to Spring Boot 2.5.6
+
 ## 2.5.4
 * **[all]**
     * Update to Spring Boot 2.5.5
