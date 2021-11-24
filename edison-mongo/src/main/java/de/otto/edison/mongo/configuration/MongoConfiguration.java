@@ -4,6 +4,7 @@ import com.mongodb.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.event.CommandListener;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -52,10 +53,10 @@ public class MongoConfiguration {
     @Bean
     @Primary
     @ConditionalOnMissingBean(name = "mongoClient", value = MongoClient.class)
-    public MongoClient mongoClient(final MongoProperties mongoProperties, List<MongoCompressor> possibleCompressors) {
+    public MongoClient mongoClient(final MongoProperties mongoProperties, final List<MongoCompressor> possibleCompressors, final List<CommandListener> commandListeners) {
         LOG.info("Creating MongoClient");
 
-        MongoClientSettings mongoClientSettings = mongoProperties.toMongoClientSettings(codecRegistry(), possibleCompressors);
+        MongoClientSettings mongoClientSettings = mongoProperties.toMongoClientSettings(codecRegistry(), possibleCompressors, commandListeners);
 
         return MongoClients.create(mongoClientSettings);
     }

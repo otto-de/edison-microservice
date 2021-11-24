@@ -26,6 +26,10 @@
 * **[edison-core]** 
   * Update to Spring Boot 2.5.0 and Spring 5.3.8
 
+## 2.4.7.1
+* **[edison-mongo]** 
+  * add command listener to MongoClient
+
 ## 2.4.7
 * **[edison-mongo]** add writeConcern to MongoProperties
 * **[edison-togglz]** change ConditionalOnBean(MongoClient) to ConditionalOnClass(MongoClient) for MongoTogglzConfiguration  

@@ -25,7 +25,7 @@ public class MongoPropertiesTest {
 
         //when
         props.setClientServerCompressionEnabled(true);
-        MongoClientSettings mongoClientOptions = props.toMongoClientSettings(MongoClientSettings.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()));
+        MongoClientSettings mongoClientOptions = props.toMongoClientSettings(MongoClientSettings.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()), null);
 
         //then
         assertThat(mongoClientOptions.getCompressorList(), is(Collections.singletonList(MongoCompressor.createZlibCompressor())));
@@ -38,7 +38,7 @@ public class MongoPropertiesTest {
 
         //when
         props.setClientServerCompressionEnabled(false);
-        MongoClientSettings mongoClientOptions = props.toMongoClientSettings(MongoClientSettings.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()));
+        MongoClientSettings mongoClientOptions = props.toMongoClientSettings(MongoClientSettings.getDefaultCodecRegistry(), Collections.singletonList(MongoCompressor.createZlibCompressor()), null);
 
         //then
         assertThat(mongoClientOptions.getCompressorList(), is(Collections.emptyList()));

@@ -1,6 +1,7 @@
 package de.otto.edison.mongo.configuration;
 
 import com.mongodb.*;
+import com.mongodb.event.CommandListener;
 import de.otto.edison.status.domain.Datasource;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
@@ -262,7 +263,7 @@ public class MongoProperties {
         this.clientServerCompressionEnabled = clientServerCompressionEnabled;
     }
 
-    public MongoClientSettings toMongoClientSettings(final CodecRegistry codecRegistry, List<MongoCompressor> possibleCompressors) {
+    public MongoClientSettings toMongoClientSettings(final CodecRegistry codecRegistry, final List<MongoCompressor> possibleCompressors, final List<CommandListener> commandListeners) {
         MongoClientSettings.Builder clientOptionsBuilder = MongoClientSettings.builder()
                 .applyToSslSettings(builder -> builder.enabled(sslEnabled))
                 .codecRegistry(codecRegistry)
@@ -282,11 +283,14 @@ public class MongoProperties {
         if (isClientServerCompressionEnabled()) {
             clientOptionsBuilder.compressorList(possibleCompressors);
         }
-        if(useAuthorizedConnection()) {
+        if (useAuthorizedConnection()) {
             clientOptionsBuilder.credential(getMongoCredentials());
         }
         if (nonNull(writeConcern)) {
             clientOptionsBuilder.writeConcern(WriteConcern.valueOf(writeConcern));
+        }
+        if (nonNull(commandListeners)) {
+            commandListeners.forEach(e->clientOptionsBuilder.addCommandListener(e));
         }
 
         return clientOptionsBuilder.build();
