@@ -31,10 +31,8 @@ import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
-import static org.assertj.core.util.Lists.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class InMemJobRepositoryTest {
 
@@ -46,7 +44,7 @@ public class InMemJobRepositoryTest {
     }
 
 
-    private Clock clock = systemDefaultZone();
+    private final Clock clock = systemDefaultZone();
 
     @Test
     public void shouldFindJobInfoByUri() {
@@ -308,7 +306,7 @@ public class InMemJobRepositoryTest {
         repository.deleteAll();
 
         //Then
-        assertThat(repository.findAll(), is(emptyList()));
+        assertThat(repository.findAll(), is(empty()));
     }
 
     private JobInfo jobInfo(final String jobId, final String type) {

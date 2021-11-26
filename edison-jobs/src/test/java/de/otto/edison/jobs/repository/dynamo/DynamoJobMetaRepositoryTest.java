@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.repository.dynamo;
 
 import de.otto.edison.jobs.domain.JobMeta;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,8 +21,8 @@ import java.util.Set;
 import static de.otto.edison.jobs.repository.dynamo.DynamoJobMetaRepository.JOB_TYPE_KEY;
 import static de.otto.edison.jobs.repository.dynamo.DynamoJobMetaRepository.KEY_DISABLED;
 import static java.util.Collections.emptySet;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 @Testcontainers
 public class DynamoJobMetaRepositoryTest {
@@ -294,6 +293,6 @@ public class DynamoJobMetaRepositoryTest {
         dynamoJobMetaRepository.deleteAll();
 
         //then
-        MatcherAssert.assertThat(dynamoJobMetaRepository.findAllJobTypes(), is(emptySet()));
+        assertThat(dynamoJobMetaRepository.findAllJobTypes(), is(emptySet()));
     }
 }

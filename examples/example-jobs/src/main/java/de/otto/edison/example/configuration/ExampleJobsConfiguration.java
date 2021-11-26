@@ -35,9 +35,4 @@ public class ExampleJobsConfiguration {
     public StopDeadJobs stopDeadJobsStrategy() {
         return new StopDeadJobs(jobService, 60);
     }
-
-    @Bean
-    public JobMutexGroup mutualExclusion() {
-        return new JobMutexGroup("barFizzle", "Bar", "Fizzle");
-    }
 }

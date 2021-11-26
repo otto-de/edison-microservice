@@ -2,36 +2,23 @@ package de.otto.edison.logging.ui;
 
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.navigation.NavBar;
-import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
 import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.boot.actuate.logging.LoggersEndpoint.LoggerLevels;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringJoiner;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static de.otto.edison.util.UrlHelper.baseUriOf;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.boot.logging.LogLevel.valueOf;
-import static org.springframework.http.MediaType.ALL_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -61,7 +48,8 @@ public class LoggersHtmlEndpoint {
             value = "${edison.application.management.base-path:/internal}/loggers",
             produces = {
                     TEXT_HTML_VALUE,
-                    ALL_VALUE},
+                    ALL_VALUE
+            },
             method = GET)
     public ModelAndView get(final HttpServletRequest request) {
         return new ModelAndView("loggers", new HashMap<String,Object>() {{
@@ -72,9 +60,7 @@ public class LoggersHtmlEndpoint {
 
     @RequestMapping(
             value = "${edison.application.management.base-path:/internal}/loggers",
-            produces = {
-                    ActuatorMediaType.V2_JSON,
-                    APPLICATION_JSON_VALUE},
+            produces = APPLICATION_JSON_VALUE,
             method = GET)
     @ResponseBody
     public Object get() {
@@ -84,9 +70,7 @@ public class LoggersHtmlEndpoint {
 
     @RequestMapping(
             value = "${edison.application.management.base-path:/internal}/loggers/{name:.*}",
-            produces = {
-                    ActuatorMediaType.V2_JSON,
-                    APPLICATION_JSON_VALUE},
+            produces = APPLICATION_JSON_VALUE,
             method = GET)
     @ResponseBody
     public Object get(@PathVariable String name) {
@@ -109,12 +93,8 @@ public class LoggersHtmlEndpoint {
 
     @RequestMapping(
             value = "${edison.application.management.base-path:/internal}/loggers/{name:.*}",
-            consumes = {
-                    ActuatorMediaType.V2_JSON,
-                    APPLICATION_JSON_VALUE},
-            produces = {
-                    ActuatorMediaType.V2_JSON,
-                    APPLICATION_JSON_VALUE},
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE,
             method = POST)
     @ResponseBody
     public Object post(@PathVariable String name,
