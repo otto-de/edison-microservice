@@ -1,5 +1,13 @@
 # Release Notes
 
+## 2.6.0
+* **[all]**
+  * Update to Spring Boot 2.6.0
+
+
+* **[edison-oauth]**
+  * REMOVAL: Edison Oauth was based on some deprecated Spring Security parts and was not building any more with the latest versions. Because it was not maintained for some while, the module was removed from Edison Microservice.
+
 ## 2.5.5
 * **[all]**
     * Update to Spring Boot 2.5.6
