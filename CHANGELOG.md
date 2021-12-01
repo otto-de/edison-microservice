@@ -11,6 +11,9 @@
 * **[edison-oauth]**
   * REMOVAL: Edison Oauth was based on some deprecated Spring Security parts and was not building any more with the latest versions. Because it was not maintained for some while, the module was removed from Edison Microservice.
 
+* **[edison-mongo]** 
+  * add command listener to MongoClient
+
 ## 2.5.5
 * **[all]**
     * Update to Spring Boot 2.5.6
@@ -36,10 +39,6 @@
 ## 2.5.0
 * **[edison-core]** 
   * Update to Spring Boot 2.5.0 and Spring 5.3.8
-
-## 2.4.7.1
-* **[edison-mongo]** 
-  * add command listener to MongoClient
 
 ## 2.4.7
 * **[edison-mongo]** add writeConcern to MongoProperties
