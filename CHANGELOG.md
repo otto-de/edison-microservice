@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.6.2
+* **[edison-togglz]**
+    * add strategy to `FeatureToggleRepresentation`
+
 ## 2.6.1
 * **[all]**
     * Update to Spring Boot 2.6.1
