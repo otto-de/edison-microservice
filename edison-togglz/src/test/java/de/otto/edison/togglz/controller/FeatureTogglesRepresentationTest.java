@@ -1,11 +1,11 @@
 package de.otto.edison.togglz.controller;
 
+import de.otto.edison.testsupport.togglz.TestFeatureManager;
 import de.otto.edison.togglz.EmptyFeatures;
 import de.otto.edison.togglz.TestFeatures;
 import org.junit.jupiter.api.Test;
 import org.togglz.core.manager.FeatureManager;
-import org.togglz.testing.TestFeatureManager;
-
+import org.togglz.core.repository.FeatureState;
 import java.util.List;
 import java.util.Map;
 
@@ -51,5 +51,17 @@ class FeatureTogglesRepresentationTest {
                 .withEnabled(false)
                 .withGroups(List.of("TestToggleGroup"))
                 .build()));
+    }
+
+    @Test
+    void shouldResolveStrategy() {
+        FeatureManager featureManager = new TestFeatureManager(TestFeatures.class);
+        FeatureState state = new FeatureState(TestFeatures.TEST_FEATURE, true);
+        state.setStrategyId("someStrategy");
+        featureManager.setFeatureState(state);
+        testee = togglzRepresentation(featureManager);
+
+        final Map<String, FeatureToggleRepresentation> features = testee.features;
+        assertThat(features.get("TEST_FEATURE").strategy, is("someStrategy"));
     }
 }

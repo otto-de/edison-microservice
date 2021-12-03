@@ -11,5 +11,6 @@ import java.lang.annotation.Target;
 @FeatureGroup
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Label("TestToggleGroup") //necessary as togglz 3.0.0 leads to 'Class' group representation
 public @interface TestToggleGroup {
 }

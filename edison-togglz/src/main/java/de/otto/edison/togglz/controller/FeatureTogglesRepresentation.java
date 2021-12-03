@@ -4,6 +4,8 @@ import net.jcip.annotations.Immutable;
 import org.togglz.core.Feature;
 import org.togglz.core.manager.FeatureManager;
 import org.togglz.core.metadata.FeatureGroup;
+import org.togglz.core.metadata.enums.AnnotationFeatureGroup;
+import org.togglz.core.repository.FeatureState;
 
 import java.util.List;
 import java.util.Map;
@@ -39,10 +41,12 @@ public class FeatureTogglesRepresentation {
         final List<String> featureGroups = featureManager.getMetaData(feature).getGroups().stream()
                 .map(FeatureGroup::getLabel)
                 .collect(Collectors.toList());
+        FeatureState featureState = featureManager.getFeatureState(feature);
         return FeatureToggleRepresentation.newBuilder()
                 .withDescription(label != null ? label : feature.name())
                 .withGroups(featureGroups)
-                .withEnabled(featureManager.getFeatureState(feature).isEnabled())
+                .withEnabled(featureState.isEnabled())
+                .withStrategy(featureState.getStrategyId())
                 .build();
     }
 }

@@ -13,12 +13,14 @@ public class FeatureToggleRepresentation {
 
     public final String description;
     public final boolean enabled;
+    public final String strategy;
     public final String value;
     public final List<String> groups;
 
     private FeatureToggleRepresentation(Builder builder) {
         description = builder.description;
         enabled = builder.enabled;
+        strategy = builder.strategy;
         value = builder.value;
         groups = builder.groups;
     }
@@ -27,26 +29,17 @@ public class FeatureToggleRepresentation {
         return new Builder();
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         FeatureToggleRepresentation that = (FeatureToggleRepresentation) o;
-
-        if (enabled != that.enabled) return false;
-        if (!Objects.equals(description, that.description)) return false;
-        return Objects.equals(value, that.value);
-
+        return enabled == that.enabled && Objects.equals(description, that.description) && Objects.equals(strategy, that.strategy) && Objects.equals(value, that.value) && Objects.equals(groups, that.groups);
     }
 
     @Override
     public int hashCode() {
-        int result = description != null ? description.hashCode() : 0;
-        result = 31 * result + (enabled ? 1 : 0);
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        return result;
+        return Objects.hash(description, enabled, strategy, value, groups);
     }
 
     @Override
@@ -54,13 +47,16 @@ public class FeatureToggleRepresentation {
         return "FeatureToggleRepresentation{" +
                 "description='" + description + '\'' +
                 ", enabled=" + enabled +
+                ", strategy='" + strategy + '\'' +
                 ", value='" + value + '\'' +
+                ", groups=" + groups +
                 '}';
     }
 
     public static final class Builder {
         private String description;
         private boolean enabled;
+        private String strategy;
         private String value;
         private List<String> groups = new ArrayList<>();
 
@@ -74,6 +70,11 @@ public class FeatureToggleRepresentation {
 
         public Builder withEnabled(boolean val) {
             enabled = val;
+            return this;
+        }
+
+        public Builder withStrategy(String val) {
+            strategy = val;
             return this;
         }
 
