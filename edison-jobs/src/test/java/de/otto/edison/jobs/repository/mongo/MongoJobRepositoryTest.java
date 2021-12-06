@@ -342,7 +342,7 @@ public class MongoJobRepositoryTest {
         repo.deleteAll();
 
         // then
-        assertThat(repo.findAll(), is(Lists.emptyList()));
+        assertThat(repo.findAll(), is(Collections.emptyList()));
     }
 
     @Test
