@@ -3,7 +3,6 @@ buildscript {
 
     repositories {
         mavenCentral()
-        jcenter()
         mavenLocal()
     }
 
@@ -33,7 +32,6 @@ repositories {
     maven { url 'http://repo.spring.io/libs-snapshot' }
 }
 
-apply from: "${rootDir}/gradle/root/versions.gradle"
 apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
 apply from: "${rootDir}/gradle/root/jacoco.gradle"
