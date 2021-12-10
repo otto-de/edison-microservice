@@ -8,9 +8,7 @@ import org.togglz.core.Feature;
 import java.util.Optional;
 
 import static de.otto.edison.testsupport.togglz.FeatureManagerSupport.allEnabledFeatureConfig;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FeatureManagerSupportTest {
 
@@ -21,12 +19,12 @@ class FeatureManagerSupportTest {
 
     @Test
     void shouldReturnTheCorrectFeature() {
-        assertThat(FeatureManagerSupport.getFeatureFromName("TEST_FEATURE").get(), is(TestFeatures.TEST_FEATURE));
+        assertThat(FeatureManagerSupport.getFeatureFromName("TEST_FEATURE").get()).isEqualTo(TestFeatures.TEST_FEATURE);
     }
 
     @Test
     void shouldReturnTheAnEmptyFeatureIfNameisNotKnown() {
-        Optional<Feature> unknwonFeature = FeatureManagerSupport.getFeatureFromName("UNKNWON_FEATURE");
-        assertFalse(unknwonFeature.isPresent());
+        Optional<Feature> unknownFeature = FeatureManagerSupport.getFeatureFromName("UNKNWON_FEATURE");
+        assertThat(unknownFeature.isPresent()).isFalse();
     }
 }
