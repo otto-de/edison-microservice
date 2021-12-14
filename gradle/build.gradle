@@ -27,7 +27,7 @@ ext {
             edison_hal                       : '2.1.0',
             validator_collection             : '2.2.0',
             slf4j                            : '1.7.26',
-            aws_sdk                          : '2.17.99',
+            aws_sdk                          : '2.17.100',
             java_validation_api              : '2.0.1.Final',
             java_xml                         : '2.3.0',
             jackson                          : '2.13.0'
