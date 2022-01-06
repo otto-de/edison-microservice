@@ -11,6 +11,11 @@ buildscript {
     }
 }
 
+plugins {
+    id 'java'
+    id "com.github.ben-manes.versions" version "0.40.0"
+}
+
 // USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
 //
 // Major Release: X.0.0-RELEASE: Breaking Changes. Should be avoided if possible, or planned for future release.
@@ -20,12 +25,10 @@ buildscript {
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
 // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-def edison_version = "2.6.1"
+def edison_version = "2.6.2-SNAPSHOT"
 //
 //
 //
-
-apply plugin: 'java'
 
 repositories {
     mavenCentral()
@@ -86,6 +89,19 @@ subprojects {
             project.logger.info("Configuring $name to use javac parameter --release $version")
             println("Configuring $name to use javac parameter --release $version")
             options.compilerArgs.addAll(['--release', version])
+        }
+    }
+}
+
+dependencyUpdates.resolutionStrategy {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm', 'preview', 'b', 'ea', 'pr'].any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]$qualifier[.\d-+]*/
+            }
+            if (rejected) {
+                selection.reject('Release candidate')
+            }
         }
     }
 }

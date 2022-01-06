@@ -3,6 +3,9 @@
 ## 2.6.2
 * **[edison-togglz]**
     * add strategy to `FeatureToggleRepresentation`
+    * add HeaderOptOutStrategy to deactivate features when a header exists 
+* **[all]**
+    * Update to Spring Boot 2.6.2 and other dependencies
 
 ## 2.6.1
 * **[all]**
