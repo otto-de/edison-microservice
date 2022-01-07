@@ -1,11 +1,11 @@
-package de.otto.edison.togglz.util;
+package de.otto.edison.togglz.activation;
 
 import org.togglz.core.activation.Parameter;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.user.FeatureUser;
 import org.togglz.servlet.activation.HeaderActivationStrategy;
 
-public class HeaderOptOutStrategy extends HeaderActivationStrategy {
+public class HeaderOptOutStrategy extends EdisonHeaderActivationStrategy {
     static final String ID = "headerOptOut";
 
     @Override

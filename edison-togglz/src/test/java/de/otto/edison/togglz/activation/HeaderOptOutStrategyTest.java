@@ -1,4 +1,4 @@
-package de.otto.edison.togglz.util;
+package de.otto.edison.togglz.activation;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.6.3
+* **[edison-togglz]**
+    * add temporary `EdisonHeaderActivationStrategy` to replace bad performing HeaderActivationStrategy (will be removed when togglz fixes it)
 ## 2.6.2
 * **[edison-togglz]**
     * add strategy to `FeatureToggleRepresentation`
