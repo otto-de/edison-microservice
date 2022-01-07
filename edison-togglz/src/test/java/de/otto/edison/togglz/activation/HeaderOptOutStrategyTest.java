@@ -1,22 +1,24 @@
 package de.otto.edison.togglz.activation;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.user.FeatureUser;
 import org.togglz.core.user.SimpleFeatureUser;
-import org.togglz.servlet.util.HttpServletRequestHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HeaderOptOutStrategyTest {
@@ -31,12 +33,9 @@ public class HeaderOptOutStrategyTest {
         user = new SimpleFeatureUser("ea", false);
         state = new FeatureState(MyFeature.FEATURE).enable();
         request = Mockito.mock(HttpServletRequest.class);
-        HttpServletRequestHolder.bind(request);
-    }
-
-    @AfterEach
-    public void cleanup() {
-        HttpServletRequestHolder.release();
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        final ServletRequestAttributes servletRequestAttributes = new ServletRequestAttributes(request, response);
+        RequestContextHolder.setRequestAttributes(servletRequestAttributes);
     }
 
     private enum MyFeature implements Feature {
