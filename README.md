@@ -9,7 +9,7 @@ Collection of independent libraries on top of Spring Boot to provide a faster se
 [![Build](https://github.com/otto-de/edison-microservice/workflows/Build/badge.svg?branch=master)](https://github.com/otto-de/edison-microservice/actions?query=workflow%3ABuild)
 [![codecov](https://codecov.io/gh/otto-de/edison-microservice/branch/master/graph/badge.svg)](https://codecov.io/gh/otto-de/edison-microservice)
 [![Known Vulnerabilities](https://snyk.io/test/github/otto-de/edison-microservice/badge.svg)](https://snyk.io/test/github/otto-de/edison-microservice)
-[![release](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.otto.edison/edison-core)
+[![Maven Central](https://img.shields.io/maven-central/v/de.otto.edison/edison-core?label=maven-central)](https://search.maven.org/search?q=g:de.otto%20a:edison-core%20v:RELEASE%20p:jar)
 [![license](https://img.shields.io/github/license/otto-de/edison-microservice.svg)](./LICENSE)
 
 Have a look at the [release notes](CHANGELOG.md) for details about updates and changes.

@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.6.4
+* **[all]**
+    * Dependency updates (Spring Boot 2.6.4 etc.)
 ## 2.6.3
 * **[edison-togglz]**
     * add temporary `EdisonHeaderActivationStrategy` to replace bad performing HeaderActivationStrategy (will be removed when togglz fixes it)
