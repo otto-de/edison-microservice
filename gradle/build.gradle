@@ -21,7 +21,7 @@ ext {
             togglz                           : '3.0.0',
             mongodb_driver                   : '4.4.0',
             caffeine                         : '3.0.5',
-            json_path                        : '2.6.0',
+            json_path                        : '2.7.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
             hibernate_validator              : '6.2.1.Final', //last version with @SafeHtml
             edison_hal                       : '2.1.0',
