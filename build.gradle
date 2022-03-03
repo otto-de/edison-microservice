@@ -25,7 +25,7 @@ plugins {
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
 // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-def edison_version = "2.6.3-SNAPSHOT"
+def edison_version = "2.6.4"
 //
 //
 //
