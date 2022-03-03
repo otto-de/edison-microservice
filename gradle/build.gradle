@@ -37,7 +37,7 @@ ext {
             hamcrest      : '2.2',
             mockito_core  : '4.3.1',
             jsonassert    : '1.5.0',
-            rest_assured  : '4.4.0',
+            rest_assured  : '4.5.1',
             testcontainers: '1.16.3'
     ]
     plugin_versions = [
