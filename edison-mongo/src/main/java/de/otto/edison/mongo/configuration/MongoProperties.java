@@ -39,6 +39,11 @@ public class MongoProperties {
     private String[] host = {"localhost"};
 
     /**
+     * The MongoDB connection uri pattern
+     */
+    private String uriPattern;
+
+    /**
      * The MongoDB database.
      */
     private String authenticationDb = "";
@@ -171,6 +176,14 @@ public class MongoProperties {
         this.host = host;
     }
 
+    public String getUriPattern() {
+        return uriPattern;
+    }
+
+    public void setUriPattern(final String uriPattern) {
+        this.uriPattern = uriPattern;
+    }
+
     public String getAuthenticationDb() {
         return authenticationDb;
     }
@@ -275,16 +288,25 @@ public class MongoProperties {
                         .maxConnectionLifeTime(connectionpool.getMaxLifeTime(), MILLISECONDS)
                         .maxWaitTime(maxWaitTime, MILLISECONDS))
                 .applyToSocketSettings(socket -> socket
-                        .connectTimeout(connectTimeout, MILLISECONDS))
-                .applyToClusterSettings(cluster -> cluster
-                        .hosts(getServers())
-                        .serverSelectionTimeout(serverSelectionTimeout, MILLISECONDS));
+                        .connectTimeout(connectTimeout, MILLISECONDS));
+
+        if (nonNull(uriPattern) && !uriPattern.isBlank()) {
+            clientOptionsBuilder
+                    .applyConnectionString(getConnectionString())
+                    .applyToClusterSettings(cluster -> cluster
+                            .serverSelectionTimeout(serverSelectionTimeout, MILLISECONDS));
+        } else {
+            clientOptionsBuilder.applyToClusterSettings(cluster -> cluster
+                    .hosts(getServers())
+                    .serverSelectionTimeout(serverSelectionTimeout, MILLISECONDS));
+
+            if (useAuthorizedConnection()) {
+                clientOptionsBuilder.credential(getMongoCredentials());
+            }
+        }
 
         if (isClientServerCompressionEnabled()) {
             clientOptionsBuilder.compressorList(possibleCompressors);
-        }
-        if (useAuthorizedConnection()) {
-            clientOptionsBuilder.credential(getMongoCredentials());
         }
         if (nonNull(writeConcern)) {
             clientOptionsBuilder.writeConcern(WriteConcern.valueOf(writeConcern));
@@ -294,6 +316,13 @@ public class MongoProperties {
         }
 
         return clientOptionsBuilder.build();
+    }
+
+    private ConnectionString getConnectionString() {
+        final String connectionString = uriPattern.contains("%s:%s@")
+                ? String.format(getUriPattern(), getUser(), getPassword())
+                : getUriPattern();
+        return new ConnectionString(connectionString);
     }
 
     private boolean useAuthorizedConnection() {

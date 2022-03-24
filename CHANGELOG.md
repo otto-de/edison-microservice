@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.6.5
+* **[edison-mongo]**
+    * add support for MongoDB ConnectionString (AWS_IAM)
+
 ## 2.6.4
 * **[all]**
     * Dependency updates (Spring Boot 2.6.4 etc.)
