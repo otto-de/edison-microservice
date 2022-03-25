@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.6.6
+* **[all]**
+    * Update to Spring Boot 2.6.5
+
 ## 2.6.5
 * **[edison-mongo]**
     * add support for MongoDB ConnectionString (AWS_IAM)
