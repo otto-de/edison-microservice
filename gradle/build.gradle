@@ -38,7 +38,7 @@ ext {
             mockito_core  : '4.4.0',
             jsonassert    : '1.5.0',
             rest_assured  : '5.0.0',
-            testcontainers: '1.16.3'
+            testcontainers: '1.17.0'
     ]
     plugin_versions = [
             versions     : '0.25.0',
