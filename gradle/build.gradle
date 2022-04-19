@@ -19,7 +19,7 @@ ext {
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.11',
             togglz                           : '3.1.1',
-            mongodb_driver                   : '4.5.1',
+            mongodb_driver                   : '4.6.0',
             caffeine                         : '3.0.6',
             json_path                        : '2.7.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
