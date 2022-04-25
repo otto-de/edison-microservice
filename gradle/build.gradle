@@ -30,7 +30,8 @@ ext {
             aws_sdk                          : '2.17.175',
             java_validation_api              : '2.0.1.Final',
             java_xml                         : '2.3.0',
-            jackson                          : '2.13.2'
+            jackson                          : '2.13.2',
+            jackson_databind                 : '2.13.2.2'
     ]
     test_versions = [
             junit         : '5.8.2',
@@ -38,6 +39,7 @@ ext {
             mockito_core  : '4.5.1',
             jsonassert    : '1.5.0',
             rest_assured  : '5.0.1',
+            commons_codec : '1.15',
             testcontainers: '1.17.1'
     ]
     plugin_versions = [
@@ -79,7 +81,7 @@ ext {
             edison_hal                         : "de.otto.edison:edison-hal:${versions.edison_hal}",
             validator_collection               : "cz.jirutka.validator:validator-collection:${versions.validator_collection}",
             jackson                            : "com.fasterxml.jackson.core:jackson-core:${versions.jackson}",
-            jackson_databind                   : "com.fasterxml.jackson.core:jackson-databind:${versions.jackson}",
+            jackson_databind                   : "com.fasterxml.jackson.core:jackson-databind:${versions.jackson_databind}",
             jackson_annotations                : "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}"
     ]
     java_xml = [
@@ -102,6 +104,7 @@ ext {
             testcontainers_junit    : "org.testcontainers:junit-jupiter:${test_versions.testcontainers}",
             json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
             rest_assured            : "io.rest-assured:rest-assured:${test_versions.rest_assured}",
+            commons_codec           : "commons-codec:commons-codec:${test_versions.commons_codec}"
 
     ]
     gradle_plugins = [
