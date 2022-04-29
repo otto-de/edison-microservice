@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.6.8
+* **[all]**
+  * Update to Spring Boot 2.6.7, Spring Framework 5.3.19 and further dependency updates
+
 ## 2.6.7
 * **[all]**
     * Update to Spring Boot 2.6.6 and Spring Framework 5.3.18 to fix Spring4Shell issue
