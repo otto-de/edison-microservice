@@ -24,7 +24,7 @@ ext {
             json_path                        : '2.7.0',
             unboundid_ldapsdk_minimal_edition: '3.2.1',
             hibernate_validator              : '6.2.3.Final', //last version with @SafeHtml
-            edison_hal                       : '2.1.0',
+            edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
             slf4j                            : '1.7.26',
             aws_sdk                          : '2.17.179',
