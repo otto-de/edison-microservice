@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.6.9
+* **[edison-mongo]**
+  * Support mongoURI to connect to MongoDB server(s) with property: `edison.mongo.uri`
+
 ## 2.6.8
 * **[all]**
   * Update to Spring Boot 2.6.7, Spring Framework 5.3.19 and further dependency updates

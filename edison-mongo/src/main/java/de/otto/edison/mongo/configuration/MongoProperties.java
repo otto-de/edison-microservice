@@ -33,15 +33,20 @@ public class MongoProperties {
     private static final Logger LOG = getLogger(MongoProperties.class);
 
     /**
-     * The MongoDB servers. Comma-separated list of host:port pairs.
+     * The MongoDB servers. Comma-separated list of host:port pairs. Can be overridden by specifying uri or uriPattern
      */
     @NotEmpty
     private String[] host = {"localhost"};
 
     /**
-     * The MongoDB connection uri pattern
+     * The MongoDB connection uri pattern (will be converted to a MongoUri after replacing %s:%s@ with username and password)
      */
     private String uriPattern;
+
+    /**
+     * The MongoURI
+     */
+    private String uri;
 
     /**
      * The MongoDB database.
@@ -184,6 +189,14 @@ public class MongoProperties {
         this.uriPattern = uriPattern;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
     public String getAuthenticationDb() {
         return authenticationDb;
     }
@@ -295,11 +308,18 @@ public class MongoProperties {
                     .applyConnectionString(getConnectionString())
                     .applyToClusterSettings(cluster -> cluster
                             .serverSelectionTimeout(serverSelectionTimeout, MILLISECONDS));
+        } else if (nonNull(uri) && !uri.isBlank()) {
+            clientOptionsBuilder
+                    .applyConnectionString(new ConnectionString(uri))
+                    .applyToClusterSettings(cluster -> cluster
+                        .serverSelectionTimeout(serverSelectionTimeout, MILLISECONDS));
+            if (useAuthorizedConnection()) {
+                clientOptionsBuilder.credential(getMongoCredentials());
+            }
         } else {
             clientOptionsBuilder.applyToClusterSettings(cluster -> cluster
                     .hosts(getServers())
                     .serverSelectionTimeout(serverSelectionTimeout, MILLISECONDS));
-
             if (useAuthorizedConnection()) {
                 clientOptionsBuilder.credential(getMongoCredentials());
             }

@@ -3,9 +3,11 @@ package de.otto.edison.mongo.configuration;
 import com.mongodb.AuthenticationMechanism;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCompressor;
+import com.mongodb.ServerAddress;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -77,5 +79,24 @@ public class MongoPropertiesTest {
         assertThat(mongoClientOptions.getCredential().getUserName(), is("aUsername"));
         assertThat(mongoClientOptions.getCredential().getPassword(), is("somePassword".toCharArray()));
         assertThat(mongoClientOptions.getCredential().getSource(), is("admin"));
+    }
+
+    @Test
+    void shouldUseMongoURI() {
+        //given
+        final MongoProperties props = new MongoProperties();
+        props.setUser("aUsername");
+        props.setPassword("somePassword");
+        props.setUri("mongodb://my.database.com:5432,my.database2.com:9876");
+
+        //when
+        MongoClientSettings mongoClientOptions = props.toMongoClientSettings(MongoClientSettings.getDefaultCodecRegistry(), null, null);
+
+        //then
+        assertThat(mongoClientOptions.getCredential(), is(notNullValue()));
+        assertThat(mongoClientOptions.getCredential().getUserName(), is("aUsername"));
+        assertThat(mongoClientOptions.getCredential().getPassword(), is("somePassword".toCharArray()));
+        assertThat(mongoClientOptions.getClusterSettings().getHosts(),
+                is(List.of(new ServerAddress("my.database.com", 5432), new ServerAddress("my.database2.com", 9876))));
     }
 }
