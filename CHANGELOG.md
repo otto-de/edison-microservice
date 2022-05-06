@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.6.10
+* **[edison-mongo]**
+    * Configure read and write timeout in MongoJobMetaRepository
+  
 ## 2.6.9
 * **[edison-mongo]**
   * Support mongoURI to connect to MongoDB server(s) with property: `edison.mongo.uri`

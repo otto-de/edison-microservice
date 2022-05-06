@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.set;
 import static com.mongodb.client.model.Updates.unset;
+import static java.lang.Math.max;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -31,9 +32,6 @@ import static java.util.stream.StreamSupport.stream;
  */
 public class MongoJobMetaRepository implements JobMetaRepository {
 
-    private static final FindOneAndUpdateOptions UPSERT = new FindOneAndUpdateOptions()
-            .upsert(true)
-            .maxTime(250, TimeUnit.MILLISECONDS);
     private static final String ID = "_id";
     private static final String KEY_DISABLED = "_e_disabled";
     private static final String KEY_RUNNING = "_e_running";
@@ -122,9 +120,9 @@ public class MongoJobMetaRepository implements JobMetaRepository {
                            final String value) {
         final Document previous;
         if (value != null) {
-            previous = collection.findOneAndUpdate(eq(ID, jobType), set(key, value), UPSERT);
+            previous = collection.findOneAndUpdate(eq(ID, jobType), set(key, value), upsertFunction());
         } else {
-            previous = collection.findOneAndUpdate(eq(ID, jobType), unset(key), UPSERT);
+            previous = collection.findOneAndUpdate(eq(ID, jobType), unset(key), upsertFunction());
         }
         return previous != null
                 ? previous.getString("key")
@@ -150,11 +148,17 @@ public class MongoJobMetaRepository implements JobMetaRepository {
 
         final Bson update = set(key, value);
         try {
-            final Document previous = collection.findOneAndUpdate(filter, update, UPSERT);
+            final Document previous = collection.findOneAndUpdate(filter, update, upsertFunction());
             return previous == null || previous.getString(key) == null;
         } catch (final Exception e) {
             return false;
         }
+    }
+
+    private FindOneAndUpdateOptions upsertFunction() {
+        return new FindOneAndUpdateOptions()
+                .upsert(true)
+                .maxTime(max(mongoProperties.getDefaultWriteTimeout(), 250), TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -164,7 +168,7 @@ public class MongoJobMetaRepository implements JobMetaRepository {
      */
     @Override
     public Set<String> findAllJobTypes() {
-        return stream(collection.find().maxTime(500, TimeUnit.MILLISECONDS).spliterator(), false)
+        return stream(collection.find().maxTime(max(mongoProperties.getDefaultReadTimeout(), 500), TimeUnit.MILLISECONDS).spliterator(), false)
                 .map(doc -> doc.getString(ID))
                 .collect(toSet());
     }
