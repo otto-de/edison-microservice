@@ -1,7 +1,7 @@
 # Release Notes
 
 ## 2.6.10
-* **[edison-mongo]**
+* **[edison-jobs]**
     * Configure read and write timeout in MongoJobMetaRepository
   
 ## 2.6.9
