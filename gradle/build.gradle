@@ -31,7 +31,7 @@ ext {
             java_validation_api              : '2.0.1.Final',
             java_xml                         : '2.3.0',
             jackson                          : '2.13.2',
-            jackson_databind                 : '2.13.2.2'
+            jackson_databind                 : '2.13.3'
     ]
     test_versions = [
             junit         : '5.8.2',
