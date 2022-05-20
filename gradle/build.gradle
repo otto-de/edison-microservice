@@ -95,7 +95,7 @@ ext {
             junit_engine            : "org.junit.jupiter:junit-jupiter-engine:${test_versions.junit}",
             hamcrest_core           : "org.hamcrest:hamcrest-core:${test_versions.hamcrest}",
             hamcrest_library        : "org.hamcrest:hamcrest-library:${test_versions.hamcrest}",
-            mockito_core            : "org.mockito:mockito-core:${test_versions.mockito_core}", /* Can not update to current 2.2.28 release because of Spring is still depending on this version... */
+            mockito_core            : "org.mockito:mockito-core:${test_versions.mockito_core}",
             spring_test             : "org.springframework:spring-test:${versions.spring}",
             spring_boot_starter_test: "org.springframework.boot:spring-boot-starter-test:${versions.spring_boot}",
             jsonassert              : "org.skyscreamer:jsonassert:${test_versions.jsonassert}",
