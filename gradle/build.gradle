@@ -22,7 +22,7 @@ ext {
             mongodb_driver                   : '4.6.0',
             caffeine                         : '3.1.0',
             json_path                        : '2.7.0',
-            unboundid_ldapsdk_minimal_edition: '3.2.1',
+            unboundid_ldapsdk                : '6.0.5',
             hibernate_validator              : '6.2.3.Final', //last version with @SafeHtml
             edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
@@ -74,7 +74,7 @@ ext {
             mongodb_driver_sync                : "org.mongodb:mongodb-driver-sync:${versions.mongodb_driver}",
             mongodb_bson                       : "org.mongodb:bson:${versions.mongodb_driver}",
             caffeine                           : "com.github.ben-manes.caffeine:caffeine:${versions.caffeine}",
-            unboundid_ldapsdk_minimal_edition  : "com.unboundid:unboundid-ldapsdk-minimal-edition:${versions.unboundid_ldapsdk_minimal_edition}",
+            unboundid_ldapsdk                  : "com.unboundid:unboundid-ldapsdk:${versions.unboundid_ldapsdk}",
             hibernate_validator                : "org.hibernate.validator:hibernate-validator:${versions.hibernate_validator}",
             java_validation_api                : "javax.validation:validation-api:${versions.java_validation_api}",
             edison_hal                         : "de.otto.edison:edison-hal:${versions.edison_hal}",

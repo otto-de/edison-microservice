@@ -8,7 +8,7 @@ dependencies {
     implementation libraries.jcip_annotations
     implementation libraries.logback_classic
     implementation libraries.spring_context_support
-    implementation libraries.unboundid_ldapsdk_minimal_edition
+    implementation libraries.unboundid_ldapsdk
     implementation libraries.hibernate_validator
 
     testImplementation project(":edison-testsupport")
