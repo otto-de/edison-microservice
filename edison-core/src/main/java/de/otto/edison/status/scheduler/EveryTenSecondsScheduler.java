@@ -3,7 +3,7 @@ package de.otto.edison.status.scheduler;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import org.springframework.scheduling.annotation.Scheduled;
 
-public class EveryTenSecondsScheduler implements Scheduler{
+public class EveryTenSecondsScheduler implements Scheduler {
 
     private static final int TEN_SECONDS = 10 * 1000;
 

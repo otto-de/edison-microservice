@@ -31,7 +31,6 @@ import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 import static de.otto.edison.jobs.domain.Level.INFO;
 import static de.otto.edison.jobs.domain.Level.WARNING;
 import static de.otto.edison.jobs.service.JobRunner.newJobRunner;
-import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.time.OffsetDateTime.now;
 import static java.util.Collections.emptyList;
@@ -150,7 +149,7 @@ public class JobService {
 
     /**
      * Checks all run locks and releases the lock, if the job is stopped.
-     *
+     * <p>
      * TODO: This method should never do something, otherwise the is a bug in the lock handling.
      * TODO: Check Log files + Remove
      */
@@ -160,7 +159,7 @@ public class JobService {
             if (jobInfoOptional.isPresent() && jobInfoOptional.get().isStopped()) {
                 jobMetaService.releaseRunLock(runningJob.jobType);
                 LOG.error("Clear Lock of Job {}. Job stopped already.", runningJob.jobType);
-            } else if (!jobInfoOptional.isPresent()){
+            } else if (!jobInfoOptional.isPresent()) {
                 jobMetaService.releaseRunLock(runningJob.jobType);
                 LOG.error("Clear Lock of Job {}. JobID does not exist", runningJob.jobType);
             }

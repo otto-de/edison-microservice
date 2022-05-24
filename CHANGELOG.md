@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.7.0-SNAPSHOT
+* **[all]**
+  * Update to Spring Boot 2.7.0 (With Metrics bug workaround https://github.com/spring-projects/spring-boot/issues/31150)
+  * Update to UnboundID LDAP SDK for Java 6.0.5 which was outdated since the minimal variant was aborted 2017
+
 ## 2.6.10
 * **[edison-jobs]**
     * Configure read and write timeout in MongoJobMetaRepository
