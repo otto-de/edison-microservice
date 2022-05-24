@@ -37,7 +37,7 @@ ext {
             hamcrest      : '2.2',
             mockito_core  : '4.5.1',
             jsonassert    : '1.5.0',
-            rest_assured  : '5.0.1',
+            rest_assured  : '5.1.0',
             commons_codec : '1.15',
             testcontainers: '1.17.2'
     ]
