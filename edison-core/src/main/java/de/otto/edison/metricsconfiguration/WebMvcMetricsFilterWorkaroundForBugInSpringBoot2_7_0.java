@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter;
 import org.springframework.boot.actuate.metrics.web.servlet.WebMvcTagsProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
@@ -11,10 +12,12 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.DispatcherType;
 
+/* TODO: Remove this when Spring Boot 2.7.1 is there */
 @Component
 public class WebMvcMetricsFilterWorkaroundForBugInSpringBoot2_7_0 {
 
     @Bean
+    @ConditionalOnMissingBean
     public FilterRegistrationBean<WebMvcMetricsFilter> webMvcMetricsFilter(MetricsProperties properties,
                                                                            MeterRegistry registry, WebMvcTagsProvider tagsProvider) {
         MetricsProperties.Web.Server.ServerRequest request = properties.getWeb().getServer().getRequest();
