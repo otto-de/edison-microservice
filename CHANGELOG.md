@@ -1,6 +1,9 @@
 # Release Notes
 
-## 2.7.0-SNAPSHOT
+## 2.7.1
+  * Update to Spring Boot 2.7.1
+
+## 2.7.0
 * **[all]**
   * Update to Spring Boot 2.7.0 (With metrics bug workaround https://github.com/spring-projects/spring-boot/issues/31150)
   * Update to UnboundID LDAP SDK for Java 6.0.5 which was outdated since the minimal variant was aborted 2017
