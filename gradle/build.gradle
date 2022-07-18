@@ -11,7 +11,7 @@
 ext {
     versions = [
             spring_boot                      : '2.7.1',
-            spring                           : '5.3.21',
+            spring                           : '5.3.22',
             spring_security_core             : '5.7.2',
             spring_security_web              : '5.7.2',
             spring_security_oauth            : '2.5.2.RELEASE',
