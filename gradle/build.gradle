@@ -39,7 +39,7 @@ ext {
             jsonassert    : '1.5.1',
             rest_assured  : '5.1.1',
             commons_codec : '1.15',
-            testcontainers: '1.17.2'
+            testcontainers: '1.17.3'
     ]
     plugin_versions = [
             versions     : '0.25.0',
