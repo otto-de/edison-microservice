@@ -10,7 +10,7 @@
  */
 ext {
     versions = [
-            spring_boot                      : '2.7.2',
+            spring_boot                      : '2.7.3',
             spring                           : '5.3.22',
             spring_security_core             : '5.7.2',
             spring_security_web              : '5.7.2',
@@ -19,11 +19,11 @@ ext {
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.11',
             togglz                           : '3.2.1',
-            mongodb_driver                   : '4.7.0',
+            mongodb_driver                   : '4.7.1',
             caffeine                         : '3.1.1',
             json_path                        : '2.7.0',
             unboundid_ldapsdk                : '6.0.5',
-            hibernate_validator              : '6.2.3.Final', //last version with @SafeHtml
+            hibernate_validator              : '6.2.4.Final', //last version with @SafeHtml
             edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
             slf4j                            : '1.7.26',
