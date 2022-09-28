@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.7.4
+* **[all]**
+  * Update to Spring Boot 2.7.4
+
 ## 2.7.2
 * **[all]**
   * Update to Spring Boot 2.7.2
