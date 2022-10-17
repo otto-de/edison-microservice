@@ -13,7 +13,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id "com.github.ben-manes.versions" version "0.42.0"
+    id "com.github.ben-manes.versions" version "0.43.0"
 }
 
 // USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
