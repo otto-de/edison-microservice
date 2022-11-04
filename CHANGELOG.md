@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.7.6
+* **[all]**
+  * Dependency updates, including Spring Security 4.7.5
+
 ## 2.7.5
 * **[all]**
   * Update to Spring Boot 2.7.5
