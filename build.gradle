@@ -30,6 +30,8 @@ def edison_version = "2.7.7-SNAPSHOT"
 //
 //
 
+project.ext.set("debugUpload", true)
+
 repositories {
     mavenCentral()
     maven { url 'http://repo.spring.io/libs-snapshot' }
@@ -39,11 +41,7 @@ apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
 apply from: "${rootDir}/gradle/root/jacoco.gradle"
 apply from: "${rootDir}/gradle/root/nexusstaging.gradle"
-
-nexusStaging {
-    numberOfRetries = 20
-    delayBetweenRetriesInMillis = 5000
-}
+apply from: "${rootDir}/gradle/maven.gradle"
 
 subprojects {
     apply plugin: 'eclipse'
