@@ -30,7 +30,7 @@ def edison_version = "2.7.7-SNAPSHOT"
 //
 //
 
-project.ext.set("debugUpload", true)
+project.ext.set("debugUpload", false)
 
 repositories {
     mavenCentral()
