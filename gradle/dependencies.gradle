@@ -5,9 +5,9 @@
  */
 ext {
     versions = [
-            spring_boot                      : '2.7.5',
-            spring                           : '5.3.23',
-            spring_security                  : '5.7.5',
+            spring_boot                      : '2.7.8',
+            spring                           : '5.3.25',
+            spring_security                  : '5.8.1',
             spring_security_jwt              : '1.1.1.RELEASE',
             jcip_annotations                 : '1.0',
             logback_classic                  : '1.2.11',
