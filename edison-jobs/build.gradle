@@ -10,7 +10,7 @@ dependencies {
 
     implementation project(":edison-core")
 
-    implementation group: 'io.micrometer', name: 'micrometer-core', version: '1.10.0'
+    implementation group: 'io.micrometer', name: 'micrometer-core', version: '1.10.3'
     implementation libraries.jcip_annotations
     implementation libraries.hibernate_validator
     implementation libraries.java_validation_api
