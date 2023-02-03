@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.7.7
+* **[all]**
+  * Spring Boot 2.7.8
+* **[edison-togglz]**
+  * Update to togglz 3.3.3 - **Note:** You might have to replace chained calls to TestFeatureManager's enable and disable functions with not-chained ones.
+
 ## 2.7.6
 * **[all]**
   * Dependency updates, including Spring Security 4.7.5
