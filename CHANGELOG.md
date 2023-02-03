@@ -4,7 +4,8 @@
 * **[all]**
   * Spring Boot 2.7.8
 * **[edison-togglz]**
-  * Update to togglz 3.3.3 - **Note:** You might have to replace chained calls to TestFeatureManager's enable and disable functions with not-chained ones.
+  * Update to togglz 3.3.3 - **Note:** You might have to replace chained calls
+    to TestFeatureManager's enable and disable functions with non-chained ones.
 
 ## 2.7.6
 * **[all]**
