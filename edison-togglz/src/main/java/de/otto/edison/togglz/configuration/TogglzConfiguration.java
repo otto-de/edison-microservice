@@ -22,7 +22,7 @@ import org.togglz.servlet.TogglzFilter;
 import org.togglz.servlet.util.HttpServletRequestHolder;
 import org.togglz.spring.manager.FeatureManagerFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
 
@@ -55,7 +55,7 @@ public class TogglzConfiguration {
             final Optional<Credentials> credentials = Credentials.readFrom(request);
             final boolean isAdmin = true; // "admin".equals(username);
 
-            return new SimpleFeatureUser((credentials.isPresent() ? credentials.get().getUsername() : null), isAdmin);
+            return new SimpleFeatureUser((credentials.map(Credentials::getUsername).orElse(null)), isAdmin);
         };
     }
 

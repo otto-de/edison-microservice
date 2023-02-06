@@ -4,7 +4,9 @@ import de.otto.edison.status.controller.StatusRepresentation.DependencyRepresent
 import de.otto.edison.status.domain.Criticality;
 import de.otto.edison.status.domain.ExternalDependency;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;

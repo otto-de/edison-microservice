@@ -6,8 +6,8 @@ import com.unboundid.ldap.sdk.SearchRequest;
 import com.unboundid.ldap.sdk.SearchResult;
 import de.otto.edison.authentication.configuration.LdapProperties;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.util.List;
 
 import static com.unboundid.ldap.sdk.SearchScope.ONE;

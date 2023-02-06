@@ -1,7 +1,7 @@
 package de.otto.edison.validation.validators;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class ELInjectionVulnerableValidator implements ConstraintValidator<TestELInjectionValidation, String> {
 

@@ -5,23 +5,23 @@
  */
 ext {
     versions = [
-            spring_boot                      : '2.7.8',
-            spring                           : '5.3.25',
-            spring_security                  : '5.8.1',
+            spring_boot                      : '3.0.2',
+            spring                           : '6.0.4',
+            spring_security                  : '6.0.1',
             spring_security_jwt              : '1.1.1.RELEASE',
             jcip_annotations                 : '1.0',
-            logback_classic                  : '1.2.11',
-            togglz                           : '3.3.3',
-            mongodb_driver                   : '4.8.1',
+            logback_classic                  : '1.4.5',
+            togglz                           : '4.0.0-M1',
+            mongodb_driver                   : '4.8.0',
             caffeine                         : '3.1.2',
             json_path                        : '2.7.0',
             unboundid_ldapsdk                : '6.0.6',
-            hibernate_validator              : '6.2.5.Final', //last version with @SafeHtml
+            hibernate_validator              : '8.0.0.Final',
             edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
+            java_validation_api              : '3.0.2',
             slf4j                            : '1.7.26',
             aws_sdk                          : '2.19.30',
-            java_validation_api              : '2.0.1.Final',
             java_xml                         : '2.3.0',
             jackson                          : '2.14.1'
     ]
@@ -36,7 +36,7 @@ ext {
     ]
     plugin_versions = [
             versions     : '0.25.0',
-            jacoco       : '0.8.6',
+            jacoco       : '0.8.8',
             nexus_staging: '0.30.0'
     ]
 
@@ -68,7 +68,7 @@ ext {
             caffeine                           : "com.github.ben-manes.caffeine:caffeine:${versions.caffeine}",
             unboundid_ldapsdk                  : "com.unboundid:unboundid-ldapsdk:${versions.unboundid_ldapsdk}",
             hibernate_validator                : "org.hibernate.validator:hibernate-validator:${versions.hibernate_validator}",
-            java_validation_api                : "javax.validation:validation-api:${versions.java_validation_api}",
+            java_validation_api                : "jakarta.validation:jakarta.validation-api:${versions.java_validation_api}",
             edison_hal                         : "de.otto.edison:edison-hal:${versions.edison_hal}",
             validator_collection               : "cz.jirutka.validator:validator-collection:${versions.validator_collection}",
             jackson                            : "com.fasterxml.jackson.core:jackson-core:${versions.jackson}",
@@ -76,7 +76,7 @@ ext {
             jackson_annotations                : "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}"
     ]
     java_xml = [
-            "javax.xml.bind:jaxb-api:${versions.java_xml}",
+            "jakarta.xml.bind:jaxb-api:${versions.java_xml}",
             "com.sun.xml.bind:jaxb-core:${versions.java_xml}",
             "com.sun.xml.bind:jaxb-impl:${versions.java_xml}"
     ]

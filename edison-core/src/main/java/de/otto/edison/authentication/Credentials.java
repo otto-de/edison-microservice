@@ -3,7 +3,7 @@ package de.otto.edison.authentication;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.ObjectUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
