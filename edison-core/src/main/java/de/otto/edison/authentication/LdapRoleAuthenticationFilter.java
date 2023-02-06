@@ -18,25 +18,25 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 /**
  * Filter that checks for LDAP authentication with certain role once per request. Will not filter routes starting with
- * {@link LdapProperties#whitelistedPaths}. Uses {@link LdapProperties} to set required role to access secured paths.
+ * {@link LdapProperties#allowlistedPaths}. Uses {@link LdapProperties} to set required role to access secured paths.
  * Rejects requests with {@code HTTP 401} if authorization fails.
  */
 public class LdapRoleAuthenticationFilter extends OncePerRequestFilter {
 
     private static Logger LOG = LoggerFactory.getLogger(LdapRoleAuthenticationFilter.class);
 
-    private final Collection<String> whiteListedPaths;
+    private final Collection<String> allowlistedPaths;
     private final String requiredRole;
 
     public LdapRoleAuthenticationFilter(final LdapProperties ldapProperties) {
-        this.whiteListedPaths = requireNonNull(ldapProperties.getWhitelistedPaths(), "white listed paths must not be null");
+        this.allowlistedPaths = requireNonNull(ldapProperties.getAllowlistedPaths(), "white listed paths must not be null");
         this.requiredRole = requireNonNull(ldapProperties.getRequiredRole(), "required role must not be null");
     }
 
     @Override
     protected boolean shouldNotFilter(final HttpServletRequest request) throws ServletException {
         final String servletPath = request.getServletPath();
-        return whiteListedPaths
+        return allowlistedPaths
                 .stream()
                 .anyMatch(servletPath::startsWith);
     }
