@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,7 +35,7 @@ public class ExampleJobsSmokeTest {
     @Test
     public void shouldRenderMainPage() {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/", String.class);
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).startsWith("<html");
         assertThat(response.getBody()).contains("<p >Hello Microservice Edison</p>");
     }
@@ -42,7 +43,7 @@ public class ExampleJobsSmokeTest {
     @Test
     public void shouldHaveStatusEndpoint() {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/status?format=json", String.class);
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.getBody()).startsWith("{");
     }
@@ -51,14 +52,14 @@ public class ExampleJobsSmokeTest {
     public void shouldHaveHealthCheck() {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/actuator/health", String.class);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
     public void shouldHaveJobDefinitions() throws JSONException {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions?format=json", String.class);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         JSONAssert.assertEquals("{\n" +
                 "  \"links\" : [ {\n" +
                 "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/Bar\",\n" +
@@ -92,7 +93,7 @@ public class ExampleJobsSmokeTest {
     public void shouldHaveFooJobDefinition() throws JSONException {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/internal/jobdefinitions/foo?format=json", String.class);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         JSONAssert.assertEquals("{\n" +
                 "  \"type\" : \"Foo\",\n" +
                 "  \"name\" : \"Foo Job\",\n" +
@@ -115,9 +116,9 @@ public class ExampleJobsSmokeTest {
     @Test
     public void shouldTriggerJob() {
         final ResponseEntity<String> postResponse = restTemplate.postForEntity("/internal/jobs/Foo", "", String.class);
-        assertThat(postResponse.getStatusCodeValue()).isEqualTo(204);
+        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         final ResponseEntity<String> jobResponse = restTemplate.getForEntity(postResponse.getHeaders().getLocation(), String.class);
-        assertThat(jobResponse.getStatusCodeValue()).isEqualTo(200);
+        assertThat(jobResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(jobResponse.getBody()).containsPattern(("\"state\"( )*:( )*\"Running\"")); // contains ignoring whitespaces
         assertThat(jobResponse.getBody()).containsPattern("\"jobType\"( )*:( )*\"Foo\""); // contains ignoring whitespaces
     }
@@ -125,15 +126,15 @@ public class ExampleJobsSmokeTest {
     @Test
     public void shouldUseJobEventPublisherForOldJob() throws IOException, InterruptedException {
         final ResponseEntity<String> postResponse = restTemplate.postForEntity("/internal/jobs/Old", "", String.class);
-        assertThat(postResponse.getStatusCodeValue()).isEqualTo(204);
+        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         ResponseEntity<String> jobResponse = restTemplate.getForEntity(postResponse.getHeaders().getLocation(), String.class);
-        assertThat(jobResponse.getStatusCodeValue()).isEqualTo(200);
+        assertThat(jobResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(jobResponse.getBody()).containsPattern(("\"state\"( )*:( )*\"Running\"")); // contains ignoring whitespaces
         assertThat(jobResponse.getBody()).containsPattern("\"jobType\"( )*:( )*\"Old\""); // contains ignoring whitespaces
 
         Thread.sleep(2000);
         jobResponse = restTemplate.getForEntity(postResponse.getHeaders().getLocation(), String.class);
-        assertThat(jobResponse.getStatusCodeValue()).isEqualTo(200);
+        assertThat(jobResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(jobResponse.getBody()).containsPattern(("\"state\"( )*:( )*\"Stopped\"")); // contains ignoring whitespaces
         assertThat(jobResponse.getBody()).containsPattern(("\"status\"( )*:( )*\"SKIPPED\"")); // contains ignoring whitespaces
         assertThat(jobResponse.getBody()).containsPattern("( )*Still doing some work...( )*"); // contains ignoring whitespaces
