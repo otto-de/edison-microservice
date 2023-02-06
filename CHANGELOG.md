@@ -1,5 +1,22 @@
 # Release Notes
 
+## 3.0.0-M1
+
+**Edison 3.0.0 requires Java 17 or later, see the Readme for a small migration guide.**
+
+* **[all]**
+  * Spring Boot 3.0.2
+  * Spring 6.0.4
+  * Spring Security 6.0.1
+  * Togglz 4.0.0-M1
+  * Hibernate Validator 8.0.0.Final
+  * Java Validation Api 3.0.2
+  
+* **[edison-jobs]**
+  * removed JobEventPublisher
+* **[edison-core]**
+  * whitelistedPaths is now allowlistedPaths in ldap configuration
+
 ## 2.7.7
 * **[all]**
   * Spring Boot 2.7.8
