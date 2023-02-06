@@ -36,22 +36,15 @@ It's purpose is to provide a common implementation for cross-cutting requirement
 
 This project maintains its roadmap with [issues](https://github.com/otto-de/edison-microservice/issues) and [milestones](https://github.com/otto-de/edison-microservice/milestones).
 
-**1.0.0**: Edison Microservices for Spring Boot 1.4 &#10004;
-
-**1.x.0**: Edison Microservices for Spring Boot 1.5 &#10004;
-
-**2.0.0**: Edison Microservices for Spring Boot 2.x &#10004;
-
-**2.3.0**: Edison Microservices for Spring Boot 2.3.x &#10004; - Compatible with Java 11 and greater
-
-**2.4.x**: Edison Microservices for Spring Boot 2.4.x &#10004; - Compatible with Java 11 and greater
-
-**2.5.x**: Edison Microservices for Spring Boot 2.5.x &#10004; - Compatible with Java 11 and greater
-
-**2.6.x**: Edison Microservices for Spring Boot 2.6.x &#10004; - Compatible with Java 11 and greater
-
 **2.7.x**: Edison Microservices for Spring Boot 2.7.x &#10004; - Compatible with Java 11 and greater
 
+**3.0.x**: Edison Microservices for Spring Boot 3.0.x &#10004; - Compatible with Java 17 and greater
+
+## Migration from Edison 2 to Edison 3
+
+The JobEventPublisher, that was deprecated since Edison 2, is finally gone.
+Everything else should be ok if you follow the Spring Boot 2 -> 3 migration guide:
+https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide
 
 ## Migration from Edison 1.x to Edison 2
 
