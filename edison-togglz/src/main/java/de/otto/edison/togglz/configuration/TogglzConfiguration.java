@@ -55,7 +55,7 @@ public class TogglzConfiguration {
             final Optional<Credentials> credentials = Credentials.readFrom(request);
             final boolean isAdmin = true; // "admin".equals(username);
 
-            return new SimpleFeatureUser((credentials.map(Credentials::getUsername).orElse(null)), isAdmin);
+            return new SimpleFeatureUser((credentials.map(Credentials::username).orElse(null)), isAdmin);
         };
     }
 

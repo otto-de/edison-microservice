@@ -5,7 +5,6 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.domain.RunningJob;
-import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
@@ -155,13 +154,13 @@ public class JobService {
      */
     private void clearRunLocks() {
         jobMetaService.runningJobs().forEach((RunningJob runningJob) -> {
-            final Optional<JobInfo> jobInfoOptional = jobRepository.findOne(runningJob.jobId);
+            final Optional<JobInfo> jobInfoOptional = jobRepository.findOne(runningJob.jobId());
             if (jobInfoOptional.isPresent() && jobInfoOptional.get().isStopped()) {
-                jobMetaService.releaseRunLock(runningJob.jobType);
-                LOG.error("Clear Lock of Job {}. Job stopped already.", runningJob.jobType);
+                jobMetaService.releaseRunLock(runningJob.jobType());
+                LOG.error("Clear Lock of Job {}. Job stopped already.", runningJob.jobType());
             } else if (!jobInfoOptional.isPresent()) {
-                jobMetaService.releaseRunLock(runningJob.jobType);
-                LOG.error("Clear Lock of Job {}. JobID does not exist", runningJob.jobType);
+                jobMetaService.releaseRunLock(runningJob.jobType());
+                LOG.error("Clear Lock of Job {}. JobID does not exist", runningJob.jobType());
             }
         });
     }
@@ -249,9 +248,9 @@ public class JobService {
             }
 
             @Override
-            public boolean execute(JobEventPublisher jobEventPublisher) {
+            public boolean execute() {
                 long ts = currentTimeMillis();
-                boolean executed = delegate.execute(jobEventPublisher);
+                boolean executed = delegate.execute();
                 Metrics.gauge(gaugeName(), (currentTimeMillis() - ts) / 1000L);
                 return executed;
             }
@@ -264,8 +263,8 @@ public class JobService {
 
     public void handleTooBigJobLogs() {
         jobMetaService.runningJobs().forEach((RunningJob runningJob) -> {
-            LOG.debug("Keeping job messages small for job id {}", runningJob.jobId);
-            jobRepository.keepJobMessagesWithinMaximumSize(runningJob.jobId);
+            LOG.debug("Keeping job messages small for job id {}", runningJob.jobId());
+            jobRepository.keepJobMessagesWithinMaximumSize(runningJob.jobId());
         });
     }
 }

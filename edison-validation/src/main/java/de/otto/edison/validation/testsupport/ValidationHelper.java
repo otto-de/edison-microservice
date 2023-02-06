@@ -13,7 +13,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.toList;
 
 public class ValidationHelper {
-    private static Validator validator;
+    private static final Validator validator;
 
     static {
         PlatformResourceBundleLocator resourceBundleLocator = new PlatformResourceBundleLocator(ResourceBundleMessageInterpolator.USER_VALIDATION_MESSAGES, null, true);

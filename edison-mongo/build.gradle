@@ -9,7 +9,6 @@ dependencies {
     implementation libraries.mongodb_bson
     implementation libraries.hibernate_validator
     implementation libraries.java_validation_api
-    implementation "org.slf4j:slf4j-api:1.7.36"
 
     testImplementation project(":edison-testsupport")
     testImplementation test_libraries.testcontainers_mongo

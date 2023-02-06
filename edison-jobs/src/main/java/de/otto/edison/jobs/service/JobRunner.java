@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
-import static de.otto.edison.jobs.eventbus.JobEventPublisher.newJobEventPublisher;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.State.*;
 import static de.otto.edison.jobs.eventbus.events.StateChangeEvent.newStateChangeEvent;
 import static java.lang.String.format;
@@ -65,7 +64,7 @@ public final class JobRunner implements Runnable {
 
     private synchronized void executeAndRetry(final int restarts, final Optional<Duration> retryDelay) {
         try {
-            final boolean executed = jobRunnable.execute(newJobEventPublisher(eventPublisher, jobRunnable, jobId));
+            final boolean executed = jobRunnable.execute();
             if (!executed) {
                 eventPublisher.publishEvent(
                         newStateChangeEvent(jobRunnable, jobId, SKIPPED)

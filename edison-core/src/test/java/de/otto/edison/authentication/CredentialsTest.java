@@ -38,8 +38,8 @@ public class CredentialsTest {
 
         // then
         assertThat(credentials.isPresent(), is(true));
-        assertThat(credentials.get().getUsername(), is("someUsername"));
-        assertThat(credentials.get().getPassword(), is("somePassword"));
+        assertThat(credentials.get().username(), is("someUsername"));
+        assertThat(credentials.get().password(), is("somePassword"));
     }
 
     @Test
@@ -99,8 +99,8 @@ public class CredentialsTest {
 
         // then
         assertThat(credentials.isPresent(), is(true));
-        assertThat(credentials.get().getUsername(), is("user"));
-        assertThat(credentials.get().getPassword(), is("pass:word"));
+        assertThat(credentials.get().username(), is("user"));
+        assertThat(credentials.get().password(), is("pass:word"));
     }
 
     @Test

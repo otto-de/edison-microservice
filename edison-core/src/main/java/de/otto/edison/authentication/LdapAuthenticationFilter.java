@@ -76,7 +76,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
             for (String baseDN : ldapProperties.getBaseDn()) {
                 final String userDN = userDnFrom(credentials, baseDN);
                 try {
-                    if (authenticate(ldap, userDN, credentials.getPassword())) {
+                    if (authenticate(ldap, userDN, credentials.password())) {
                         return ldapProperties.getRoleBaseDn() != null
                                 ? Optional.of(new LdapRoleCheckingRequest(request, ldap, userDN, ldapProperties))
                                 : Optional.of(request);
@@ -85,7 +85,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
                     LOG.debug("LDAPBindException for userDN: {}", userDN);
                 }
             }
-            LOG.warn("Could not bind to LDAP: {}", credentials.getUsername());
+            LOG.warn("Could not bind to LDAP: {}", credentials.username());
         } catch (LDAPException | GeneralSecurityException e) {
             LOG.warn("Authentication error: ", e);
         }
@@ -98,7 +98,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
     }
 
     String userDnFrom(final Credentials credentials, String baseDN) {
-        return format("%s=%s,%s", ldapProperties.getRdnIdentifier(), credentials.getUsername(), baseDN);
+        return format("%s=%s,%s", ldapProperties.getRdnIdentifier(), credentials.username(), baseDN);
     }
 
     boolean authenticate(final LDAPConnection ldap, final String userDN, final String password) throws LDAPException {
