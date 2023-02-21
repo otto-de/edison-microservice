@@ -40,21 +40,13 @@ public class JobService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobService.class);
 
-    @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
-    @Autowired
     private JobRepository jobRepository;
-    @Autowired
     private JobMetaService jobMetaService;
-    @Autowired
     private ScheduledExecutorService executor;
-    @Autowired(required = false)
     private List<JobRunnable> jobRunnables = emptyList();
-    @Autowired
     private UuidProvider uuidProvider;
 
-
-    @Autowired
     private SystemInfo systemInfo;
 
     private Clock clock = Clock.systemDefaultZone();
@@ -62,20 +54,21 @@ public class JobService {
     public JobService() {
     }
 
+    @Autowired
     JobService(final JobRepository jobRepository,
                final JobMetaService jobMetaService,
-               final List<JobRunnable> jobRunnables,
+               @Autowired(required = false) final List<JobRunnable> jobRunnables,
                final ScheduledExecutorService executor,
                final ApplicationEventPublisher applicationEventPublisher,
-               final Clock clock,
+               @Autowired(required = false) final Clock clock,
                final SystemInfo systemInfo,
                final UuidProvider uuidProvider) {
         this.jobRepository = jobRepository;
         this.jobMetaService = jobMetaService;
-        this.jobRunnables = jobRunnables;
+        this.jobRunnables = jobRunnables != null ? jobRunnables : this.jobRunnables;
         this.executor = executor;
         this.applicationEventPublisher = applicationEventPublisher;
-        this.clock = clock;
+        this.clock = clock != null ? clock : this.clock;
         this.systemInfo = systemInfo;
         this.uuidProvider = uuidProvider;
     }
