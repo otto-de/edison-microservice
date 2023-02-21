@@ -1,5 +1,10 @@
 # Release Notes
 
+## 3.0.0-M2
+
+* **[edison-jobs]**
+    * Formerly removed JobEventPublisher is back (but still deprecated)
+
 ## 3.0.0-M1
 
 **Edison 3.0.0 requires Java 17 or later, see the Readme for a small migration guide.**
