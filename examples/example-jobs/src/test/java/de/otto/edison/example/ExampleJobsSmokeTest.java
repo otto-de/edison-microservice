@@ -78,6 +78,10 @@ public class ExampleJobsSmokeTest {
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
                 "    \"title\" : \"Foo Job\"\n" +
                 "  }, {\n" +
+                "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/Old\",\n" +
+                "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
+                "    \"title\" : \"Old Job\"\n" +
+                "  }, {\n" +
                 "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions\",\n" +
                 "    \"rel\" : \"self\",\n" +
                 "    \"title\" : \"Self\"\n" +
@@ -117,6 +121,24 @@ public class ExampleJobsSmokeTest {
         assertThat(jobResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(jobResponse.getBody()).containsPattern(("\"state\"( )*:( )*\"Running\"")); // contains ignoring whitespaces
         assertThat(jobResponse.getBody()).containsPattern("\"jobType\"( )*:( )*\"Foo\""); // contains ignoring whitespaces
+    }
+
+    @Test
+    public void shouldUseJobEventPublisherForOldJob() throws IOException, InterruptedException {
+        final ResponseEntity<String> postResponse = restTemplate.postForEntity("/internal/jobs/Old", "", String.class);
+        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        ResponseEntity<String> jobResponse = restTemplate.getForEntity(postResponse.getHeaders().getLocation(), String.class);
+        assertThat(jobResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(jobResponse.getBody()).containsPattern(("\"state\"( )*:( )*\"Running\"")); // contains ignoring whitespaces
+        assertThat(jobResponse.getBody()).containsPattern("\"jobType\"( )*:( )*\"Old\""); // contains ignoring whitespaces
+
+        Thread.sleep(2000);
+        jobResponse = restTemplate.getForEntity(postResponse.getHeaders().getLocation(), String.class);
+        assertThat(jobResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(jobResponse.getBody()).containsPattern(("\"state\"( )*:( )*\"Stopped\"")); // contains ignoring whitespaces
+        assertThat(jobResponse.getBody()).containsPattern(("\"status\"( )*:( )*\"SKIPPED\"")); // contains ignoring whitespaces
+        assertThat(jobResponse.getBody()).containsPattern("( )*Still doing some work...( )*"); // contains ignoring whitespaces
+
     }
 
 }

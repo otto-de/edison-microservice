@@ -5,6 +5,7 @@ import de.otto.edison.jobs.domain.JobInfo;
 import de.otto.edison.jobs.domain.JobMessage;
 import de.otto.edison.jobs.domain.Level;
 import de.otto.edison.jobs.domain.RunningJob;
+import de.otto.edison.jobs.eventbus.JobEventPublisher;
 import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
@@ -248,9 +249,9 @@ public class JobService {
             }
 
             @Override
-            public boolean execute() {
+            public boolean execute(JobEventPublisher jobEventPublisher) {
                 long ts = currentTimeMillis();
-                boolean executed = delegate.execute();
+                boolean executed = delegate.execute(jobEventPublisher);
                 Metrics.gauge(gaugeName(), (currentTimeMillis() - ts) / 1000L);
                 return executed;
             }
