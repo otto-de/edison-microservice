@@ -9,7 +9,19 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    target-branch: "main"
   - package-ecosystem: "gradle" # See documentation for possible values
     directory: "/gradle" # Location of package manifests
     schedule:
       interval: "daily"
+    target-branch: "main"
+  - package-ecosystem: "gradle" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    target-branch: "2.7.x"
+  - package-ecosystem: "gradle" # See documentation for possible values
+    directory: "/gradle" # Location of package manifests
+    schedule:
+      interval: "daily"
+    target-branch: "2.7.x"
