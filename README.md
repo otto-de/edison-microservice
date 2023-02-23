@@ -42,7 +42,6 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 
 ## Migration from Edison 2 to Edison 3
 
-The JobEventPublisher, that was deprecated since Edison 2, is finally gone.
 In edison-ldap, whitelisted-paths was replaced with allowlisted-paths.
 Everything else should be ok if you follow the Spring Boot 2 -> 3 migration guide:
 https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide
