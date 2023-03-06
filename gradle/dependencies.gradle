@@ -13,7 +13,7 @@ ext {
             logback_classic                  : '1.4.5',
             togglz                           : '4.0.0-M1',
             mongodb_driver                   : '4.9.0',
-            caffeine                         : '3.1.4',
+            caffeine                         : '3.1.5',
             json_path                        : '2.7.0',
             unboundid_ldapsdk                : '6.0.7',
             hibernate_validator              : '8.0.0.Final',
