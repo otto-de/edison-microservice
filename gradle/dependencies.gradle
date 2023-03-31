@@ -14,7 +14,7 @@ ext {
             togglz                           : '4.0,0-M2',
             mongodb_driver                   : '4.9.0',
             caffeine                         : '3.1.5',
-            json_path                        : '2.7.0',
+            json_path                        : '2.8.0',
             unboundid_ldapsdk                : '6.0.8',
             hibernate_validator              : '8.0.0.Final',
             edison_hal                       : '2.1.1',
