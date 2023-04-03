@@ -10,6 +10,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -48,7 +49,7 @@ public class LoggersAcceptanceTest {
     @Test
     public void shouldHaveLoggersAsHtml() {
         final ResponseEntity<String> response = template.getForEntity("/internal/loggers?format=html", String.class);
-        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(TEXT_HTML), is(true));
     }
 
@@ -56,14 +57,14 @@ public class LoggersAcceptanceTest {
     public void shouldHaveLoggersAsHtmlThroughHeader() {
         final HttpEntity<String> httpEntity = new HttpEntity<>("", htmlHeaders);
         final ResponseEntity<String> response = template.exchange("/internal/loggers", GET, httpEntity, String.class);
-        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(TEXT_HTML), is(true));
     }
 
     @Test
     public void shouldHaveLoggersAsJson() {
         final ResponseEntity<String> response = template.getForEntity("/internal/loggers?format=json", String.class);
-        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
     }
 
@@ -71,21 +72,21 @@ public class LoggersAcceptanceTest {
     public void shouldHaveLoggersAsJsonThroughHeader() {
         final HttpEntity<String> httpEntity = new HttpEntity<>("", jsonHeaders);
         final ResponseEntity<String> response = template.exchange("/internal/loggers", GET, httpEntity, String.class);
-        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
     }
 
     @Test
     public void shouldHaveLoggersAsJsonAsDefault() {
         final ResponseEntity<String> response = template.getForEntity("/internal/loggers", String.class);
-        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
     }
 
     @Test
     public void shouldGetLoggerAsJson() {
         final ResponseEntity<String> response = template.getForEntity("/internal/loggers/ROOT", String.class);
-        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
         assertThat(response.getBody(), is("{\"configuredLevel\":\"INFO\",\"effectiveLevel\":\"INFO\"}"));
     }
@@ -96,10 +97,10 @@ public class LoggersAcceptanceTest {
         headers.setAccept(singletonList(APPLICATION_JSON));
         headers.setContentType(APPLICATION_JSON);
         final ResponseEntity<String> postResponse = template.exchange("/internal/loggers/ROOT", POST, new HttpEntity<>("{\"configuredLevel\":\"WARN\"}", headers), String.class);
-        assertThat(postResponse.getStatusCodeValue(), is(200));
+        assertThat(postResponse.getStatusCode(), is(HttpStatus.OK));
 
         final ResponseEntity<String> response = template.exchange("/internal/loggers/ROOT", GET, new HttpEntity<>("", headers), String.class);
-        assertThat(response.getStatusCodeValue(), is(200));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getHeaders().getContentType().isCompatibleWith(APPLICATION_JSON), is(true));
         assertThat(response.getBody(), is("{\"configuredLevel\":\"WARN\",\"effectiveLevel\":\"WARN\"}"));
     }

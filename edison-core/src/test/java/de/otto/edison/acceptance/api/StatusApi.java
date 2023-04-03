@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.otto.edison.testsupport.applicationdriver.SpringTestBase;
 import de.otto.edison.testsupport.dsl.When;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -23,7 +20,7 @@ public class StatusApi extends SpringTestBase {
     private final static RestTemplate restTemplate = new RestTemplate();
     private final static ObjectMapper objectMapper = new ObjectMapper();
     private static String content = null;
-    private static HttpStatus statusCode;
+    private static HttpStatusCode statusCode;
     private static HttpHeaders requestHeaders = new HttpHeaders();
     private static HttpHeaders responseHeaders;
 
@@ -43,7 +40,7 @@ public class StatusApi extends SpringTestBase {
         return When.INSTANCE;
     }
 
-    public static HttpStatus the_status_code() {
+    public static HttpStatusCode the_status_code() {
         return statusCode;
     }
 

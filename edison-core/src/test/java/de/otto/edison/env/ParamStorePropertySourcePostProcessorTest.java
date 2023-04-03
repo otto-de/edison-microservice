@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 class ParamStorePropertySourcePostProcessorTest {
 
-    private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
     @ImportAutoConfiguration({SSMTestConfiguration.class, ParamStoreConfiguration.class})
     private static class ParamStoreTestConfiguration {

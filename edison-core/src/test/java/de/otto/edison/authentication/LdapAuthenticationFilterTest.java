@@ -11,11 +11,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Base64Utils;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -41,7 +41,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 public class LdapAuthenticationFilterTest {
 
-    private static final String WHITELISTED_PATH = "/internal/health";
+    private static final String ALLOWLISTED_PATH = "/internal/health";
 
     private LdapAuthenticationFilter testee;
     private HttpServletResponse response;
@@ -53,7 +53,7 @@ public class LdapAuthenticationFilterTest {
         response = mock(HttpServletResponse.class);
 
         testee = new LdapAuthenticationFilter(
-                ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", singletonList("/internal"), StartTLS, WHITELISTED_PATH),
+                ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", singletonList("/internal"), StartTLS, ALLOWLISTED_PATH),
                 ldapConnectionFactory
         );
     }
@@ -105,9 +105,9 @@ public class LdapAuthenticationFilterTest {
     }
 
     @Test
-    public void shouldNotApplyFilterToWhitelistedEndpoint() throws Exception {
+    public void shouldNotApplyFilterToAllowlistedEndpoint() throws Exception {
         final HttpServletRequest request = requestWithoutAuthorizationHeader();
-        when(request.getServletPath()).thenReturn(WHITELISTED_PATH + "/etc");
+        when(request.getServletPath()).thenReturn(ALLOWLISTED_PATH + "/etc");
 
         final FilterChain filterChain = mock(FilterChain.class);
         testee.doFilter(request, response, filterChain);
@@ -128,7 +128,7 @@ public class LdapAuthenticationFilterTest {
 
     @Test
     public void shouldApplyFilterToAuthenticatedUser() throws IOException, ServletException, GeneralSecurityException, LDAPException {
-        final LdapProperties ldapProperties = ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", singletonList("/internal"), StartTLS, WHITELISTED_PATH);
+        final LdapProperties ldapProperties = ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", singletonList("/internal"), StartTLS, ALLOWLISTED_PATH);
         final LdapConnectionFactory connectionFactory = mock(LdapConnectionFactory.class);
         final LDAPConnection ldapConnection = someLdapConnectionReturning(SUCCESS);
         when(connectionFactory.buildLdapConnection()).thenReturn(ldapConnection);
@@ -143,7 +143,7 @@ public class LdapAuthenticationFilterTest {
     @Test
     public void shouldApplyFilterToAuthenticatedUserWithAdditionallyConfiguredBaseDn() throws IOException, ServletException, GeneralSecurityException, LDAPException {
         // given
-        final LdapProperties ldapProperties = ldapProperties("someHost", 389, asList("exceptionBaseDn", "successBaseDn"), null, "someRdnIdentifier", singletonList("/internal"), StartTLS, WHITELISTED_PATH);
+        final LdapProperties ldapProperties = ldapProperties("someHost", 389, asList("exceptionBaseDn", "successBaseDn"), null, "someRdnIdentifier", singletonList("/internal"), StartTLS, ALLOWLISTED_PATH);
         final LdapConnectionFactory connectionFactory = mock(LdapConnectionFactory.class);
         final LDAPConnection ldapConnection = someLdapConnectionReturningSuccessOrThrowingBindException("successBaseDn", "exceptionBaseDn");
         when(connectionFactory.buildLdapConnection()).thenReturn(ldapConnection);
@@ -161,7 +161,7 @@ public class LdapAuthenticationFilterTest {
 
     @Test
     public void shouldNotApplyFilterToNotAuthenticatedUser() throws IOException, ServletException, GeneralSecurityException, LDAPException {
-        final LdapProperties ldapProperties = ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", singletonList("/internal"), StartTLS, WHITELISTED_PATH);
+        final LdapProperties ldapProperties = ldapProperties("someHost", 389, singletonList("someBaseDn"), null, "someRdnIdentifier", singletonList("/internal"), StartTLS, ALLOWLISTED_PATH);
         final LdapConnectionFactory connectionFactory = mock(LdapConnectionFactory.class);
         final LDAPConnection ldapConnection = someLdapConnectionReturning(AUTHORIZATION_DENIED);
         when(connectionFactory.buildLdapConnection()).thenReturn(ldapConnection);

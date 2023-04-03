@@ -1,6 +1,7 @@
 package de.otto.edison.status.controller;
 
 import de.otto.edison.configuration.EdisonApplicationProperties;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.ui.Model;
@@ -24,6 +25,11 @@ public class GlobalModelAttributes {
     public void addAttributes(Model model) {
         model.addAttribute("webEndpointBasePath", webEndpointProperties.getBasePath());
         model.addAttribute("edisonManagementBasePath", edisonApplicationProperties.getManagement().getBasePath());
+    }
+
+    @ModelAttribute("requestURI")
+    public String requestURI(final HttpServletRequest request) {
+        return request.getRequestURI();
     }
 
 }

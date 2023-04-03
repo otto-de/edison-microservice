@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head th:replace="fragments/head  :: head" />
+<head th:replace="~{fragments/head  :: head}" />
 
 <body>
 
-<div th:replace="fragments/navigation  :: navigation" />
+<div th:replace="~{fragments/navigation  :: navigation}" />
 
 <div class="container">
     <div class="panel panel-default" th:each="def : ${jobdefinitions}">

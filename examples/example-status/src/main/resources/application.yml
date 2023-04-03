@@ -41,4 +41,4 @@ edison:
 #        port: 389
 #        base-dn: ou=test,ou=people,dc=example,dc=org
 #        rdn-identifier: uid
-#        whitelisted-paths: /internal/health,/internal/status
+#        allowlisted-paths: /internal/health,/internal/status

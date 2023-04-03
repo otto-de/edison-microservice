@@ -107,7 +107,7 @@ public class JobMessageLogAppenderTest {
         loggingEvent.setMessage(message);
         loggingEvent.setArgumentArray(params);
         loggingEvent.setLevel(level);
-        loggingEvent.setMarker(JobMarker.JOB);
+        loggingEvent.addMarker(JobMarker.JOB);
         return loggingEvent;
     }
 }
