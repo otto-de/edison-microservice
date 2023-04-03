@@ -6,7 +6,7 @@ import org.togglz.core.user.FeatureUser;
 import org.togglz.core.user.UserProvider;
 import org.togglz.servlet.util.HttpServletRequestHolder;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

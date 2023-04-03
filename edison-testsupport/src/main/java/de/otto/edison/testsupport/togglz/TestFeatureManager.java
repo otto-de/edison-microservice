@@ -37,7 +37,7 @@ public class TestFeatureManager implements FeatureManager {
 
     @Override
     public Set<Feature> getFeatures() {
-        return new HashSet<Feature>(Arrays.asList(featureEnum.getEnumConstants()));
+        return new HashSet<>(Arrays.asList(featureEnum.getEnumConstants()));
     }
 
     @Override
@@ -89,17 +89,17 @@ public class TestFeatureManager implements FeatureManager {
         return this;
     }
 
-    public TestFeatureManager enable(Feature feature) {
-        return setEnabled(feature, true);
+    public void enable(Feature feature) {
+        setEnabled(feature, true);
     }
 
-    public TestFeatureManager disable(Feature feature) {
-        return setEnabled(feature, false);
+    public void disable(Feature feature) {
+        setEnabled(feature, false);
     }
 
     public TestFeatureManager enableAll() {
         for (FeatureState featureState : featureStates.values()) {
-            featureState.setEnabled(false);
+            featureState.setEnabled(true);
         }
         return this;
     }

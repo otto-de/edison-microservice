@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head th:replace="fragments/head  :: head" />
+<head th:replace="~{fragments/head  :: head}" />
 
 <body>
 
-    <div th:replace="fragments/navigation  :: navigation" />
+    <div th:replace="~{fragments/navigation  :: navigation}" />
 
     <div class="container">
         <div class="row">
@@ -29,11 +29,11 @@
                                     <form th:action="${baseUri} + ${edisonManagementBasePath} + '/loggers'" method="POST">
                                         <div class="input-group input-group-sm">
                                             <select class="form-control" name="level">
-                                                <option th:selected="${logger.effectiveLevel == 'TRACE'}">TRACE</option>
-                                                <option th:selected="${logger.effectiveLevel == 'DEBUG'}">DEBUG</option>
-                                                <option th:selected="${logger.effectiveLevel == 'INFO'}">INFO</option>
-                                                <option th:selected="${logger.effectiveLevel == 'WARN'}">WARN</option>
-                                                <option th:selected="${logger.effectiveLevel == 'ERROR'}">ERROR</option>
+                                                <option th:selected="${#strings.equals(logger.effectiveLevel, 'TRACE')}">TRACE</option>
+                                                <option th:selected="${logger.effectiveLevel=='DEBUG'}">DEBUG</option>
+                                                <option th:selected="${logger.effectiveLevel=='INFO'}">INFO</option>
+                                                <option th:selected="${logger.effectiveLevel=='WARN'}">WARN</option>
+                                                <option th:selected="${logger.effectiveLevel=='ERROR'}">ERROR</option>
                                             </select>
                                             <input type="hidden" hidden="hidden" name="name" th:value="${logger.name}"/>
                                             <span class="input-group-btn">

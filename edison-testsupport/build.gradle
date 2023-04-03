@@ -1,5 +1,7 @@
+apply plugin: 'java-library'
+
 dependencies {
-    compile libraries.togglz_console
+    api libraries.togglz_console
     compileOnly libraries.togglz_spring_web
     compileOnly libraries.togglz_spring_boot_starter
     compileOnly libraries.aws_sdk_ssm
@@ -12,63 +14,80 @@ dependencies {
     testImplementation test_libraries.testcontainers_mongo
     testImplementation test_libraries.testcontainers_junit
 
-    compile libraries.spring_boot
-    compile libraries.spring_boot_autoconfigure
-    compile test_libraries.junit
-    compile test_libraries.junit_params
-    compile test_libraries.junit_engine
-    compile test_libraries.hamcrest_core
-    compile test_libraries.hamcrest_library
-    compile test_libraries.mockito_core
-    compile test_libraries.spring_test
-    compile test_libraries.spring_boot_starter_test
+    api libraries.spring_boot
+    api libraries.spring_boot_autoconfigure
+    api test_libraries.junit
+    api test_libraries.junit_params
+    api test_libraries.junit_engine
+    api test_libraries.hamcrest_core
+    api test_libraries.hamcrest_library
+    api test_libraries.mockito_core
+    api test_libraries.spring_test
+    api test_libraries.spring_boot_starter_test
 }
 
-artifacts {
-    archives jar
-    archives javadocJar
-    archives sourcesJar
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-
-            pom.project {
-                name 'edison-testsupport'
-                packaging 'jar'
-                description 'Test support for Edison Microservices.'
-                url 'http://github.com/otto-de/edison-microservice'
-
-                scm {
-                    url 'scm:git@github.com:otto-de/edison-microservice.git'
-                    connection 'scm:git@github.com:otto-de/edison-microservice.git'
-                    developerConnection 'scm:git@github.com:otto-de/edison-microservice.git'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'edison-testsupport'
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
                 }
-
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'edison-testsupport'
+                description = 'Test support for Edison Microservices.'
+                url = 'https://github.com/otto-de/jlineup'
                 licenses {
                     license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution 'repo'
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
-
                 developers {
                     developer {
-                        id 'gsteinacker'
-                        name 'Guido Steinacker'
+                        id = 'MediaMarco'
+                        name = 'Marco Geweke'
+                        email = 'marco.geweke@gmail.com'
                     }
+                    developer {
+                        id = 'gsteinacker'
+                        name = 'Guido Steinacker'
+                    }
+                }
+                scm {
+                    connection = 'scm:git@github.com:otto-de/edison-microservice.git'
+                    developerConnection = 'scm:git@github.com:otto-de/edison-microservice.git'
+                    url = 'https://github.com/otto-de/edison-microservice'
                 }
             }
         }
     }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            if (project.debugUpload) {
+                releasesRepoUrl = "$buildDir/repos/releases"
+                snapshotsRepoUrl = "$buildDir/repos/snapshots"
+            } else {
+                credentials {
+                    username = sonatypeUsername
+                    password = sonatypePassword
+                }
+            }
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }

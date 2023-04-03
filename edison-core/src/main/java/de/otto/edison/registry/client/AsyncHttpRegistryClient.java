@@ -4,13 +4,13 @@ import de.otto.edison.annotations.Beta;
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.registry.configuration.ServiceRegistryProperties;
 import de.otto.edison.status.domain.ApplicationInfo;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

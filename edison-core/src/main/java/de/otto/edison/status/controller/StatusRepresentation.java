@@ -91,8 +91,7 @@ public class StatusRepresentation {
             type = dependency.getType() + "/" + dependency.getSubtype();
             criticality = dependency.getCriticality();
             expectations = dependency.getExpectations();
-            if (dependency instanceof ServiceDependency) {
-                final ServiceDependency serviceDependency = (ServiceDependency) dependency;
+            if (dependency instanceof ServiceDependency serviceDependency) {
                 url = serviceDependency.getUrl();
                 methods = valueOf(serviceDependency.getMethods());
                 mediatypes = serviceDependency.getMediaTypes();
@@ -170,7 +169,7 @@ public class StatusRepresentation {
 
         private static String toCamelCase(final String name) {
             Matcher matcher = STATUS_DETAIL_JSON_SEPARATOR_PATTERN.matcher(name);
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             while (matcher.find()) {
                 matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
             }

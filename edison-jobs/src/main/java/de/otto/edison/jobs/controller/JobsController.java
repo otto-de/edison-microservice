@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,7 @@ import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static de.otto.edison.util.UrlHelper.baseUriOf;
 import static java.util.stream.Collectors.toList;
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @Controller

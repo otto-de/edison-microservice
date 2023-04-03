@@ -22,7 +22,7 @@ import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
 @Component
 public class JobMessageLogAppender extends AppenderBase<ILoggingEvent> {
 
-    private JobService jobService;
+    private final JobService jobService;
 
     @Autowired
     public JobMessageLogAppender(final JobService jobService) {
@@ -39,7 +39,7 @@ public class JobMessageLogAppender extends AppenderBase<ILoggingEvent> {
     protected void append(final ILoggingEvent eventObject) {
         Map<String, String> mdcMap = eventObject.getMDCPropertyMap();
         // TODO: check for JOB marker:
-        if (mdcMap.containsKey("job_id") && eventObject.getMarker() != null && JobMarker.JOB.contains(eventObject.getMarker())) {
+        if (mdcMap.containsKey("job_id") && eventObject.getMarkerList() != null && eventObject.getMarkerList().contains(JobMarker.JOB)) {
             String jobId = mdcMap.get("job_id");
             Level level = eventObject.getLevel();
             de.otto.edison.jobs.domain.Level edisonLevel = logLevelToEdisonLevel(level);
@@ -57,10 +57,10 @@ public class JobMessageLogAppender extends AppenderBase<ILoggingEvent> {
     }
 
     private de.otto.edison.jobs.domain.Level logLevelToEdisonLevel(final Level level) {
-        switch (level.levelStr) {
-            case "ERROR": return de.otto.edison.jobs.domain.Level.ERROR;
-            case "WARN": return de.otto.edison.jobs.domain.Level.WARNING;
-            default: return de.otto.edison.jobs.domain.Level.INFO;
-        }
+        return switch (level.levelStr) {
+            case "ERROR" -> de.otto.edison.jobs.domain.Level.ERROR;
+            case "WARN" -> de.otto.edison.jobs.domain.Level.WARNING;
+            default -> de.otto.edison.jobs.domain.Level.INFO;
+        };
     }
 }

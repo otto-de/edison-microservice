@@ -36,7 +36,7 @@ public class S3TogglzRepository implements StateRepository {
         final CacheEntry cachedEntry = cache.get(feature.name());
 
         if (cachedEntry != null) {
-            return cachedEntry.getState();
+            return cachedEntry.state();
         }
 
         // no cache hit - refresh state from delegate
@@ -79,19 +79,9 @@ public class S3TogglzRepository implements StateRepository {
     }
 
     /**
-     * This class represents a cached repository lookup
-     */
-    private static class CacheEntry {
-
-        private final FeatureState state;
-
-        public CacheEntry(final FeatureState state) {
-            this.state = state;
-        }
-
-        public FeatureState getState() {
-            return state;
-        }
+         * This class represents a cached repository lookup
+         */
+        private record CacheEntry(FeatureState state) {
 
     }
 }
