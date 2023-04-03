@@ -26,7 +26,7 @@ updates:
         # For Logback Classic, ignore versions higher than 1.2 because of Spring Boot 2.x
         update-types: ["version-update:semver-major"]
         # Ignore Spring > 2
-      - dependency-name: "org.springframework.boot"
+      - dependency-name: "org.springframework.boot:*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "org.hibernate.validator:hibernate-validator"
         update-types: ["version-update:semver-major"]
@@ -40,7 +40,7 @@ updates:
         # For Logback Classic, ignore versions higher than 1.2 because of Spring Boot 2.x
         update-types: ["version-update:semver-major"]
         # Ignore Spring > 2
-      - dependency-name: "org.springframework.boot"
+      - dependency-name: "org.springframework.boot:*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "org.hibernate.validator:hibernate-validator"
         update-types: ["version-update:semver-major"]
