@@ -4,10 +4,10 @@ import de.otto.edison.authentication.configuration.LdapProperties;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -58,7 +58,7 @@ public class LdapRoleAuthenticationFilterTest {
     @Test
     public void shouldInvokeFilterLogicWhenRequestIsForSecuredPath() throws ServletException {
         // given
-        final LdapProperties ldapProperties = mockLdapPropertiesWithProtecedAndWhiteListedPath("/internal", "/internal/public");
+        final LdapProperties ldapProperties = mockLdapPropertiesWithProtecedAndAllowlistedPath("/internal", "/internal/public");
         final LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
 
         final HttpServletRequest request = mockRequestWithPath("/internal");
@@ -71,9 +71,9 @@ public class LdapRoleAuthenticationFilterTest {
     }
 
     @Test
-    public void shouldNotInvokeFilterLogicWhenRequestIsForWhitelistedPath() throws ServletException {
+    public void shouldNotInvokeFilterLogicWhenRequestIsForAllowlistedPath() throws ServletException {
         // given
-        final LdapProperties ldapProperties = mockLdapPropertiesWithProtecedAndWhiteListedPath("/internal", "/internal/public");
+        final LdapProperties ldapProperties = mockLdapPropertiesWithProtecedAndAllowlistedPath("/internal", "/internal/public");
         final LdapRoleAuthenticationFilter filter = new LdapRoleAuthenticationFilter(ldapProperties);
 
         final HttpServletRequest request = mockRequestWithPath("/internal/public");
@@ -108,10 +108,10 @@ public class LdapRoleAuthenticationFilterTest {
         return ldapPropertiesMock;
     }
 
-    private LdapProperties mockLdapPropertiesWithProtecedAndWhiteListedPath(final String securedPath, final String whiteListedPath) {
+    private LdapProperties mockLdapPropertiesWithProtecedAndAllowlistedPath(final String securedPath, final String allowlistedPaths) {
         final LdapProperties ldapPropertiesMock = mock(LdapProperties.class);
         when(ldapPropertiesMock.getPrefixes()).thenReturn(singletonList(securedPath));
-        when(ldapPropertiesMock.getWhitelistedPaths()).thenReturn(singletonList(whiteListedPath));
+        when(ldapPropertiesMock.getAllowlistedPaths()).thenReturn(singletonList(allowlistedPaths));
         when(ldapPropertiesMock.getRequiredRole()).thenReturn("someRole");
         return ldapPropertiesMock;
     }

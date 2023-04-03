@@ -7,7 +7,7 @@ import org.togglz.core.repository.FeatureState;
 import org.togglz.core.spi.ActivationStrategy;
 import org.togglz.core.user.FeatureUser;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Objects;
 

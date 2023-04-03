@@ -4,10 +4,10 @@
 
     <nav class="navbar navbar-default navbar-fixed-top" th:fragment="navigation">
         <div class="container">
-            <div class="navbar-header" th:replace="fragments/navbar/header :: header" />
+            <div class="navbar-header" th:replace="~{fragments/navbar/header :: header}" />
             <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav" th:replace="fragments/navbar/main :: main" />
-                <ul class="nav navbar-nav navbar-right" th:replace="fragments/navbar/right :: right" />
+                <ul class="nav navbar-nav" th:replace="~{fragments/navbar/main :: main}" />
+                <ul class="nav navbar-nav navbar-right" th:replace="~{fragments/navbar/right :: right}" />
             </div><!--/.nav-collapse -->
         </div>
     </nav>

@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -27,11 +27,11 @@ public class LdapProperties {
     private static final Logger LOG = getLogger(LdapProperties.class);
 
     /**
-     * Default paths that are whitelisted in any case.
+     * Default paths that are allowlisted in any case.
      *
-     * Note: /internal/js/ is the path for the JavaScript Code of edison. Has to be whitelisted to be excluded from authentication process.
+     * Note: /internal/js/ is the path for the JavaScript Code of edison. Has to be allowlisted to be excluded from authentication process.
      */
-    private static final Collection<String> DEFAULT_WHITELIST = asList("/internal/js/", "/internal/health");
+    private static final Collection<String> DEFAULT_ALLOWLIST = asList("/internal/js/", "/internal/health");
 
     /**
      * Enable / disable the LDAP authentication
@@ -87,9 +87,9 @@ public class LdapProperties {
     private Collection<String> prefixes = Collections.emptyList();
 
     /**
-     * List of paths that should be whitelisted from LDAP authentication (sub-paths will also be whitelisted)
+     * List of paths that should be allowlisted from LDAP authentication (sub-paths will also be allowlisted)
      */
-    private Collection<String> whitelistedPaths = emptyList();
+    private Collection<String> allowlistedPaths = emptyList();
 
     /**
      * You can choose between StartTLS and SSL encryption for the LDAP server connection
@@ -108,7 +108,7 @@ public class LdapProperties {
      * @param rdnIdentifier Relative distinguished name
      * @param prefix Prefixes of paths that should require LDAP authentication
      * @param encryptionType StartTLS or SSL for the connection to the LDAP server
-     * @param whitelistedPaths Paths that should be excluded from LDAP authentication (includes sub-paths)
+     * @param allowlistedPaths Paths that should be excluded from LDAP authentication (includes sub-paths)
      * @return Ldap properties
      */
     public static LdapProperties ldapProperties(final String host,
@@ -118,7 +118,7 @@ public class LdapProperties {
                                                 final String rdnIdentifier,
                                                 final List<String> prefix,
                                                 final EncryptionType encryptionType,
-                                                final String... whitelistedPaths) {
+                                                final String... allowlistedPaths) {
         final LdapProperties ldap = new LdapProperties();
         ldap.setEnabled(true);
         ldap.setHost(host);
@@ -128,7 +128,7 @@ public class LdapProperties {
         ldap.setRdnIdentifier(rdnIdentifier);
         ldap.setPrefixes(prefix);
         ldap.setEncryptionType(encryptionType);
-        ldap.setWhitelistedPaths(asList(whitelistedPaths));
+        ldap.setAllowlistedPaths(asList(allowlistedPaths));
         return ldap;
     }
 
@@ -230,14 +230,14 @@ public class LdapProperties {
         this.prefixes = prefixes;
     }
 
-    public Collection<String> getWhitelistedPaths() {
-        Collection<String> copy = new HashSet<>(whitelistedPaths);
-        copy.addAll(DEFAULT_WHITELIST);
+    public Collection<String> getAllowlistedPaths() {
+        Collection<String> copy = new HashSet<>(allowlistedPaths);
+        copy.addAll(DEFAULT_ALLOWLIST);
         return copy;
     }
 
-    public void setWhitelistedPaths(Collection<String> whitelistedPaths) {
-        this.whitelistedPaths = whitelistedPaths;
+    public void setAllowlistedPaths(Collection<String> allowlistedPaths) {
+        this.allowlistedPaths = allowlistedPaths;
     }
 
     public EncryptionType getEncryptionType() {

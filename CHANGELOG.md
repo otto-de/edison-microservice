@@ -1,5 +1,46 @@
 # Release Notes
 
+## 3.0.0-M2
+
+* **[edison-jobs]**
+    * Formerly removed JobEventPublisher is back (but still deprecated)
+
+## 3.0.0-M1
+
+**Edison 3.0.0 requires Java 17 or later, see the Readme for a small migration guide.**
+
+* **[all]**
+  * Spring Boot 3.0.2
+  * Spring 6.0.4
+  * Spring Security 6.0.1
+  * Togglz 4.0.0-M1
+  * Hibernate Validator 8.0.0.Final
+  * Java Validation Api 3.0.2
+  
+* **[edison-jobs]**
+  * removed JobEventPublisher
+* **[edison-core]**
+  * whitelistedPaths is now allowlistedPaths in ldap configuration
+
+## 2.7.7
+* **[all]**
+  * Spring Boot 2.7.8
+* **[edison-togglz]**
+  * Update to togglz 3.3.3 - **Note:** You might have to replace chained calls
+    to TestFeatureManager's enable and disable functions with non-chained ones.
+
+## 2.7.6
+* **[all]**
+  * Dependency updates, including Spring Security 4.7.5
+
+## 2.7.5
+* **[all]**
+  * Update to Spring Boot 2.7.5
+
+## 2.7.4
+* **[all]**
+  * Update to Spring Boot 2.7.4
+
 ## 2.7.2
 * **[all]**
   * Update to Spring Boot 2.7.2
@@ -286,7 +327,7 @@ Re-Enable Prefetch-Feature for `S3TogglzRepository` in newer Spring versions aga
 
 **New Features:**
 * **[edison-core]** Enhanced LDAP configuration to require a specific role to access secured paths. To achieve this you 
-                    can set the property `edison.ldap.required-role`. As usual, all whitelisted paths will be ignored.
+                    can set the property `edison.ldap.required-role`. As usual, all allowlisted paths will be ignored.
 * **[edison-core]** Enhanced LDAP configuration to use more than one prefix path with the property `edison.ldap.prefixes`.  
                     The old property `prefix` is now deprecated, but still usable and will be appended to `prefixes`.
                     
@@ -681,7 +722,7 @@ endpoints:
 
 **Bugfixes:**
 
-* **[edison-core]** Added /internal/js to LDAP whitelist, so the JS can be loaded w/o authentication in case of
+* **[edison-core]** Added /internal/js to LDAP allowlist, so the JS can be loaded w/o authentication in case of
 whilelisted /internal/jobs or /internal/jobdefinitions
 * **[edison-core]** Renamed Spring Bean `authenticationFilter` (see `LdapConfiguration`) to `ldapAuthenticationFilter`
 to prevent naming collisions with `authenticationFilter` bean registered by

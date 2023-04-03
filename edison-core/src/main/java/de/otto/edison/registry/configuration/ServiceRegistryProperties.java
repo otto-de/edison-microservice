@@ -1,10 +1,10 @@
 package de.otto.edison.registry.configuration;
 
+import jakarta.validation.constraints.Min;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.Min;
 
 @ConfigurationProperties(prefix = "edison.serviceregistry")
 @Validated

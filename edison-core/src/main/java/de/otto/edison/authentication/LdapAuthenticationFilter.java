@@ -11,10 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
@@ -26,7 +26,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 /**
  * Filter that checks for LDAP authentication once per request. Will not filter routes starting with
- * {@link LdapProperties#whitelistedPaths}. Uses {@link LdapProperties} to create an SSL based connection to the
+ * {@link LdapProperties#allowlistedPaths}. Uses {@link LdapProperties} to create an SSL based connection to the
  * configured LDAP server. Rejects requests with {@code HTTP 401} if authorization fails.
  */
 public class LdapAuthenticationFilter extends OncePerRequestFilter {
@@ -48,7 +48,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(final HttpServletRequest request) throws ServletException {
         final String servletPath = request.getServletPath();
-        return ldapProperties.getWhitelistedPaths()
+        return ldapProperties.getAllowlistedPaths()
                 .stream()
                 .anyMatch(servletPath::startsWith);
     }
@@ -76,7 +76,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
             for (String baseDN : ldapProperties.getBaseDn()) {
                 final String userDN = userDnFrom(credentials, baseDN);
                 try {
-                    if (authenticate(ldap, userDN, credentials.getPassword())) {
+                    if (authenticate(ldap, userDN, credentials.password())) {
                         return ldapProperties.getRoleBaseDn() != null
                                 ? Optional.of(new LdapRoleCheckingRequest(request, ldap, userDN, ldapProperties))
                                 : Optional.of(request);
@@ -85,7 +85,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
                     LOG.debug("LDAPBindException for userDN: {}", userDN);
                 }
             }
-            LOG.warn("Could not bind to LDAP: {}", credentials.getUsername());
+            LOG.warn("Could not bind to LDAP: {}", credentials.username());
         } catch (LDAPException | GeneralSecurityException e) {
             LOG.warn("Authentication error: ", e);
         }
@@ -98,7 +98,7 @@ public class LdapAuthenticationFilter extends OncePerRequestFilter {
     }
 
     String userDnFrom(final Credentials credentials, String baseDN) {
-        return format("%s=%s,%s", ldapProperties.getRdnIdentifier(), credentials.getUsername(), baseDN);
+        return format("%s=%s,%s", ldapProperties.getRdnIdentifier(), credentials.username(), baseDN);
     }
 
     boolean authenticate(final LDAPConnection ldap, final String userDN, final String password) throws LDAPException {

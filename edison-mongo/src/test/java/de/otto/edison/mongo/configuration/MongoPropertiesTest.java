@@ -69,7 +69,7 @@ public class MongoPropertiesTest {
         final MongoProperties props = new MongoProperties();
         props.setUser("aUsername");
         props.setPassword("somePassword");
-        props.setUriPattern("mongodb+srv://%s:%s@cluster0.x4oml.mongodb.net/myFirstDatabase");
+        props.setUriPattern("mongodb+srv://%s:%s@cluster0.x4oml.mongodb.net/myFirstDatabase?authSource=admin");
 
         //when
         MongoClientSettings mongoClientOptions = props.toMongoClientSettings(MongoClientSettings.getDefaultCodecRegistry(), null, null);

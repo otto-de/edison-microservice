@@ -6,10 +6,7 @@ import de.otto.edison.health.indicator.ApplicationHealthIndicator;
 import de.otto.edison.testsupport.applicationdriver.SpringTestBase;
 import de.otto.edison.testsupport.dsl.Given;
 import de.otto.edison.testsupport.dsl.When;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,7 +24,7 @@ public class HealthApi extends SpringTestBase {
     private final static RestTemplate restTemplate = new RestTemplate();
     private final static ObjectMapper objectMapper = new ObjectMapper();
     private static String content = null;
-    private static HttpStatus statusCode;
+    private static HttpStatusCode statusCode;
 
     public static Given an_healthy_application() {
         ApplicationHealthIndicator healthIndicator = applicationContext().getBean(ApplicationHealthIndicator.class);
@@ -65,7 +62,7 @@ public class HealthApi extends SpringTestBase {
         }
     }
 
-    public static HttpStatus the_status_code() {
+    public static HttpStatusCode the_status_code() {
         return statusCode;
     }
 

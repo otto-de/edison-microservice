@@ -3,7 +3,6 @@ package de.otto.edison.logging.ui;
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.navigation.NavBar;
 import org.springframework.boot.actuate.logging.LoggersEndpoint;
-import org.springframework.boot.actuate.logging.LoggersEndpoint.LoggerLevels;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
@@ -22,7 +21,6 @@ import static org.springframework.http.MediaType.*;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 
 /**
  * Replacement for {@link org.springframework.boot.actuate.logging.LoggersEndpoint} with additional
@@ -52,7 +50,7 @@ public class LoggersHtmlEndpoint {
             },
             method = GET)
     public ModelAndView get(final HttpServletRequest request) {
-        return new ModelAndView("loggers", new HashMap<String,Object>() {{
+        return new ModelAndView("loggers", new HashMap<>() {{
             put("loggers", getLoggers());
             put("baseUri", baseUriOf(request));
         }});
@@ -64,7 +62,7 @@ public class LoggersHtmlEndpoint {
             method = GET)
     @ResponseBody
     public Object get() {
-        final Map<String, Object> levels = loggersEndpoint.loggers();
+        final LoggersEndpoint.LoggersDescriptor levels = loggersEndpoint.loggers();
         return (levels == null ? notFound().build() : levels);
     }
 
@@ -74,7 +72,7 @@ public class LoggersHtmlEndpoint {
             method = GET)
     @ResponseBody
     public Object get(@PathVariable String name) {
-        final LoggerLevels levels = loggersEndpoint.loggerLevels(name);
+        final LoggersEndpoint.LoggerLevelsDescriptor levels = loggersEndpoint.loggerLevels(name);
         return (levels == null ? notFound().build() : levels);
     }
 
@@ -107,12 +105,12 @@ public class LoggersHtmlEndpoint {
 
     private List<Map<String,?>> getLoggers() {
         @SuppressWarnings({"unchecked", "raw"})
-        final Map<String,?> loggers = (Map) loggersEndpoint.loggers().get("loggers");
+        final Map<String,?> loggers = loggersEndpoint.loggers().getLoggers();
         return loggers
                 .keySet()
                 .stream()
                 .map(key -> key.contains("$") ? null : new HashMap<String,Object>() {{
-                    final LoggersEndpoint.SingleLoggerLevels logger = (LoggersEndpoint.SingleLoggerLevels) loggers.get(key);
+                    final LoggersEndpoint.SingleLoggerLevelsDescriptor logger = (LoggersEndpoint.SingleLoggerLevelsDescriptor) loggers.get(key);
                     put("name", key);
                     put("displayName", displayNameOf(key));
                     put("configuredLevel", logger.getConfiguredLevel());

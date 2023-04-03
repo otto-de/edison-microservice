@@ -7,8 +7,8 @@ import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLev
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.metadata.ConstraintDescriptor;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;

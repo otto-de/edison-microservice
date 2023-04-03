@@ -20,8 +20,8 @@ task jacocoRootReport(type: JacocoReport) {
     executionData jacocoMerge.destinationFile
 
     reports {
-        html.enabled = true
-        xml.enabled = true
+        html.required = true
+        xml.required = true
     }
 
     doFirst {

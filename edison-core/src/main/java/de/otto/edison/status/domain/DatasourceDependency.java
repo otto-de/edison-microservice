@@ -50,9 +50,8 @@ public class DatasourceDependency extends ExternalDependency {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DatasourceDependency)) return false;
+        if (!(o instanceof DatasourceDependency that)) return false;
         if (!super.equals(o)) return false;
-        DatasourceDependency that = (DatasourceDependency) o;
         return Objects.equals(getDatasources(), that.getDatasources());
     }
 
