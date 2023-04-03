@@ -24,7 +24,7 @@ updates:
     ignore:
       # For Logback Classic, ignore versions higher than 1.2 because of Spring Boot 2.x
       - dependency-name: "ch.qos.logback:logback-classic"
-        update-types: ["version-update:semver-major"]
+        update-types: ["version-update:semver-minor"]
       # Ignore Spring Boot > 2
       - dependency-name: "org.springframework.boot:*"
         update-types: ["version-update:semver-major"]
@@ -48,7 +48,7 @@ updates:
     ignore:
       # For Logback Classic, ignore versions higher than 1.2 because of Spring Boot 2.x
       - dependency-name: "ch.qos.logback:logback-classic"
-        update-types: ["version-update:semver-major"]
+        update-types: ["version-update:semver-minor"]
       # Ignore Spring Boot > 2
       - dependency-name: "org.springframework.boot:*"
         update-types: ["version-update:semver-major"]
