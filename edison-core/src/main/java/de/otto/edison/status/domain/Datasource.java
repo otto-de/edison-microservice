@@ -114,8 +114,7 @@ public final class Datasource {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Datasource)) return false;
-        Datasource that = (Datasource) o;
+        if (!(o instanceof Datasource that)) return false;
         return port == that.port &&
                 Objects.equals(node, that.node) &&
                 Objects.equals(resource, that.resource);

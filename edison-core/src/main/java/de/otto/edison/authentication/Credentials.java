@@ -3,29 +3,13 @@ package de.otto.edison.authentication;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.ObjectUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
  * LDAP credentials (username, password) parsed from HTTP request
  */
-public class Credentials {
-
-    private final String username;
-    private final String password;
-
-    public Credentials(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
+public record Credentials(String username, String password) {
 
     /**
      * Read username and password from the request's {@code Authorization} header and create a {@code Credentials}

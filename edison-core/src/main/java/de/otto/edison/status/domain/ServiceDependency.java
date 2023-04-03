@@ -105,9 +105,8 @@ public class ServiceDependency extends ExternalDependency {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ServiceDependency)) return false;
+        if (!(o instanceof ServiceDependency that)) return false;
         if (!super.equals(o)) return false;
-        ServiceDependency that = (ServiceDependency) o;
         return Objects.equals(getUrl(), that.getUrl()) &&
                 Objects.equals(getMethods(), that.getMethods()) &&
                 Objects.equals(getMediaTypes(), that.getMediaTypes()) &&

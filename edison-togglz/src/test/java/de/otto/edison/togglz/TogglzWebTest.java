@@ -3,7 +3,7 @@ package de.otto.edison.togglz;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -25,7 +25,7 @@ class TogglzWebTest {
 
     @Test
     void shouldRegisterTogglzConsole() {
-        final ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:" + port + "/togglztest/internal/toggles/", String.class);
+        final ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:" + port + "/togglztest/internal/toggles", String.class);
         assertThat(response.getStatusCode().is2xxSuccessful(), is(true));
     }
 

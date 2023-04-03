@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 
-<ul class="nav navbar-nav navbar-right" th:with="url=${#httpServletRequest.getRequestURI()}" th:fragment="right">
+<ul class="nav navbar-nav navbar-right" th:with="url=${requestURI}" th:fragment="right">
     <li role="presentation" class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
             Admin <span class="caret"></span>

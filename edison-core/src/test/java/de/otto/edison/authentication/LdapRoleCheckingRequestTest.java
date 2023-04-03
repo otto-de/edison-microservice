@@ -10,7 +10,7 @@ import com.unboundid.ldap.sdk.SearchResultEntry;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static de.otto.edison.authentication.configuration.EncryptionType.StartTLS;
