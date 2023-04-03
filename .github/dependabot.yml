@@ -23,7 +23,7 @@ updates:
     target-branch: "2.7.x"
     ignore:
       # For Logback Classic, ignore versions higher than 1.2 because of Spring Boot 2.x
-      - dependency-name: "ch.qos.logback:logback-classic:*"
+      - dependency-name: "ch.qos.logback:logback-classic"
         update-types: ["version-update:semver-major"]
       # Ignore Spring Boot > 2
       - dependency-name: "org.springframework.boot:*"
@@ -35,10 +35,10 @@ updates:
       - dependency-name: "org.springframework.security:*"
         update-types: ["version-update:semver-major"]
       # Stick to Hibernate Validator 6.x
-      - dependency-name: "org.hibernate.validator:hibernate-validator:*"
+      - dependency-name: "org.hibernate.validator:hibernate-validator"
         update-types: ["version-update:semver-major"]
       # Stick to SLF4J API 1.x
-      - dependency-name: "org.slf4j:slf4j-api:*"
+      - dependency-name: "org.slf4j:slf4j-api"
         update-types: [ "version-update:semver-major" ]
   - package-ecosystem: "gradle" # See documentation for possible values
     directory: "/gradle" # Location of package manifests
@@ -47,7 +47,7 @@ updates:
     target-branch: "2.7.x"
     ignore:
       # For Logback Classic, ignore versions higher than 1.2 because of Spring Boot 2.x
-      - dependency-name: "ch.qos.logback:logback-classic:*"
+      - dependency-name: "ch.qos.logback:logback-classic"
         update-types: ["version-update:semver-major"]
       # Ignore Spring Boot > 2
       - dependency-name: "org.springframework.boot:*"
@@ -59,8 +59,8 @@ updates:
       - dependency-name: "org.springframework.security:*"
         update-types: ["version-update:semver-major"]
       # Stick to Hibernate Validator 6.x
-      - dependency-name: "org.hibernate.validator:hibernate-validator:*"
+      - dependency-name: "org.hibernate.validator:hibernate-validator"
         update-types: ["version-update:semver-major"]
       # Stick to SLF4J API 1.x
-      - dependency-name: "org.slf4j:slf4j-api:*"
+      - dependency-name: "org.slf4j:slf4j-api"
         update-types: [ "version-update:semver-major" ]
