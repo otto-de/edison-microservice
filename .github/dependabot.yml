@@ -30,6 +30,8 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "org.springframework:*"
         update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.springframework.security:*"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "org.hibernate.validator:hibernate-validator"
         update-types: ["version-update:semver-major"]
       - dependency-name: "org.slf4j:slf4j-api"
@@ -47,6 +49,8 @@ updates:
       - dependency-name: "org.springframework.boot:*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "org.springframework:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.springframework.security:*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "org.hibernate.validator:hibernate-validator"
         update-types: ["version-update:semver-major"]
