@@ -19,7 +19,7 @@ ext {
             hibernate_validator              : '6.2.5.Final', //last version with @SafeHtml
             edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
-            slf4j                            : '1.7.36',
+            slf4j                            : '2.0.7',
             aws_sdk                          : '2.20.37',
             java_validation_api              : '2.0.1.Final',
             java_xml                         : '2.3.0',
