@@ -1,4 +1,7 @@
 test {
+
+    useJUnitPlatform()
+
     // pass -Dspring.profiles.active=local and other system properties to the test task
     systemProperties = System.properties
     // jacoco needs this property when using it with subprojects
@@ -10,7 +13,7 @@ test {
         }
     }
     options {
-        jvmArgs '-XX:SoftRefLRUPolicyMSPerMB=0', '-XX:+UseParallelGC', '-noverify'
+        jvmArgs '-XX:SoftRefLRUPolicyMSPerMB=0', '-XX:+UseParallelGC'
     }
     testLogging {
         events 'skipped', 'failed'
@@ -20,5 +23,5 @@ test {
         showStackTraces = true
     }
 
-    useJUnitPlatform()
+
 }

@@ -64,4 +64,14 @@ public class FallbackTestFeatureManager implements FeatureManager {
         return Collections.emptyList();
     }
 
+    @Override
+    public void enable(Feature feature) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void disable(Feature feature) {
+        throw new UnsupportedOperationException();
+    }
+
 }

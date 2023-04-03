@@ -3,8 +3,8 @@ package de.otto.edison.validation.validators;
 import cz.jirutka.validator.collection.CommonEachValidator;
 import cz.jirutka.validator.collection.constraints.EachConstraint;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 
 @Documented
 @EachConstraint(validateAs = SafeId.class)
-@Constraint(validatedBy = {CommonEachValidator.class})
+//@Constraint(validatedBy = {CommonEachValidator.class})
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EachSafeId {

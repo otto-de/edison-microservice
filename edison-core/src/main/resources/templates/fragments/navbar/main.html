@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
-                <ul class="nav navbar-nav" th:with="url=${#httpServletRequest.getRequestURI()}" th:fragment="main">
+                <ul class="nav navbar-nav" th:with="url=${requestURI}" th:fragment="main">
                     <li th:each="item : ${@mainNavBar.items}" th:classappend="${url.endsWith(item.getLink()) ? 'active' : ''}">
                         <a th:href="@{${item.link}}" th:text="${item.title}" />
                     </li>

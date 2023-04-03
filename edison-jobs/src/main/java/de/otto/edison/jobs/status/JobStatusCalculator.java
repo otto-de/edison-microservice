@@ -222,7 +222,7 @@ public class JobStatusCalculator {
         final Status status;
         final String message;
         final JobInfo currentJob = jobInfos.get(0);
-        final JobInfo lastJob = (!currentJob.getStopped().isPresent() && currentJob.getStatus() == JobStatus.OK && jobInfos.size() > 1) ? jobInfos.get(1) : jobInfos.get(0);
+        final JobInfo lastJob = (currentJob.getStopped().isEmpty() && currentJob.getStatus() == JobStatus.OK && jobInfos.size() > 1) ? jobInfos.get(1) : jobInfos.get(0);
         final JobMeta jobMeta = getJobMeta(jobDefinition.jobType());
         long numFailedJobs = getNumFailedJobs(jobInfos);
         if (!jobMeta.isDisabled()) {

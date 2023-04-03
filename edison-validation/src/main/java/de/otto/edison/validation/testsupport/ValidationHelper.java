@@ -3,17 +3,17 @@ package de.otto.edison.validation.testsupport;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Path;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Path;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
 public class ValidationHelper {
-    private static Validator validator;
+    private static final Validator validator;
 
     static {
         PlatformResourceBundleLocator resourceBundleLocator = new PlatformResourceBundleLocator(ResourceBundleMessageInterpolator.USER_VALIDATION_MESSAGES, null, true);

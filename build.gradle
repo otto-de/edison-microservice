@@ -13,7 +13,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id "com.github.ben-manes.versions" version "0.42.0"
+    id "com.github.ben-manes.versions" version "0.46.0"
 }
 
 // USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
@@ -25,10 +25,12 @@ plugins {
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
 // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-def edison_version = "2.7.2"
+def edison_version = "3.0.0-M3-SNAPSHOT"
 //
 //
 //
+
+project.ext.set("debugUpload", false)
 
 repositories {
     mavenCentral()
@@ -39,11 +41,7 @@ apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
 apply from: "${rootDir}/gradle/root/jacoco.gradle"
 apply from: "${rootDir}/gradle/root/nexusstaging.gradle"
-
-nexusStaging {
-    numberOfRetries = 20
-    delayBetweenRetriesInMillis = 5000
-}
+apply from: "${rootDir}/gradle/maven.gradle"
 
 subprojects {
     apply plugin: 'eclipse'
@@ -80,8 +78,8 @@ subprojects {
         }
     }
 
-    targetCompatibility = '11'
-    sourceCompatibility = '11'
+    targetCompatibility = '17'
+    sourceCompatibility = '17'
 
     project.afterEvaluate {
         tasks.withType(JavaCompile) {

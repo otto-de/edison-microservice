@@ -46,7 +46,7 @@ public class DynamoJobMetaRepositoryTest {
     }
 
     private static DynamoDbClient getDynamoDbClient() {
-        String endpointUri = "http://" + dynamodb.getContainerIpAddress() + ":" +
+        String endpointUri = "http://" + dynamodb.getHost() + ":" +
                 dynamodb.getMappedPort(8000);
 
         return DynamoDbClient.builder()

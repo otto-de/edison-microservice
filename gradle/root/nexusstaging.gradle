@@ -4,4 +4,6 @@ nexusStaging {
     username=sonatypeUsername
     password=sonatypePassword
     packageGroup='de.otto'
+    numberOfRetries = 20
+    delayBetweenRetriesInMillis = 5000
 }
