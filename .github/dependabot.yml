@@ -10,6 +10,7 @@ updates:
     schedule:
       interval: "daily"
     target-branch: "main"
+    open-pull-requests-limit: 25
   - package-ecosystem: "gradle" # See documentation for possible values
     directory: "/gradle" # Location of package manifests
     schedule:
@@ -21,6 +22,7 @@ updates:
     schedule:
       interval: "daily"
     target-branch: "2.7.x"
+    open-pull-requests-limit: 25
     ignore:
       # For Logback Classic, ignore versions higher than 1.2 because of Spring Boot 2.x
       - dependency-name: "ch.qos.logback:logback-classic"
