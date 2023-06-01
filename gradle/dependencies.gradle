@@ -10,7 +10,7 @@ ext {
             spring_security                  : '6.0.2',
             spring_security_jwt              : '1.1.1.RELEASE',
             jcip_annotations                 : '1.0',
-            logback_classic                  : '1.4.6',
+            logback_classic                  : '1.4.7',
             togglz                           : '4.0,0-M2',
             mongodb_driver                   : '4.9.1',
             caffeine                         : '3.1.6',
@@ -20,7 +20,7 @@ ext {
             edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
             java_validation_api              : '3.0.2',
-            aws_sdk                          : '2.20.42',
+            aws_sdk                          : '2.20.76',
             java_xml                         : '2.3.0',
             jackson                          : '2.14.2'
     ]
@@ -31,7 +31,7 @@ ext {
             jsonassert    : '1.5.1',
             rest_assured  : '5.3.0',
             commons_codec : '1.15',
-            testcontainers: '1.18.0'
+            testcontainers: '1.18.3'
     ]
     plugin_versions = [
             versions     : '0.25.0',
