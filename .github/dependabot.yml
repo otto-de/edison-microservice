@@ -11,11 +11,6 @@ updates:
       interval: "daily"
     target-branch: "main"
     open-pull-requests-limit: 25
-  - package-ecosystem: "gradle" # See documentation for possible values
-    directory: "/gradle" # Location of package manifests
-    schedule:
-      interval: "daily"
-    target-branch: "main"
 
   - package-ecosystem: "gradle" # See documentation for possible values
     directory: "/" # Location of package manifests
@@ -42,27 +37,6 @@ updates:
       # Stick to SLF4J API 1.x
       - dependency-name: "org.slf4j:slf4j-api"
         update-types: [ "version-update:semver-major" ]
-  - package-ecosystem: "gradle" # See documentation for possible values
-    directory: "/gradle" # Location of package manifests
-    schedule:
-      interval: "daily"
-    target-branch: "2.7.x"
-    ignore:
-      # For Logback Classic, ignore versions higher than 1.2 because of Spring Boot 2.x
-      - dependency-name: "ch.qos.logback:logback-classic"
-        update-types: ["version-update:semver-minor"]
-      # Ignore Spring Boot > 2
-      - dependency-name: "org.springframework.boot:*"
-        update-types: ["version-update:semver-major"]
-      # Ignore Spring Framework > 5
-      - dependency-name: "org.springframework:*"
-        update-types: ["version-update:semver-major"]
-      # Ignore Spring Security > 5
-      - dependency-name: "org.springframework.security:*"
-        update-types: ["version-update:semver-major"]
-      # Stick to Hibernate Validator 6.x
-      - dependency-name: "org.hibernate.validator:hibernate-validator"
-        update-types: ["version-update:semver-major"]
-      # Stick to SLF4J API 1.x
-      - dependency-name: "org.slf4j:slf4j-api"
+      # Stick to Togglz 3.x
+      - dependency-name: "org.togglz:*"
         update-types: [ "version-update:semver-major" ]
