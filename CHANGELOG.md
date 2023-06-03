@@ -7,6 +7,11 @@
   * Spring Security 6.1.0
   * Togglz 4.0.1
 
+## 2.7.8
+* **[all]**
+    * Spring Boot 2.7.12
+    * Dependency updates
+
 ## 3.0.0-M2
 
 * **[edison-jobs]**
