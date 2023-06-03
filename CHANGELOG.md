@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.7.8
+* **[all]**
+  * Spring Boot 2.7.12
+  * Dependency updates
+
 ## 2.7.7
 * **[all]**
   * Spring Boot 2.7.8
