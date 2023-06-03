@@ -98,7 +98,6 @@ subprojects {
             environment "DOCKER_HOST", "unix:///tmp/podman.sock"
             environment "TESTCONTAINERS_RYUK_DISABLED", "true"
         }
-        println(getEnvironment())
     }
 }
 
