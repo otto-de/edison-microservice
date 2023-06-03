@@ -1,5 +1,12 @@
 # Release Notes
 
+## 3.0.0
+* **[all]**
+  * Spring Boot 3.0.7
+  * Spring 6.0.9
+  * Spring Security 6.1.0
+  * Togglz 4.0.1
+
 ## 3.0.0-M2
 
 * **[edison-jobs]**

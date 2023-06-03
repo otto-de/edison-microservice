@@ -1,3 +1,5 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 buildscript {
     apply from: 'gradle/dependencies.gradle'
 
@@ -25,7 +27,7 @@ plugins {
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
 // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-def edison_version = "3.0.0-M3-SNAPSHOT"
+def edison_version = "3.0.0"
 //
 //
 //
@@ -88,6 +90,15 @@ subprojects {
             println("Configuring $name to use javac parameter --release $version")
             options.compilerArgs.addAll(['--release', version])
         }
+    }
+
+    test {
+        OperatingSystem os = DefaultNativePlatform.currentOperatingSystem;
+        if (os.isMacOsX()) {
+            environment "DOCKER_HOST", "unix:///tmp/podman.sock"
+            environment "TESTCONTAINERS_RYUK_DISABLED", "true"
+        }
+        println(getEnvironment())
     }
 }
 
