@@ -136,7 +136,13 @@ public class JobService {
         final OffsetDateTime timeToMarkJobAsStopped = now(clock).minusSeconds(seconds);
         LOG.debug("JobCleanup: Looking for jobs older than {}.", timeToMarkJobAsStopped);
         final List<JobInfo> deadJobs = jobRepository.findRunningWithoutUpdateSince(timeToMarkJobAsStopped);
-        deadJobs.forEach(deadJob -> killJob(deadJob.getJobId()));
+        deadJobs.forEach(deadJob -> {
+            try {
+                killJob(deadJob.getJobId());
+            } catch (final Exception e) {
+                LOG.error("Exception when kill dead job", e);
+            }
+        });
         clearRunLocks();
     }
 
