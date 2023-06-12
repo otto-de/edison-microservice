@@ -1,5 +1,8 @@
 # Release Notes
 
+##3.0.1 
+* change thyemleaf include syntax to new style
+
 ## 3.0.0
 * **[all]**
   * Spring Boot 3.0.7
