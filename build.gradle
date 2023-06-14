@@ -16,6 +16,7 @@ buildscript {
 plugins {
     id 'java'
     id "com.github.ben-manes.versions" version "0.46.0"
+    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
 
 // USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
@@ -39,18 +40,26 @@ repositories {
     maven { url 'http://repo.spring.io/libs-snapshot' }
 }
 
+nexusPublishing {
+    repositories {
+        sonatype()
+    }
+}
+
 apply from: "${rootDir}/gradle/root/idea.gradle"
 apply from: "${rootDir}/gradle/root/eclipse.gradle"
 apply from: "${rootDir}/gradle/root/jacoco.gradle"
-apply from: "${rootDir}/gradle/root/nexusstaging.gradle"
 apply from: "${rootDir}/gradle/maven.gradle"
+
+group = 'de.otto.edison'
+version = edison_version
 
 subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'project-report'
 
-    version = edison_version
-    group = 'de.otto.edison'
+    version = parent.version
+    group = parent.group
 
     repositories {
         mavenCentral()
@@ -76,7 +85,8 @@ subprojects {
     dependencies {
         compileOnly "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}"
         constraints {
-            implementation 'junit:junit:4.13.2'  // some dependencies bring junit 4.12 which has a security vulnerability
+            implementation 'junit:junit:4.13.2'
+            // some dependencies bring junit 4.12 which has a security vulnerability
         }
     }
 
@@ -117,7 +127,7 @@ dependencyUpdates.resolutionStrategy {
 // This function converts Java version string '1.8' to '8'
 static String compat(String src) {
     if (src.contains('.')) {
-        src.substring(src.lastIndexOf('.')+1)
+        src.substring(src.lastIndexOf('.') + 1)
     } else {
         src
     }

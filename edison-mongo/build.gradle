@@ -59,22 +59,6 @@ publishing {
             }
         }
     }
-    repositories {
-        maven {
-            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-            if (project.debugUpload) {
-                releasesRepoUrl = "$buildDir/repos/releases"
-                snapshotsRepoUrl = "$buildDir/repos/snapshots"
-            } else {
-                credentials {
-                    username = sonatypeUsername
-                    password = sonatypePassword
-                }
-            }
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-        }
-    }
 }
 
 signing {
