@@ -26,6 +26,7 @@ public class SafeIdValidatorTest {
                 Arguments.of("long-id", true),
                 Arguments.of("long-id-with-numbers-1234567890", true),
                 Arguments.of("long-id-with-numbers-1234567890-and-underscore_", true),
+                Arguments.of("long-id-with-numbers-1234567890-and-underscore_-and-dot.", true),
                 Arguments.of("ID-with-CAPITALS", true),
                 Arguments.of(null, true),
                 Arguments.of("id<", false),

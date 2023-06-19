@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class SafeIdValidator implements ConstraintValidator<SafeId, String> {
 
-    private static final Pattern IdPattern = Pattern.compile("[a-zA-Z0-9\\-_]*");
+    private static final Pattern IdPattern = Pattern.compile("[a-zA-Z0-9\\-_.]*");
 
     @Override
     public void initialize(SafeId safeId) {
