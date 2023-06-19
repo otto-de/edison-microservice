@@ -1,6 +1,10 @@
 # Release Notes
 
-##3.0.1 
+## 3.0.2 
+* **[edison-validation]**
+* add dot to safe id validator
+
+## 3.0.1 
 * change thyemleaf include syntax to new style
 
 ## 3.0.0
