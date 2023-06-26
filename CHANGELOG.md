@@ -1,5 +1,13 @@
 # Release Notes
 
+## 3.0.3
+* **[edison-validation]**
+* Fix loading of ValidationMessages.properties
+  * In previous version edison has only loaded the first validation property file instead of merging all candidates
+  * In the past this has always worked because the error message rendering was always triggered after Spring validations
+  * With Spring Framework v6.0.10 MethodArgumentNotValidException can also be thrown before validators
+  * As the resources are permanently cached by Java this issue never occurred before Spring Framework v6.0.10
+
 ## 3.0.2 
 * **[edison-validation]**
 * add dot to safe id validator

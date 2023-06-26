@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -16,13 +16,13 @@ import static java.util.Comparator.comparing;
 @Component
 public class ErrorHalRepresentationFactory {
 
-    private final ResourceBundleMessageSource messageSource;
+    private final AbstractMessageSource messageSource;
     private final ObjectMapper objectMapper;
     private final String errorProfile;
 
     @Autowired
     public ErrorHalRepresentationFactory(
-            ResourceBundleMessageSource edisonValidationMessageSource,
+            AbstractMessageSource edisonValidationMessageSource,
             ObjectMapper objectMapper,
             @Value("${edison.validation.error-profile:http://spec.otto.de/profiles/error}") String errorProfile) {
         this.messageSource = edisonValidationMessageSource;
@@ -47,12 +47,10 @@ public class ErrorHalRepresentationFactory {
                 .filter(o -> o instanceof FieldError)
                 .map(FieldError.class::cast)
                 .sorted(comparing(FieldError::getField))
-                .forEach(e -> {
-                    builder.withError(e.getField(),
-                            messageSource.getMessage(e.getCode() + ".key", null, "unknown", Locale.getDefault()),
-                            e.getDefaultMessage(),
-                            serializeRejectedValue(e));
-                });
+                .forEach(e -> builder.withError(e.getField(),
+                        messageSource.getMessage(e.getCode() + ".key", null, "unknown", Locale.getDefault()),
+                        e.getDefaultMessage(),
+                        serializeRejectedValue(e)));
 
         return builder.build();
     }

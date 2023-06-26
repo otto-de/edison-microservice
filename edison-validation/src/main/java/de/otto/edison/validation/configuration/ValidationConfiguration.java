@@ -3,15 +3,15 @@ package de.otto.edison.validation.configuration;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Configuration
 public class ValidationConfiguration {
 
     @Bean
-    public ResourceBundleMessageSource edisonValidationMessageSource() {
-        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+    public AbstractMessageSource edisonValidationMessageSource() {
+        AggregateResourceBundleMessageSource source = new AggregateResourceBundleMessageSource();
         source.setBasename("ValidationMessages");
         source.setUseCodeAsDefaultMessage(true);
         return source;

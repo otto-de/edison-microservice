@@ -2,7 +2,7 @@ package de.otto.edison.validation.validators;
 
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.AbstractMessageSource;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -15,12 +15,12 @@ import java.util.stream.Stream;
 public class EnumListValidator implements ConstraintValidator<IsEnum, List<String>> {
 
     private static final String UNKNOWN_ENUMS_VALUE_MESSAGE_CODE = "unknown.enums.values";
-    private final ResourceBundleMessageSource messageSource;
+    private final AbstractMessageSource messageSource;
     private Set<String> availableEnumNames;
     private boolean ignoreCase;
     private boolean allowNull;
 
-    public EnumListValidator(@Qualifier("edisonValidationMessageSource") ResourceBundleMessageSource messageSource) {
+    public EnumListValidator(@Qualifier("edisonValidationMessageSource") AbstractMessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
@@ -40,6 +40,7 @@ public class EnumListValidator implements ConstraintValidator<IsEnum, List<Strin
         if (value == null) {
             return allowNull;
         } else {
+
             List<String> invalidValues = value.stream()
                     .filter(v -> !isValidEnum(v))
                     .collect(Collectors.toList());
