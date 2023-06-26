@@ -7,6 +7,7 @@
   * In the past this has always worked because the error message rendering was always triggered after Spring validations
   * With Spring Framework v6.0.10 MethodArgumentNotValidException can also be thrown before validators
   * As the resources are permanently cached by Java this issue never occurred before Spring Framework v6.0.10
+  * Fix uses the existing solution from Hibernate and combines it with our custom Spring message source
 
 ## 3.0.2 
 * **[edison-validation]**
