@@ -1,40 +1,29 @@
 package de.otto.edison.authentication;
 
-import com.unboundid.ldap.sdk.BindResult;
-import com.unboundid.ldap.sdk.LDAPBindException;
-import com.unboundid.ldap.sdk.LDAPConnection;
-import com.unboundid.ldap.sdk.LDAPException;
-import com.unboundid.ldap.sdk.ResultCode;
+import com.unboundid.ldap.sdk.*;
 import de.otto.edison.authentication.configuration.LdapProperties;
 import de.otto.edison.authentication.connection.LdapConnectionFactory;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.util.Base64Utils;
-
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Base64;
 
-import static com.unboundid.ldap.sdk.ResultCode.AUTHORIZATION_DENIED;
-import static com.unboundid.ldap.sdk.ResultCode.SERVER_DOWN;
-import static com.unboundid.ldap.sdk.ResultCode.SUCCESS;
+import static com.unboundid.ldap.sdk.ResultCode.*;
 import static de.otto.edison.authentication.configuration.EncryptionType.StartTLS;
 import static de.otto.edison.authentication.configuration.LdapProperties.ldapProperties;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -200,7 +189,7 @@ public class LdapAuthenticationFilterTest {
 
     private HttpServletRequest requestWithAuthorizationHeader() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getHeader(AUTHORIZATION)).thenReturn("Basic " + Base64Utils.encodeToString("someUsername:somePassword".getBytes()));
+        when(request.getHeader(AUTHORIZATION)).thenReturn("Basic " + Base64.getEncoder().encodeToString("someUsername:somePassword".getBytes()));
         when(request.getDispatcherType()).thenReturn(DispatcherType.REQUEST);
         when(request.getServletPath()).thenReturn("/internal");
         return request;

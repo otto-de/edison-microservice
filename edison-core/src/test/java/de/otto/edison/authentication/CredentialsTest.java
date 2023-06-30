@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Base64;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
-import static org.springframework.util.Base64Utils.encodeToString;
 
 public class CredentialsTest {
 
@@ -20,7 +21,7 @@ public class CredentialsTest {
 
     private void mockHttpServletRequestWithAuthentication(final String authString) {
         when(httpServletRequest.getHeader("Authorization"))
-                .thenReturn("Basic " + encodeToString(authString.getBytes()));
+                .thenReturn("Basic " + Base64.getEncoder().encodeToString(authString.getBytes()));
     }
 
     @BeforeEach

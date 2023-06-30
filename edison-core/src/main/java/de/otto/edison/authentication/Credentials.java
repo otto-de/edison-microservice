@@ -1,9 +1,10 @@
 package de.otto.edison.authentication;
 
-import org.springframework.util.Base64Utils;
 import org.springframework.util.ObjectUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Base64;
 import java.util.Optional;
 
 /**
@@ -39,7 +40,7 @@ public record Credentials(String username, String password) {
 
     private static Optional<String> base64Decode(String input) {
         try {
-            return Optional.of(new String(Base64Utils.decode(input.getBytes())));
+            return Optional.of(new String(Base64.getDecoder().decode(input.getBytes())));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
