@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.0.4
+* **[all]**
+  * add -parameters compile flag to avoid warnings
+
 ## 3.0.3
 * **[edison-validation]**
 * Fix loading of ValidationMessages.properties

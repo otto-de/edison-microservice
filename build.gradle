@@ -94,11 +94,11 @@ subprojects {
     sourceCompatibility = '17'
 
     project.afterEvaluate {
-        tasks.withType(JavaCompile) {
+        tasks.withType(JavaCompile).configureEach {
             def version = compat(sourceCompatibility)
             project.logger.info("Configuring $name to use javac parameter --release $version")
             println("Configuring $name to use javac parameter --release $version")
-            options.compilerArgs.addAll(['--release', version])
+            options.compilerArgs.addAll(['--release', version, "-parameters"])
         }
     }
 
