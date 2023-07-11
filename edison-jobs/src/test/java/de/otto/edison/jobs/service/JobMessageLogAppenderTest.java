@@ -1,12 +1,15 @@
 package de.otto.edison.jobs.service;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.classic.util.LogbackMDCAdapter;
 import de.otto.edison.jobs.domain.JobMarker;
 import de.otto.edison.jobs.domain.JobMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.slf4j.MDC;
 
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,6 +33,9 @@ public class JobMessageLogAppenderTest {
     @Test
     public void shouldNotLogWhenNoJobIdInMDC() {
         final LoggingEvent loggingEvent = new LoggingEvent();
+        final LoggerContext loggerContext = new LoggerContext();
+        loggerContext.setMDCAdapter((LogbackMDCAdapter) MDC.getMDCAdapter());
+        loggingEvent.setLoggerContext(loggerContext);
 
         //when
         jobEventAppender.append(loggingEvent);
