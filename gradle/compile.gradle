@@ -1,7 +1,11 @@
 apply plugin: 'java'
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     dependsOn processResources
+    project.logger.info("Configuring $name to use javac parameter --release $sourceCompatibility")
+    println("Configuring $name to use javac parameter --release $sourceCompatibility")
     options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['--release', sourceCompatibility])
     options.compilerArgs << '-Xlint:all,-serial,-processing'
+    options.compilerArgs << '-parameters'
 }
