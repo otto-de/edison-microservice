@@ -5,6 +5,11 @@
   * Spring Boot 3.1.1
   * Dependency updates
 
+## 2.7.9
+* **[all]**
+  * Spring Boot 2.7.13
+  * Dependency updates
+
 ## 3.0.4
 * **[all]**
   * add -parameters compile flag to avoid warnings
