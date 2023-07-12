@@ -1,5 +1,10 @@
 # Release Notes
 
+## 3.1.0
+* **[all]**
+  * Spring Boot 3.1.1
+  * Dependency updates
+
 ## 3.0.4
 * **[all]**
   * add -parameters compile flag to avoid warnings
