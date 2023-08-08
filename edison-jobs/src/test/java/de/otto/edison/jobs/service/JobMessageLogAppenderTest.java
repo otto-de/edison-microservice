@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.MDC;
+import org.slf4j.Marker;
 
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -94,6 +95,22 @@ public class JobMessageLogAppenderTest {
         assertMessageEvent(messageCaptor, de.otto.edison.jobs.domain.Level.INFO);
     }
 
+    @Test
+    public void shouldPublishEventWithCustomJobMarker() {
+        // given
+        final Marker jobMarker = JobMarker.jobMarker("some_jobmarker");
+        final LoggingEvent loggingEvent = createLoggingEvent(Level.INFO, "someMessage", jobMarker);
+
+        // when
+        jobEventAppender.append(loggingEvent);
+
+        // then
+        final ArgumentCaptor<JobMessage> messageCaptor = forClass(JobMessage.class);
+        verify(jobService).appendMessage(eq("someJobId"), messageCaptor.capture());
+
+        assertMessageEvent(messageCaptor, de.otto.edison.jobs.domain.Level.INFO);
+    }
+
     private void assertMessageEvent(final ArgumentCaptor<JobMessage> messageCaptor,
                                     final de.otto.edison.jobs.domain.Level expectedLevel) {
         final JobMessage jobMessage = messageCaptor.getValue();
@@ -102,18 +119,19 @@ public class JobMessageLogAppenderTest {
     }
 
     private LoggingEvent createLoggingEvent(final Level level) {
-        return createLoggingEvent(level, "someMessage");
+        return createLoggingEvent(level, "someMessage", JobMarker.JOB);
     }
 
     private LoggingEvent createLoggingEvent(final Level level,
                                             final String message,
+                                            final Marker jobMarker,
                                             final Object... params) {
         final LoggingEvent loggingEvent = new LoggingEvent();
         loggingEvent.setMDCPropertyMap(singletonMap("job_id", "someJobId"));
         loggingEvent.setMessage(message);
         loggingEvent.setArgumentArray(params);
         loggingEvent.setLevel(level);
-        loggingEvent.addMarker(JobMarker.JOB);
+        loggingEvent.addMarker(jobMarker);
         return loggingEvent;
     }
 }

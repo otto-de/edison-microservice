@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import de.otto.edison.jobs.domain.JobMarker;
 import de.otto.edison.jobs.domain.JobMessage;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,8 +39,7 @@ public class JobMessageLogAppender extends AppenderBase<ILoggingEvent> {
     @Override
     protected void append(final ILoggingEvent eventObject) {
         Map<String, String> mdcMap = eventObject.getMDCPropertyMap();
-        // TODO: check for JOB marker:
-        if (mdcMap.containsKey("job_id") && eventObject.getMarkerList() != null && eventObject.getMarkerList().contains(JobMarker.JOB)) {
+        if (mdcMap.containsKey("job_id") && eventObject.getMarkerList() != null && eventObject.getMarkerList().stream().anyMatch(JobMarker.JOB::contains)) {
             String jobId = mdcMap.get("job_id");
             Level level = eventObject.getLevel();
             de.otto.edison.jobs.domain.Level edisonLevel = logLevelToEdisonLevel(level);
@@ -49,8 +49,7 @@ public class JobMessageLogAppender extends AppenderBase<ILoggingEvent> {
             try {
                 final JobMessage jobMessage = jobMessage(edisonLevel, message, OffsetDateTime.now());
                 jobService.appendMessage(jobId, jobMessage);
-            }
-            catch(final RuntimeException e) {
+            } catch (final RuntimeException e) {
                 addError("Failed to persist job message (jobId=" + jobId + "): " + message, e);
             }
         }
