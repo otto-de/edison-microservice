@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.1.1
+* **[edison-jobs]**
+  * Fix job check in JobMessageLogAppender
+
 ## 3.1.0
 * **[all]**
   * Spring Boot 3.1.1
