@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.1.3
+* **[edison-togglz]**
+  * Add activation strategy `TimeRangeActivationStrategy` for time range
+
 ## 3.1.2
 * **[all]**
     * Spring Boot 3.1.3
