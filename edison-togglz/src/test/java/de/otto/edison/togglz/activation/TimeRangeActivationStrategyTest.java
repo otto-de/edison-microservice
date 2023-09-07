@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.togglz.core.repository.FeatureState;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,7 +16,7 @@ class TimeRangeActivationStrategyTest {
     @Test
     public void shouldBeActiveWhenNowIsBetweenFromAndTo() {
         // given
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         final String from = format.format(now.minusHours(1));
         final String to = format.format(now.plusHours(1));
 
@@ -33,7 +34,7 @@ class TimeRangeActivationStrategyTest {
     @Test
     public void shouldNotBeActiveIfToIsBeforeNow() {
         // given
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         final String from = format.format(now.minusHours(2));
         final String to = format.format(now.minusHours(1));
 
@@ -50,7 +51,7 @@ class TimeRangeActivationStrategyTest {
     @Test
     public void shouldNotBeActiveIfFromIsAfterNow() {
         // given
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         final String from = format.format(now.plusHours(1));
         final String to = format.format(now.plusHours(2));
 
@@ -67,7 +68,7 @@ class TimeRangeActivationStrategyTest {
     @Test
     public void shouldNotBeActiveIfToIsBeforeFrom() {
         // given
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         final String from = format.format(now.plusHours(1));
         final String to = format.format(now.minusHours(1));
 
@@ -84,7 +85,25 @@ class TimeRangeActivationStrategyTest {
     @Test
     public void shouldNotBeActiveOnInvalidExpression() {
         // given
-        final FeatureState state = setupToggle("someInvalidDate", LocalDateTime.now().toString());
+        final FeatureState state = setupToggle("someInvalidDate", LocalDateTime.now(ZoneId.of("UTC")).toString());
+        final TimeRangeActivationStrategy strategy = new TimeRangeActivationStrategy();
+
+        // when
+        final boolean active = strategy.isActive(state, null);
+
+        // then
+        assertFalse(active);
+    }
+
+    @Test
+    public void shouldBeInactiveWhenTimeZonesDoNotMatch() {
+        // given
+        final LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Paris"));
+        final String from = format.format(now.minusHours(1));
+        final String to = format.format(now.plusHours(1));
+
+        final FeatureState state = setupToggle(from, to);
+
         final TimeRangeActivationStrategy strategy = new TimeRangeActivationStrategy();
 
         // when

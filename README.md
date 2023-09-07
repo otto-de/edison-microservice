@@ -150,7 +150,7 @@ Determine possible dependency updates
 
 Publish new releases
 
-    gradle uploadArchives
+    ./release.sh
 
 
 ## Examples
