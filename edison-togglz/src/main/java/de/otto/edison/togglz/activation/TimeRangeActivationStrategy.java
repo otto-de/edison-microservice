@@ -7,11 +7,14 @@ import org.togglz.core.spi.ActivationStrategy;
 import org.togglz.core.user.FeatureUser;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TimeRangeActivationStrategy implements ActivationStrategy {
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    private static final ZoneId ZONE_ID = ZoneId.of("UTC");
     @Override
     public String getId() {
         return "time-range";
@@ -28,9 +31,9 @@ public class TimeRangeActivationStrategy implements ActivationStrategy {
             final String fromString = featureState.getParameter("from");
             final String toString = featureState.getParameter("to");
             try {
-                final LocalDateTime fromDateTime = format.parse(fromString, LocalDateTime::from);
-                final LocalDateTime toDateTime = format.parse(toString, LocalDateTime::from);
-                final LocalDateTime now = LocalDateTime.now();
+                final ZonedDateTime fromDateTime = LocalDateTime.parse(fromString, format).atZone(ZONE_ID);
+                final ZonedDateTime toDateTime = LocalDateTime.parse(toString, format).atZone(ZONE_ID);
+                final ZonedDateTime now = ZonedDateTime.now(ZONE_ID);
                 return (fromDateTime.isBefore(now) && toDateTime.isAfter(now));
             } catch (RuntimeException e) {
                 return false;
@@ -43,8 +46,8 @@ public class TimeRangeActivationStrategy implements ActivationStrategy {
     @Override
     public Parameter[] getParameters() {
         return new Parameter[]{
-                ParameterBuilder.create("from").label("From").description("Start date and time (LocalDateTime - yyyy-MM-dd HH:mm:ss)."),
-                ParameterBuilder.create("to").label("To").description("End date and time (LocalDateTime - yyyy-MM-dd HH:mm:ss).").optional(),
+                ParameterBuilder.create("from").label("From").description("Start date and time (UTC - yyyy-MM-dd HH:mm:ss)."),
+                ParameterBuilder.create("to").label("To").description("End date and time (UTC - yyyy-MM-dd HH:mm:ss).").optional(),
         };
     }
 }
