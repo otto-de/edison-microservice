@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.1.4
+* **[edison-togglz]**
+  * Add registry for new activation strategies
+
 ## 3.1.3
 * **[edison-togglz]**
   * Add activation strategy `TimeRangeActivationStrategy` for time range
