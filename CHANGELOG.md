@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.1.5
+* **[edison-togglz]**
+  * Use UTC in time range activation strategy
+
 ## 3.1.4
 * **[edison-togglz]**
   * Add registry for new activation strategies
