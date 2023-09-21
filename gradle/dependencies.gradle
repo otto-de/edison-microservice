@@ -20,7 +20,7 @@ ext {
             edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
             java_validation_api              : '3.0.2',
-            aws_sdk                          : '2.20.146',
+            aws_sdk                          : '2.20.152',
             java_xml                         : '2.3.0',
             jackson                          : '2.15.2'
     ]
