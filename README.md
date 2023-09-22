@@ -148,16 +148,19 @@ Determine possible dependency updates
 
 ### Publishing
 
-Publish new releases
+#### Publish new releases to sonatype
 
     ./release.sh
 
+#### Create a release in github
+Click on "Releases" -> "Draft a new release". Create a tag and copy&paste the relevant info from the changelog.<br/>
+Don't publish packages to github. They are published to sonatype.
 
 ## Examples
 
 There are a few examples that may help you to start your first microservice based
 on Edison and Spring Boot. Because Spring Boot itself has some complexity, it is
-recommended to first read it's documentation before starting with Edison.
+recommended to first read its documentation before starting with Edison.
 
 The examples can be started with gradle:
 
