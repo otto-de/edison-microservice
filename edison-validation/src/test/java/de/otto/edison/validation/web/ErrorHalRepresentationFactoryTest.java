@@ -1,6 +1,7 @@
 package de.otto.edison.validation.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.otto.edison.validation.configuration.AggregateResourceBundleMessageSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -21,11 +22,11 @@ import static org.mockito.Mockito.when;
 public class ErrorHalRepresentationFactoryTest {
 
 
-    private ResourceBundleMessageSource messageSource;
+    private AggregateResourceBundleMessageSource messageSource;
 
     @BeforeEach
     public void setUp() {
-        messageSource = new ResourceBundleMessageSource();
+        messageSource = new AggregateResourceBundleMessageSource();
         messageSource.setBasename("ValidationMessages");
         messageSource.setUseCodeAsDefaultMessage(true);
 

@@ -1,15 +1,16 @@
 package de.otto.edison.validation.validators;
 
+import de.otto.edison.validation.configuration.AggregateResourceBundleMessageSource;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import org.hibernate.validator.internal.engine.DefaultClockProvider;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ResourceBundleMessageSource;
 
-import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.metadata.ConstraintDescriptor;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -81,7 +82,7 @@ public class EnumListValidatorTest {
     }
 
     private EnumListValidator createAndInitializeValidator(boolean ignoreCase, boolean allowNull) {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        AggregateResourceBundleMessageSource messageSource = new AggregateResourceBundleMessageSource();
         messageSource.setBasename("ValidationMessages");
         messageSource.setUseCodeAsDefaultMessage(true);
 
