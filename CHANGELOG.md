@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.1.6
+* **[edison-core]**
+  * Add possibility to use authorization for http calls to jobtrigger registry
+
 ## 3.1.5
 * **[edison-togglz]**
   * Use UTC in time range activation strategy
