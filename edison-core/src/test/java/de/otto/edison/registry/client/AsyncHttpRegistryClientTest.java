@@ -1,5 +1,6 @@
 package de.otto.edison.registry.client;
 
+import de.otto.edison.registry.security.OAuth2TokenProviderFactory;
 import de.otto.edison.status.configuration.ApplicationInfoConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,7 @@ public class AsyncHttpRegistryClientTest {
         // given
         TestPropertyValues.of("edison.serviceregistry.enabled=false").applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
+        context.register(OAuth2TokenProviderFactory.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
 
@@ -48,6 +50,7 @@ public class AsyncHttpRegistryClientTest {
                 .and("edison.serviceregistry.service=http://test")
                 .applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
+        context.register(OAuth2TokenProviderFactory.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
 
@@ -62,6 +65,7 @@ public class AsyncHttpRegistryClientTest {
                 .and("edison.serviceregistry.servers=")
                 .applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
+        context.register(OAuth2TokenProviderFactory.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
 
@@ -78,6 +82,7 @@ public class AsyncHttpRegistryClientTest {
                 .and("edison.serviceregistry.service=")
                 .applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
+        context.register(OAuth2TokenProviderFactory.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
 
@@ -95,6 +100,7 @@ public class AsyncHttpRegistryClientTest {
                 .and("edison.serviceregistry.service=http://test")
                 .applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
+        context.register(OAuth2TokenProviderFactory.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
 
@@ -107,6 +113,7 @@ public class AsyncHttpRegistryClientTest {
     public void shouldDoNothingIfNothingConfigured() {
         // given
         context.register(ApplicationInfoConfiguration.class);
+        context.register(OAuth2TokenProviderFactory.class);
         context.register(AsyncHttpRegistryClient.class);
         context.refresh();
 

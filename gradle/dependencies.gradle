@@ -31,7 +31,9 @@ ext {
             jsonassert    : '1.5.1',
             rest_assured  : '5.3.2',
             commons_codec : '1.16.0',
-            testcontainers: '1.19.0'
+            testcontainers: '1.19.0',
+            mockserver    : '5.15.0',
+            awaitility    : '4.2.0'
     ]
     plugin_versions = [
             versions     : '0.25.0',
@@ -80,22 +82,25 @@ ext {
             "com.sun.xml.bind:jaxb-impl:${versions.java_xml}"
     ]
     test_libraries = [
-            junit                   : "org.junit.jupiter:junit-jupiter-api:${test_versions.junit}",
-            junit_params            : "org.junit.jupiter:junit-jupiter-params:${test_versions.junit}",
-            junit_engine            : "org.junit.jupiter:junit-jupiter-engine:${test_versions.junit}",
-            hamcrest_core           : "org.hamcrest:hamcrest-core:${test_versions.hamcrest}",
-            hamcrest_library        : "org.hamcrest:hamcrest-library:${test_versions.hamcrest}",
-            mockito_core            : "org.mockito:mockito-core:${test_versions.mockito_core}",
-            spring_test             : "org.springframework:spring-test:${versions.spring}",
-            spring_boot_starter_test: "org.springframework.boot:spring-boot-starter-test:${versions.spring_boot}",
-            jsonassert              : "org.skyscreamer:jsonassert:${test_versions.jsonassert}",
-            togglz_testing          : "org.togglz:togglz-testing:${versions.togglz}",
-            testcontainers_mongo    : "org.testcontainers:mongodb:${test_versions.testcontainers}",
-            testcontainers_junit    : "org.testcontainers:junit-jupiter:${test_versions.testcontainers}",
-            json_path               : "com.jayway.jsonpath:json-path:${versions.json_path}",
-            rest_assured            : "io.rest-assured:rest-assured:${test_versions.rest_assured}",
-            commons_codec           : "commons-codec:commons-codec:${test_versions.commons_codec}"
-
+            junit                    : "org.junit.jupiter:junit-jupiter-api:${test_versions.junit}",
+            junit_params             : "org.junit.jupiter:junit-jupiter-params:${test_versions.junit}",
+            junit_engine             : "org.junit.jupiter:junit-jupiter-engine:${test_versions.junit}",
+            hamcrest_core            : "org.hamcrest:hamcrest-core:${test_versions.hamcrest}",
+            hamcrest_library         : "org.hamcrest:hamcrest-library:${test_versions.hamcrest}",
+            mockito_core             : "org.mockito:mockito-core:${test_versions.mockito_core}",
+            spring_test              : "org.springframework:spring-test:${versions.spring}",
+            spring_boot_starter_test : "org.springframework.boot:spring-boot-starter-test:${versions.spring_boot}",
+            jsonassert               : "org.skyscreamer:jsonassert:${test_versions.jsonassert}",
+            togglz_testing           : "org.togglz:togglz-testing:${versions.togglz}",
+            testcontainers_mongo     : "org.testcontainers:mongodb:${test_versions.testcontainers}",
+            testcontainers_junit     : "org.testcontainers:junit-jupiter:${test_versions.testcontainers}",
+            json_path                : "com.jayway.jsonpath:json-path:${versions.json_path}",
+            rest_assured             : "io.rest-assured:rest-assured:${test_versions.rest_assured}",
+            commons_codec            : "commons-codec:commons-codec:${test_versions.commons_codec}",
+            mockserver_netty         : "org.mock-server:mockserver-netty:${test_versions.mockserver}",
+            mockserver_client_java   : "org.mock-server:mockserver-client-java:${test_versions.mockserver}",
+            mockserver_junit_jupiter : "org.mock-server:mockserver-junit-jupiter:${test_versions.mockserver}",
+            awaitility               : "org.awaitility:awaitility:${test_versions.awaitility}",
     ]
     gradle_plugins = [
             spring_boot  : "org.springframework.boot:spring-boot-gradle-plugin:${versions.spring_boot}",

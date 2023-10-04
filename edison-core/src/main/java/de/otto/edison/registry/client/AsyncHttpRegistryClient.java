@@ -3,6 +3,8 @@ package de.otto.edison.registry.client;
 import de.otto.edison.annotations.Beta;
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.registry.configuration.ServiceRegistryProperties;
+import de.otto.edison.registry.security.OAuth2TokenProvider;
+import de.otto.edison.registry.security.OAuth2TokenProviderFactory;
 import de.otto.edison.status.domain.ApplicationInfo;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import static java.util.Arrays.stream;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
@@ -34,22 +37,24 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 public class AsyncHttpRegistryClient implements RegistryClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncHttpRegistryClient.class);
-
     private final ApplicationInfo applicationInfo;
     private final HttpClient httpClient;
     private final ServiceRegistryProperties serviceRegistryProperties;
     private final EdisonApplicationProperties edisonApplicationProperties;
+    private final OAuth2TokenProvider oAuth2TokenProvider;
     private final ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor();
     private boolean isRunning = false;
 
     @Autowired
     public AsyncHttpRegistryClient(final ApplicationInfo applicationInfo,
                                    final ServiceRegistryProperties serviceRegistryProperties,
-                                   final EdisonApplicationProperties edisonApplicationProperties) {
+                                   final EdisonApplicationProperties edisonApplicationProperties,
+                                   final OAuth2TokenProviderFactory oAuth2TokenProviderFactory) {
         this.applicationInfo = applicationInfo;
         this.httpClient = HttpClient.newBuilder().build();
         this.serviceRegistryProperties = serviceRegistryProperties;
         this.edisonApplicationProperties = edisonApplicationProperties;
+        this.oAuth2TokenProvider = oAuth2TokenProviderFactory.isEnabled() ? oAuth2TokenProviderFactory.create() : null;
     }
 
     @PostConstruct
@@ -77,32 +82,37 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                 .filter(server -> !isEmpty(server))
                 .forEach(discoveryServer -> {
                     try {
+                        final HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                                .PUT(HttpRequest.BodyPublishers.ofString(
+                                        "{\n" +
+                                        "   \"groups\":[\"" + edisonApplicationProperties.getGroup() + "\"],\n" +
+                                        "   \"expire\":" + serviceRegistryProperties.getExpireAfter() + ",\n" +
+                                        "   \"links\":[{\n" +
+                                        "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +
+                                        "      \"href\" : \"" + serviceRegistryProperties.getService() + "\",\n" +
+                                        "      \"title\":\"" + applicationInfo.title + "\"\n" +
+                                        "   }]  \n" +
+                                        "}"
+                                ))
+                                .uri(URI.create(discoveryServer + "/environments/" + edisonApplicationProperties.getEnvironment() + "/" + applicationInfo.name))
+                                .header(CONTENT_TYPE, "application/vnd.otto.edison.links+json")
+                                .header(ACCEPT, "application/vnd.otto.edison.links+json");
+
+                        if (oAuth2TokenProvider != null) {
+                            requestBuilder.header(AUTHORIZATION, "Bearer " + oAuth2TokenProvider.getAccessToken());
+                        }
+
                         LOG.debug("Updating registration of service at '{}'", discoveryServer);
                         httpClient
-                                .sendAsync(HttpRequest.newBuilder()
-                                        .PUT(HttpRequest.BodyPublishers.ofString(
-                                                "{\n" +
-                                                        "   \"groups\":[\"" + edisonApplicationProperties.getGroup() + "\"],\n" +
-                                                        "   \"expire\":" + serviceRegistryProperties.getExpireAfter() + ",\n" +
-                                                        "   \"links\":[{\n" +
-                                                        "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +
-                                                        "      \"href\" : \"" + serviceRegistryProperties.getService() + "\",\n" +
-                                                        "      \"title\":\"" + applicationInfo.title + "\"\n" +
-                                                        "   }]  \n" +
-                                                        "}"
-                                        ))
-                                        .uri(URI.create(discoveryServer + "/environments/" + edisonApplicationProperties.getEnvironment() + "/" + applicationInfo.name))
-                                        .header("Content-Type", "application/vnd.otto.edison.links+json")
-                                        .header("Accept", "application/vnd.otto.edison.links+json")
-                                        .build(), HttpResponse.BodyHandlers.ofString())
-                        .thenApply(response -> {
-                            if (response.statusCode() < 300) {
-                                LOG.info("Successfully updated registration at " + discoveryServer);
-                            } else {
-                                LOG.warn("Failed to update registration at '{}': Status='{}'", discoveryServer, response.statusCode());
-                            }
-                            return response.statusCode();
-                        });
+                                .sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
+                                .thenApply(response -> {
+                                    if (response.statusCode() < 300) {
+                                        LOG.info("Successfully updated registration at " + discoveryServer);
+                                    } else {
+                                        LOG.warn("Failed to update registration at '{}': Status='{}'", discoveryServer, response.statusCode());
+                                    }
+                                    return response.statusCode();
+                                });
                     } catch (final Exception e) {
                         LOG.error("Error updating registration", e);
                     }

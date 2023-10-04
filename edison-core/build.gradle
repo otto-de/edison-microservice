@@ -13,6 +13,10 @@ dependencies {
 
     testImplementation project(":edison-testsupport")
     testImplementation libraries.aws_sdk_ssm
+    testImplementation test_libraries.mockserver_netty
+    testImplementation test_libraries.mockserver_client_java
+    testImplementation test_libraries.mockserver_junit_jupiter
+    testImplementation test_libraries.awaitility
 }
 
 artifacts {
