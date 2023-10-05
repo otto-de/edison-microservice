@@ -55,6 +55,7 @@ public class AsyncHttpRegistryClientIntegrationTest {
         // given
         final var asyncHttpRegistryClient = new AsyncHttpRegistryClient(applicationInfo("testApplication", edisonApplicationProperties),
                 serviceRegistryProperties, edisonApplicationProperties, oAuth2TokenProviderFactory);
+        asyncHttpRegistryClient.postConstruct();
         client.when(
                 request("/serviceregistry/environments/testEnvironment/testApplication")
                         .withMethod("PUT")
@@ -85,12 +86,15 @@ public class AsyncHttpRegistryClientIntegrationTest {
         // given
         final var tokenProvider = mock(OAuth2TokenProvider.class);
         when(tokenProvider.getAccessToken()).thenReturn("someAccessToken");
-
+        when(serviceRegistryProperties.isEnabled()).thenReturn(true);
+        when(serviceRegistryProperties.getService()).thenReturn("someService");
+        when(serviceRegistryProperties.getRefreshAfter()).thenReturn(123L);
         when(oAuth2TokenProviderFactory.isEnabled()).thenReturn(true);
         when(oAuth2TokenProviderFactory.create()).thenReturn(tokenProvider);
 
         final var asyncHttpRegistryClient = new AsyncHttpRegistryClient(applicationInfo("testApplication", edisonApplicationProperties),
                 serviceRegistryProperties, edisonApplicationProperties, oAuth2TokenProviderFactory);
+        asyncHttpRegistryClient.postConstruct();
 
         client.when(
                 request("/serviceregistry/environments/testEnvironment/testApplication")
@@ -119,12 +123,15 @@ public class AsyncHttpRegistryClientIntegrationTest {
         // given
         final var tokenProvider = mock(OAuth2TokenProvider.class);
         when(tokenProvider.getAccessToken()).thenThrow(OAuth2TokenException.class);
-
+        when(serviceRegistryProperties.isEnabled()).thenReturn(true);
+        when(serviceRegistryProperties.getService()).thenReturn("someService");
+        when(serviceRegistryProperties.getRefreshAfter()).thenReturn(123L);
         when(oAuth2TokenProviderFactory.isEnabled()).thenReturn(true);
         when(oAuth2TokenProviderFactory.create()).thenReturn(tokenProvider);
 
         final var asyncHttpRegistryClient = new AsyncHttpRegistryClient(applicationInfo("testApplication", edisonApplicationProperties),
                 serviceRegistryProperties, edisonApplicationProperties, oAuth2TokenProviderFactory);
+        asyncHttpRegistryClient.postConstruct();
 
         // when
         asyncHttpRegistryClient.registerService();

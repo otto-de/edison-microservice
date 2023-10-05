@@ -41,7 +41,7 @@ class OAuth2TokenProviderTest {
                 response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withBody(""" 
-                                { "access_token": "someAccessToken" }
+                                { "access_token": "someAccessToken", "expires_in": 1000 }
                                 """));
 
         // when

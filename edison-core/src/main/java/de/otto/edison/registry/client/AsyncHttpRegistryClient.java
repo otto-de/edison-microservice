@@ -41,7 +41,8 @@ public class AsyncHttpRegistryClient implements RegistryClient {
     private final HttpClient httpClient;
     private final ServiceRegistryProperties serviceRegistryProperties;
     private final EdisonApplicationProperties edisonApplicationProperties;
-    private final OAuth2TokenProvider oAuth2TokenProvider;
+    private final OAuth2TokenProviderFactory oAuth2TokenProviderFactory;
+    private OAuth2TokenProvider oAuth2TokenProvider;
     private final ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor();
     private boolean isRunning = false;
 
@@ -54,7 +55,7 @@ public class AsyncHttpRegistryClient implements RegistryClient {
         this.httpClient = HttpClient.newBuilder().build();
         this.serviceRegistryProperties = serviceRegistryProperties;
         this.edisonApplicationProperties = edisonApplicationProperties;
-        this.oAuth2TokenProvider = oAuth2TokenProviderFactory.isEnabled() ? oAuth2TokenProviderFactory.create() : null;
+        this.oAuth2TokenProviderFactory = oAuth2TokenProviderFactory;
     }
 
     @PostConstruct
@@ -65,6 +66,7 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                 scheduledExecutorService
                         .scheduleWithFixedDelay(this::registerService, 0, serviceRegistryProperties.getRefreshAfter(), MINUTES);
                 isRunning = true;
+                oAuth2TokenProvider = oAuth2TokenProviderFactory.isEnabled() ? oAuth2TokenProviderFactory. create() : null;
             } else {
                 LOG.warn("===================================================================================");
                 LOG.warn("ServiceRegistryProperties is enabled, but no service and/or servers are configured");
