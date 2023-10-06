@@ -27,7 +27,7 @@ ext {
     test_versions = [
             junit         : '5.10.0',
             hamcrest      : '2.2',
-            mockito_core  : '5.5.0',
+            mockito_core  : '5.6.0',
             jsonassert    : '1.5.1',
             rest_assured  : '5.3.2',
             commons_codec : '1.16.0',
