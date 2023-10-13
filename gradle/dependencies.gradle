@@ -22,7 +22,7 @@ ext {
             java_validation_api              : '3.0.2',
             aws_sdk                          : '2.20.152',
             java_xml                         : '2.3.0',
-            jackson                          : '2.15.2'
+            jackson                          : '2.15.3'
     ]
     test_versions = [
             junit         : '5.10.0',
