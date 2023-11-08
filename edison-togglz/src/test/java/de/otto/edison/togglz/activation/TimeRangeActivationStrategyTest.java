@@ -98,7 +98,7 @@ class TimeRangeActivationStrategyTest {
     @Test
     public void shouldBeInactiveWhenTimeZonesDoNotMatch() {
         // given
-        final LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Paris"));
+        final LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC-3"));
         final String from = format.format(now.minusHours(1));
         final String to = format.format(now.plusHours(1));
 
