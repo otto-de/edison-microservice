@@ -1,5 +1,10 @@
 # Release Notes
 
+## 3.2.0
+* **[all]**
+  * Spring Boot 3.2.2
+  * Dependency updates
+
 ## 3.1.6
 * **[edison-core]**
   * Add possibility to use authorization for http calls to jobtrigger registry
