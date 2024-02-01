@@ -6,8 +6,10 @@ import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.service.JobDefinitionService;
 import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.navigation.NavBar;
+import de.otto.edison.navigation.configuration.NavBarConfiguration;
 import de.otto.edison.status.domain.Link;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
@@ -46,7 +49,7 @@ public class JobDefinitionsController {
     @Autowired
     public JobDefinitionsController(final JobDefinitionService definitionService,
                                     final JobMetaService jobMetaService,
-                                    final NavBar rightNavBar,
+                                    @Qualifier(NavBarConfiguration.RIGHT_NAV_BAR) final NavBar rightNavBar,
                                     final EdisonApplicationProperties applicationProperties) {
         this.jobDefinitionService = definitionService;
         this.jobMetaService = jobMetaService;
@@ -147,7 +150,7 @@ public class JobDefinitionsController {
     private String fixedDelayFrequency(Optional<Duration> duration) {
         if (duration.isPresent()) {
             if (duration.get().toMinutes() < 1) {
-                return "Every " + duration.get().toMillis()/1000 + " Seconds";
+                return "Every " + duration.get().toMillis() / 1000 + " Seconds";
             } else {
                 return "Every " + duration.get().toMinutes() + " Minutes";
             }

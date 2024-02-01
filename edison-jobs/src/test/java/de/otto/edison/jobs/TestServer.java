@@ -11,7 +11,8 @@ import static org.springframework.boot.SpringApplication.run;
 @Configuration
 @ComponentScan(basePackages = {"de.otto.edison"}, excludeFilters = {
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "de.otto.edison.mongo.*"),
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "de.otto.edison.status.*Controller")
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "de.otto.edison.status.*Controller"),
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "de.otto.edison.testsupport.TestServer")
 })
 @SpringBootApplication
 public class TestServer {

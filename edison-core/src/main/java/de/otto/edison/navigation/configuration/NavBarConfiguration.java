@@ -36,12 +36,15 @@ import static java.util.Arrays.asList;
 @EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class NavBarConfiguration {
 
-    @Bean
+    public static final String MAIN_NAV_BAR = "mainNavBar";
+    public static final String RIGHT_NAV_BAR = "rightNavBar";
+
+    @Bean(name = MAIN_NAV_BAR)
     public NavBar mainNavBar() {
         return emptyNavBar();
     }
 
-    @Bean
+    @Bean(name = RIGHT_NAV_BAR)
     public NavBar rightNavBar(final EdisonApplicationProperties properties) {
         final String href = properties.getManagement().getBasePath() + "/status";
         return navBar(asList(
