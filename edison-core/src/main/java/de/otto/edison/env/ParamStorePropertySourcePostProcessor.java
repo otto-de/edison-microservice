@@ -73,7 +73,10 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
 
     private void addParametersToPropertiesSource(final Properties propertiesSource, final List<Parameter> parameters) {
         parameters.forEach(p -> {
-            final String name = p.name().substring(properties.getPath().length() + 1);
+            String name = p.name().substring(properties.getPath().length() + 1);
+            if (StringUtils.hasText(properties.getSeparator())) {
+                name = name.replaceAll(properties.getSeparator(), ".");
+            }
             final String loggingValue = SECURE_STRING == p.type() ? "*****" : p.value();
             LOG.info("Loaded '" + name + "' from ParametersStore, value='" + loggingValue + "', length=" + p.value().length());
 
@@ -87,6 +90,7 @@ public class ParamStorePropertySourcePostProcessor implements BeanFactoryPostPro
         final String path = requireNonNull(environment.getProperty(pathProperty),
                 "Property '" + pathProperty + "' must not be null");
         properties = new ParamStoreProperties();
+        properties.setSeparator(environment.getProperty("edison.env.paramstore.separator"));
         properties.setAddWithLowestPrecedence(
                 parseBoolean(environment.getProperty("edison.env.paramstore.addWithLowestPrecedence", "false")));
         properties.setPath(path);
