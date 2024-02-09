@@ -8,6 +8,8 @@ public class ParamStoreProperties {
     private String path;
     private boolean addWithLowestPrecedence;
 
+    private String separator;
+
     public ParamStoreProperties() {
     }
 
@@ -33,5 +35,14 @@ public class ParamStoreProperties {
 
     public void setAddWithLowestPrecedence(final boolean addWithLowestPrecedence) {
         this.addWithLowestPrecedence = addWithLowestPrecedence;
+    }
+
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public void setSeparator(String separator) {
+        this.separator = separator;
     }
 }

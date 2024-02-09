@@ -35,7 +35,10 @@ class ParamStorePropertySourcePostProcessorTest {
             SsmClient mock = mock(SsmClient.class);
             when(mock.getParametersByPath(any(GetParametersByPathRequest.class))).thenReturn(
                     GetParametersByPathResponse.builder()
-                            .parameters(Parameter.builder().name("mongo/password").value("secret").build())
+                            .parameters(
+                                    Parameter.builder().name("mongo/password").value("secret").build(),
+                                    Parameter.builder().name("mongo/subSection/config").value("someConfig").build()
+                            )
                             .build()
             );
             return mock;
@@ -59,6 +62,21 @@ class ParamStorePropertySourcePostProcessorTest {
         assertThat(this.context.containsBean("paramStorePropertySourcePostProcessor"), is(true));
         assertThat(this.context.getEnvironment().getPropertySources().contains("paramStorePropertySource"), is(true));
         assertEquals("secret", this.context.getEnvironment().getProperty("password"));
+        assertEquals("someConfig", this.context.getEnvironment().getProperty("subSection/config"));
+    }
+
+    @Test
+    void shouldLoadPropertiesWithSeperatorsFromParamStore() {
+        this.context.register(ParamStoreTestConfiguration.class);
+        TestPropertyValues
+                .of("edison.env.paramstore.enabled=true")
+                .and("edison.env.paramstore.path=mongo")
+                .and("edison.env.paramstore.separator=/")
+                .applyTo(context);
+        this.context.refresh();
+        assertThat(this.context.containsBean("paramStorePropertySourcePostProcessor"), is(true));
+        assertThat(this.context.getEnvironment().getPropertySources().contains("paramStorePropertySource"), is(true));
+        assertEquals("someConfig", this.context.getEnvironment().getProperty("subSection.config"));
     }
 
     @Test
