@@ -33,7 +33,7 @@ ext {
             commons_codec : '1.16.1',
             testcontainers: '1.19.5',
             mockserver    : '5.15.0',
-            awaitility    : '4.2.0'
+            awaitility    : '4.2.1'
     ]
     plugin_versions = [
             versions     : '0.25.0',
