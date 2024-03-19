@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.2.2
+* **[all]**
+  * Dependency updates
+
 ## 3.2.1
 * **[edison-core]**
     * Add seperator-option to use sections in a parameter name as properties e.g. `some/value` results in `some.value` with a seperator of `/`
