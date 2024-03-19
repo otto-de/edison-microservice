@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.7.11
+
+* **[all]**
+    * Spring Boot 2.7.18
+    * Dependency updates
+
 ## 2.7.10
 
 * **[all]**
