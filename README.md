@@ -43,6 +43,8 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 
 **3.1.x**: Edison Microservices for Spring Boot 3.1.x &#10004; - Compatible with Java 17 and greater
 
+**3.2.x**: Edison Microservices for Spring Boot 3.2.x &#10004; - Compatible with Java 17 and greater
+
 ## Migration from Edison 2 to Edison 3
 
 In edison-ldap, whitelisted-paths was replaced with allowlisted-paths.
