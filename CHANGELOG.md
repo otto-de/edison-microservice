@@ -1,5 +1,8 @@
 # Release Notes
-
+## 3.2.3
+* **[edison-mongo]
+    * Downgrade mongodb version to 4.11.2 because this is the version still used by spring boot 3.2.5
+  
 ## 3.2.2
 * **[all]**
   * Dependency updates
