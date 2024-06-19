@@ -15,7 +15,7 @@ ext {
             mongodb_driver                   : '5.1.0',
             caffeine                         : '3.1.8',
             json_path                        : '2.9.0',
-            unboundid_ldapsdk                : '7.0.0',
+            unboundid_ldapsdk                : '7.0.1',
             hibernate_validator              : '8.0.1.Final',
             edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
