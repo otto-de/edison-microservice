@@ -25,7 +25,7 @@ ext {
             jackson                          : '2.17.1'
     ]
     test_versions = [
-            junit         : '5.10.2',
+            junit         : '5.10.3',
             hamcrest      : '2.2',
             mockito_core  : '5.12.0',
             jsonassert    : '1.5.1',
