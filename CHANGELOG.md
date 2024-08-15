@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.7.12
+* **[all]**
+    * Dependency updates
+
+**Note: This is the last 2.7.x release. Open Source support for Spring Boot 2 ended in November 2023, please migrate to Edison 3.**
+
 ## 2.7.11
 
 * **[all]**
