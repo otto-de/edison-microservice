@@ -27,7 +27,7 @@ plugins {
 //
 // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
 // Publish artifacts to sonatype by executing the release.sh script. Don't publish packages to github.
-def edison_version = "3.2.4-SNAPSHOT"
+def edison_version = "3.3.0"
 //
 //
 //
