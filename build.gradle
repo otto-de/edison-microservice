@@ -72,6 +72,29 @@ subprojects {
     ext['mockito.version'] = test_versions.mockito_core
     ext['jackson.version'] = versions.jackson
 
+//    configurations.all {
+//        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//            if (details.requested.group == 'ch.qos.logback') {
+//                details.useVersion versions.logback_classic
+//            }
+//            if (details.requested.group == 'com.fasterxml.jackson.core') {
+//                details.useVersion versions.jackson
+//            }
+//            if (details.requested.group == 'io.micrometer') {
+//                details.useVersion versions.micrometer
+//            }
+//            if (details.requested.group == 'io.netty' && !details.requested.name.startsWith('netty-tcnative')) {
+//                //details.useVersion versions.netty
+//            }
+//            if (details.requested.group == 'org.springframework') {
+//                details.useVersion versions.spring
+//            }
+//            if (details.requested.group == 'org.thymeleaf') {
+//                details.useVersion versions.thymeleaf
+//            }
+//        }
+//    }
+
     task allDeps(type: DependencyReportTask) {}
 
     apply from: "${rootDir}/gradle/idea.gradle"
