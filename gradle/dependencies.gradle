@@ -10,7 +10,7 @@ ext {
             spring_security                  : '6.3.3',
             spring_security_jwt              : '1.1.1.RELEASE',
             jcip_annotations                 : '1.0',
-            logback_classic                  : '1.5.7',
+            logback_classic                  : '1.5.8',
             togglz                           : '4.4.0',
             mongodb_driver                   : '5.1.4',
             caffeine                         : '3.1.8',
