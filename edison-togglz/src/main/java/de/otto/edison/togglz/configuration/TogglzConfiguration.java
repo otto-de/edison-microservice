@@ -23,6 +23,7 @@ import org.togglz.servlet.util.HttpServletRequestHolder;
 import org.togglz.spring.manager.FeatureManagerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,6 +52,10 @@ public class TogglzConfiguration {
         return () -> {
 
             final HttpServletRequest request = HttpServletRequestHolder.get();
+
+            if (request == null) {
+                return null;
+            }
 
             final Optional<Credentials> credentials = Credentials.readFrom(request);
             final boolean isAdmin = true; // "admin".equals(username);
