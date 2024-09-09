@@ -21,7 +21,7 @@ check_configuration() {
     check_configured "signing.keyId" "This is the id of your key (e.g. 72FE5380). Use gpg --list-keys to find yours"
     check_configured "signing.password" "This is the password you defined for your gpg key"
     # for GPG version >= 2.1: gpg --export-secret-keys >~/.gnupg/secring.gpg
-    # gpg --send-keys --keyserver keyserver.ubuntu.com yourKeyId
+    # gpg --send-keys --keyserver keys.openpgp.org yourKeyId
 }
 
 check_configuration
@@ -37,8 +37,8 @@ else
   echo "INFO: This is a SNAPSHOT release."
 fi
 
-"${SCRIPT_DIR}"/gradlew clean
-"${SCRIPT_DIR}"/gradlew check
+#"${SCRIPT_DIR}"/gradlew clean
+#"${SCRIPT_DIR}"/gradlew check
 "${SCRIPT_DIR}"/gradlew -Dorg.gradle.internal.http.socketTimeout=200000 -Dorg.gradle.internal.http.connectionTimeout=200000 build publish
 
 if [[ $SNAPSHOT == 1 ]]; then

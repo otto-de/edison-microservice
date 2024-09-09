@@ -1,5 +1,10 @@
 # Release Notes
 
+## 3.3.1
+* **[general]**: increase gradle version to 8.x
+* **[edison-togglz]**
+    * Fix NullPointerException for togglz check when togglz state is retrieved without HttpServletRequest. 
+
 ## 3.3.0
 * **[all]
     * Upgrade to Spring Boot 3.3.2

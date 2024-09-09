@@ -57,6 +57,10 @@ publishing {
     }
 }
 
+tasks.named("publishMavenJavaPublicationToSonatypeRepository") {
+    dependsOn tasks.named("signArchives")
+}
+
 signing {
     sign publishing.publications.mavenJava
 }
