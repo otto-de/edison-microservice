@@ -45,9 +45,6 @@ nexusPublishing {
     }
 }
 
-apply from: "${rootDir}/gradle/root/idea.gradle"
-apply from: "${rootDir}/gradle/root/eclipse.gradle"
-apply from: "${rootDir}/gradle/root/jacoco.gradle"
 apply from: "${rootDir}/gradle/maven.gradle"
 
 group = 'de.otto.edison'
