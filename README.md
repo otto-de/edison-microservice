@@ -41,6 +41,7 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 **3.3.x**: Edison Microservices for Spring Boot 3.3.x &#10004; - Compatible with Java 17 and greater
 
 **2.7.x (EOL)**: Edison Microservices for Spring Boot 2.7.x &#10004; - Compatible with Java 11 and greater - End of Life, not updated any more
+
 **3.2.x (EOL)**: Edison Microservices for Spring Boot 3.2.x &#10004; - Compatible with Java 17 and greater - End of Life, not updated any more
 
 ## Migration from Edison 2 to Edison 3
