@@ -1,5 +1,8 @@
 # Release Notes
 
+## 3.3.2
+* **[all]**: Update to Spring Boot 3.3.4
+
 ## 3.3.1
 * **[general]**: increase gradle version to 8.x
 * **[edison-togglz]**
