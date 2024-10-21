@@ -26,7 +26,7 @@ ext {
             micrometer                       : '1.13.4'
     ]
     test_versions = [
-            junit         : '5.11.1',
+            junit         : '5.11.3',
             hamcrest      : '3.0',
             mockito_core  : '5.14.2',
             jsonassert    : '1.5.3',
