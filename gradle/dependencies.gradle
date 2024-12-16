@@ -16,7 +16,7 @@ ext {
             caffeine                         : '3.1.8',
             json_path                        : '2.9.0',
             unboundid_ldapsdk                : '7.0.2',
-            hibernate_validator              : '8.0.1.Final',
+            hibernate_validator              : '8.0.2.Final',
             edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
             java_validation_api              : '3.1.0',
