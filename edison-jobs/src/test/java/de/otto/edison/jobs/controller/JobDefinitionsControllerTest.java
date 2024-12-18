@@ -74,9 +74,9 @@ public class JobDefinitionsControllerTest {
 
         // when
         mockMvc.perform(
-                get(MANAGEMENT_CONTEXT + "/jobdefinitions/FooJob")
-                        .accept("application/json")
-        )
+                        get(MANAGEMENT_CONTEXT + "/jobdefinitions/FooJob")
+                                .accept("application/json")
+                )
                 .andExpect(status().is(200))
                 .andExpect(content().json("{\n" +
                         "  \"type\": \"FooJob\",\n" +
@@ -109,7 +109,7 @@ public class JobDefinitionsControllerTest {
 
         // when
         mockMvc.perform(
-                get(MANAGEMENT_CONTEXT + "/jobdefinitions/")
+                get(MANAGEMENT_CONTEXT + "/jobdefinitions")
                         .accept("application/json")
         )
                 .andExpect(status().is(200))
@@ -143,8 +143,8 @@ public class JobDefinitionsControllerTest {
         when(jobDefinitionService.getJobDefinitions()).thenReturn(asList(fooJobDef, barJobDef));
 
         // when
-        mockMvc.perform(
-                get(MANAGEMENT_CONTEXT + "/jobdefinitions/")
+         mockMvc.perform(
+                get(MANAGEMENT_CONTEXT + "/jobdefinitions")
                         .accept("text/html")
         )
                 .andExpect(status().is(200))
@@ -170,7 +170,7 @@ public class JobDefinitionsControllerTest {
 
         // when
         mockMvc.perform(
-                get(MANAGEMENT_CONTEXT + "/jobdefinitions/")
+                get(MANAGEMENT_CONTEXT + "/jobdefinitions")
                         .accept("text/html")
         )
                 .andExpect(status().is(200))
@@ -190,7 +190,7 @@ public class JobDefinitionsControllerTest {
 
         // when
         mockMvc.perform(
-                get(MANAGEMENT_CONTEXT + "/jobdefinitions/")
+                get(MANAGEMENT_CONTEXT + "/jobdefinitions")
                         .accept("text/html")
         )
                 .andExpect(status().is(200))

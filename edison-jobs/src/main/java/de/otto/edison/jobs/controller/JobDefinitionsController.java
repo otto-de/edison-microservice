@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -76,7 +77,7 @@ public class JobDefinitionsController {
 
     @RequestMapping(value = "${edison.application.management.base-path:/internal}/jobdefinitions", method = GET, produces = "*/*")
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
-        return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
+        return new ModelAndView("jobdefinitions_view", new HashMap<String, Object>() {{
             put("baseUri", baseUriOf(request));
             put("jobdefinitions", jobDefinitionService.getJobDefinitions()
                     .stream()
@@ -129,7 +130,7 @@ public class JobDefinitionsController {
                     put("retry", retryOf(def));
                 }});
         if (optionalResult.isPresent()) {
-            return new ModelAndView("jobdefinitions", new HashMap<String, Object>() {{
+            return new ModelAndView("jobdefinitions_view", new HashMap<String, Object>() {{
                 put("baseUri", baseUriOf(request));
                 put("jobdefinitions", singletonList(optionalResult.get()));
             }});
