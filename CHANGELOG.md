@@ -1,5 +1,11 @@
 # Release Notes
 
+## 3.4.0
+
+* **[all]**: Update to Spring Boot 3.4.0
+
+  * See https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.4-Release-Notes for an upgrade guide
+
 ## 3.3.3
 
 * **[edison-validation]**: Add annotation `@UrlParameterEntity` to mark classes that are used to hold request
