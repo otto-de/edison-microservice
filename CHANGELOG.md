@@ -1,5 +1,10 @@
 # Release Notes
 
+## 3.4.1
+
+* **[edison-jobs]**: Fix `/jobdefinitions` endpoint by resolving view correctly.
+* **[all]**: Dependency Updates
+
 ## 3.4.0
 
 * **[all]**: Update to Spring Boot 3.4.0
