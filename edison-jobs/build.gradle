@@ -22,7 +22,7 @@ dependencies {
     testImplementation test_libraries.jsonassert
     testImplementation test_libraries.testcontainers_junit
     testImplementation test_libraries.testcontainers_mongo
-
+    testImplementation test_libraries.rest_assured
 }
 
 publishing {

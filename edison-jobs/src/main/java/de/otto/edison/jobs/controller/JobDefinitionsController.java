@@ -8,6 +8,8 @@ import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.navigation.NavBar;
 import de.otto.edison.navigation.configuration.NavBarConfiguration;
 import de.otto.edison.status.domain.Link;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,11 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -30,10 +28,10 @@ import static de.otto.edison.jobs.controller.JobDefinitionRepresentation.represe
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static de.otto.edison.status.domain.Link.link;
 import static de.otto.edison.util.UrlHelper.baseUriOf;
+import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
-import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
@@ -63,21 +61,21 @@ public class JobDefinitionsController {
     @ResponseBody
     public Map<String, List<Link>> getJobDefinitionsAsJson(final HttpServletRequest request) {
         final String baseUri = baseUriOf(request);
-        return singletonMap("links", new ArrayList<Link>() {{
+        return singletonMap("links", new ArrayList<>() {{
             addAll(jobDefinitionService.getJobDefinitions()
                     .stream()
                     .map((def) -> link(
                             "http://github.com/otto-de/edison/link-relations/job/definition",
                             baseUri + jobDefinitionsUri + "/" + def.jobType(),
                             def.jobName()))
-                    .collect(toList()));
+                    .toList());
             add(link("self", baseUriOf(request) + jobDefinitionsUri, "Self"));
         }});
     }
 
     @RequestMapping(value = "${edison.application.management.base-path:/internal}/jobdefinitions", method = GET, produces = "*/*")
     public ModelAndView getJobDefinitionsAsHtml(final HttpServletRequest request) {
-        return new ModelAndView("jobdefinitions_view", new HashMap<String, Object>() {{
+        return new ModelAndView("definitions", new HashMap<>() {{
             put("baseUri", baseUriOf(request));
             put("jobdefinitions", jobDefinitionService.getJobDefinitions()
                     .stream()
@@ -130,7 +128,7 @@ public class JobDefinitionsController {
                     put("retry", retryOf(def));
                 }});
         if (optionalResult.isPresent()) {
-            return new ModelAndView("jobdefinitions_view", new HashMap<String, Object>() {{
+            return new ModelAndView("definitions", new HashMap<>() {{
                 put("baseUri", baseUriOf(request));
                 put("jobdefinitions", singletonList(optionalResult.get()));
             }});

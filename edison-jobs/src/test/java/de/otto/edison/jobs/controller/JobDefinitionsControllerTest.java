@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Duration;
@@ -149,6 +150,7 @@ public class JobDefinitionsControllerTest {
         )
                 .andExpect(status().is(200))
                 .andDo(result -> {
+                    assertThat(result.getModelAndView().getViewName(), is("definitions"));
                     Map<String, Object> model = result.getModelAndView().getModel();
                     List<Map<String, Object>> jobDefinitions = (List<Map<String, Object>>) model.get("jobdefinitions");
                     assertThat(jobDefinitions.size(), is(2));
