@@ -6,7 +6,7 @@
 ext {
     versions = [
             spring_boot                      : '3.4.1',
-            spring                           : '6.2.1',
+            spring                           : '6.2.2',
             spring_security                  : '6.4.2',
             spring_security_jwt              : '1.1.1.RELEASE',
             jcip_annotations                 : '1.0',
