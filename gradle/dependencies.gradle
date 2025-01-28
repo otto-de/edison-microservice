@@ -31,7 +31,7 @@ ext {
             mockito_core  : '5.15.2',
             jsonassert    : '1.5.3',
             rest_assured  : '5.5.0',
-            commons_codec : '1.17.2',
+            commons_codec : '1.18.0',
             testcontainers: '1.20.4',
             mockserver    : '5.15.0',
             awaitility    : '4.2.2'
