@@ -6,12 +6,11 @@ import java.util.Optional;
 /**
  * Definition about how often and when a job expects to be triggered, restarted, and so on.
  *
- * This information is used by external triggers like Edison JobTrigger, and during execution
+ * This information could be used by external triggers and during execution
  * of jobs.
  *
  * @author Guido Steinacker
  * @since 25.08.15
- * @see <a href="https://github.com/otto-de/edison-jobtrigger">Edison JobTrigger</a>
  */
 public interface JobDefinition {
 
@@ -75,7 +74,6 @@ public interface JobDefinition {
      * the job failed to start.
      *
      * @return number of retries
-     * @see <a href="https://github.com/otto-de/edison-jobtrigger">Edison JobTrigger</a>
      */
     public default int retries() { return 0; }
 
@@ -85,7 +83,6 @@ public interface JobDefinition {
      * This information is used by a job trigger to determine, how long a retry should be delayed.
      *
      * @return optional delay before retrying
-     * @see <a href="https://github.com/otto-de/edison-jobtrigger">Edison JobTrigger</a>
      */
     public default Optional<Duration> retryDelay() { return Optional.empty(); }
 }
