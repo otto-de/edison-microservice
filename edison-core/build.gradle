@@ -1,4 +1,5 @@
 apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 
 dependencies {
     compileOnly libraries.aws_sdk_ssm
@@ -19,62 +20,18 @@ dependencies {
     testImplementation test_libraries.awaitility
 }
 
-artifacts {
-    archives jar
-    archives javadocJar
-    archives sourcesJar
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            groupId = "de.otto.edison"
             artifactId = 'edison-core'
+
             from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            versionMapping {
-                usage('java-api') {
-                    fromResolutionOf('runtimeClasspath')
-                }
-                usage('java-runtime') {
-                    fromResolutionResult()
-                }
-            }
+
             pom {
                 name = 'edison-core'
                 description = 'Core library for all Edison libraries.'
-                url = 'https://github.com/otto-de/jlineup'
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'MediaMarco'
-                        name = 'Marco Geweke'
-                        email = 'marco.geweke@gmail.com'
-                    }
-                    developer {
-                        id = 'gsteinacker'
-                        name = 'Guido Steinacker'
-                    }
-                }
-                scm {
-                    connection = 'scm:git@github.com:otto-de/edison-microservice.git'
-                    developerConnection = 'scm:git@github.com:otto-de/edison-microservice.git'
-                    url = 'https://github.com/otto-de/edison-microservice'
-                }
             }
         }
     }
-}
-
-tasks.named("publishMavenJavaPublicationToSonatypeRepository") {
-    dependsOn tasks.named("signArchives")
-}
-
-signing {
-    sign publishing.publications.mavenJava
 }

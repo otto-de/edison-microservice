@@ -3,23 +3,24 @@
 set -e
 SCRIPT_DIR=$(dirname $0)
 
-USER_GRADLE_PROPERTIES=~/.gradle/gradle.properties
+USER_JRELEASER_PROPERTIES=~/.jreleaser/config.toml
 
 check_configured() {
-    grep -q $1 ${USER_GRADLE_PROPERTIES} || echo "$1 not configured in ${USER_GRADLE_PROPERTIES}. $2"
+    grep -q $1 ${USER_JRELEASER_PROPERTIES} || echo "$1 not configured in ${USER_GRADLE_PROPERTIES}. $2"
 }
 
 check_configuration() {
-    if [ ! -f ${USER_GRADLE_PROPERTIES} ]; then
-        echo "${USER_GRADLE_PROPERTIES} does not exist"
+    if [ ! -f ${USER_JRELEASER_PROPERTIES} ]; then
+        echo "${USER_JRELEASER_PROPERTIES} does not exist"
         exit 1
     fi
 
-    check_configured "sonatypeUsername" "This is the username you use to authenticate with sonatype nexus (e.g. otto-de)"
-    check_configured "sonatypePassword" "This is the password you use to authenticate with sonatype nexus (ask Guido or one of the developers)"
-    check_configured "signing.secretKeyRingFile" "This is the gpg secret key file, e.g. ~/.gnupg/secring.gpg. If this doesn't exist, generate a key: gpg --gen-key"
-    check_configured "signing.keyId" "This is the id of your key (e.g. 72FE5380). Use gpg --list-keys to find yours"
-    check_configured "signing.password" "This is the password you defined for your gpg key"
+    check_configured "JRELEASER_GPG_PASSPHRASE" "This is the GPG passphrase for your GPG key"
+    check_configured "JRELEASER_GPG_PUBLIC_KEY" "This is the GPG public key to sign the release"
+    check_configured "JRELEASER_GPG_SECRET_KEY" "This is the GPG secret key to sign the release"
+    check_configured "JRELEASER_MAVENCENTRAL_USERNAME" "This is the Maven Central username to release packages"
+    check_configured "JRELEASER_MAVENCENTRAL_PASSWORD" "This is the Maven Central password to release packages"
+    check_configured "JRELEASER_GITHUB_TOKEN" "This it the Github Token to release packages and release information to GitHub"
     # for GPG version >= 2.1: gpg --export-secret-keys >~/.gnupg/secring.gpg
     # gpg --send-keys --keyserver keys.openpgp.org yourKeyId
 }
@@ -32,18 +33,19 @@ SNAPSHOT=$?
 set -e
 
 if [[ $SNAPSHOT == 1 ]]; then
-  echo "INFO: This is not a SNAPSHOT, I'll release after upload."
+  echo "INFO: This is not a SNAPSHOT, I'll release to Maven Central during upload."
 else
-  echo "INFO: This is a SNAPSHOT release."
+  echo "INFO: This is a SNAPSHOT release. Packages will be released to GitHub packages only."
 fi
 
-#"${SCRIPT_DIR}"/gradlew clean
-#"${SCRIPT_DIR}"/gradlew check
-"${SCRIPT_DIR}"/gradlew -Dorg.gradle.internal.http.socketTimeout=200000 -Dorg.gradle.internal.http.connectionTimeout=200000 build publish
+"${SCRIPT_DIR}"/gradlew clean jreleaserConfig check
+"${SCRIPT_DIR}"/gradlew publish
+"${SCRIPT_DIR}"/gradlew jreleaserFullRelease
+#"${SCRIPT_DIR}"/gradlew -Dorg.gradle.internal.http.socketTimeout=200000 -Dorg.gradle.internal.http.connectionTimeout=200000 build publish
 
-if [[ $SNAPSHOT == 1 ]]; then
-  echo "Closing and releasing into Sonatype OSS repository"
-  "${SCRIPT_DIR}"/gradlew findSonatypeStagingRepository closeAndReleaseSonatypeStagingRepository
-else
-  echo "This is a snapshot release, closing in sonatype is not necessary"
-fi
+#if [[ $SNAPSHOT == 1 ]]; then
+#  echo "Closing and releasing into Sonatype OSS repository"
+#  "${SCRIPT_DIR}"/gradlew findSonatypeStagingRepository closeAndReleaseSonatypeStagingRepository
+#else
+#  echo "This is a snapshot release, closing in sonatype is not necessary"
+#fi

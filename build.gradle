@@ -14,7 +14,41 @@ buildscript {
 plugins {
     id 'java'
     id "com.github.ben-manes.versions" version "0.52.0"
-    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
+    id 'org.jreleaser' version '1.17.0'
+}
+
+jreleaser {
+    project {
+        snapshot {
+            fullChangelog = true
+        }
+    }
+    gitRootSearch = true
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    deploy {
+        //exclude subproject from jreleaser if name includes 'example'
+        maven {
+            github {
+                app {
+                    snapshotSupported = true
+                    active = 'SNAPSHOT'
+                    url = "https://maven.pkg.github.com/otto-de/edison-microservice"
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+            mavenCentral {
+                app {
+                    snapshotSupported = false
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+        }
+    }
 }
 
 // USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
@@ -29,7 +63,7 @@ plugins {
 // Publish artifacts to sonatype by executing the release.sh script. Don't publish packages to github.
 //
 //
-def edison_version = "3.4.3-SNAPSHOT"
+def edison_version = "3.4.3"
 //
 //
 //
@@ -41,12 +75,6 @@ repositories {
     maven { url 'http://repo.spring.io/libs-snapshot' }
 }
 
-nexusPublishing {
-    repositories {
-        sonatype()
-    }
-}
-
 apply from: "${rootDir}/gradle/maven.gradle"
 
 group = 'de.otto.edison'
@@ -55,6 +83,9 @@ version = edison_version
 subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'project-report'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    //apply plugin: 'org.jreleaser'
 
     version = parent.version
     group = parent.group
@@ -70,29 +101,6 @@ subprojects {
     // see https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-customize-dependency-versions
     ext['mockito.version'] = test_versions.mockito_core
     ext['jackson.version'] = versions.jackson
-
-//    configurations.all {
-//        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-//            if (details.requested.group == 'ch.qos.logback') {
-//                details.useVersion versions.logback_classic
-//            }
-//            if (details.requested.group == 'com.fasterxml.jackson.core') {
-//                details.useVersion versions.jackson
-//            }
-//            if (details.requested.group == 'io.micrometer') {
-//                details.useVersion versions.micrometer
-//            }
-//            if (details.requested.group == 'io.netty' && !details.requested.name.startsWith('netty-tcnative')) {
-//                //details.useVersion versions.netty
-//            }
-//            if (details.requested.group == 'org.springframework') {
-//                details.useVersion versions.spring
-//            }
-//            if (details.requested.group == 'org.thymeleaf') {
-//                details.useVersion versions.thymeleaf
-//            }
-//        }
-//    }
 
     task allDeps(type: DependencyReportTask) {}
 
@@ -124,6 +132,58 @@ subprojects {
         }
     }
     */
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    if (!name.contains("example")) {
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    pom {
+                        url = 'https://github.com/otto-de/edison-microservice'
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            }
+                        }
+                        developers {
+                            developer {
+                                id = 'MediaMarco'
+                                name = 'Marco Geweke'
+                                email = 'marco.geweke@gmail.com'
+                            }
+                            developer {
+                                id = 'gsteinacker'
+                                name = 'Guido Steinacker'
+                            }
+                        }
+                        scm {
+                            connection = 'scm:git:https://github.com/otto-de/edison-microservice.git'
+                            developerConnection = 'scm:git:ssh://github.com/otto-de/edison-microservice.git'
+                            url = 'https://github.com/otto-de/edison-microservice'
+                        }
+                    }
+                }
+            }
+
+            repositories {
+                maven {
+                    //print the current project directory
+                    //println "Project directory: ${layout.projectDirectory.asFile.parent}"
+                    url = layout.projectDirectory.asFile.parent.concat('/build/staging-deploy')
+                }
+            }
+        }
+
+        signing {
+            sign publishing.publications.mavenJava
+        }
+    }
+
 }
 
 dependencyUpdates.resolutionStrategy {
