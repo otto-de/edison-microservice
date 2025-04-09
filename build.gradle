@@ -18,6 +18,13 @@ plugins {
 }
 
 jreleaser {
+    release {
+        github {
+            update {
+                enabled = true
+            }
+        }
+    }
     project {
         snapshot {
             fullChangelog = true
@@ -29,12 +36,11 @@ jreleaser {
         armored = true
     }
     deploy {
-        //exclude subproject from jreleaser if name includes 'example'
         maven {
             github {
                 app {
                     snapshotSupported = true
-                    active = 'SNAPSHOT'
+                    active = 'ALWAYS'
                     url = "https://maven.pkg.github.com/otto-de/edison-microservice"
                     stagingRepository('build/staging-deploy')
                 }
@@ -45,6 +51,17 @@ jreleaser {
                     active = 'ALWAYS'
                     url = 'https://central.sonatype.com/api/v1/publisher'
                     stagingRepository('build/staging-deploy')
+
+                    // Time to wait between state transition checks, in seconds.
+                    // Defaults to `10`.
+                    //
+                    retryDelay = 10
+
+                    // Maximum number of attempts to verify state transition.
+                    // Defaults to `60`.
+                    // Maven Central release can currently take up to 20 minutes, so we increased this to 120
+                    //
+                    maxRetries = 120
                 }
             }
         }
@@ -63,12 +80,10 @@ jreleaser {
 // Publish artifacts to sonatype by executing the release.sh script. Don't publish packages to github.
 //
 //
-def edison_version = "3.4.3"
+def edison_version = "3.4.4-SNAPSHOT"
 //
 //
 //
-
-project.ext.set("debugUpload", false)
 
 repositories {
     mavenCentral()
@@ -85,7 +100,6 @@ subprojects {
     apply plugin: 'project-report'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
-    //apply plugin: 'org.jreleaser'
 
     version = parent.version
     group = parent.group
@@ -172,15 +186,11 @@ subprojects {
 
             repositories {
                 maven {
-                    //print the current project directory
-                    //println "Project directory: ${layout.projectDirectory.asFile.parent}"
-                    url = layout.projectDirectory.asFile.parent.concat('/build/staging-deploy')
+                    // Our settingsDirectory is the project root dir.
+                    // We want to 'publish' to the specified dir to have the artifacts uploaded with JReleaser from that location afterwards.
+                    url = layout.settingsDirectory.dir('build/staging-deploy')
                 }
             }
-        }
-
-        signing {
-            sign publishing.publications.mavenJava
         }
     }
 

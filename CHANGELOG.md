@@ -5,7 +5,7 @@
 * **[edison-jobs]**: remove references to edison-jobtrigger since the project is archived and add note to README of edison-jobs
 * **[edison-jobs]**: add local scheduling
 * **[all]**: Update to Spring Boot 3.4.4
-* **[all]**: Dependency Updates 
+* **[all]**: Dependency Updates
 
 ## 3.4.2
 
