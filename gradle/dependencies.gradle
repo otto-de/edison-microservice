@@ -19,7 +19,7 @@ ext {
             hibernate_validator              : '8.0.2.Final',
             edison_hal                       : '2.1.1',
             validator_collection             : '2.2.0',
-            java_validation_api              : '3.1.0',
+            java_validation_api              : '3.1.1',
             aws_sdk                          : '2.31.17',
             java_xml                         : '2.3.0',
             jackson                          : '2.18.3',
