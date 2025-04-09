@@ -23,8 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -78,6 +80,12 @@ public class JobsConfiguration {
                 return new Thread(r, "edison-ScheduledExecutorService-" + num.getAndAdd(1));
             }
         });
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(TaskScheduler.class)
+    public TaskScheduler taskScheduler(ThreadPoolTaskSchedulerBuilder builder) {
+        return builder.build();
     }
 
     @Bean
