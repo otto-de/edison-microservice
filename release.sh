@@ -34,7 +34,7 @@ check_configuration() {
 check_configuration
 
 set +e
-grep 'def edison_version = ".*-SNAPSHOT"' "$SCRIPT_DIR/build.gradle"
+grep '_version = ".*-SNAPSHOT"' "$SCRIPT_DIR/build.gradle"
 SNAPSHOT=$?
 set -e
 
