@@ -107,8 +107,6 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     // Override some Spring Boot default versions
