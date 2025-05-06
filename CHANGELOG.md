@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.4.4
+* **[all]**: Update to Spring Boot 3.4.5
+* **[all]**: Dependency Updates
+
 ## 3.4.3
 
 * **[edison-jobs]**: remove references to edison-jobtrigger since the project is archived and add note to README of edison-jobs
