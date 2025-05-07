@@ -136,7 +136,7 @@ Examples:
 
 ## Setup
 
-Make sure you have Java 11 or later and gradle 6.x installed on your computer.
+Make sure you have Java 17 or later installed on your computer.
 
 ### Testing
 
