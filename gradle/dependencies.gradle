@@ -32,7 +32,7 @@ ext {
             jsonassert    : '1.5.3',
             rest_assured  : '5.5.1',
             commons_codec : '1.18.0',
-            testcontainers: '1.21.0',
+            testcontainers: '1.21.3',
             mockserver    : '5.15.0',
             awaitility    : '4.3.0'
     ]
