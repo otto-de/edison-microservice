@@ -4,6 +4,7 @@ dependencies {
     implementation project(":edison-core")
     api libraries.togglz_console
     api libraries.togglz_spring_web
+    api libraries.togglz_spring_boot_starter
 
     implementation libraries.aws_sdk_s3
     implementation libraries.mongodb_driver_core

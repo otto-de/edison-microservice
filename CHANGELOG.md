@@ -1,5 +1,8 @@
 # Release Notes
 
+## 3.4.5
+* **[edison-togglz]** add `local` option to support an initial togglz state based on properties
+
 ## 3.4.4
 * **[all]**: Update to Spring Boot 3.4.5
 * **[all]**: Dependency Updates
