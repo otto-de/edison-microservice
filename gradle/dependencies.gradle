@@ -23,7 +23,7 @@ ext {
             aws_sdk                          : '2.31.35',
             java_xml                         : '2.3.0',
             jackson                          : '2.19.2',
-            micrometer                       : '1.14.6'
+            micrometer                       : '1.15.2'
     ]
     test_versions = [
             junit         : '5.13.4',
