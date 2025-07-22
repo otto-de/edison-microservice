@@ -61,7 +61,7 @@ jreleaser {
                     // Defaults to `60`.
                     // Maven Central release can currently take up to 20 minutes, so we increased this to 120
                     //
-                    maxRetries = 120
+                    maxRetries = 240
                 }
             }
         }
@@ -80,7 +80,7 @@ jreleaser {
 // Publish artifacts to sonatype by executing the release.sh script. Don't publish packages to github.
 //
 //
-def edison_version = "3.5.0-SNAPSHOT"
+def edison_version = "3.5.1-SNAPSHOT"
 //
 //
 //
