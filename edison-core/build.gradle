@@ -1,30 +1,21 @@
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
-apply plugin: 'io.spring.dependency-management'
-
-dependencyManagement {
-    imports {
-        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-    }
-}
 
 dependencies {
-    compileOnly libraries.aws_sdk_ssm
-    api libraries.spring_boot_starter_web
-    implementation libraries.spring_boot_starter_actuator
-    implementation libraries.spring_boot_starter_thymeleaf
-    implementation libraries.jcip_annotations
-    implementation libraries.logback_classic
-    implementation libraries.spring_context_support
-    implementation libraries.unboundid_ldapsdk
-    implementation libraries.hibernate_validator
+    compileOnly libs.aws.sdk.ssm
+    api libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.actuator
+    implementation libs.spring.boot.starter.thymeleaf
+    implementation libs.jcip.annotations
+    implementation libs.logback.classic
+    implementation libs.spring.context.support
+    implementation libs.unboundid.ldapsdk
+    implementation libs.hibernate.validator
 
     testImplementation project(":edison-testsupport")
-    testImplementation libraries.aws_sdk_ssm
-    testImplementation test_libraries.mockserver_netty
-    testImplementation test_libraries.mockserver_client_java
-    testImplementation test_libraries.mockserver_junit_jupiter
-    testImplementation test_libraries.awaitility
+    testImplementation libs.aws.sdk.ssm
+    testImplementation libs.bundles.mockserver
+    testImplementation libs.awaitility
 }
 
 publishing {

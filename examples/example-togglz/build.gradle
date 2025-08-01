@@ -2,11 +2,11 @@ apply plugin: 'java-library'
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    implementation libraries.spring_boot_starter_actuator
+    implementation libs.spring.boot.starter.actuator
 
     implementation project(":edison-core")
     implementation project(":edison-togglz")
-    implementation libraries.spring_boot_starter_web
+    implementation libs.spring.boot.starter.web
 
     testImplementation project(":edison-testsupport")
 }

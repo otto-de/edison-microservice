@@ -1,0 +1,85 @@
+[versions]
+spring-boot = "3.5.4"
+jcip-annotations = "1.0"
+togglz = "4.4.0"
+edison-hal = "2.2.0"
+validator-collection = "2.2.0"
+aws-sdk = "2.32.4"
+mockserver = "5.15.0"
+
+[libraries]
+spring-boot = { module = "org.springframework.boot:spring-boot", version.ref = "spring-boot" }
+#spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
+spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+#spring-boot-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf" }
+spring-context-support = { module = "org.springframework:spring-context-support" }
+
+#spring-security = { module = "org.springframework.security:spring-security-core" }
+#spring-security-web = { module = "org.springframework.security:spring-security-web" }
+#spring-security-jwt = { module = "org.springframework.security:spring-security-jwt" }
+
+jcip-annotations = { module = "net.jcip:jcip-annotations", version.ref = "jcip-annotations" }
+logback-classic = { module = "ch.qos.logback:logback-classic" }
+
+aws-sdk-s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws-sdk" }
+aws-sdk-ssm = { module = "software.amazon.awssdk:ssm", version.ref = "aws-sdk" }
+aws-sdk-dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "aws-sdk" }
+
+unboundid-ldapsdk = { module = "com.unboundid:unboundid-ldapsdk" }
+
+togglz-console = { module = "org.togglz:togglz-console", version.ref = "togglz" }
+togglz-spring-web = { module = "org.togglz:togglz-spring-web", version.ref = "togglz" }
+togglz-spring-boot-starter = { module = "org.togglz:togglz-spring-boot-starter", version.ref = "togglz" }
+
+mongodb-driver-core = { module = "org.mongodb:mongodb-driver-core" }
+mongodb-driver-sync = { module = "org.mongodb:mongodb-driver-sync" }
+mongodb-bson = { module = "org.mongodb:bson" }
+
+hibernate-validator = { module = "org.hibernate.validator:hibernate-validator" }
+edison-hal = { module = "de.otto.edison:edison-hal", version.ref = "edison-hal" }
+validator-collection = { module = "cz.jirutka.validator:validator-collection", version.ref = "validator-collection" }
+
+mockserver-netty = { module = "org.mock-server:mockserver-netty", version.ref = "mockserver" }
+mockserver-client-java = { module = "org.mock-server:mockserver-client-java", version.ref = "mockserver" }
+mockserver-junit-jupiter = { module = "org.mock-server:mockserver-junit-jupiter", version.ref = "mockserver" }
+
+#jaxb-api = { module = "jakarta.xml.bind:jaxb-api" }
+#jaxb-core = { module = "com.sun.xml.bind:jaxb-core" }
+#jaxb-impl = { module = "com.sun.xml.bind:jaxb-impl" }
+
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations" }
+
+jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api" }
+
+micrometer-core = { module = "io.micrometer:micrometer-core" }
+
+junit = { module = "org.junit.jupiter:junit-jupiter-api" }
+junit-params = { module = "org.junit.jupiter:junit-jupiter-params" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
+hamcrest = { module = "org.hamcrest:hamcrest" }
+mockito-core = { module = "org.mockito:mockito-core" }
+spring-test = { module = "org.springframework:spring-test" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+jsonassert = { module = "org.skyscreamer:jsonassert" }
+togglz-testing = { module = "org.togglz:togglz-testing", version.ref = "togglz" }
+testcontainers-mongo = { module = "org.testcontainers:mongodb" }
+testcontainers-junit = { module = "org.testcontainers:junit-jupiter" }
+json-path = { module = "com.jayway.jsonpath:json-path" }
+rest-assured = { module = "io.rest-assured:rest-assured" }
+commons-codec = { module = "commons-codec:commons-codec" }
+awaitility = { module = "org.awaitility:awaitility" }
+
+[bundles]
+mockserver = [ "mockserver-netty", "mockserver-client-java", "mockserver-junit-jupiter" ]
+mongodb = [ "mongodb-driver-core", "mongodb-driver-sync", "mongodb-bson" ]
+jackson = [ "jackson-core", "jackson-databind", "jackson-annotations" ]
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+jreleaser = { id = "org.jreleaser", version = "1.19.0" }

@@ -1,29 +1,29 @@
 apply plugin: 'java-library'
 
 dependencies {
-    api libraries.togglz_console
-    compileOnly libraries.togglz_spring_web
-    compileOnly libraries.togglz_spring_boot_starter
-    compileOnly libraries.aws_sdk_ssm
-    compileOnly libraries.aws_sdk_s3
-    compileOnly libraries.jackson_databind
-    compileOnly libraries.jackson_annotations
-    compileOnly libraries.mongodb_driver_core
-    compileOnly libraries.mongodb_driver_sync
-    compileOnly test_libraries.togglz_testing
-    testImplementation test_libraries.testcontainers_mongo
-    testImplementation test_libraries.testcontainers_junit
+    api libs.togglz.console
+    compileOnly libs.togglz.spring.web
+    compileOnly libs.togglz.spring.boot.starter
+    compileOnly libs.aws.sdk.ssm
+    compileOnly libs.aws.sdk.s3
+    compileOnly libs.jackson.databind
+    compileOnly libs.jackson.annotations
+    compileOnly libs.bundles.mongodb
 
-    api libraries.spring_boot
-    api libraries.spring_boot_autoconfigure
-    api test_libraries.junit
-    api test_libraries.junit_params
-    api test_libraries.junit_engine
-    api test_libraries.hamcrest_core
-    api test_libraries.hamcrest_library
-    api test_libraries.mockito_core
-    api test_libraries.spring_test
-    api test_libraries.spring_boot_starter_test
+    compileOnly libs.togglz.testing
+    testImplementation libs.testcontainers.mongo
+    testImplementation libs.testcontainers.junit
+
+    api libs.spring.boot
+    api libs.spring.boot.autoconfigure
+    api libs.junit
+    api libs.junit.engine
+    api libs.junit.params
+    api libs.hamcrest
+    api libs.mockito.core
+    api libs.spring.test
+    api libs.spring.boot.starter.test
+
 }
 
 publishing {

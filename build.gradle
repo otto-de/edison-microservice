@@ -1,18 +1,13 @@
 buildscript {
-    apply from: 'gradle/dependencies.gradle'
-
     repositories {
         mavenCentral()
-    }
-
-    dependencies {
-        classpath gradle_plugins.values()
     }
 }
 
 plugins {
     id 'java'
-    id 'org.jreleaser' version '1.19.0'
+    alias(libs.plugins.jreleaser)
+    alias(libs.plugins.spring.boot)
 }
 
 jreleaser {
@@ -125,10 +120,10 @@ subprojects {
 
     dependencies {
         compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-        constraints {
-            implementation 'junit:junit:4.13.2'
-            // some dependencies bring junit 4.12 which has a security vulnerability
-        }
+//        constraints {
+//            implementation 'junit:junit:4.13.2'
+//            // some dependencies bring junit 4.12 which has a security vulnerability
+//        }
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
 

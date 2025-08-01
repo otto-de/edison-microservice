@@ -2,30 +2,29 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation project(":edison-core")
-    api libraries.togglz_console
-    api libraries.togglz_spring_web
 
-    implementation libraries.aws_sdk_s3
-    implementation libraries.mongodb_driver_core
-    implementation libraries.mongodb_driver_sync
+    api libs.togglz.console
+    api libs.togglz.spring.web
+
+    implementation libs.aws.sdk.s3
+    implementation libs.bundles.mongodb
+
     implementation project(":edison-mongo")
 
-    implementation libraries.unboundid_ldapsdk
-    implementation libraries.jcip_annotations
-    implementation libraries.java_validation_api
+    implementation libs.unboundid.ldapsdk
+    implementation libs.jcip.annotations
+    implementation libs.jakarta.validation.api
 
     testImplementation project(":edison-testsupport")
     testImplementation project(":edison-mongo")
-    testImplementation test_libraries.togglz_testing
+    implementation libs.togglz.testing
 
-    testImplementation libraries.aws_sdk_s3
-    testImplementation test_libraries.testcontainers_mongo
-    testImplementation test_libraries.testcontainers_junit
-    testImplementation test_libraries.junit
-    testImplementation test_libraries.mockito_core
-    testImplementation test_libraries.hamcrest_core
-    testImplementation test_libraries.hamcrest_library
-    testImplementation test_libraries.spring_boot_starter_test
+    testImplementation libs.testcontainers.mongo
+    testImplementation libs.testcontainers.junit
+    testImplementation libs.junit
+    testImplementation libs.mockito.core
+    testImplementation libs.hamcrest
+    testImplementation libs.spring.boot.starter.web
 }
 
 publishing {

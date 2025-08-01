@@ -5,10 +5,9 @@ dependencies {
     implementation project(":edison-togglz")
     implementation project(":edison-mongo")
 
-    implementation libraries.mongodb_driver_core
-    implementation libraries.mongodb_driver_sync
-    testImplementation test_libraries.testcontainers_mongo
-    testImplementation test_libraries.testcontainers_junit
+    implementation libs.bundles.mongodb
+    testImplementation libs.testcontainers.mongo
+    testImplementation libs.testcontainers.junit
 
     testImplementation project(":edison-testsupport")
 }

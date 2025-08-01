@@ -2,17 +2,15 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation project(":edison-core")
-    implementation libraries.spring_boot
-    implementation libraries.spring_boot_autoconfigure
-    implementation libraries.mongodb_driver_core
-    implementation libraries.mongodb_driver_sync
-    implementation libraries.mongodb_bson
-    implementation libraries.hibernate_validator
-    implementation libraries.java_validation_api
+    implementation libs.spring.boot
+    implementation libs.spring.boot.autoconfigure
+    implementation libs.bundles.mongodb
+    implementation libs.hibernate.validator
+    implementation libs.jakarta.validation.api
 
     testImplementation project(":edison-testsupport")
-    testImplementation test_libraries.testcontainers_mongo
-    testImplementation test_libraries.testcontainers_junit
+    testImplementation libs.testcontainers.mongo
+    testImplementation libs.testcontainers.junit
 }
 
 publishing {

@@ -3,6 +3,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 rootProject.name = 'edison-microservice'
 
 include "edison-testsupport"
@@ -13,7 +14,6 @@ include "edison-core"
 include "edison-validation"
 include "examples:example-status"
 include "examples:example-jobs"
-include "examples:example-oauth"
 include "examples:example-togglz"
 include "examples:example-togglz-mongo"
 
