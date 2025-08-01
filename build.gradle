@@ -3,7 +3,6 @@ buildscript {
 
     repositories {
         mavenCentral()
-        mavenLocal()
     }
 
     dependencies {
@@ -13,7 +12,6 @@ buildscript {
 
 plugins {
     id 'java'
-    id "com.github.ben-manes.versions" version "0.52.0"
     id 'org.jreleaser' version '1.19.0'
 }
 
@@ -87,7 +85,7 @@ def edison_version = "3.5.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven { url 'http://repo.spring.io/libs-snapshot' }
+    maven { url 'https://repo.spring.io/libs-snapshot' }
 }
 
 apply from: "${rootDir}/gradle/maven.gradle"
@@ -100,6 +98,13 @@ subprojects {
     apply plugin: 'project-report'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencyManagement {
+        imports {
+            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+        }
+    }
 
     version = parent.version
     group = parent.group
@@ -108,11 +113,6 @@ subprojects {
         mavenCentral()
         mavenLocal()
     }
-
-    // Override some Spring Boot default versions
-    // see https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-customize-dependency-versions
-    ext['mockito.version'] = test_versions.mockito_core
-    ext['jackson.version'] = versions.jackson
 
     task allDeps(type: DependencyReportTask) {}
 
@@ -124,7 +124,7 @@ subprojects {
     apply from: "${rootDir}/gradle/signing.gradle"
 
     dependencies {
-        compileOnly "org.springframework.boot:spring-boot-configuration-processor:${versions.spring_boot}"
+        compileOnly "org.springframework.boot:spring-boot-configuration-processor"
         constraints {
             implementation 'junit:junit:4.13.2'
             // some dependencies bring junit 4.12 which has a security vulnerability
@@ -193,19 +193,6 @@ subprojects {
         }
     }
 
-}
-
-dependencyUpdates.resolutionStrategy {
-    componentSelection { rules ->
-        rules.all { ComponentSelection selection ->
-            boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm', 'preview', 'b', 'ea', 'pr'].any { qualifier ->
-                selection.candidate.version ==~ /(?i).*[.-]$qualifier[.\d-+]*/
-            }
-            if (rejected) {
-                selection.reject('Release candidate')
-            }
-        }
-    }
 }
 
 // This function converts Java version string '1.8' to '8'

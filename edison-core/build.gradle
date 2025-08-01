@@ -1,5 +1,12 @@
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
 
 dependencies {
     compileOnly libraries.aws_sdk_ssm
