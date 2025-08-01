@@ -80,7 +80,6 @@ def edison_version = "3.5.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/libs-snapshot' }
 }
 
 apply from: "${rootDir}/gradle/maven.gradle"
