@@ -6,6 +6,7 @@ edison-hal = "2.2.0"
 validator-collection = "2.2.0"
 aws-sdk = "2.32.4"
 mockserver = "5.15.0"
+jacoco = "0.8.13"
 
 [libraries]
 spring-boot = { module = "org.springframework.boot:spring-boot", version.ref = "spring-boot" }
