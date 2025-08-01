@@ -19,7 +19,7 @@ ext {
             mockserver                       : '5.15.0'
     ]
     libraries = [
-            spring_boot                        : "org.springframework.boot:spring-boot",
+            spring_boot                        : "org.springframework.boot:spring-boot:${versions.spring_boot}",
             spring_boot_configuration_processor: "org.springframework.boot:spring-boot-configuration-processor",
             spring_boot_autoconfigure          : "org.springframework.boot:spring-boot-autoconfigure",
             spring_boot_devtools               : "org.springframework.boot:spring-boot-devtools",
