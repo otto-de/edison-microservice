@@ -13,7 +13,7 @@ ext {
             hibernate_validator              : '8.0.2.Final',
             edison_hal                       : '2.2.0',
             validator_collection             : '2.2.0',
-            aws_sdk                          : '2.32.4',
+            aws_sdk                          : '2.32.13',
             java_xml                         : '2.3.0',
             micrometer                       : '1.15.2',
             mockserver                       : '5.15.0'
