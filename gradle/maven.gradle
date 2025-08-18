@@ -11,12 +11,13 @@ jar {
     }
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     archiveClassifier = 'javadoc'
     from 'build/docs/javadoc'
 }
 
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar) {
     from sourceSets.main.allSource
     archiveClassifier = 'sources'
 }

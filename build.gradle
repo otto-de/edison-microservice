@@ -186,14 +186,4 @@ subprojects {
             }
         }
     }
-
-}
-
-// This function converts Java version string '1.8' to '8'
-static String compat(String src) {
-    if (src.contains('.')) {
-        src.substring(src.lastIndexOf('.') + 1)
-    } else {
-        src
-    }
 }
