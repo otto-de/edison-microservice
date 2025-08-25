@@ -1,5 +1,12 @@
 # Release Notes
 
+## 3.5.1
+* **[all]**: 
+  * Don't specify versions that are already specified by Spring Boot BOM
+  * Use standard libs.versions.toml file for dependency management
+  * Update to Spring Boot 3.5.5 
+  * Dependency Updates 
+
 ## 3.5.0
 * **[all]**: Update to Spring Boot 3.5.3
 
