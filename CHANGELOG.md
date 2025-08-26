@@ -1,5 +1,8 @@
 # Release Notes
 
+## 3.5.4
+* **[togglz]**: Fix accidental inclusion of togglz.testing dependency in implementation scope (introduced in 3.5.1)
+
 ## 3.5.3
 * **[core]**: Fix SystemInfoAWSConfiguration which had a bean naming issue
 
