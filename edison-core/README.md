@@ -243,7 +243,15 @@ automatically loaded and added to the environment of the application.
 
 ParamStore support must be explicitly enabled:
 
-- The AWS SSM v2 JAR must be in the classpath of the application.
+- The AWS SSM v2 JAR must be in the classpath of the application (`software.amazon.awssdk:ssm`)
 - A Spring bean with type `software.amazon.awssdk.services.ssm.SsmClient` must be configured.
 - `edison.env.paramstore.enabled=true` must be added to the application.properties.
 - `edison.env.paramstore.path` must be configured
+
+# 4.1 edison.status.aws
+
+The edison status page can show specific EC2 instance information, if the application is running on an AWS EC2 instance.
+To enable this feature, the following conditions must be fulfilled:
+- The AWS IMDS v2 JAR must be in the classpath of the application (`software.amazon.awssdk:imds`)
+- An async HTTP client jar must be in the classpath (i.e. `software.amazon.awssdk:netty-nio-client`)
+- `edison.status.aws.enabled=true` must be added to the application.properties.

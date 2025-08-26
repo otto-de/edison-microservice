@@ -44,11 +44,14 @@
                             <dt>Port:</dt>
                             <dd th:text="${system.port}">Port</dd>
                             <dt>System Time:</dt>
-                            <dd th:text="${system.systemTime}">Systemtime</dd>
-                            <dt>System Started</dt>
-                            <dd th:text="${system.systemStartTime}">Systemstarttime</dd>
-                            <dt>System Uptime</dt>
-                            <dd th:text="${system.systemUpTime}">SystemUptime</dd>
+                            <dd th:text="${system.systemTime}">System Time</dd>
+                            <dt>System Started:</dt>
+                            <dd th:text="${system.systemStartTime}">System Start Time</dd>
+                            <dt>System Uptime:</dt>
+                            <dd th:text="${system.systemUpTime}">System Uptime</dd>
+                            <dt th:if="${system.additionalInfo!=null and !system.additionalInfo.isEmpty()}">Additional Info:</dt>
+                            <dd th:if="${system.additionalInfo!=null and !system.additionalInfo.isEmpty()}" th:each="info : ${system.additionalInfo}"
+                                th:text="${info}">Additional Info</dd>
                         </dl>
                     </div>
                 </div>

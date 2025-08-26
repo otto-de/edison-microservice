@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import net.jcip.annotations.Immutable;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import static java.time.Duration.between;
 import static java.time.OffsetDateTime.now;
@@ -17,14 +18,20 @@ public class SystemInfo {
 
     public final String hostname;
     public final int port;
+    public final List<String> additionalInfo;
 
-    private SystemInfo(final String hostname, final int port) {
+    private SystemInfo(final String hostname, final int port, List<String> additionalInfo) {
         this.hostname = hostname;
         this.port = port;
+        this.additionalInfo = additionalInfo;
     }
 
     public static SystemInfo systemInfo(final String hostname, final int port) {
-        return new SystemInfo(hostname, port);
+        return new SystemInfo(hostname, port, null);
+    }
+
+    public static SystemInfo systemInfo(final String hostname, final int port, final List<String> additionalInfo) {
+        return new SystemInfo(hostname, port, additionalInfo);
     }
 
     public String getHostname() {

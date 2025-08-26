@@ -29,6 +29,8 @@ logback-classic = { module = "ch.qos.logback:logback-classic" }
 aws-sdk-s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws-sdk" }
 aws-sdk-ssm = { module = "software.amazon.awssdk:ssm", version.ref = "aws-sdk" }
 aws-sdk-dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "aws-sdk" }
+aws-sdk-imds = { module = "software.amazon.awssdk:imds", version.ref = "aws-sdk" }
+aws-sdk-netty-nio-client = { module = "software.amazon.awssdk:netty-nio-client", version.ref = "aws-sdk" }
 
 unboundid-ldapsdk = { module = "com.unboundid:unboundid-ldapsdk" }
 

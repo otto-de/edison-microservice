@@ -3,15 +3,16 @@ package de.otto.edison.status.configuration;
 import de.otto.edison.status.domain.SystemInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Configuration
+@ConditionalOnProperty(name = "edison.status.aws.enabled", havingValue = "false", matchIfMissing = true)
 public class SystemInfoConfiguration {
 
     private static final String defaultHostname;

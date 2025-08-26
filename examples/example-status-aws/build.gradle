@@ -1,0 +1,19 @@
+apply plugin: 'java-library'
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    implementation libs.spring.boot.starter.actuator
+    implementation libs.aws.sdk.imds
+    implementation libs.aws.sdk.netty.nio.client
+
+    implementation project(":edison-core")
+    implementation libs.spring.boot.devtools
+
+    testImplementation project(":edison-testsupport")
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}

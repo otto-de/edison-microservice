@@ -3,6 +3,7 @@ apply plugin: 'maven-publish'
 
 dependencies {
     compileOnly libs.aws.sdk.ssm
+    compileOnly libs.aws.sdk.imds
     api libs.spring.boot.starter.web
     implementation libs.spring.boot.starter.actuator
     implementation libs.spring.boot.starter.thymeleaf
@@ -14,6 +15,8 @@ dependencies {
 
     testImplementation project(":edison-testsupport")
     testImplementation libs.aws.sdk.ssm
+    testImplementation libs.aws.sdk.imds
+    testImplementation libs.aws.sdk.netty.nio.client
     testImplementation libs.bundles.mockserver
     testImplementation libs.awaitility
 }
