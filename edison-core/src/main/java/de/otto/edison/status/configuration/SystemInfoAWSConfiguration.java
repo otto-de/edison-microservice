@@ -1,12 +1,10 @@
 package de.otto.edison.status.configuration;
 
-import de.otto.edison.env.ParamStorePropertySourcePostProcessor;
 import de.otto.edison.status.domain.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +41,7 @@ public class SystemInfoAWSConfiguration {
     private int port;
 
     @Bean
-    public Ec2MetadataAsyncClient ec2MetadataClient() {
+    public Ec2MetadataAsyncClient ec2MetadataAsyncClient() {
         return Ec2MetadataAsyncClient.create();
     }
 

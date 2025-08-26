@@ -1,5 +1,8 @@
 # Release Notes
 
+## 3.5.3
+* **[core]**: Fix SystemInfoAWSConfiguration which had a bean naming issue
+
 ## 3.5.2
 * **[core]**: Add option to show instance-id and instance-type in /status endpoint (`edison.status.aws.enabled=true`)
 
