@@ -1,5 +1,8 @@
 # Release Notes
 
+## 3.5.2
+* **[core]**: Add option to show instance-id and instance-type in /status endpoint (`edison.status.aws.enabled=true`)
+
 ## 3.5.1
 * **[all]**: 
   * Don't specify versions that are already specified by Spring Boot BOM
