@@ -2,6 +2,7 @@
 
 ## 3.5.5
 * **[jobs]**: add configuration for errorOnLastJobFailedOrDead and errorOnLastThreeJobsFailedOrDead
+* **[all]**: Update to Spring Boot 3.5.6
 
 ## 3.5.4
 * **[togglz]**: Fix accidental inclusion of togglz.testing dependency in implementation scope (introduced in 3.5.1)
