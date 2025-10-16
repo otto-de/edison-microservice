@@ -76,6 +76,7 @@ public class JobStatusCalculator {
     private static final String ERROR_MESSAGE = "Job had an error";
     private static final String DEAD_MESSAGE = "Job died";
     private static final String TOO_MANY_JOBS_FAILED_MESSAGE = "%d out of %d job executions failed";
+    private static final String TOO_MANY_DEAD_JOBS_MESSAGE = "%d out of %d job executions gone dead";
     private static final String JOB_TOO_OLD_MESSAGE = "Job didn't run in the past %s";
     private static final String LOAD_JOBS_EXCEPTION_MESSAGE = "Failed to load job status";
     private static final String JOB_DEACTIVATED_MESSAGE = "Job is deactivated: %s";
@@ -85,6 +86,7 @@ public class JobStatusCalculator {
     private final String key;
     private final int numberOfJobs;
     private final int maxFailedJobs;
+    private final int maxDeadJobs;
     private final JobRepository jobRepository;
     private final JobMetaRepository jobMetaRepository;
     private final String managementContextPath;
@@ -95,6 +97,7 @@ public class JobStatusCalculator {
      * @param key                   the key of the calculator.
      * @param numberOfJobs          the total number of jobs to take into calculation.
      * @param maxFailedJobs         the maximum number of jobs that that are accepted to fail.
+     * @param maxFailedJobs         the maximum number of jobs that that are accepted to be dead.
      * @param jobRepository         repository to fetch the last {@code numberOfJobs}.
      * @param jobMetaRepository     meta data to indentify disabled jobs
      * @param managementContextPath base path to link to job directly
@@ -102,6 +105,7 @@ public class JobStatusCalculator {
     public JobStatusCalculator(final String key,
                                final int numberOfJobs,
                                final int maxFailedJobs,
+                               final int maxDeadJobs,
                                final JobRepository jobRepository,
                                final JobMetaRepository jobMetaRepository,
                                final String managementContextPath) {
@@ -109,9 +113,12 @@ public class JobStatusCalculator {
         checkArgument(maxFailedJobs <= numberOfJobs, "Parameter maxFailedJobs must not be greater numberOfJobs");
         checkArgument(numberOfJobs > 0, "Parameter numberOfJobs must be greater 0");
         checkArgument(maxFailedJobs >= 0, "Parameter maxFailedJobs must not be negative");
+        checkArgument(maxDeadJobs <= numberOfJobs, "Parameter maxDeadJobs must not be greater numberOfJobs");
+        checkArgument(maxDeadJobs >= 0, "Parameter maxDeadJobs must not be negative");
         this.key = key;
         this.numberOfJobs = numberOfJobs;
         this.maxFailedJobs = maxFailedJobs;
+        this.maxDeadJobs = maxDeadJobs;
         this.jobRepository = jobRepository;
         this.jobMetaRepository = jobMetaRepository;
         this.managementContextPath = managementContextPath;
@@ -131,7 +138,7 @@ public class JobStatusCalculator {
                                                              final JobMetaRepository jobMetaRepository,
                                                              final String managementContextPath) {
         return new JobStatusCalculator(
-                key, 1, 1, jobRepository, jobMetaRepository, managementContextPath
+                key, 1, 1, 1, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
@@ -149,7 +156,25 @@ public class JobStatusCalculator {
                                                            final JobMetaRepository jobMetaRepository,
                                                            final String managementContextPath) {
         return new JobStatusCalculator(
-                key, 1, 0, jobRepository, jobMetaRepository, managementContextPath
+                key, 1, 0, 1, jobRepository, jobMetaRepository, managementContextPath
+        );
+    }
+
+    /**
+     * Builds a JobStatusCalculator that is reporting {@link Status#ERROR} if the last job failed or was dead.
+     *
+     * @param key                   key of the calculator
+     * @param jobRepository         the repository
+     * @param jobMetaRepository     meta data to indentify disabled jobs
+     * @param managementContextPath base path to link to job directly
+     * @return JobStatusCalculator
+     */
+    public static JobStatusCalculator errorOnLastJobFailedOrDead(final String key,
+                                                           final JobRepository jobRepository,
+                                                           final JobMetaRepository jobMetaRepository,
+                                                           final String managementContextPath) {
+        return new JobStatusCalculator(
+                key, 1, 0, 0, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
@@ -170,7 +195,28 @@ public class JobStatusCalculator {
                                                                final String managementContextPath
     ) {
         return new JobStatusCalculator(
-                key, numJobs, numJobs - 1, jobRepository, jobMetaRepository, managementContextPath
+                key, numJobs, numJobs - 1, numJobs, jobRepository, jobMetaRepository, managementContextPath
+        );
+    }
+
+    /**
+     * Builds a JobStatusCalculator that is reporting {@link Status#ERROR} if the last {@code numJobs} job failed or was dead.
+     *
+     * @param key                   key of the calculator
+     * @param numJobs               the number of last jobs used to calculate the job status
+     * @param jobRepository         the repository
+     * @param jobMetaRepository     meta data to indentify disabled jobs
+     * @param managementContextPath base path to link to job directly
+     * @return JobStatusCalculator
+     */
+    public static JobStatusCalculator errorOnLastNumJobsFailedOrDead(final String key,
+                                                               final int numJobs,
+                                                               final JobRepository jobRepository,
+                                                               final JobMetaRepository jobMetaRepository,
+                                                               final String managementContextPath
+    ) {
+        return new JobStatusCalculator(
+                key, numJobs, numJobs - 1, numJobs - 1, jobRepository, jobMetaRepository, managementContextPath
         );
     }
 
@@ -225,6 +271,7 @@ public class JobStatusCalculator {
         final JobInfo lastJob = (currentJob.getStopped().isEmpty() && currentJob.getStatus() == JobStatus.OK && jobInfos.size() > 1) ? jobInfos.get(1) : jobInfos.get(0);
         final JobMeta jobMeta = getJobMeta(jobDefinition.jobType());
         long numFailedJobs = getNumFailedJobs(jobInfos);
+        long numDeadJobs = getNumDeadJobs(jobInfos);
         if (!jobMeta.isDisabled()) {
             switch (lastJob.getStatus()) {
                 case OK:
@@ -254,6 +301,17 @@ public class JobStatusCalculator {
                     break;
 
                 case DEAD:
+                    if (numDeadJobs > maxDeadJobs) {
+                        status = ERROR;
+                    } else {
+                        status = WARNING;
+                    }
+                    if (numberOfJobs == 1 && maxDeadJobs <= 1) {
+                        message = DEAD_MESSAGE;
+                    } else {
+                        message = format(TOO_MANY_DEAD_JOBS_MESSAGE, numDeadJobs, jobInfos.size());
+                    }
+                    break;
                 default:
                     status = WARNING;
                     message = DEAD_MESSAGE;
@@ -283,6 +341,19 @@ public class JobStatusCalculator {
         return jobInfos
                 .stream()
                 .filter(job -> JobStatus.ERROR.equals(job.getStatus()))
+                .count();
+    }
+
+    /**
+     * Returns the number of dead jobs.
+     *
+     * @param jobInfos list of job infos
+     * @return num dead jobs
+     */
+    protected final long getNumDeadJobs(final List<JobInfo> jobInfos) {
+        return jobInfos
+                .stream()
+                .filter(job -> JobStatus.DEAD.equals(job.getStatus()))
                 .count();
     }
 

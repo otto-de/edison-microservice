@@ -138,8 +138,18 @@ public class JobsConfiguration {
     }
 
     @Bean
+    public JobStatusCalculator errorOnLastJobFailedOrDead(final JobRepository jobRepository, final JobMetaRepository jobMetaRepository) {
+        return JobStatusCalculator.errorOnLastJobFailedOrDead("errorOnLastJobFailedOrDead", jobRepository, jobMetaRepository, edisonManagementBasePath);
+    }
+
+    @Bean
     public JobStatusCalculator errorOnLastThreeJobsFailed(final JobRepository jobRepository, final JobMetaRepository jobMetaRepository) {
         return JobStatusCalculator.errorOnLastNumJobsFailed("errorOnLastThreeJobsFailed", 3, jobRepository, jobMetaRepository, edisonManagementBasePath);
+    }
+
+    @Bean
+    public JobStatusCalculator errorOnLastThreeJobsFailedOrDead(final JobRepository jobRepository, final JobMetaRepository jobMetaRepository) {
+        return JobStatusCalculator.errorOnLastNumJobsFailedOrDead("errorOnLastThreeJobsFailedOrDead", 3, jobRepository, jobMetaRepository, edisonManagementBasePath);
     }
 
     @Bean

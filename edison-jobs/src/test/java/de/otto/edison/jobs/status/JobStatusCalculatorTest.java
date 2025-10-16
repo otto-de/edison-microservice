@@ -43,6 +43,7 @@ public class JobStatusCalculatorTest {
     private JobMetaRepository jobMetaRepository;
     private JobStatusCalculator warningOnLastJobFailed;
     private JobStatusCalculator errorOnLastJobFailed;
+    private JobStatusCalculator errorOnLastJobFailedOrDead;
     private JobStatusCalculator errorOnLastTwoJobsFailed;
 
     @BeforeEach
@@ -51,6 +52,7 @@ public class JobStatusCalculatorTest {
         jobMetaRepository = mock(JobMetaRepository.class);
         warningOnLastJobFailed = warningOnLastJobFailed("test", jobRepository, jobMetaRepository, "/someInternalPath");
         errorOnLastJobFailed = errorOnLastJobFailed("test", jobRepository, jobMetaRepository, "/someInternalPath");
+        errorOnLastJobFailedOrDead = errorOnLastJobFailedOrDead("test", jobRepository, jobMetaRepository, "/someInternalPath");
         errorOnLastTwoJobsFailed = errorOnLastNumJobsFailed("test", 2, jobRepository, jobMetaRepository,"/someInternalPath");
     }
 
@@ -174,7 +176,7 @@ public class JobStatusCalculatorTest {
         when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
-        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, jobMetaRepository,"/someInternalPath");
+        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, 1, jobRepository, jobMetaRepository,"/someInternalPath");
         final StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
 
         // then
@@ -194,7 +196,7 @@ public class JobStatusCalculatorTest {
         when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
 
         // when
-        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, jobRepository, jobMetaRepository, "/someInternalPath");
+        JobStatusCalculator maxOneOfThree = new JobStatusCalculator("test", 3, 1, 1, jobRepository, jobMetaRepository, "/someInternalPath");
         final StatusDetail detail = maxOneOfThree.statusDetail(jobDefinition);
 
         // then
@@ -307,6 +309,22 @@ public class JobStatusCalculatorTest {
 
         // then
         assertThat(statusDetail.getStatus(), is(Status.WARNING));
+        assertThat(statusDetail.getMessage(), is("Job died"));
+    }
+
+    @Test
+    public void shouldIndicateErrorIfLastJobRunWasDead() {
+        // given
+        final List<JobInfo> jobInfos = singletonList(someStoppedJob(DEAD, 1));
+        when(jobRepository.findLatestBy(anyString(), eq(1+1))).thenReturn(jobInfos);
+        final JobMeta jobMeta = new JobMeta("test", false, false, null, emptyMap());
+        when(jobMetaRepository.getJobMeta(anyString())).thenReturn(jobMeta);
+
+        // when
+        final StatusDetail statusDetail = errorOnLastJobFailedOrDead.statusDetail(jobDefinition);
+
+        // then
+        assertThat(statusDetail.getStatus(), is(Status.ERROR));
         assertThat(statusDetail.getMessage(), is("Job died"));
     }
 
