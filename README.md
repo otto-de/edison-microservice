@@ -118,7 +118,6 @@ When migrating, take care of the following adjustments:
 ## Documentation
 
 Edison Modules:
-* [`edison-aws`](edison-auth-aws/README.md): AWS related configuration and togglz settings
 * [`edison-core`](edison-core/README.md): Main library of Edison microservices.
 * [`edison-jobs`](edison-jobs/README.md): Optional module providing a simple job library.
 * [`edison-mongo`](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and Togglz StateRepository.
