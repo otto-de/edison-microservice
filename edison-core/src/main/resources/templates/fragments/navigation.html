@@ -13,7 +13,7 @@
 <!--        </div>-->
 <!--    </nav>-->
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-primary fixed-top py-3 shadow bg-opacity-75"  th:fragment="navigation">
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark-subtle fixed-top py-3 shadow"  th:fragment="navigation">
         <div class="container">
 
              <div class="navbar-header" th:replace="~{fragments/navbar/header :: header}"></div>
@@ -26,8 +26,27 @@
                 <ul class="navbar-nav me-auto" th:replace="~{fragments/navbar/main :: main}"> </ul>
                 <ul class="navbar-nav ms-auto" th:insert="~{fragments/navbar/right :: right}"> </ul>
             </div>
+
+
+        </div>
+        <div class="position-absolute end-0 top-50 translate-middle-y me-5">
+            <button class="btn" id="darkModeToggle" type="button">
+                <i class="bi bi-moon"></i>
+            </button>
         </div>
     </nav>
 
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-bs-theme');
+            html.setAttribute('data-bs-theme', currentTheme === 'dark' ? 'light' : 'dark');
+            console.log(currentTheme);
+        });
+    });
+</script>
+
 </html>
