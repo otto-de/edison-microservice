@@ -18,6 +18,7 @@ spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-start
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
 spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf" }
 spring-context-support = { module = "org.springframework:spring-context-support" }
+spring-retry = { module = "org.springframework.retry:spring-retry" }
 
 #spring-security = { module = "org.springframework.security:spring-security-core" }
 #spring-security-web = { module = "org.springframework.security:spring-security-web" }
