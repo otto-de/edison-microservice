@@ -37,16 +37,4 @@
     </nav>
 
 </body>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-bs-theme');
-            html.setAttribute('data-bs-theme', currentTheme === 'dark' ? 'light' : 'dark');
-            console.log(currentTheme);
-        });
-    });
-</script>
-
 </html>
