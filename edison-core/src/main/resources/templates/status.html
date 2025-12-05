@@ -1,283 +1,287 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="light">
 
-<head th:replace="~{fragments/head  :: head}" />
+<head th:replace="~{fragments/head  :: head}"/>
 
 <body>
 
-    <div th:replace="~{fragments/navigation  :: navigation}" />
+<div th:replace="~{fragments/navigation  :: navigation}"/>
 
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header bg-body-secondary">
-                        <h5 class="card-title">Application</h5>
-                    </div>
-                    <div class="card-body">
-                        <div th:with="app=${status.application}">
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Name:</div>
-                                <div class="col-8" th:text="${app.name}">Name</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Title:</div>
-                                <div class="col-8" th:text="${app.title}">Title</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Description:</div>
-                                <div class="col-8" th:text="${app.description}">Name</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Group:</div>
-                                <div class="col-8" th:text="${app.group}"></div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Environment:</div>
-                                <div class="col-8" th:text="${app.environment}"></div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Status:</div>
-                                    <div class="col-8">
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Application</h5>
+                </div>
+                <div class="card-body">
+                    <div th:with="app=${status.application}">
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Name:</div>
+                            <div class="col-8" th:text="${app.name}">Name</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Title:</div>
+                            <div class="col-8" th:text="${app.title}">Title</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Description:</div>
+                            <div class="col-8" th:text="${app.description}">Name</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Group:</div>
+                            <div class="col-8" th:text="${app.group}"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Environment:</div>
+                            <div class="col-8" th:text="${app.environment}"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Status:</div>
+                            <div class="col-8">
                                         <span th:switch="${#strings.trim(status.status)}">
-                                            <span th:case="'OK'" class="badge bg-success" th:text="${status.status}"></span>
-                                            <span th:case="'WARNING'" class="badge bg-warning text-dark" th:text="${status.status}"></span>
+                                            <span th:case="'OK'" class="badge bg-success"
+                                                  th:text="${status.status}"></span>
+                                            <span th:case="'WARNING'" class="badge bg-warning text-dark"
+                                                  th:text="${status.status}"></span>
                                             <span th:case="*" class="badge bg-info" th:text="${status.status}"></span>
                                         </span>
-                                </div>
                             </div>
                         </div>
+                    </div>
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header bg-body-secondary">
-                        <h5 class="card-title">System</h5>
-                    </div>
-                    <div class="card-body">
-                        <div th:with="system=${status.system}">
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Host:</div>
-                                <div class="col-8" th:text="${system.hostname}">Hostname</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Port:</div>
-                                <div class="col-8" th:text="${system.port}">Port</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">System Time:</div>
-                                <div class="col-8" th:text="${system.systemTime}">System Time</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">System Started:</div>
-                                <div class="col-8" th:text="${system.systemStartTime}">System Start Time</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">System Uptime:</div>
-                                <div class="col-8" th:text="${system.systemUpTime}">System Uptime</div>
-                            </div>
-                            <div class="row mb-2" th:if="${system.additionalInfo!=null and !system.additionalInfo.isEmpty()}">
-                                <div class="col-4 fw-bold">Additional Info:</div>
-                                <div class="col-8">
-                                    <div th:each="info : ${system.additionalInfo}" th:text="${info}">Additional Info</div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
                 </div>
             </div>
         </div>
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header bg-body-secondary">
-                        <h5 class="card-title">Version</h5>
-                    </div>
-                    <div class="card-body">
-                        <div th:with="vcs=${status.vcs}">
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Version:</div>
-                                <div class="col-8" th:text="${vcs.version}">Version</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Commit Message:</div>
-                                <div class="col-8" th:text="${vcs.messageShort}">Short Message</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Commit ID:</div>
-                                <div class="col-8" th:text="${vcs.commitIdAbbrev}">Git commit</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Commit Time:</div>
-                                <div class="col-8" th:text="${vcs.commitTime}">Git time</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Branch:</div>
-                                <div class="col-8" th:text="${vcs.branch}">master</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">User:</div>
-                                <div class="col-8" th:text="${vcs.userName + ' (' + vcs.userEmail + ')'}"></div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">VCS:</div>
-                                <div class="col-8" th:with="isHttpUrl=${#strings.startsWith(vcs.url, 'http')}">
-                                    <a th:if="${isHttpUrl}" th:href="${vcs.url}">Open VCS UI</a>
-                                    <span th:unless="${isHttpUrl}" th:text="${vcs.url}">Vcs Url</span>
-                                </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">System</h5>
+                </div>
+                <div class="card-body">
+                    <div th:with="system=${status.system}">
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Host:</div>
+                            <div class="col-8" th:text="${system.hostname}">Hostname</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Port:</div>
+                            <div class="col-8" th:text="${system.port}">Port</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">System Time:</div>
+                            <div class="col-8" th:text="${system.systemTime}">System Time</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">System Started:</div>
+                            <div class="col-8" th:text="${system.systemStartTime}">System Start Time</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">System Uptime:</div>
+                            <div class="col-8" th:text="${system.systemUpTime}">System Uptime</div>
+                        </div>
+                        <div class="row mb-2"
+                             th:if="${system.additionalInfo!=null and !system.additionalInfo.isEmpty()}">
+                            <div class="col-4 fw-bold">Additional Info:</div>
+                            <div class="col-8">
+                                <div th:each="info : ${system.additionalInfo}" th:text="${info}">Additional Info</div>
                             </div>
                         </div>
-
                     </div>
+
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header bg-body-secondary">
-                        <h5 class="card-title">Team</h5>
-                    </div>
-                    <div class="card-body">
-                        <div th:with="team=${status.team}">
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Name:</div>
-                                <div class="col-8" th:text="${team.name}"></div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Technical Contact:</div>
-                                <div class="col-8" th:text="${team.technicalContact}"></div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-4 fw-bold">Business Contact:</div>
-                                <div class="col-8" th:text="${team.businessContact}"></div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Version</h5>
+                </div>
+                <div class="card-body">
+                    <div th:with="vcs=${status.vcs}">
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Version:</div>
+                            <div class="col-8" th:text="${vcs.version}">Version</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Commit Message:</div>
+                            <div class="col-8" th:text="${vcs.messageShort}">Short Message</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Commit ID:</div>
+                            <div class="col-8" th:text="${vcs.commitIdAbbrev}">Git commit</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Commit Time:</div>
+                            <div class="col-8" th:text="${vcs.commitTime}">Git time</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Branch:</div>
+                            <div class="col-8" th:text="${vcs.branch}">master</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">User:</div>
+                            <div class="col-8" th:text="${vcs.userName + ' (' + vcs.userEmail + ')'}"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">VCS:</div>
+                            <div class="col-8" th:with="isHttpUrl=${#strings.startsWith(vcs.url, 'http')}">
+                                <a th:if="${isHttpUrl}" th:href="${vcs.url}">Open VCS UI</a>
+                                <span th:unless="${isHttpUrl}" th:text="${vcs.url}">Vcs Url</span>
                             </div>
                         </div>
-
                     </div>
+
                 </div>
             </div>
         </div>
-        <div class="row mb-4">
-            <div class="col-md-6" th:if="${criticality}">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5 class="panel-title">Criticality</h5>
-                    </div>
-                    <div class="panel-body">
-                        <dl class="dl-horizontal">
-                            <dt>Level:</dt>
-                            <dd th:text="${criticality.level}"></dd>
-                            <dt>Disaster Impact:</dt>
-                            <dd th:text="${criticality.disasterImpact}"></dd>
-                        </dl>
-                    </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Team</h5>
                 </div>
-            </div>
-            <div class="col-md-6" th:if="${status.cluster.enabled}">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5 class="panel-title">Cluster Info</h5>
-                    </div>
-                    <div class="panel-body">
-                        <dl class="dl-horizontal">
-                            <dt>Color:</dt>
-                            <dd th:text="${status.cluster.color}"></dd>
-                            <dt>Color State:</dt>
-                            <dd th:text="${status.cluster.colorState}"></dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header bg-body-secondary">
-                        <h5 class="card-title">Details</h5>
-                    </div>
-                    <div class="card-body">
-
-                        <div class="list-group">
-                            <div class="list-group-item" th:each="statusDetail : ${status.statusDetails}">
-                                <h4 class="list-group-item-heading" th:text="${statusDetail.name}">List group item heading</h4>
-                                <dl class="list-group-item-text dl-horizontal">
-                                    <dt>Status:</dt>
-                                    <dd th:text="${statusDetail.status}"></dd>
-                                    <dt>Message:</dt>
-                                    <dd th:text="${statusDetail.message}"></dd>
-                                    <th:block th:each="key : ${statusDetail.details.keySet()}">
-                                        <dt th:text="${key} + ':'">Message:</dt>
-                                        <dd th:text="${statusDetail.details.get(key)}"></dd>
-                                    </th:block>
-                                    <th:block th:each="link : ${statusDetail.links}">
-                                        <dt th:text="${link.title}"></dt>
-                                        <dd>
-                                            <a th:href="@{${link.href}}">Open</a>
-                                        </dd>
-                                    </th:block>
-                                </dl>
-                            </div>
+                <div class="card-body">
+                    <div th:with="team=${status.team}">
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Name:</div>
+                            <div class="col-8" th:text="${team.name}"></div>
                         </div>
-
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Technical Contact:</div>
+                            <div class="col-8" th:text="${team.technicalContact}"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Business Contact:</div>
+                            <div class="col-8" th:text="${team.businessContact}"></div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header bg-body-secondary">
-                        <h5 class="card-title">Dependencies</h5>
-                    </div>
-                    <div class="card-body">
-
-                        <table class="table table-striped table-hover">
-                            <tr>
-                                <th>Type</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Requirements</th>
-                            </tr>
-                            <tr th:each="dep : ${dependencies}">
-                                <td th:text="${dep.type}">Type</td>
-                                <td th:text="${dep.name}">Name</td>
-                                <td>
-                                    <p th:if="${!#lists.isEmpty(dep.datasources)}">Datasources:<br/>
-                                        <span th:each="ds : ${dep.datasources}"><span th:text="${ds}"></span><br/></span>
-                                    </p>
-                                    <p th:if="${!#strings.isEmpty(dep.url)}">Service:<br/>
-                                        <span th:text="${dep.url}"></span>
-                                    </p>
-                                    <p th:if="${!#strings.isEmpty(dep.description)}">Description:<br/>
-                                        <span th:text="${dep.description}"></span>
-                                    </p>
-                                    <p th:if="${!#strings.isEmpty(dep.methods)}">Methods:<br/>
-                                        <span th:text="${dep.methods}"></span>
-                                    </p>
-                                    <p th:if="${!#lists.isEmpty(dep.mediatypes)}">Mediatypes:<br/>
-                                        <span th:each="mt : ${dep.mediatypes}"><span th:text="${mt}"></span><br/></span>
-                                    </p>
-                                    <p th:if="${!#strings.isEmpty(dep.authentication)}">Authentication:<br/>
-                                        <span th:text="${dep.authentication}"></span>
-                                    </p>
-                                </td>
-                                <td>
-                                    <p>Criticality:<br/> <span th:text="${dep.criticality.level}">Criticality</span></p>
-                                    <p>Impact:<br/> <span th:text="${dep.criticality.disasterImpact}">Impact</span></p>
-                                    <p>Availability:<br/> <span th:text="${dep.expectations.availability}" /></p>
-                                    <p>Performance:<br/>  <span th:text="${dep.expectations.performance}" /></p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6" th:if="${criticality}">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Criticality</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="dl-horizontal">
+                        <dt>Level:</dt>
+                        <dd th:text="${criticality.level}"></dd>
+                        <dt>Disaster Impact:</dt>
+                        <dd th:text="${criticality.disasterImpact}"></dd>
+                    </dl>
                 </div>
             </div>
         </div>
-    </div> <!-- /container -->
+        <div class="col-md-6"> <!--  th:if="${status.cluster.enabled}"-->
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Cluster Info</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="dl-horizontal">
+                        <dt>Color:</dt>
+                        <dd th:text="${status.cluster.color}"></dd>
+                        <dt>Color State:</dt>
+                        <dd th:text="${status.cluster.colorState}"></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Details</h5>
+                </div>
+                <div class="card-body">
 
-    <span th:replace="~{fragments/footer :: footer}"></span>
+                    <div class="list-group">
+                        <div class="list-group-item" th:each="statusDetail : ${status.statusDetails}">
+                            <h4 class="list-group-item-heading" th:text="${statusDetail.name}">List group item
+                                heading</h4>
+                            <dl class="list-group-item-text dl-horizontal">
+                                <dt>Status:</dt>
+                                <dd th:text="${statusDetail.status}"></dd>
+                                <dt>Message:</dt>
+                                <dd th:text="${statusDetail.message}"></dd>
+                                <th:block th:each="key : ${statusDetail.details.keySet()}">
+                                    <dt th:text="${key} + ':'">Message:</dt>
+                                    <dd th:text="${statusDetail.details.get(key)}"></dd>
+                                </th:block>
+                                <th:block th:each="link : ${statusDetail.links}">
+                                    <dt th:text="${link.title}"></dt>
+                                    <dd>
+                                        <a th:href="@{${link.href}}">Open</a>
+                                    </dd>
+                                </th:block>
+                            </dl>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Dependencies</h5>
+                </div>
+                <div class="card-body">
+
+                    <table class="table table-striped table-hover">
+                        <tr>
+                            <th>Type</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Requirements</th>
+                        </tr>
+                        <tr th:each="dep : ${dependencies}">
+                            <td th:text="${dep.type}">Type</td>
+                            <td th:text="${dep.name}">Name</td>
+                            <td>
+                                <p th:if="${!#lists.isEmpty(dep.datasources)}">Datasources:<br/>
+                                    <span th:each="ds : ${dep.datasources}"><span th:text="${ds}"></span><br/></span>
+                                </p>
+                                <p th:if="${!#strings.isEmpty(dep.url)}">Service:<br/>
+                                    <span th:text="${dep.url}"></span>
+                                </p>
+                                <p th:if="${!#strings.isEmpty(dep.description)}">Description:<br/>
+                                    <span th:text="${dep.description}"></span>
+                                </p>
+                                <p th:if="${!#strings.isEmpty(dep.methods)}">Methods:<br/>
+                                    <span th:text="${dep.methods}"></span>
+                                </p>
+                                <p th:if="${!#lists.isEmpty(dep.mediatypes)}">Mediatypes:<br/>
+                                    <span th:each="mt : ${dep.mediatypes}"><span th:text="${mt}"></span><br/></span>
+                                </p>
+                                <p th:if="${!#strings.isEmpty(dep.authentication)}">Authentication:<br/>
+                                    <span th:text="${dep.authentication}"></span>
+                                </p>
+                            </td>
+                            <td>
+                                <p>Criticality:<br/> <span th:text="${dep.criticality.level}">Criticality</span></p>
+                                <p>Impact:<br/> <span th:text="${dep.criticality.disasterImpact}">Impact</span></p>
+                                <p>Availability:<br/> <span th:text="${dep.expectations.availability}"/></p>
+                                <p>Performance:<br/> <span th:text="${dep.expectations.performance}"/></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- /container -->
+
+<span th:replace="~{fragments/footer :: footer}"></span>
 </body>
 <script th:src="@{/js/darkmodeToggle.js}"></script>
 </html>

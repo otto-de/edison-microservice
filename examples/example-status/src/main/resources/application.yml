@@ -35,6 +35,12 @@ edison:
             business-contact: edison-team@example.org
             name: Edison Team
             technical-contact: edison-dev@example.org
+
+        cluster:
+            enabled: true
+            color-header: X-Color
+            color-state-header: X-Staging
+
 #    ldap:
 #        enabled: false
 #        host: ldap.example.com
