@@ -1,6 +1,6 @@
 package de.otto.edison.registry.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.registry.configuration.ServiceRegistryProperties;
 import de.otto.edison.registry.security.OAuth2TokenException;
@@ -82,7 +82,7 @@ public class AsyncHttpRegistryClientIntegrationTest {
     }
 
     @Test
-    public void shouldCallRegistryEndpointWithAuthorization(MockServerClient client) throws OAuth2TokenException, ExecutionException, InterruptedException, JsonProcessingException {
+    public void shouldCallRegistryEndpointWithAuthorization(MockServerClient client) throws OAuth2TokenException, ExecutionException, InterruptedException, JacksonException {
         // given
         final var tokenProvider = mock(OAuth2TokenProvider.class);
         when(tokenProvider.getAccessToken()).thenReturn("someAccessToken");
@@ -119,7 +119,7 @@ public class AsyncHttpRegistryClientIntegrationTest {
     }
 
     @Test
-    public void shouldNotThrowExceptionOnFailingTokenCall() throws OAuth2TokenException, ExecutionException, InterruptedException, JsonProcessingException {
+    public void shouldNotThrowExceptionOnFailingTokenCall() throws OAuth2TokenException, ExecutionException, InterruptedException, JacksonException {
         // given
         final var tokenProvider = mock(OAuth2TokenProvider.class);
         when(tokenProvider.getAccessToken()).thenThrow(OAuth2TokenException.class);

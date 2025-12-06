@@ -10,7 +10,6 @@ dependencies {
     implementation libs.jcip.annotations
     implementation libs.logback.classic
     implementation libs.spring.context.support
-    implementation libs.spring.retry
     implementation libs.unboundid.ldapsdk
     implementation libs.hibernate.validator
 

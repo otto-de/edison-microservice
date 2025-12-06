@@ -21,7 +21,6 @@ dependencies {
     testImplementation libs.jsonassert
     testImplementation libs.testcontainers.junit
     testImplementation libs.testcontainers.mongo
-    testImplementation libs.rest.assured
 }
 
 publishing {

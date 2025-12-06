@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
-import static org.springframework.boot.actuate.health.Health.down;
-import static org.springframework.boot.actuate.health.Health.up;
+import static org.springframework.boot.health.contributor.Health.down;
+import static org.springframework.boot.health.contributor.Health.up;
 
 public class GracefulShutdownHealthIndicatorTest {
 

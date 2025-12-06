@@ -1,9 +1,6 @@
 package de.otto.edison.validation.web;
 
 import de.otto.edison.validation.validators.SafeId;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,16 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.client.RestTestClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.WebApplicationContext;
 
-import jakarta.servlet.ServletContext;
-
-import java.util.Collections;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.http.MediaType.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -41,55 +36,56 @@ public class ValidationExceptionHandlerAcceptanceTest {
     private int port;
 
     @Autowired
-    private ServletContext servletContext;
+    private WebApplicationContext webApplicationContext;
+
+    private RestTestClient restTestClient;
 
     @BeforeEach
     public void setUp() {
-        RestAssured.port = port;
-        RestAssured.basePath = servletContext.getContextPath();
+        //restTestClient = RestTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
+        restTestClient = RestTestClient.bindToApplicationContext(webApplicationContext).build();
     }
 
     @Test
     public void shouldValidateAndProduceErrorRepresentation() {
-        given()
-                .contentType(ContentType.JSON)
+        restTestClient.put()
+                .uri("/testing")
+                .contentType(APPLICATION_JSON)
                 .body("{\"id\":\"_!NON_SAFE_ID!!?**\"}")
-                .when()
-                .put("/testing")
-                .then()
-                .assertThat()
-                .statusCode(is(422)).and()
-                .header("Content-type", Matchers.containsString("application/hal+json"))
-                .body("errors.id[0].key", Collections.emptyList(), is("id.invalid"))
-                .body("errors.id[0].message", Collections.emptyList(), is("Ungueltiger Id-Wert."))
-                .body("errors.id[0].rejected", Collections.emptyList(), is("_!NON_SAFE_ID!!?**"));
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT)
+                .expectHeader().value("Content-Type", it -> assertThat(it, containsString("application/hal+json")))
+                .expectBody()
+                .jsonPath("$.errors.id[0].key").isEqualTo("id.invalid")
+                .jsonPath("$.errors.id[0].message").isEqualTo("Ungueltiger Id-Wert.")
+                .jsonPath("$.errors.id[0].rejected").isEqualTo("_!NON_SAFE_ID!!?**");
     }
 
     @Test
     public void shouldValidateUrlParameterClassAndProduceBadRequestErrorRepresentation() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/testing?test=_!NON_SAFE_ID!!?**")
-                .then()
-                .assertThat()
-                .statusCode(is(HttpStatus.BAD_REQUEST.value())).and()
-                .header("Content-type", Matchers.containsString("application/hal+json"))
-                .body("errors.test[0].key", Collections.emptyList(), is("id.invalid"))
-                .body("errors.test[0].message", Collections.emptyList(), is("Ungueltiger Id-Wert."))
-                .body("errors.test[0].rejected", Collections.emptyList(), is("_!NON_SAFE_ID!!?**"));
+        restTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/testing")
+                        .queryParam("test", "_!NON_SAFE_ID!!?**")
+                        .build())
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
+                .expectHeader().value("Content-Type", it -> assertThat(it, containsString("application/hal+json")))
+                .expectBody()
+                .jsonPath("$.errors.test[0].key").isEqualTo("id.invalid")
+                .jsonPath("$.errors.test[0].message").isEqualTo("Ungueltiger Id-Wert.")
+                .jsonPath("$.errors.test[0].rejected").isEqualTo("_!NON_SAFE_ID!!?**");
     }
 
     @Test
     public void shouldValidateSimpleUrlParameterAndProduceBadRequestErrorRepresentation() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/testing?simpleParam=_!NON_SAFE_ID!!?**")
-                .then()
-                .assertThat()
-                .statusCode(is(HttpStatus.BAD_REQUEST.value())).and()
-                .header("Content-type", Matchers.containsString("application/json"));
+        restTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/testing")
+                        .queryParam("simpleParam", "_!NON_SAFE_ID!!?**")
+                        .build())
+                .header("Content-Type", "application/json")
+                .accept(ALL)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     public static class TestConfiguration {

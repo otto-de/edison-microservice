@@ -1,8 +1,9 @@
 package de.otto.edison.status.domain;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 
@@ -15,50 +16,70 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ServiceDependencyTest {
 
+    ObjectMapper mapper = JsonMapper.builder().build();
+
     @Test
-    public void shouldTransformToJson() throws JsonProcessingException {
+    public void shouldTransformToJson() {
         final ServiceDependency dependency = someRestfulService();
-        final String json = new ObjectMapper().writeValueAsString(dependency);
-        assertThat(json).isEqualTo("{" +
-                "\"name\":\"shoppingcart\"," +
-                "\"description\":" +
-                "\"Imports shoppingcarts\"," +
-                "\"type\":\"service\"," +
-                "\"subtype\":\"REST\"," +
-                "\"criticality\":{\"level\":\"HIGH\",\"disasterImpact\":\"really bad\"}," +
-                "\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"}," +
-                "\"url\":\"http://example.com/order/shoppingcarts\"," +
-                "\"methods\":[\"GET\"]," +
-                "\"mediaTypes\":[\"application/json\"]," +
-                "\"authentication\":\"OAUTH\"" +
-                "}");
+        final String json = mapper.writeValueAsString(dependency);
+        String expected = """
+                {
+                  "name": "shoppingcart",
+                  "description": "Imports shoppingcarts",
+                  "type": "service",
+                  "subtype": "REST",
+                  "criticality": { "level": "HIGH", "disasterImpact": "really bad" },
+                  "expectations": { "availability": "NOT_SPECIFIED", "performance": "NOT_SPECIFIED" },
+                  "url": "http://example.com/order/shoppingcarts",
+                  "methods": ["GET"],
+                  "mediaTypes": ["application/json"],
+                  "authentication": "OAUTH"
+                }
+                """;
+        //Compare ignoring formatting differences
+        assertJsonContentIsIdentical(json, expected);
     }
 
     @Test
     public void shouldTransformFromJson() throws IOException {
-        final String json = "{" +
-                "\"name\":\"shoppingcart\"," +
-                "\"description\":" +
-                "\"Imports shoppingcarts\"," +
-                "\"type\":\"service\"," +
-                "\"subtype\":\"REST\"," +
-                "\"criticality\":{\"level\":\"HIGH\",\"disasterImpact\":\"really bad\"}," +
-                "\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"}," +
-                "\"url\":\"http://example.com/order/shoppingcarts\"," +
-                "\"methods\":[\"GET\"]," +
-                "\"mediaTypes\":[\"application/json\"]," +
-                "\"authentication\":\"OAUTH\"" +
-                "}";
-        final ServiceDependency dependency = new ObjectMapper().readValue(json, ServiceDependency.class);
+        final String json = """
+        {
+          "name": "shoppingcart",
+          "description": "Imports shoppingcarts",
+          "type": "service",
+          "subtype": "REST",
+          "criticality": { "level": "HIGH", "disasterImpact": "really bad" },
+          "expectations": { "availability": "NOT_SPECIFIED", "performance": "NOT_SPECIFIED" },
+          "url": "http://example.com/order/shoppingcarts",
+          "methods": ["GET"],
+          "mediaTypes": ["application/json"],
+          "authentication": "OAUTH"
+        }
+        """;
+        final ServiceDependency dependency = mapper.readValue(json, ServiceDependency.class);
         final ServiceDependency expected = someRestfulService();
         assertThat(dependency).isEqualTo(expected);
     }
 
     @Test
-    public void shouldIgnoreNullValues() throws JsonProcessingException {
+    public void shouldIgnoreNullValues() throws JacksonException {
         final ServiceDependency dependency = new ServiceDependency(null, null, "", "", "", null, null, null, null, null);
-        final String json = new ObjectMapper().writeValueAsString(dependency);
-        assertThat(json).isEqualTo("{\"name\":\"\",\"description\":\"\",\"type\":\"\",\"subtype\":\"\",\"criticality\":{\"level\":\"NOT_SPECIFIED\",\"disasterImpact\":\"Not Specified\"},\"expectations\":{\"availability\":\"NOT_SPECIFIED\",\"performance\":\"NOT_SPECIFIED\"},\"url\":\"\",\"methods\":[],\"mediaTypes\":[],\"authentication\":\"\"}");
+        final String json = mapper.writeValueAsString(dependency);
+        String expected = """
+        {
+          "name": "",
+          "description": "",
+          "type": "",
+          "subtype": "",
+          "criticality": { "level": "NOT_SPECIFIED", "disasterImpact": "Not Specified" },
+          "expectations": { "availability": "NOT_SPECIFIED", "performance": "NOT_SPECIFIED" },
+          "url": "",
+          "methods": [],
+          "mediaTypes": [],
+          "authentication": ""
+        }
+        """;
+        assertJsonContentIsIdentical(json, expected);
     }
 
     @Test
@@ -83,5 +104,9 @@ public class ServiceDependencyTest {
                 "OAUTH",
                 criticality(Level.HIGH, "really bad"),
                 unspecifiedExpectations());
+    }
+
+    private void assertJsonContentIsIdentical(String json, String expected) {
+        assertThat(mapper.readTree(json)).isEqualTo(mapper.readTree(expected));
     }
 }

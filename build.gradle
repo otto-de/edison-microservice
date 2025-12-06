@@ -73,7 +73,7 @@ jreleaser {
 // Publish artifacts to sonatype by executing the release.sh script. Don't publish packages to github.
 //
 //
-def edison_version = "3.5.7-SNAPSHOT"
+def edison_version = "4.0.0-SNAPSHOT"
 //
 //
 //
@@ -125,9 +125,6 @@ subprojects {
 //        }
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
-
-    targetCompatibility = '17'
-    sourceCompatibility = '17'
 
     /*
     // uncomment when using podman

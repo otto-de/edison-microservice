@@ -1,7 +1,7 @@
 package de.otto.edison.togglz.s3.testsupport;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.*;
@@ -16,13 +16,12 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
 
 public class LocalS3ClientTest {
 
     private LocalS3Client testee;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         testee = new LocalS3Client();
         testee.createBucket(CreateBucketRequest.builder().bucket("someBucket").build());
@@ -72,12 +71,12 @@ public class LocalS3ClientTest {
 
     @Test
     public void listBucketsShouldReturnSingleBucket() {
-        assertEquals(testee.listBuckets()
+        assertThat(testee.listBuckets()
                         .buckets()
                         .stream()
                         .map(Bucket::name)
                         .collect(Collectors.toList()),
-                Collections.singletonList("someBucket"));
+                is(Collections.singletonList("someBucket")));
     }
 
     @Test
@@ -86,12 +85,12 @@ public class LocalS3ClientTest {
         testee.createBucket(CreateBucketRequest.builder().bucket("newBucket").build());
 
         // then
-        assertEquals(testee.listBuckets()
+        assertThat(testee.listBuckets()
                 .buckets()
                 .stream()
                 .map(Bucket::name)
                 .sorted()
-                .collect(Collectors.toList()), Arrays.asList("newBucket", "someBucket"));
+                .collect(Collectors.toList()), is(Arrays.asList("newBucket", "someBucket")));
     }
 
     @Test

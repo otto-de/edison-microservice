@@ -1,15 +1,13 @@
 package de.otto.edison.status.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.annotations.Beta;
 import net.jcip.annotations.Immutable;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static de.otto.edison.status.domain.Availability.HIGH;
-import static de.otto.edison.status.domain.Availability.LOW;
-import static de.otto.edison.status.domain.Availability.MEDIUM;
-import static de.otto.edison.status.domain.Availability.NOT_SPECIFIED;
+import static de.otto.edison.status.domain.Availability.*;
 
 /**
  * Describes expectations about an external dependency.
@@ -72,10 +70,7 @@ public final class Expectations {
         return new Expectations(availability, performance);
     }
 
-    private Expectations() {
-        this(null, null);
-    }
-
+    @JsonCreator
     private Expectations(final Availability availability,
                          final Performance performance) {
         this.availability = availability;

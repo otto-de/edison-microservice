@@ -5,8 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,12 +28,14 @@ import static org.springframework.http.MediaType.TEXT_HTML;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
+@AutoConfigureTestRestTemplate
 public class LoggersAcceptanceTest {
 
 
     @Autowired
     private ConfigurableApplicationContext ctx;
-    @Autowired private TestRestTemplate template;
+    @Autowired
+    private TestRestTemplate template;
 
     private HttpHeaders htmlHeaders;
     private HttpHeaders jsonHeaders;

@@ -1,10 +1,10 @@
 package de.otto.edison.health.indicator;
 
 import net.jcip.annotations.ThreadSafe;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 
-import static org.springframework.boot.actuate.health.Health.up;
+import static org.springframework.boot.health.contributor.Health.up;
 
 @ThreadSafe
 public final class ApplicationHealthIndicator implements HealthIndicator {

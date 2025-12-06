@@ -5,12 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.context.SmartLifecycle;
 
-import static org.springframework.boot.actuate.health.Health.down;
-import static org.springframework.boot.actuate.health.Health.up;
+import static org.springframework.boot.health.contributor.Health.down;
+import static org.springframework.boot.health.contributor.Health.up;
 
 @ThreadSafe
 public class GracefulShutdownHealthIndicator implements SmartLifecycle, HealthIndicator {

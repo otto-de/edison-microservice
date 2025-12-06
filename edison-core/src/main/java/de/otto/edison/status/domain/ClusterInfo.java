@@ -1,7 +1,7 @@
 package de.otto.edison.status.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.otto.edison.annotations.Beta;
 
 import java.util.function.Supplier;

@@ -1,7 +1,8 @@
 package de.otto.edison.acceptance.togglz;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import de.otto.edison.testsupport.togglz.FeatureManagerSupport;
 import de.otto.edison.togglz.TestFeatures;
 import de.otto.edison.togglz.TestServer;
@@ -29,8 +30,6 @@ import org.togglz.core.repository.StateRepository;
 import org.togglz.core.repository.mem.InMemoryStateRepository;
 import org.togglz.core.user.NoOpUserProvider;
 import org.togglz.core.user.UserProvider;
-
-import java.io.IOException;
 
 import static de.otto.edison.testsupport.dsl.Then.assertThat;
 import static java.util.Collections.singletonList;
@@ -86,7 +85,7 @@ public class FeatureTogglesControllerAcceptanceTest {
     JsonNode jsonNode(ResponseEntity<String> resource) {
         try {
             return objectMapper.readTree(resource.getBody());
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }

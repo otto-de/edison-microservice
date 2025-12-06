@@ -10,7 +10,6 @@ dependencies {
     api libs.jakarta.validation.api
 
     testImplementation project(":edison-testsupport")
-    testImplementation libs.rest.assured
     testImplementation libs.commons.codec
 }
 

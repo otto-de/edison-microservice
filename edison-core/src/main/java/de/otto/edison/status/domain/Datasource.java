@@ -1,9 +1,9 @@
 package de.otto.edison.status.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import de.otto.edison.annotations.Beta;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 
 import java.util.List;
 import java.util.Objects;
@@ -92,7 +92,7 @@ public final class Datasource {
             port = valueOf(nodeAndPort.substring(colonPos+1));
             return datasource(node, port, resource);
         } else {
-            return datasource(nodeAndPort, -1, resource);
+            return datasource(nodeAndPort, port, resource);
         }
     }
 

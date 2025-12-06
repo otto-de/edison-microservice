@@ -1,7 +1,7 @@
 package de.otto.edison.validation.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.AbstractMessageSource;
@@ -65,7 +65,7 @@ public class ErrorHalRepresentationFactory {
         } else {
             try {
                 return objectMapper.writeValueAsString(e.getRejectedValue());
-            } catch (JsonProcessingException ignore) {
+            } catch (JacksonException ignore) {
                 return e.getRejectedValue().toString();
             }
         }

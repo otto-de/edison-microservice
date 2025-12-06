@@ -1,10 +1,9 @@
 package de.otto.edison.registry.security;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import tools.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -35,7 +34,7 @@ public class OAuth2TokenProvider {
         this.objectMapper = new ObjectMapper();
     }
 
-    public String getAccessToken() throws ExecutionException, InterruptedException, JsonProcessingException, OAuth2TokenException {
+    public String getAccessToken() throws ExecutionException, InterruptedException, OAuth2TokenException {
         try {
             final HttpResponse<String> response = httpClient
                     .sendAsync(HttpRequest.newBuilder()

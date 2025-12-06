@@ -1,6 +1,6 @@
 package de.otto.edison.validation.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import de.otto.edison.validation.configuration.AggregateResourceBundleMessageSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

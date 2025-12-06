@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.boot.actuate.health.Health.down;
-import static org.springframework.boot.actuate.health.Health.up;
-import static org.springframework.boot.actuate.health.Status.DOWN;
-import static org.springframework.boot.actuate.health.Status.UP;
+import static org.springframework.boot.health.contributor.Health.down;
+import static org.springframework.boot.health.contributor.Health.up;
+import static org.springframework.boot.health.contributor.Status.DOWN;
+import static org.springframework.boot.health.contributor.Status.UP;
 
 public class ApplicationHealthIndicatorTest {
 

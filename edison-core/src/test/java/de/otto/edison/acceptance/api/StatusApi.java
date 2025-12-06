@@ -1,7 +1,8 @@
 package de.otto.edison.acceptance.api;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import de.otto.edison.testsupport.applicationdriver.SpringTestBase;
 import de.otto.edison.testsupport.dsl.When;
 import org.springframework.http.*;
@@ -55,7 +56,7 @@ public class StatusApi extends SpringTestBase {
     public static JsonNode the_returned_json() {
         try {
             return objectMapper.readTree(content);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }

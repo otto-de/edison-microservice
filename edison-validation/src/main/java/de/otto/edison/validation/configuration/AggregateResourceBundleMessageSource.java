@@ -17,7 +17,7 @@
 
 package de.otto.edison.validation.configuration;
 
-import org.hibernate.validator.internal.util.privilegedactions.GetResources;
+import org.hibernate.validator.internal.util.actions.GetResources;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.support.AbstractResourceBasedMessageSource;
 import org.springframework.lang.Nullable;
@@ -483,7 +483,7 @@ class AggregateResourceBundleControl extends ResourceBundle.Control {
     private static List<ResourceBundle> load(String resourceName, ClassLoader loader) throws IOException {
         List<ResourceBundle> resourceBundles = new ArrayList<>();
 
-        Enumeration<URL> urls = GetResources.action(loader, resourceName).run();
+        Enumeration<URL> urls = GetResources.action(loader, resourceName);
         while (urls.hasMoreElements()) {
             URL url = urls.nextElement();
             try (InputStream propertyStream = url.openStream()) {

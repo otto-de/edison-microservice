@@ -1,5 +1,5 @@
 [versions]
-spring-boot = "3.5.8"
+spring-boot = "4.0.0"
 jcip-annotations = "1.0"
 togglz = "4.4.0"
 edison-hal = "2.2.0"
@@ -17,8 +17,12 @@ spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-start
 #spring-boot-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
 spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf" }
+spring-boot-test = { module = "org.springframework.boot:spring-boot-test" }
+spring-boot-webmvc-test = { module = "org.springframework.boot:spring-boot-webmvc-test" }
+spring-boot-resttestclient = { module = "org.springframework.boot:spring-boot-resttestclient" }
+spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
 spring-context-support = { module = "org.springframework:spring-context-support" }
-spring-retry = { module = "org.springframework.retry:spring-retry" }
+#spring-retry = { module = "org.springframework.retry:spring-retry" }
 
 #spring-security = { module = "org.springframework.security:spring-security-core" }
 #spring-security-web = { module = "org.springframework.security:spring-security-web" }
@@ -55,8 +59,8 @@ mockserver-junit-jupiter = { module = "org.mock-server:mockserver-junit-jupiter"
 #jaxb-core = { module = "com.sun.xml.bind:jaxb-core" }
 #jaxb-impl = { module = "com.sun.xml.bind:jaxb-impl" }
 
-jackson-core = { module = "com.fasterxml.jackson.core:jackson-core" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind" }
+jackson-core = { module = "tools.jackson.core:jackson-core" }
+jackson-databind = { module = "tools.jackson.core:jackson-databind" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations" }
 
 jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api" }
@@ -72,8 +76,8 @@ spring-test = { module = "org.springframework:spring-test" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 jsonassert = { module = "org.skyscreamer:jsonassert" }
 togglz-testing = { module = "org.togglz:togglz-testing", version.ref = "togglz" }
-testcontainers-mongo = { module = "org.testcontainers:mongodb" }
-testcontainers-junit = { module = "org.testcontainers:junit-jupiter" }
+testcontainers-mongo = { module = "org.testcontainers:testcontainers-mongodb" }
+testcontainers-junit = { module = "org.testcontainers:testcontainers-junit-jupiter" }
 json-path = { module = "com.jayway.jsonpath:json-path" }
 rest-assured = { module = "io.rest-assured:rest-assured" }
 commons-codec = { module = "commons-codec:commons-codec" }

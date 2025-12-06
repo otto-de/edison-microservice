@@ -1,13 +1,13 @@
 package de.otto.edison.example;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +22,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ExampleJobsServer.class, webEnvironment = RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @ActiveProfiles("test")
 public class ExampleJobsSmokeTest {
 
@@ -29,8 +30,6 @@ public class ExampleJobsSmokeTest {
     private TestRestTemplate restTemplate;
     @LocalServerPort
     private int port;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     public void shouldRenderMainPage() {
