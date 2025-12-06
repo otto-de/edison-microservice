@@ -1,5 +1,6 @@
 # Release Notes
-##
+## 3.5.7
+* **[all]**: Update to Spring Boot 3.5.8
 * **[togglz]**: Retryable on MongoTogglzRepository when load feature state fails due mongo timeouts
 
 ## 3.5.6
