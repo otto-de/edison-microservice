@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="light">
 
-<head th:replace="~{fragments/head  :: head}"/>
+<head>
+    <script src="/js/themeInit.js"></script>
+    <th:block th:replace="~{fragments/head  :: head}"></th:block>
+</head>
 
 <body>
 
@@ -12,7 +15,7 @@
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title">Application</h5>
+                    <h5 class="card-title mb-0">Application</h5>
                 </div>
                 <div class="card-body">
                     <div th:with="app=${status.application}">
@@ -39,13 +42,7 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Status:</div>
                             <div class="col-8">
-                                        <span th:switch="${#strings.trim(status.status)}">
-                                            <span th:case="'OK'" class="badge bg-success"
-                                                  th:text="${status.status}"></span>
-                                            <span th:case="'WARNING'" class="badge bg-warning text-dark"
-                                                  th:text="${status.status}"></span>
-                                            <span th:case="*" class="badge bg-info" th:text="${status.status}"></span>
-                                        </span>
+                                <div th:replace="fragments/status-badge :: statusBadge(${status.status})"></div>
                             </div>
                         </div>
                     </div>
@@ -56,7 +53,7 @@
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title">System</h5>
+                    <h5 class="card-title mb-0">System</h5>
                 </div>
                 <div class="card-body">
                     <div th:with="system=${status.system}">
@@ -97,7 +94,7 @@
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title">Version</h5>
+                    <h5 class="card-title mb-0">Version</h5>
                 </div>
                 <div class="card-body">
                     <div th:with="vcs=${status.vcs}">
@@ -140,7 +137,7 @@
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title">Team</h5>
+                    <h5 class="card-title mb-0">Team</h5>
                 </div>
                 <div class="card-body">
                     <div th:with="team=${status.team}">
@@ -166,7 +163,7 @@
         <div class="col-md-6" th:if="${criticality}">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title">Criticality</h5>
+                    <h5 class="card-title mb-0">Criticality</h5>
                 </div>
                 <div class="card-body">
                     <dl class="dl-horizontal">
@@ -178,10 +175,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6"> <!--  th:if="${status.cluster.enabled}"-->
+        <div class="col-md-6"> <!--  th:if="${status.cluster.enabled}" TODO: change-->
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title">Cluster Info</h5>
+                    <h5 class="card-title mb-0">Cluster Info</h5>
                 </div>
                 <div class="card-body">
                     <dl class="dl-horizontal">
@@ -198,26 +195,28 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Details</h5>
+                    <h5 class="card-title mb-0">Details</h5>
                 </div>
                 <div class="card-body">
 
                     <div class="list-group">
                         <div class="list-group-item" th:each="statusDetail : ${status.statusDetails}">
-                            <h4 class="list-group-item-heading" th:text="${statusDetail.name}">List group item
+                            <h4 class="mb-1" th:text="${statusDetail.name}">List group item
                                 heading</h4>
-                            <dl class="list-group-item-text dl-horizontal">
-                                <dt>Status:</dt>
-                                <dd th:text="${statusDetail.status}"></dd>
-                                <dt>Message:</dt>
-                                <dd th:text="${statusDetail.message}"></dd>
+                            <dl class="row mb-0">
+                                <dt class="col-sm-2">Status:</dt>
+                                <dd class="col-sm-10">
+                                    <div th:replace="fragments/status-badge :: statusBadge(${statusDetail.status})"></div>
+                                </dd>
+                                <dt class="col-sm-2">Message:</dt>
+                                <dd class="col-sm-10" th:text="${statusDetail.message}"></dd>
                                 <th:block th:each="key : ${statusDetail.details.keySet()}">
-                                    <dt th:text="${key} + ':'">Message:</dt>
-                                    <dd th:text="${statusDetail.details.get(key)}"></dd>
+                                    <dd class="col-sm-2" th:text="${key} + ':'">Message:</dd>
+                                    <dd class="col-sm-10" th:text="${statusDetail.details.get(key)}"></dd>
                                 </th:block>
                                 <th:block th:each="link : ${statusDetail.links}">
-                                    <dt th:text="${link.title}"></dt>
-                                    <dd>
+                                    <dd class="col-sm-2" th:text="${link.title}"></dd>
+                                    <dd class="col-sm-10">
                                         <a th:href="@{${link.href}}">Open</a>
                                     </dd>
                                 </th:block>
@@ -233,7 +232,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Dependencies</h5>
+                    <h5 class="card-title mb-0">Dependencies</h5>
                 </div>
                 <div class="card-body">
 

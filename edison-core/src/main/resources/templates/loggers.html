@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="light">
 
-<head th:replace="~{fragments/head  :: head}"/>
+<head>
+    <script src="/js/themeInit.js"></script>
+    <th:block th:replace="~{fragments/head  :: head}"/>
+</head>
 
 <body>
 
-<div th:replace="~{fragments/navigation  :: navigation}"/>
+<div th:replace="~{fragments/navigation  :: navigation}"></div>
 
 <div class="container">
     <div class="row">

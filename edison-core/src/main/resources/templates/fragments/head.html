@@ -17,74 +17,24 @@
 <!--    style="background-color: #2E86C1"-->
 
     <style>
-        /*:root {*/
-        /*    --bs-primary: #0d6efd;*/
-        /*    --bs-primary-rgb: 13, 110, 253;*/
-        /*    --bs-link-color: #0d6efd;*/
-        /*    --bs-link-hover-color: #0a58ca;*/
-        /*}*/
+        :root {
+            --primary-color: #8F9FFA;
+            --primary-color-rgb: 143, 159, 250;
 
-        /*[data-bs-theme="dark"] {*/
-        /*    --bs-primary: #0d6efd;*/
-        /*    --bs-primary-rgb: 13, 110, 253;*/
-        /*    --bs-link-color: #0d6efd;*/
-        /*    --bs-link-hover-color: #0a58ca;*/
-        /*}*/
+            --bs-primary: var(--primary-color);
+            --bs-primary-rgb: var(--primary-color-rgb);
+        }
 
-        /*.btn-primary {*/
-        /*    --bs-btn-bg: #0d6efd;*/
-        /*    --bs-btn-border-color: #0d6efd;*/
-        /*    --bs-btn-hover-bg: #0a58ca;*/
-        /*    --bs-btn-hover-border-color: #0a58ca;*/
-        /*    --bs-btn-active-bg: #0a58ca;*/
-        /*}*/
+        [data-bs-theme="dark"] {
+            --bs-primary: var(--primary-color);
+            --bs-primary-rgb: var(--primary-color-rgb);
+        }
 
-        /*.bg-primary {*/
-        /*    background-color: #0d6efd !important;*/
-        /*}*/
-
-        /*.text-primary {*/
-        /*    color: #0d6efd !important;*/
-        /*}*/
-
-        /*.border-primary {*/
-        /*    border-color: #0d6efd !important;*/
-        /*}*/
-
-        /*.dropdown-item:hover,*/
-        /*.dropdown-item:focus {*/
-        /*    background-color: rgba(13, 110, 253, 0.1);*/
-        /*    color: #0d6efd;*/
-        /*}*/
-
-        /*.dropdown-item.active,*/
-        /*.dropdown-item:active {*/
-        /*    background-color: #0d6efd;*/
-        /*    color: white;*/
-        /*}*/
-
-        /*a {*/
-        /*    color: #0d6efd;*/
-        /*}*/
-
-        /*a:hover {*/
-        /*    color: #0a58ca;*/
-        /*}*/
-
-        /*.list-group-item.active {*/
-        /*    background-color: #0d6efd;*/
-        /*    border-color: #0d6efd;*/
-        /*}*/
-
-        /*.badge.bg-primary {*/
-        /*    background-color: #0d6efd !important;*/
-        /*}*/
-
-        /*.alert-primary {*/
-        /*    --bs-alert-bg: rgba(13, 110, 253, 0.1);*/
-        /*    --bs-alert-border-color: #0d6efd;*/
-        /*    --bs-alert-color: #0a58ca;*/
-        /*}*/
+        .dropdown-item:active,
+        .dropdown-item.active {
+            background-color: var(--primary-color) !important;
+            color: #fff !important;
+        }
 
         body { padding-top: 100px; }
     </style>

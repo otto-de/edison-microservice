@@ -17,11 +17,11 @@ import static de.otto.edison.status.domain.Level.LOW;
 @EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class NavigationConfiguration {
 
-    @Autowired
-    public NavigationConfiguration(final NavBar mainNavBar,
-                                   final EdisonApplicationProperties properties) {
-        mainNavBar.register(navBarItem(top(), "Status", String.format("%s/status", properties.getManagement().getBasePath())));
-    }
+//    @Autowired
+//    public NavigationConfiguration(final NavBar mainNavBar,
+//                                   final EdisonApplicationProperties properties) {
+//        mainNavBar.register(navBarItem(top(), "Status", String.format("%s/status", properties.getManagement().getBasePath())));
+//    }
 
     @Bean
     public Criticality serviceCriticality() {
