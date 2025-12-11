@@ -2,24 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 
-            <div class="navbar-header" th:fragment="header">
+<div class="navbar-header" th:fragment="header">
 
-                <!--  TODO: ist this needed?   >-->
-<!--                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">-->
-<!--                  <span class="sr-only">Toggle navigation</span>-->
-<!--                  <span class="icon-bar"></span>-->
-<!--                  <span class="icon-bar"></span>-->
-<!--                  <span class="icon-bar"></span>-->
-<!--                  </button>-->
+    <!--  TODO: ist this needed?   >-->
+    <!--                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">-->
+    <!--                  <span class="sr-only">Toggle navigation</span>-->
+    <!--                  <span class="icon-bar"></span>-->
+    <!--                  <span class="icon-bar"></span>-->
+    <!--                  <span class="icon-bar"></span>-->
+    <!--                  </button>-->
 
-<!--                <a class="navbar-brand fs-4" th:href="@{|${edisonManagementBasePath}/status|}" th:text="${@applicationInfo.title}">Edison µService</a>-->
+    <!--                <a class="navbar-brand fs-4" th:href="@{|${edisonManagementBasePath}/status|}" th:text="${@applicationInfo.title}">Edison µService</a>-->
 
-                <a class="navbar-brand btn bg-primary fs-4 d-flex align-items-center" type="button" th:href="@{|${edisonManagementBasePath}/status|}">
-<!--                    <i class="bi bi-cpu me-2 text-light"></i>-->
-                    <span class="text-light" th:text="${@applicationInfo.title}">Edison µService</span>
-                </a>
+    <a class="navbar-brand btn bg-light-subtle fs-4 d-flex align-items-center" type="button"
+       th:href="@{|${edisonManagementBasePath}/status|}">
+        <i class="bi bi-cpu me-2"></i>
+        <span th:text="${@applicationInfo.title}">Edison µService</span>
+    </a>
 
-            </div>
+</div>
 
 </body>
 </html>

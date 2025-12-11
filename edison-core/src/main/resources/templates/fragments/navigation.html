@@ -13,7 +13,7 @@
 <!--        </div>-->
 <!--    </nav>-->
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-dark-subtle fixed-top py-3 shadow"  th:fragment="navigation">
+    <nav class="navbar navbar-expand-lg bg-primary fixed-top py-3 shadow"  th:fragment="navigation">
         <div class="container">
 
              <div class="navbar-header" th:replace="~{fragments/navbar/header :: header}"></div>
@@ -29,8 +29,8 @@
 
 
         </div>
-        <div class="position-absolute end-0 top-50 translate-middle-y me-5">
-            <button class="btn bg-primary text-light" id="darkModeToggle" type="button">
+        <div class="position-absolute end-0 top-50 translate-middle-y me-5 navbar-collapse">
+            <button class="btn bg-light-subtle" id="darkModeToggle" type="button">
                 <i class="bi bi-moon"></i>
             </button>
         </div>
