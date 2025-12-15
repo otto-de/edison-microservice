@@ -44,7 +44,6 @@
                         </th:block>
                         <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING"
                                                                           class="badge bg-info text-dark"
-                                                                          style="width:80%; height:2em;"
                                                                           th:id="'job-status-' + ${job.id}">RUNNING</span>
                         </th:block>
                     </td>
@@ -69,7 +68,8 @@
                             <div class="btn-group">
                                 <button type="button" class="btn btn-sm btn-secondary dropdown-toggle"
                                         data-bs-toggle="dropdown">
-                                    Details </button>
+                                    Details
+                                </button>
                                 <ul class="dropdown-menu">
                                     <li><a th:href="${job.jobUri}">Messages</a></li>
                                     <li th:if="${typeFilter == null}"><a th:id="'openButton-' + ${job.id}"

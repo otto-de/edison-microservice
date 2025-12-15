@@ -8,7 +8,7 @@
 
 <body>
 
-<div th:replace="~{fragments/navigation  :: navigation}" />
+<div th:replace="~{fragments/navigation  :: navigation}"/>
 
 <div class="container">
     <div id="job-messages" class="card h-100 mb-4">
@@ -22,46 +22,61 @@
                         <dt>Status:</dt>
                         <dd>
                             <th:block th:if="${job.state} != 'Running'">
-                                <span th:if="${job.status} == 'OK'"  class="badge bg-success" style="width:10em; height:2em;" id="job-status"><span th:text="${job.status}"></span></span>
-                                <span th:if="${job.status} == 'SKIPPED'"  class="badge bg-secondary" style="width:10em; height:2em;" id="job-status"><span th:text="${job.status}"></span></span>
-                                <span th:if="${job.status} == 'ERROR'"  class="badge bg-danger" style="width:10em; height:2em;" id="job-status"><span th:text="${job.status}"></span></span>
-                                <span th:if="${job.status} == 'DEAD'"  class="badge bg-warning" style="width:10em; height:2em; background: rgba(230, 110, 30, 1);" id="job-status"><span th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'OK'" class="badge bg-success" id="job-status"><span
+                                        th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'SKIPPED'" class="badge bg-secondary"
+                                      id="job-status"><span th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'ERROR'" class="badge bg-danger" id="job-status"><span
+                                        th:text="${job.status}"></span></span>
+                                <span th:if="${job.status} == 'DEAD'" class="badge bg-warning" id="job-status"><span
+                                        th:text="${job.status}"></span></span>
                             </th:block>
-                            <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="badge bg-info text-dark" style="width:10em; height:2em;" id="job-status">RUNNING</span></th:block>
+                            <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING"
+                                                                              class="badge bg-info text-dark"
+                                                                              id="job-status">RUNNING</span></th:block>
                         </dd>
                         <dt><br/>Executed by:</dt>
                         <dd th:text="${job.hostname}">&nbsp;</dd>
                         <dt>Started:</dt>
-                        <dd class="job-started" th:data-datetime="${job.startedIso}" th:text="${job.started}">&nbsp;</dd>
+                        <dd class="job-started" th:data-datetime="${job.startedIso}" th:text="${job.started}">&nbsp;
+                        </dd>
                         <dt>Stopped:</dt>
-                        <dd class="job-stopped" id="job-stopped" th:data-datetime="${job.stoppedIso}" th:text="${job.stopped}">&nbsp;</dd>
+                        <dd class="job-stopped" id="job-stopped" th:data-datetime="${job.stoppedIso}"
+                            th:text="${job.stopped}">&nbsp;
+                        </dd>
                         <dt>Last Update:</dt>
-                        <dd class="job-updated" id="job-last-updated" th:data-datetime="${job.lastUpdatedIso}" th:text="${job.lastUpdated}">&nbsp;</dd>
+                        <dd class="job-updated" id="job-last-updated" th:data-datetime="${job.lastUpdatedIso}"
+                            th:text="${job.lastUpdated}">&nbsp;
+                        </dd>
                     </dl>
                     <div class="form-group">
-                        <a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}" class="btn btn-sm btn-secondary btn-block">Open Definition</a>
+                        <a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}"
+                           class="btn btn-sm btn-secondary btn-block">Open Definition</a>
                         <button type="button"
-                                class="triggerButton btn btn-sm btn-default btn-block"
+                                class="triggerButton btn btn-sm btn-secondaryt btn-block"
                                 th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
                                 title="Click to start job now"
                                 data-loading-text="Triggering...">
-                            <span>Trigger </span><span class="glyphicon glyphicon-play"></span>
+                            <span>Trigger </span><span class="bi bi-play-fill"></span>
                         </button>
                     </div>
                 </div>
                 <div class="col-md-10">
                     <div class="form-check text-right">
-                        <input type="checkbox" class="form-check-input" id="follow-log" checked="checked" />
+                        <input type="checkbox" class="form-check-input" id="follow-log" checked="checked"/>
                         <label class="form-check-label" for="follow-log">Follow log</label>
                     </div>
-                    <pre class="logWindow overflow-auto" th:attr="data-job-url=${job.jobUri} + '?humanReadable=true'"><div th:each="message : ${job.getRawMessages()}"><span class="job-messagedate" th:data-datetime="${message.getTimestampUTCIsoString()}"></span> <span th:text="'[' + ${message.getLevel()} + '] ' + ${message.getMessage()}"></span></div></pre>
+                    <pre class="logWindow overflow-auto" th:attr="data-job-url=${job.jobUri} + '?humanReadable=true'"><div
+                            th:each="message : ${job.getRawMessages()}"><span class="job-messagedate"
+                                                                              th:data-datetime="${message.getTimestampUTCIsoString()}"></span> <span
+                            th:text="'[' + ${message.getLevel()} + '] ' + ${message.getMessage()}"></span></div></pre>
                 </div>
             </div>
         </div>
     </div>
 </div> <!-- /container -->
 
-<span th:replace="~{fragments/footer :: footer}" />
+<span th:replace="~{fragments/footer :: footer}"/>
 
 <script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
 <script th:src="${baseUri} + '/internal/js/datetime.js'"></script>
