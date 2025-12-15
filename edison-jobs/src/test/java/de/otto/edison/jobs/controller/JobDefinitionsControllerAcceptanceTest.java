@@ -35,7 +35,7 @@ public class JobDefinitionsControllerAcceptanceTest {
                 // then
                 .then()
                 .statusCode(200)
-                .body(containsString("<h3 class=\"panel-title\">" + MockJobRunnable.MOCK_JOB_NAME + "</h3>"));
+                .body(containsString("<h3 class=\"card-title mb-0\">" + MockJobRunnable.MOCK_JOB_NAME + "</h3>"));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class JobDefinitionsControllerAcceptanceTest {
                 // then
                 .then()
                 .statusCode(200)
-                .body(containsString("<h3 class=\"panel-title\">" + MockJobRunnable.MOCK_JOB_NAME + "</h3>"));
+                .body(containsString("<h3 class=\"card-title mb-0\">" + MockJobRunnable.MOCK_JOB_NAME + "</h3>"));
     }
 
 }
