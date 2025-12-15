@@ -11,7 +11,7 @@
 <div th:replace="~{fragments/navigation  :: navigation}"></div>
 
 <div class="container">
-    <div class="card h-100" th:each="def : ${jobdefinitions}">
+    <div class="card h-100 mb-4" th:each="def : ${jobdefinitions}">
         <div class="card-header">
             <h3 class="card-title mb-0" th:text="${def.name}"></h3>
         </div>
@@ -31,12 +31,13 @@
                     <span id="retries" th:text="${def.retry}"></span>
                 </div>
                 <div class="col-md-4" th:text="${def.description}">Description</div>
-                <div class="col-md-4">
+                <div class="col-md-4 d-flex flex-column align-items-start">
+
                     <a id="openButton" th:href="@{|${edisonManagementBasePath}/jobs?type=${def.jobType}|}"
-                       class="btn btn-sm btn-secondary">Job Overview</a>
+                       class="btn btn-sm btn-secondary mb-2 w-auto">Job Overview</a>
 
                     <button type="button"
-                            class="triggerButton btn btn-sm btn-secondary"
+                            class="triggerButton btn btn-sm btn-secondary mb-2 w-auto"
                             th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType}, disabled=${def.isDisabled ? 'disabled' : null}"
                             title="Click to start job now"
                             data-loading-text="Triggering...">
@@ -45,8 +46,8 @@
 
 
                     <form th:action="${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType} + '/' + ${def.isDisabled?'enable':'disable'}"
-                          method="POST">
-                        <div class="input-group input-group-sm">
+                          method="POST" class="mb-2 w-100">
+                        <div class="input-group input-group-sm w-100">
                             <button type="submit" class="btn btn-secondary"
                                     th:title="${def.isDisabled} ? 'Job is disabled. Click to enable' : 'Job is enabled. Click to disable'">
                                 <span th:if="${def.isDisabled}">Disabled <span
@@ -54,10 +55,10 @@
                                 <span th:if="${!def.isDisabled}">Enabled <span
                                         class="glyphicon glyphicon-ok"></span></span> <!--  TODO: change-->
                             </button>
-                            <textarea th:if="${def.isDisabled}" name="disabledComment" class="form-control" rows="3"
-                                      disabled th:text="${def.comment}"></textarea>
-                            <textarea th:if="${!def.isDisabled}" name="disabledComment" class="form-control" rows="3"
-                                      placeholder="Why disabled?"></textarea>
+                            <input th:if="${def.isDisabled}" name="disabledComment" class="form-control"
+                                      disabled th:text="${def.comment}"></input>
+                            <input th:if="${!def.isDisabled}" name="disabledComment" class="form-control"
+                                      placeholder="Why disabled?"></input>
                         </div><!-- /input-group -->
                     </form>
 

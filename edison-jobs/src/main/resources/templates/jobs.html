@@ -49,13 +49,13 @@
                                     class="triggerButton btn btn-sm btn-secondary"
                                     th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
                                     title="Click to start job now"
-                                    data-loading-text="Triggering...">
+                                    data-loading-text="Triggering..."> <!--  TODO: needs to be manually changed with js-->
                                <span>Trigger </span><span class="glyphicon glyphicon-play"></span> <!--  TODO: change-->
                             </button>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
                                     Details <span class="caret"></span></button> <!--  TODO: change-->
-                                <ul class="dropdown-menu" role="menu">
+                                <ul class="dropdown-menu">
                                     <li><a th:href="${job.jobUri}">Messages</a></li>
                                     <li th:if="${typeFilter == null}"><a th:id="'openButton-' + ${job.id}" th:href="@{|${edisonManagementBasePath}/jobs?type=${job.jobType}|}">Job Overview</a></li>
                                     <li th:if="${typeFilter != null}"><a th:id="'openButton-' + ${job.id}" th:href="@{|${edisonManagementBasePath}/jobs|}">Job Overview</a></li>
