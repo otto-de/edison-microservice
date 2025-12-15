@@ -52,7 +52,7 @@ jreleaser {
 
                     // Maximum number of attempts to verify state transition.
                     // Defaults to `60`.
-                    // Maven Central release can currently take up to 20 minutes, so we increased this to 120
+                    // Maven Central release can currently take up to 40 minutes, so we increased this to 240
                     //
                     maxRetries = 240
                 }
@@ -73,7 +73,7 @@ jreleaser {
 // Publish artifacts to sonatype by executing the release.sh script. Don't publish packages to github.
 //
 //
-def edison_version = "3.5.7-SNAPSHOT"
+def edison_version = "4.0.1-SNAPSHOT"  // <--- SET AND UPDATE EDISON VERSION HERE
 //
 //
 //
@@ -125,9 +125,6 @@ subprojects {
 //        }
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
-
-    targetCompatibility = '17'
-    sourceCompatibility = '17'
 
     /*
     // uncomment when using podman

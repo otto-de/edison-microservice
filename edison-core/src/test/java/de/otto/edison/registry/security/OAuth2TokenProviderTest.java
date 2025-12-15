@@ -1,6 +1,5 @@
 package de.otto.edison.registry.security;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +7,8 @@ import org.mockserver.client.MockServerClient;
 import org.mockserver.junit.jupiter.MockServerExtension;
 import org.mockserver.junit.jupiter.MockServerSettings;
 import org.springframework.http.HttpStatus;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.exc.MismatchedInputException;
 
 import java.util.concurrent.ExecutionException;
 
@@ -32,7 +33,7 @@ class OAuth2TokenProviderTest {
     }
 
     @Test
-    public void shouldGetAccessToken(MockServerClient client) throws OAuth2TokenException, ExecutionException, InterruptedException, JsonProcessingException {
+    public void shouldGetAccessToken(MockServerClient client) throws OAuth2TokenException, ExecutionException, InterruptedException, JacksonException {
         // given
         client.when(
                 request("/token")
@@ -83,7 +84,7 @@ class OAuth2TokenProviderTest {
                                 """));
 
         // when + then
-        assertThrows(JsonProcessingException.class, tokenProvider::getAccessToken);
+        assertThrows(MismatchedInputException.class, tokenProvider::getAccessToken);
     }
 
 }

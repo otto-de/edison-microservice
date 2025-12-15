@@ -1,5 +1,6 @@
 package de.otto.edison.status.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.annotations.Beta;
 import net.jcip.annotations.Immutable;
 
@@ -17,6 +18,7 @@ import static de.otto.edison.status.domain.Expectations.unspecifiedExpectations;
  */
 @Beta
 @Immutable
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExternalDependency {
     private final String name;
     private final String description;

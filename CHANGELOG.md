@@ -1,5 +1,26 @@
 # Release Notes
 
+## 4.0.0-SNAPSHOT
+* **[all]**: Update to Spring Boot 4.0.0
+  * See https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide for
+    an upgrade guide
+  
+    Noteworthy changes:
+        
+        Spring Boot 4.0 requires Java 17 or later. Using the latest LTS release of Java is encouraged.
+
+        Spring Boot applications can also be developed using Kotlin where v2.2 or later must be used.
+        
+        If you’re using GraalVM’s native-image, v25 or later must be used.
+        
+        Spring Boot 4 is based on Jakarta EE 11 and requires a Servlet 6.1 baseline.
+
+        Jackson 3 ist the default JSON library now.
+        
+If you manage dependencies directly, make sure you update them accordingly. In particular, you must use Spring Framework 7.x.
+    
+* **[togglz]**: Retryable on MongoTogglzRepository when load feature state fails due mongo timeouts
+
 ## 3.5.6
 * **[all]**: Update to Spring Boot 3.5.7
 

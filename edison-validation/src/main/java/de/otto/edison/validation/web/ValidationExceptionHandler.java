@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 public class ValidationExceptionHandler {
@@ -25,9 +24,9 @@ public class ValidationExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(value = UNPROCESSABLE_ENTITY)
+    @ResponseStatus(value = UNPROCESSABLE_CONTENT)
     public ResponseEntity<ErrorHalRepresentation> handleException(final MethodArgumentNotValidException exception) {
-        HttpStatus returnCode = UNPROCESSABLE_ENTITY;
+        HttpStatus returnCode = UNPROCESSABLE_CONTENT;
         if (exception.getTarget().getClass().isAnnotationPresent(UrlParameterEntity.class)) {
             returnCode = BAD_REQUEST;
         }

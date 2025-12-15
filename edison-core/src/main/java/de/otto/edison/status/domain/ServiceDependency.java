@@ -35,10 +35,6 @@ public class ServiceDependency extends ExternalDependency {
     private final List<String> mediaTypes;
     private final String authentication;
 
-    ServiceDependency() {
-        this(null, null, "", "", "", null, null, null, null, null);
-    }
-
     /**
      * Creates a ServiceDependency.
      * <p>

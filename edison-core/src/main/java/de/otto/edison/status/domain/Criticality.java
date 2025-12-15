@@ -1,5 +1,6 @@
 package de.otto.edison.status.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.otto.edison.annotations.Beta;
@@ -33,10 +34,7 @@ public final class Criticality {
     public final Level level;
     public final String disasterImpact;
 
-    private Criticality() {
-        this(null, null);
-    }
-
+    @JsonCreator
     private Criticality(final Level level,
                         final String disasterImpact) {
         this.level = level;

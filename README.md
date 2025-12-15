@@ -38,13 +38,18 @@ It's purpose is to provide a common implementation for cross-cutting requirement
 
 This project maintains its roadmap with [issues](https://github.com/otto-de/edison-microservice/issues) and [milestones](https://github.com/otto-de/edison-microservice/milestones).
 
-**3.5.x**: Edison Microservices for Spring Boot 3.5.x &#10004; - Compatible with Java 17 and greater
+**4.0.x**: Edison Microservices for Spring Boot 4.0.x &#10004; - Compatible with Java 17 and greater
 
-**3.4.x**: Edison Microservices for Spring Boot 3.4.x &#10004; - Compatible with Java 17 and greater
+**3.5.x**: Edison Microservices for Spring Boot 3.5.x &#10004; - Compatible with Java 17 and greater
 
 **2.7.x (EOL)**: Edison Microservices for Spring Boot 2.7.x &#10004; - Compatible with Java 11 and greater - End of Life, not updated any more
 
 **3.2.x (EOL)**: Edison Microservices for Spring Boot 3.2.x &#10004; - Compatible with Java 17 and greater - End of Life, not updated any more
+
+## Migration from Edison 3 to Edison 4
+
+You should be fine if you follow the Spring Boot 3 -> 4 migration guide:
+https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide
 
 ## Migration from Edison 2 to Edison 3
 
@@ -118,7 +123,6 @@ When migrating, take care of the following adjustments:
 ## Documentation
 
 Edison Modules:
-* [`edison-aws`](edison-auth-aws/README.md): AWS related configuration and togglz settings
 * [`edison-core`](edison-core/README.md): Main library of Edison microservices.
 * [`edison-jobs`](edison-jobs/README.md): Optional module providing a simple job library.
 * [`edison-mongo`](edison-mongo/README.md): Auto-configuration for MongoDB repositories plus implementation of MongoJobRepository and Togglz StateRepository.

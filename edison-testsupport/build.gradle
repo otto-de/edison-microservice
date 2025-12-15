@@ -11,8 +11,8 @@ dependencies {
     compileOnly libs.bundles.mongodb
 
     compileOnly libs.togglz.testing
-    testImplementation libs.testcontainers.mongo
-    testImplementation libs.testcontainers.junit
+
+    testImplementation libs.spring.boot.testcontainers
 
     api libs.spring.boot
     api libs.spring.boot.autoconfigure
@@ -22,7 +22,10 @@ dependencies {
     api libs.hamcrest
     api libs.mockito.core
     api libs.spring.test
+    api libs.spring.boot.test
     api libs.spring.boot.starter.test
+    api libs.spring.boot.resttestclient
+    api libs.spring.boot.webmvc.test
 
 }
 

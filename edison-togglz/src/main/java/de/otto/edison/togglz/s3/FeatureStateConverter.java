@@ -1,7 +1,6 @@
 package de.otto.edison.togglz.s3;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import de.otto.edison.togglz.configuration.TogglzProperties;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
@@ -61,7 +60,7 @@ public class FeatureStateConverter {
                     .build();
             final RequestBody requestBody = RequestBody.fromString(json);
             s3Client.putObject(putObjectRequest, requestBody);
-        } catch (final S3Exception | JsonProcessingException e) {
+        } catch (final S3Exception e) {
             throw new RuntimeException("Failed to set the feature state", e);
         }
     }

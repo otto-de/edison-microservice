@@ -11,3 +11,20 @@ updates:
       interval: "daily"
     target-branch: "main"
     open-pull-requests-limit: 25
+
+  - package-ecosystem: "gradle" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    target-branch: "3.5.x"
+    open-pull-requests-limit: 25
+    ignore:
+      # Ignore Spring Boot > 3
+      - dependency-name: "org.springframework.boot"
+        update-types: [ "version-update:semver-major" ]
+      # Ignore Spring Framework > 6
+      - dependency-name: "org.springframework"
+        update-types: [ "version-update:semver-major" ]
+      # Ignore Spring Security > 6
+      - dependency-name: "org.springframework.security"
+        update-types: [ "version-update:semver-major" ]

@@ -9,6 +9,7 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.resilience.annotation.Retryable;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
@@ -51,6 +52,7 @@ public class MongoTogglzRepository extends AbstractMongoRepository<String, Featu
      * @return The persisted feature state or <code>null</code>
      */
     @Override
+    @Retryable
     public FeatureState getFeatureState(final Feature feature) {
         final Optional<FeatureState> featureState = findOne(feature.name());
         return featureState.orElse(null);
