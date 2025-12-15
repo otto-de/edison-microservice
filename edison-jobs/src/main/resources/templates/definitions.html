@@ -40,8 +40,8 @@
                             class="triggerButton btn btn-sm btn-secondary mb-2 w-auto"
                             th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType}, disabled=${def.isDisabled ? 'disabled' : null}"
                             title="Click to start job now"
-                            data-loading-text="Triggering...">
-                        <span>Trigger </span><span class="glyphicon glyphicon-play"></span> <!--  TODO: change-->
+                            data-loading-text="Triggering..."> <!--  TODO: needs to be changes in js-->
+                        <span>Trigger </span><span class="bi bi-play-fill"></span>
                     </button>
 
 
@@ -51,14 +51,14 @@
                             <button type="submit" class="btn btn-secondary"
                                     th:title="${def.isDisabled} ? 'Job is disabled. Click to enable' : 'Job is enabled. Click to disable'">
                                 <span th:if="${def.isDisabled}">Disabled <span
-                                        class="glyphicon glyphicon-remove"></span></span> <!--  TODO: change-->
+                                        class="bi bi-x"></span></span>
                                 <span th:if="${!def.isDisabled}">Enabled <span
-                                        class="glyphicon glyphicon-ok"></span></span> <!--  TODO: change-->
+                                        class="bi bi-check"></span></span>
                             </button>
                             <input th:if="${def.isDisabled}" name="disabledComment" class="form-control"
-                                      disabled th:text="${def.comment}"></input>
+                                   disabled th:text="${def.comment}"></input>
                             <input th:if="${!def.isDisabled}" name="disabledComment" class="form-control"
-                                      placeholder="Why disabled?"></input>
+                                   placeholder="Why disabled?"></input>
                         </div><!-- /input-group -->
                     </form>
 
