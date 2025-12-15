@@ -16,7 +16,7 @@ spring:
 server:
     servlet:
         context-path: /
-    port: 8084
+    port: 8080
 
 management:
     endpoints:
