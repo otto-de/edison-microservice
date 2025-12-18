@@ -70,7 +70,12 @@ public class MongoProperties {
     private String password = "";
 
     /**
-     * database user password
+     * use iam authentication for documentdb
+     */
+    private boolean iamAuthenticationEnabled = false;
+
+    /**
+     * use ssl connection
      */
     private boolean sslEnabled;
 
@@ -229,6 +234,14 @@ public class MongoProperties {
         this.password = password;
     }
 
+    public boolean isIamAuthenticationEnabled() {
+        return iamAuthenticationEnabled;
+    }
+
+    public void setIamAuthenticationEnabled(final boolean iamAuthenticationEnabled) {
+        this.iamAuthenticationEnabled = iamAuthenticationEnabled;
+    }
+
     public boolean isSslEnabled() {
         return sslEnabled;
     }
@@ -346,15 +359,19 @@ public class MongoProperties {
     }
 
     private boolean useAuthorizedConnection() {
-        return !getUser().isEmpty() && !getPassword().isEmpty();
+        return (!getUser().isEmpty() && !getPassword().isEmpty()) || isIamAuthenticationEnabled();
     }
 
     private MongoCredential getMongoCredentials() {
-        return createCredential(
-                getUser(),
-                getAuthenticationDb(),
-                getPassword().toCharArray()
-        );
+        if (isIamAuthenticationEnabled()) {
+            return MongoCredential.createAwsCredential(null, null);
+        } else {
+            return createCredential(
+                    getUser(),
+                    getAuthenticationDb(),
+                    getPassword().toCharArray()
+            );
+        }
     }
 
     private ServerAddress toServerAddress(final String server) {
