@@ -73,7 +73,7 @@ jreleaser {
 // This adds a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
 //
 //
-def edison_version = "4.0.1"  // <--- SET AND UPDATE EDISON VERSION HERE
+def edison_version = "4.0.2-SNAPSHOT"  // <--- SET AND UPDATE EDISON VERSION HERE
 //
 //
 //
