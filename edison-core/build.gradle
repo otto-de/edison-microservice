@@ -2,6 +2,9 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 dependencies {
+
+    api platform(project(":edison-platform"))
+
     compileOnly libs.aws.sdk.ssm
     compileOnly libs.aws.sdk.imds
     api libs.spring.boot.starter.web

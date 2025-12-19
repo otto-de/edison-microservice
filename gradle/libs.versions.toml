@@ -22,6 +22,7 @@ spring-boot-webmvc-test = { module = "org.springframework.boot:spring-boot-webmv
 spring-boot-resttestclient = { module = "org.springframework.boot:spring-boot-resttestclient" }
 spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
 spring-context-support = { module = "org.springframework:spring-context-support" }
+spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 #spring-retry = { module = "org.springframework.retry:spring-retry" }
 
 #spring-security = { module = "org.springframework.security:spring-security-core" }
@@ -36,6 +37,7 @@ aws-sdk-ssm = { module = "software.amazon.awssdk:ssm", version.ref = "aws-sdk" }
 aws-sdk-dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "aws-sdk" }
 aws-sdk-imds = { module = "software.amazon.awssdk:imds", version.ref = "aws-sdk" }
 aws-sdk-netty-nio-client = { module = "software.amazon.awssdk:netty-nio-client", version.ref = "aws-sdk" }
+aws-sdk-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws-sdk" }
 
 unboundid-ldapsdk = { module = "com.unboundid:unboundid-ldapsdk" }
 

@@ -1,0 +1,49 @@
+plugins {
+    id("java-platform")
+    id("maven-publish")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+
+    api platform(libs.aws.sdk.bom)
+    api platform(libs.spring.boot.dependencies)
+
+    constraints {
+        api libs.togglz.console
+        api libs.togglz.spring.boot.starter
+        api libs.togglz.spring.web
+        api libs.togglz.testing
+        api libs.jcip.annotations
+        api libs.edison.hal
+        api libs.validator.collection
+        api libs.mockserver.netty
+        api libs.mockserver.client.java
+        api libs.mockserver.junit.jupiter
+    }
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+
+    repositories {
+        maven {
+            // Our settingsDirectory is the project root dir.
+            // We want to 'publish' to the specified dir to have the artifacts uploaded with JReleaser from that location afterwards.
+            url = layout.settingsDirectory.dir('build/staging-deploy')
+        }
+    }
+}
+

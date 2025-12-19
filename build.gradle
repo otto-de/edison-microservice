@@ -88,17 +88,6 @@ group = 'de.otto.edison'
 version = edison_version
 
 subprojects {
-    apply plugin: 'eclipse'
-    apply plugin: 'project-report'
-    apply plugin: 'java-library'
-    apply plugin: 'maven-publish'
-    apply plugin: 'io.spring.dependency-management'
-
-    dependencyManagement {
-        imports {
-            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-        }
-    }
 
     version = parent.version
     group = parent.group
@@ -108,77 +97,83 @@ subprojects {
         mavenLocal()
     }
 
-    task allDeps(type: DependencyReportTask) {}
+    if (project.name == 'edison-platform') {
+        println("Configuring edison-platform project...")
+        apply plugin: 'maven-publish'
+    } else {
+        apply plugin: 'eclipse'
+        apply plugin: 'project-report'
+        apply plugin: 'java-library'
+        apply plugin: 'maven-publish'
+        apply plugin: 'io.spring.dependency-management'
 
-    apply from: "${rootDir}/gradle/idea.gradle"
-    apply from: "${rootDir}/gradle/compile.gradle"
-    apply from: "${rootDir}/gradle/test.gradle"
-    apply from: "${rootDir}/gradle/jacoco.gradle"
-    apply from: "${rootDir}/gradle/maven.gradle"
-    apply from: "${rootDir}/gradle/signing.gradle"
 
-    dependencies {
-        compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-//        constraints {
-//            implementation 'junit:junit:4.13.2'
-//            // some dependencies bring junit 4.12 which has a security vulnerability
+//    dependencyManagement {
+//        imports {
+//            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 //        }
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    }
+//    }
 
-    /*
-    // uncomment when using podman
-    test {
-        OperatingSystem os = DefaultNativePlatform.currentOperatingSystem;
-        if (os.isMacOsX()) {
-            environment "DOCKER_HOST", "unix:///tmp/podman.sock"
-            environment "TESTCONTAINERS_RYUK_DISABLED", "true"
+
+        task allDeps(type: DependencyReportTask) {}
+
+        apply from: "${rootDir}/gradle/idea.gradle"
+        apply from: "${rootDir}/gradle/compile.gradle"
+        apply from: "${rootDir}/gradle/test.gradle"
+        apply from: "${rootDir}/gradle/jacoco.gradle"
+        apply from: "${rootDir}/gradle/maven.gradle"
+        apply from: "${rootDir}/gradle/signing.gradle"
+
+        dependencies {
+            implementation platform(project(":edison-platform"))
+            compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+            testRuntimeOnly("org.junit.platform:junit-platform-launcher")
         }
-    }
-    */
 
-    java {
-        withJavadocJar()
-        withSourcesJar()
-    }
 
-    if (!name.contains("example")) {
-        publishing {
-            publications {
-                mavenJava(MavenPublication) {
-                    pom {
-                        url = 'https://github.com/otto-de/edison-microservice'
-                        licenses {
-                            license {
-                                name = 'The Apache License, Version 2.0'
-                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            }
-                        }
-                        developers {
-                            developer {
-                                id = 'MediaMarco'
-                                name = 'Marco Geweke'
-                                email = 'marco.geweke@gmail.com'
-                            }
-                            developer {
-                                id = 'gsteinacker'
-                                name = 'Guido Steinacker'
-                            }
-                        }
-                        scm {
-                            connection = 'scm:git:https://github.com/otto-de/edison-microservice.git'
-                            developerConnection = 'scm:git:ssh://github.com/otto-de/edison-microservice.git'
+        java {
+            withJavadocJar()
+            withSourcesJar()
+        }
+
+        if (!name.contains("example")) {
+            publishing {
+                publications {
+                    mavenJava(MavenPublication) {
+                        pom {
                             url = 'https://github.com/otto-de/edison-microservice'
+                            licenses {
+                                license {
+                                    name = 'The Apache License, Version 2.0'
+                                    url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id = 'MediaMarco'
+                                    name = 'Marco Geweke'
+                                    email = 'marco.geweke@gmail.com'
+                                }
+                                developer {
+                                    id = 'gsteinacker'
+                                    name = 'Guido Steinacker'
+                                }
+                            }
+                            scm {
+                                connection = 'scm:git:https://github.com/otto-de/edison-microservice.git'
+                                developerConnection = 'scm:git:ssh://github.com/otto-de/edison-microservice.git'
+                                url = 'https://github.com/otto-de/edison-microservice'
+                            }
                         }
                     }
                 }
-            }
 
-            repositories {
-                maven {
-                    // Our settingsDirectory is the project root dir.
-                    // We want to 'publish' to the specified dir to have the artifacts uploaded with JReleaser from that location afterwards.
-                    url = layout.settingsDirectory.dir('build/staging-deploy')
+                repositories {
+                    maven {
+                        // Our settingsDirectory is the project root dir.
+                        // We want to 'publish' to the specified dir to have the artifacts uploaded with JReleaser from that location afterwards.
+                        url = layout.settingsDirectory.dir('build/staging-deploy')
+                    }
                 }
             }
         }
