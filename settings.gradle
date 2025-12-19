@@ -6,6 +6,7 @@ pluginManagement {
 
 rootProject.name = 'edison-microservice'
 
+include "edison-platform"
 include "edison-testsupport"
 include "edison-mongo"
 include "edison-jobs"
