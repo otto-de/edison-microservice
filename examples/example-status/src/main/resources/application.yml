@@ -29,12 +29,18 @@ edison:
         description: Example service to show how to use edison-core in your microservices
         environment: local
         group: example
-        title: Example Status
+        title: example-status [develop]
     status:
         team:
             business-contact: edison-team@example.org
             name: Edison Team
             technical-contact: edison-dev@example.org
+
+        cluster:
+            enabled: true
+            color-header: X-Color
+            color-state-header: X-Staging
+
 #    ldap:
 #        enabled: false
 #        host: ldap.example.com

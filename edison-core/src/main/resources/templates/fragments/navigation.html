@@ -2,13 +2,37 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 
-    <nav class="navbar navbar-default navbar-fixed-top" th:fragment="navigation">
+<!--    <nav class="navbar navbar-default navbar-fixed-top" th:fragment="navigation">-->
+<!--        <div class="container">-->
+<!--            <div class="navbar-header" th:replace="~{fragments/navbar/header :: header}" />-->
+
+<!--            <div id="navbar" class="navbar-collapse collapse">-->
+<!--                <ul class="nav navbar-nav" th:replace="~{fragments/navbar/main :: main}" />-->
+<!--                <ul class="nav navbar-nav ms-auto" th:replace="~{fragments/navbar/right :: right}" />-->
+<!--            </div>&lt;!&ndash;/.nav-collapse &ndash;&gt;-->
+<!--        </div>-->
+<!--    </nav>-->
+
+    <nav class="navbar navbar-expand-lg bg-primary fixed-top py-3 shadow"  th:fragment="navigation">
         <div class="container">
-            <div class="navbar-header" th:replace="~{fragments/navbar/header :: header}" />
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav" th:replace="~{fragments/navbar/main :: main}" />
-                <ul class="nav navbar-nav navbar-right" th:replace="~{fragments/navbar/right :: right}" />
-            </div><!--/.nav-collapse -->
+
+             <div class="navbar-header" th:replace="~{fragments/navbar/header :: header}"></div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav me-auto" th:replace="~{fragments/navbar/main :: main}"> </ul>
+                <ul class="navbar-nav ms-auto" th:insert="~{fragments/navbar/right :: right}"> </ul>
+            </div>
+
+
+        </div>
+        <div class="position-absolute end-0 top-50 translate-middle-y me-5 navbar-collapse">
+            <button class="btn bg-light-subtle" id="darkModeToggle" type="button">
+                <i class="bi bi-moon"></i>
+            </button>
         </div>
     </nav>
 

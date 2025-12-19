@@ -11,7 +11,7 @@ function getLog(logIndex) {
         error: function (data, status, error) {
             console.log("Error polling job status.");
             var jobStatus = $('#job-status');
-            jobStatus.attr("class", "label label-danger");
+            jobStatus.attr("class", "badge bg-danger");
             jobStatus.attr("style", "width:10em; height:2em;");
             jobStatus.html("<span>UNKNOWN</span>");
         },
@@ -42,20 +42,16 @@ function getLog(logIndex) {
             } else {
                 var jobStatus = $('#job-status');
                 if (data.status === 'OK') {
-                    jobStatus.attr("class", "label label-success");
-                    jobStatus.attr("style", "width:10em; height:2em;");
+                    jobStatus.attr("class", "badge bg-success");
                     jobStatus.html("<span>" + data.status + "</span>");
                 } else if (data.status === 'SKIPPED') {
-                    jobStatus.attr("class", "label label-default");
-                    jobStatus.attr("style", "width:10em; height:2em;");
+                    jobStatus.attr("class", "badge bg-secondary");
                     jobStatus.html("<span>" + data.status + "</span>");
                 } else if (data.status === 'ERROR') {
-                    jobStatus.attr("class", "label label-danger");
-                    jobStatus.attr("style", "width:10em; height:2em;");
+                    jobStatus.attr("class", "badge bg-danger");
                     jobStatus.html("<span>" + data.status + "</span>");
                 } else if (data.status === 'DEAD') {
-                    jobStatus.attr("class", "label label-warning");
-                    jobStatus.attr("style", "width:10em; height:2em; background: rgba(230, 110, 30, 1);");
+                    jobStatus.attr("class", "badge bg-warning");
                     jobStatus.html("<span>" + data.status + "</span>");
                 }
                 $("#job-stopped").text(formatUTCToLocalDateTime(data.stoppedIso));

@@ -33,20 +33,16 @@ function update() {
 
                 if (dataRow.state !== 'Running') {
                     if (dataRow.status === 'OK') {
-                        jobStatus.attr("class", "label label-success");
-                        jobStatus.attr("style", "width:10em; height:2em;");
+                        jobStatus.attr("class", "badge bg-success");
                         jobStatus.html("<span>" + dataRow.status + "</span>");
                     } else if (dataRow.status === 'SKIPPED') {
-                        jobStatus.attr("class", "label label-default");
-                        jobStatus.attr("style", "width:10em; height:2em;");
+                        jobStatus.attr("class", "badge bg-secondary");
                         jobStatus.html("<span>" + dataRow.status + "</span>");
                     } else if (dataRow.status === 'ERROR') {
-                        jobStatus.attr("class", "label label-danger");
-                        jobStatus.attr("style", "width:10em; height:2em;");
+                        jobStatus.attr("class", "badge bg-danger");
                         jobStatus.html("<span>" + dataRow.status + "</span>");
                     } else if (dataRow.status === 'DEAD') {
-                        jobStatus.attr("class", "label label-warning");
-                        jobStatus.attr("style", "width:10em; height:2em; background: rgba(230, 110, 30, 1);");
+                        jobStatus.attr("class", "badge bg-warning");
                         jobStatus.html("<span>" + dataRow.status + "</span>");
                     }
                     $("#trigger-button-" + dataRow.id).prop('disabled', false);

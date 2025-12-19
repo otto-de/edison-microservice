@@ -9,13 +9,31 @@
     <title th:text="${@applicationInfo.title}">Edison µService</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
     <style>
-        body { padding-top: 70px; }
+        :root {
+            --primary-color: #8F9FFA;
+            --primary-color-rgb: 143, 159, 250;
+
+            --bs-primary: var(--primary-color);
+            --bs-primary-rgb: var(--primary-color-rgb);
+        }
+
+        [data-bs-theme="dark"] {
+            --bs-primary: var(--primary-color);
+            --bs-primary-rgb: var(--primary-color-rgb);
+        }
+
+        .dropdown-item:active,
+        .dropdown-item.active {
+            background-color: var(--primary-color) !important;
+            color: #fff !important;
+        }
+
+        body { padding-top: 100px; }
     </style>
 
 </head>

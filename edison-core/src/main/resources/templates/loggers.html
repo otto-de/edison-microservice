@@ -1,58 +1,62 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="light">
 
-<head th:replace="~{fragments/head  :: head}" />
+<head>
+    <script src="/js/themeInit.js"></script>
+    <th:block th:replace="~{fragments/head  :: head}"/>
+</head>
 
 <body>
 
-    <div th:replace="~{fragments/navigation  :: navigation}" />
+<div th:replace="~{fragments/navigation  :: navigation}"></div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Loggers</h3>
-                    </div>
-                    <div class="panel-body">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Logger</th>
-                                <th>Level</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="logger : ${loggers}">
-                                <td th:text="${logger.displayName}">Logger Name</td>
-                                <td>
-                                    <form th:action="${baseUri} + ${edisonManagementBasePath} + '/loggers'" method="POST">
-                                        <div class="input-group input-group-sm">
-                                            <select class="form-control" name="level">
-                                                <option th:selected="${#strings.equals(logger.effectiveLevel, 'TRACE')}">TRACE</option>
-                                                <option th:selected="${logger.effectiveLevel=='DEBUG'}">DEBUG</option>
-                                                <option th:selected="${logger.effectiveLevel=='INFO'}">INFO</option>
-                                                <option th:selected="${logger.effectiveLevel=='WARN'}">WARN</option>
-                                                <option th:selected="${logger.effectiveLevel=='ERROR'}">ERROR</option>
-                                            </select>
-                                            <input type="hidden" hidden="hidden" name="name" th:value="${logger.name}"/>
-                                            <span class="input-group-btn">
-                                                <button type="submit" class="btn btn-primary" th:title="'Log Level'">
-                                                    <span class="glyphicon glyphicon-ok"></span>
-                                                </button>
-                                            </span>
-                                        </div><!-- /input-group -->
-                                    </form>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card h-100">
+                <div class="card-header bg-body-secondary">
+                    <h3 class="card-title">Loggers</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Logger</th>
+                            <th>Level</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="logger : ${loggers}">
+                            <td th:text="${logger.displayName}">Logger Name</td>
+                            <td>
+                                <form th:action="${baseUri} + ${edisonManagementBasePath} + '/loggers'" method="POST">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="level">
+                                            <option th:selected="${#strings.equals(logger.effectiveLevel, 'TRACE')}">
+                                                TRACE
+                                            </option>
+                                            <option th:selected="${logger.effectiveLevel=='DEBUG'}">DEBUG</option>
+                                            <option th:selected="${logger.effectiveLevel=='INFO'}">INFO</option>
+                                            <option th:selected="${logger.effectiveLevel=='WARN'}">WARN</option>
+                                            <option th:selected="${logger.effectiveLevel=='ERROR'}">ERROR</option>
+                                        </select>
+                                        <input type="hidden" hidden="hidden" name="name" th:value="${logger.name}"/>
+                                        <button type="submit" class="btn btn-success" th:title="'Log Level'">
+                                            <i class="bi bi-check"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div> <!-- /container -->
+    </div>
+</div> <!-- /container -->
 
-    <span th:replace="~{fragments/footer :: footer}" />
+<span th:replace="~{fragments/footer :: footer}"></span>
 </body>
+<script th:src="@{/js/darkmodeToggle.js}"></script>
 </html>

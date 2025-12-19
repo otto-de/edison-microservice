@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
-                <ul class="nav navbar-nav" th:with="url=${requestURI}" th:fragment="main">
-                    <li th:each="item : ${@mainNavBar.items}" th:classappend="${url.endsWith(item.getLink()) ? 'active' : ''}">
-                        <a th:href="@{${item.link}}" th:text="${item.title}" />
-                    </li>
-                </ul>
+<ul class="navbar-nav mb-0 d-flex justify-content-center list-unstyled gap-2" th:with="url=${requestURI}"
+    th:fragment="main">
+    <li th:each="item : ${@mainNavBar.items}" th:classappend="${url.endsWith(item.getLink()) ? 'active' : ''}">
+        <a class="navbar-brand btn bg-light-subtle fs-4 d-flex align-items-center" th:href="@{${item.link}}">
+            <span th:text="${item.title}"></span>
+        </a>
+    </li>
+</ul>
 </body>
 </html>

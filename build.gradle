@@ -70,7 +70,7 @@ jreleaser {
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
 // Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-// Publish artifacts to sonatype by executing the release.sh script. Don't publish packages to github.
+// Publish artifacts to sonatype by executing the release.sh script.
 //
 //
 def edison_version = "4.0.1-SNAPSHOT"  // <--- SET AND UPDATE EDISON VERSION HERE

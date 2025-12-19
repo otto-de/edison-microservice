@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head th:replace="~{fragments/head  :: head}" />
+<head>
+    <script src="/js/themeInit.js"></script>
+    <th:block th:replace="~{fragments/head  :: head}"></th:block>
+</head>
 
 <body>
 
-<div th:replace="~{fragments/navigation  :: navigation}" />
+<div th:replace="~{fragments/navigation  :: navigation}"></div>
 
 <div class="container">
-    <div class="panel panel-default" th:each="def : ${jobdefinitions}">
-        <div class="panel-heading">
-            <h3 class="panel-title" th:text="${def.name}"></h3>
+    <div class="card h-100 mb-4" th:each="def : ${jobdefinitions}">
+        <div class="card-header">
+            <h3 class="card-title mb-0" th:text="${def.name}"></h3>
         </div>
-        <div class="panel-body">
-            <div class="row>">
+        <div class="card-body">
+            <div class="row">
                 <div class="col-md-4">
                     <label for="jobType">Job Type: </label>
                     <span id="jobType" th:text="${def.jobType}"></span>
@@ -28,30 +31,34 @@
                     <span id="retries" th:text="${def.retry}"></span>
                 </div>
                 <div class="col-md-4" th:text="${def.description}">Description</div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <a id="openButton" th:href="@{|${edisonManagementBasePath}/jobs?type=${def.jobType}|}" class="btn btn-sm btn-default">Job Overview</a>
-                    </div>
-                    <div class="form-group">
-                        <button type="button"
-                                class="triggerButton btn btn-sm btn-default"
-                                th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType}, disabled=${def.isDisabled ? 'disabled' : null}"
-                                title="Click to start job now"
-                                data-loading-text="Triggering...">
-                            <span>Trigger </span><span class="glyphicon glyphicon-play"></span>
-                        </button>
-                    </div>
+                <div class="col-md-4 d-flex flex-column align-items-start">
 
-                    <form th:action="${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType} + '/' + ${def.isDisabled?'enable':'disable'}" method="POST">
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-btn">
-                                <button type="submit" class="btn btn-default" th:title="${def.isDisabled} ? 'Job is disabled. Click to enable' : 'Job is enabled. Click to disable'">
-                                    <span th:if="${def.isDisabled}">Disabled <span class="glyphicon glyphicon-remove"></span></span>
-                                    <span th:if="${!def.isDisabled}">Enabled <span class="glyphicon glyphicon-ok"></span></span>
-                                </button>
-                            </span>
-                            <textarea th:if="${def.isDisabled}" name="disabledComment" class="form-control" rows="3" disabled="true" th:text="${def.comment}"></textarea>
-                            <textarea th:if="${!def.isDisabled}" name="disabledComment" class="form-control" rows="3" placeholder="Why disabled?"></textarea>
+                    <a id="openButton" th:href="@{|${edisonManagementBasePath}/jobs?type=${def.jobType}|}"
+                       class="btn btn-sm btn-secondary mb-2 w-auto">Job Overview</a>
+
+                    <button type="button"
+                            class="triggerButton btn btn-sm btn-secondary mb-2 w-auto"
+                            th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType}, disabled=${def.isDisabled ? 'disabled' : null}"
+                            title="Click to start job now"
+                            data-loading-text="Triggering..."> <!--  TODO: needs to be changes in js-->
+                        <span>Trigger </span><span class="bi bi-play-fill"></span>
+                    </button>
+
+
+                    <form th:action="${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType} + '/' + ${def.isDisabled?'enable':'disable'}"
+                          method="POST" class="mb-2 w-100">
+                        <div class="input-group input-group-sm w-100">
+                            <button type="submit" class="btn btn-secondary"
+                                    th:title="${def.isDisabled} ? 'Job is disabled. Click to enable' : 'Job is enabled. Click to disable'">
+                                <span th:if="${def.isDisabled}">Disabled <span
+                                        class="bi bi-x"></span></span>
+                                <span th:if="${!def.isDisabled}">Enabled <span
+                                        class="bi bi-check"></span></span>
+                            </button>
+                            <input th:if="${def.isDisabled}" name="disabledComment" class="form-control"
+                                   disabled th:text="${def.comment}"></input>
+                            <input th:if="${!def.isDisabled}" name="disabledComment" class="form-control"
+                                   placeholder="Why disabled?"></input>
                         </div><!-- /input-group -->
                     </form>
 
@@ -63,9 +70,11 @@
 </div> <!-- /container -->
 
 
-<span th:replace="~{fragments/footer :: footer}" />
+<span th:replace="~{fragments/footer :: footer}"/>
 
 <script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
+
+<script th:src="@{/js/darkmodeToggle.js}"></script>
 </body>
 </html>
 

@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head th:replace="~{fragments/head  :: head}" />
+<head>
+    <script src="/js/themeInit.js"></script>
+    <th:block th:replace="~{fragments/head  :: head}"></th:block>
+</head>
 
 <body>
 
-<div th:replace="~{fragments/navigation  :: navigation}" />
+<div th:replace="~{fragments/navigation  :: navigation}"/>
 
-<div class="container" id="jobsContainer" th:data-type-filter="${typeFilter}" th:data-jobs-url="${baseUri} + ${edisonManagementBasePath} + '/jobs'">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Job Overview</h3>
+<div class="container" id="jobsContainer" th:data-type-filter="${typeFilter}"
+     th:data-jobs-url="${baseUri} + ${edisonManagementBasePath} + '/jobs'">
+    <div class="card h-100">
+        <div class="card-header">
+            <h3 class="card-title mb-0">Job Overview</h3>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -29,41 +33,62 @@
                     <td th:text="${job.jobType}">&nbsp;</td>
                     <td>
                         <th:block th:if="${job.state} != 'Running'">
-                            <span th:if="${job.status} == 'OK'"  class="label label-success" th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
-                            <span th:if="${job.status} == 'SKIPPED'"  class="label label-default" th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
-                            <span th:if="${job.status} == 'ERROR'"  class="label label-danger" th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
-                            <span th:if="${job.status} == 'DEAD'"  class="label label-warning" th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'OK'" class="badge bg-success"
+                                  th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'SKIPPED'" class="badge bg-secondary"
+                                  th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'ERROR'" class="badge bg-danger"
+                                  th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
+                            <span th:if="${job.status} == 'DEAD'" class="badge bg-warning"
+                                  th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
                         </th:block>
-                        <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING" class="label progress-bar progress-bar-info progress-bar-striped active" style="width:80%; height:2em;" th:id="'job-status-' + ${job.id}">RUNNING</span></th:block>
+                        <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING"
+                                                                          class="badge bg-info text-dark"
+                                                                          th:id="'job-status-' + ${job.id}">RUNNING</span>
+                        </th:block>
                     </td>
-                    <td class="job-started" th:text="${job.started}" th:data-datetime="${job.startedIso}" th:id="'job-started-' + ${job.id}">&nbsp;</td>
-                    <td class="job-stopped" th:text="${job.stopped}" th:data-datetime="${job.stoppedIso}" th:id="'job-stopped-' + ${job.id}">&nbsp;</td>
+                    <td class="job-started" th:text="${job.started}" th:data-datetime="${job.startedIso}"
+                        th:id="'job-started-' + ${job.id}">&nbsp;
+                    </td>
+                    <td class="job-stopped" th:text="${job.stopped}" th:data-datetime="${job.stoppedIso}"
+                        th:id="'job-stopped-' + ${job.id}">&nbsp;
+                    </td>
                     <td th:text="${job.runtime}" th:id="'job-runtime-' + ${job.id}">&nbsp;</td>
                     <td>
                         <div class="btn-group">
                             <button type="button"
                                     th:id="'trigger-button-' + ${job.id}"
-                                    class="triggerButton btn btn-sm btn-default"
+                                    class="triggerButton btn btn-sm btn-secondary"
                                     th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
                                     title="Click to start job now"
                                     data-loading-text="Triggering...">
-                                <span>Trigger </span><span class="glyphicon glyphicon-play"></span>
+                                <!--  TODO: needs to be manually changed with js-->
+                                <span>Trigger </span><span class="bi bi-play-fill"></span>
                             </button>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-                                    Details <span class="caret"></span></button>
-                                <ul class="dropdown-menu" role="menu">
+                                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle"
+                                        data-bs-toggle="dropdown">
+                                    Details
+                                </button>
+                                <ul class="dropdown-menu">
                                     <li><a th:href="${job.jobUri}">Messages</a></li>
-                                    <li th:if="${typeFilter == null}"><a th:id="'openButton-' + ${job.id}" th:href="@{|${edisonManagementBasePath}/jobs?type=${job.jobType}|}">Job Overview</a></li>
-                                    <li th:if="${typeFilter != null}"><a th:id="'openButton-' + ${job.id}" th:href="@{|${edisonManagementBasePath}/jobs|}">Job Overview</a></li>
-                                    <li><a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}">Job Definition</a></li>
+                                    <li th:if="${typeFilter == null}"><a th:id="'openButton-' + ${job.id}"
+                                                                         th:href="@{|${edisonManagementBasePath}/jobs?type=${job.jobType}|}">Job
+                                        Overview</a></li>
+                                    <li th:if="${typeFilter != null}"><a th:id="'openButton-' + ${job.id}"
+                                                                         th:href="@{|${edisonManagementBasePath}/jobs|}">Job
+                                        Overview</a></li>
+                                    <li><a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}">Job
+                                        Definition</a></li>
                                 </ul>
                             </div>
                         </div>
 
                     </td>
                 </tr>
-                <tr th:if="${#lists.isEmpty(jobs)}"><td colspan="7">No Jobs</td></tr>
+                <tr th:if="${#lists.isEmpty(jobs)}">
+                    <td colspan="7">No Jobs</td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -71,11 +96,13 @@
 </div> <!-- /container -->
 
 
-<span th:replace="~{fragments/footer :: footer}" />
+<span th:replace="~{fragments/footer :: footer}"/>
 
 <script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
 <script th:src="${baseUri} + '/internal/js/datetime.js'"></script>
 <script th:src="${baseUri} + '/internal/js/jobs.js'"></script>
+
+<script th:src="@{/js/darkmodeToggle.js}"></script>
 
 </body>
 </html>

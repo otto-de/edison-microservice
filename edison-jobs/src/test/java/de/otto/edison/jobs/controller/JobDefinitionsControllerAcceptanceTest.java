@@ -43,7 +43,7 @@ public class JobDefinitionsControllerAcceptanceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class)
-                .value(body -> assertThat(body, containsString("<h3 class=\"panel-title\">" + MockJobRunnable.MOCK_JOB_NAME + "</h3>")));
+                .value(body -> assertThat(body, containsString("<h3 class=\"card-title mb-0\">" + MockJobRunnable.MOCK_JOB_NAME + "</h3>")));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class JobDefinitionsControllerAcceptanceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class)
-                .value(body -> assertThat(body, containsString("<h3 class=\"panel-title\">" + MockJobRunnable.MOCK_JOB_NAME + "</h3>")));
+                .value(body -> assertThat(body, containsString("<h3 class=\"card-title mb-0\">" + MockJobRunnable.MOCK_JOB_NAME + "</h3>")));
     }
 
 }
