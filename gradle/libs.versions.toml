@@ -36,6 +36,7 @@ aws-sdk-s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws-sdk" }
 aws-sdk-ssm = { module = "software.amazon.awssdk:ssm", version.ref = "aws-sdk" }
 aws-sdk-dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "aws-sdk" }
 aws-sdk-imds = { module = "software.amazon.awssdk:imds", version.ref = "aws-sdk" }
+aws-sdk-auth = { module = "software.amazon.awssdk:auth", version.ref = "aws-sdk" }
 aws-sdk-netty-nio-client = { module = "software.amazon.awssdk:netty-nio-client", version.ref = "aws-sdk" }
 aws-sdk-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws-sdk" }
 
@@ -81,7 +82,6 @@ togglz-testing = { module = "org.togglz:togglz-testing", version.ref = "togglz" 
 testcontainers-mongo = { module = "org.testcontainers:testcontainers-mongodb" }
 testcontainers-junit = { module = "org.testcontainers:testcontainers-junit-jupiter" }
 json-path = { module = "com.jayway.jsonpath:json-path" }
-rest-assured = { module = "io.rest-assured:rest-assured" }
 commons-codec = { module = "commons-codec:commons-codec" }
 awaitility = { module = "org.awaitility:awaitility" }
 
