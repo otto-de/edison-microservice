@@ -37,7 +37,7 @@
                        class="btn btn-sm btn-secondary mb-2 w-auto">Job Overview</a>
 
                     <button type="button"
-                            class="triggerButton btn btn-sm btn-secondary mb-2 w-auto"
+                            class="triggerButton btn btn-sm btn-primary mb-2 w-auto"
                             th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType}, disabled=${def.isDisabled ? 'disabled' : null}"
                             title="Click to start job now"
                             data-loading-text="Triggering..."> <!--  TODO: needs to be changes in js-->
@@ -48,7 +48,7 @@
                     <form th:action="${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${def.jobType} + '/' + ${def.isDisabled?'enable':'disable'}"
                           method="POST" class="mb-2 w-100">
                         <div class="input-group input-group-sm w-100">
-                            <button type="submit" class="btn btn-secondary"
+                            <button type="submit" class="btn" th:classappend="${def.isDisabled ? 'btn-danger' : 'btn-success'}"
                                     th:title="${def.isDisabled} ? 'Job is disabled. Click to enable' : 'Job is enabled. Click to disable'">
                                 <span th:if="${def.isDisabled}">Disabled <span
                                         class="bi bi-x"></span></span>

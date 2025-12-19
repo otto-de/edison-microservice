@@ -55,34 +55,31 @@
                     </td>
                     <td th:text="${job.runtime}" th:id="'job-runtime-' + ${job.id}">&nbsp;</td>
                     <td>
-                        <div class="btn-group">
-                            <button type="button"
-                                    th:id="'trigger-button-' + ${job.id}"
-                                    class="triggerButton btn btn-sm btn-secondary"
-                                    th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
-                                    title="Click to start job now"
-                                    data-loading-text="Triggering...">
-                                <!--  TODO: needs to be manually changed with js-->
-                                <span>Trigger </span><span class="bi bi-play-fill"></span>
-                            </button>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle"
-                                        data-bs-toggle="dropdown">
-                                    Details
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a th:href="${job.jobUri}">Messages</a></li>
-                                    <li th:if="${typeFilter == null}"><a th:id="'openButton-' + ${job.id}"
-                                                                         th:href="@{|${edisonManagementBasePath}/jobs?type=${job.jobType}|}">Job
-                                        Overview</a></li>
-                                    <li th:if="${typeFilter != null}"><a th:id="'openButton-' + ${job.id}"
-                                                                         th:href="@{|${edisonManagementBasePath}/jobs|}">Job
-                                        Overview</a></li>
-                                    <li><a th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}">Job
-                                        Definition</a></li>
-                                </ul>
-                            </div>
-                        </div>
+                        <button type="button"
+                                th:id="'trigger-button-' + ${job.id}"
+                                class="triggerButton btn btn-sm btn-primary"
+                                th:attr="data-trigger-url=${baseUri} + ${edisonManagementBasePath} + '/jobs/' + ${job.jobType}, disabled=${job.isDisabled || (job.state == 'Running') ? 'disabled' : null}"
+                                title="Click to start job now"
+                                data-loading-text="Triggering...">
+                            <!--  TODO: needs to be manually changed with js-->
+                            <span>Trigger </span><span class="bi bi-play-fill"></span>
+                        </button>
+
+                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle"
+                                data-bs-toggle="dropdown">
+                            Details
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="${job.jobUri}">Messages</a></li>
+                            <li th:if="${typeFilter == null}"><a class="dropdown-item" th:id="'openButton-' + ${job.id}"
+                                                                 th:href="@{|${edisonManagementBasePath}/jobs?type=${job.jobType}|}">Job
+                                Overview</a></li>
+                            <li th:if="${typeFilter != null}"><a class="dropdown-item" th:id="'openButton-' + ${job.id}"
+                                                                 th:href="@{|${edisonManagementBasePath}/jobs|}">Job
+                                Overview</a></li>
+                            <li><a class="dropdown-item" th:href="@{|${edisonManagementBasePath}/jobdefinitions/${job.jobType}|}">Job
+                                Definition</a></li>
+                        </ul>
 
                     </td>
                 </tr>
