@@ -1,9 +1,10 @@
 # Release Notes
 
-## 4.0.1-SNAPSHOT
+## 4.0.1
 * **[edison-platform]**: Created edison-platform as platform project that defines versions for dependency management
 * **[mongo]**: Add support for IAM authentication to connect to DocumentDB clusters
 * **[frontend]**: Update Bootstrap to version 5
+* **[all]**: Update to Spring Boot 4.0.1
 
 ## 4.0.0
 * **[all]**: Update to Spring Boot 4.0.0

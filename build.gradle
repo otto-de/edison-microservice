@@ -69,8 +69,8 @@ jreleaser {
 //
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
-// Add a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
-// Publish artifacts to sonatype by executing the release.sh script.
+// Publish artifacts to Sonatype's Maven Central by executing the release.sh script.
+// This adds a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
 //
 //
 def edison_version = "4.0.1-SNAPSHOT"  // <--- SET AND UPDATE EDISON VERSION HERE
@@ -106,14 +106,6 @@ subprojects {
         apply plugin: 'java-library'
         apply plugin: 'maven-publish'
         apply plugin: 'io.spring.dependency-management'
-
-
-//    dependencyManagement {
-//        imports {
-//            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-//        }
-//    }
-
 
         task allDeps(type: DependencyReportTask) {}
 
