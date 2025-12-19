@@ -20,11 +20,11 @@ updates:
     open-pull-requests-limit: 25
     ignore:
       # Ignore Spring Boot > 3
-      - dependency-name: "org.springframework.boot"
+      - dependency-name: "org.springframework.boot:*"
         update-types: [ "version-update:semver-major" ]
       # Ignore Spring Framework > 6
-      - dependency-name: "org.springframework"
+      - dependency-name: "org.springframework:*"
         update-types: [ "version-update:semver-major" ]
       # Ignore Spring Security > 6
-      - dependency-name: "org.springframework.security"
+      - dependency-name: "org.springframework.security:*"
         update-types: [ "version-update:semver-major" ]
