@@ -56,7 +56,7 @@
                                         class="bi bi-check"></span></span>
                             </button>
                             <input th:if="${def.isDisabled}" name="disabledComment" class="form-control"
-                                   disabled th:text="${def.comment}"></input>
+                                   disabled th:placeholder="${def.comment}"></input>
                             <input th:if="${!def.isDisabled}" name="disabledComment" class="form-control"
                                    placeholder="Why disabled?"></input>
                         </div><!-- /input-group -->
