@@ -68,7 +68,7 @@
                             <input type="checkbox" class="form-check-input" id="follow-log" checked="checked"/>
                             <label class="form-check-label" for="follow-log">Follow log</label>
                         </div>
-                        <div class="card bg-light">
+                        <div class="card">
                         <pre class="p-2 font-monospace logWindow overflow-auto"
                              th:attr="data-job-url=${job.jobUri} + '?humanReadable=true'"><div
                                 th:each="message : ${job.getRawMessages()}"><span class="job-messagedate"
