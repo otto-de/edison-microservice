@@ -1,6 +1,10 @@
 # Release Notes
 
-## 4.0.0-SNAPSHOT
+## 4.0.1-SNAPSHOT
+* **[edison-platform]**: Created edison-platform as platform project that defines versions for dependency management
+* **[mongo]**: Add support for IAM authentication to connect to DocumentDB clusters
+
+## 4.0.0
 * **[all]**: Update to Spring Boot 4.0.0
   * See https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide for
     an upgrade guide
@@ -19,6 +23,11 @@
         
 If you manage dependencies directly, make sure you update them accordingly. In particular, you must use Spring Framework 7.x.
     
+## 3.5.8
+* **[mongo]**: Add support for IAM authentication to connect to DocumentDB clusters
+
+## 3.5.7
+* **[all]**: Update to Spring Boot 3.5.8
 * **[togglz]**: Retryable on MongoTogglzRepository when load feature state fails due mongo timeouts
 
 ## 3.5.6
