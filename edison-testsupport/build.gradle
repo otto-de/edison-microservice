@@ -24,6 +24,7 @@ dependencies {
     api libs.spring.test
     api libs.spring.boot.test
     api libs.spring.boot.starter.test
+    api libs.spring.boot.restclient
     api libs.spring.boot.resttestclient
     api libs.spring.boot.webmvc.test
 
