@@ -21,10 +21,10 @@ updates:
     ignore:
       # Ignore Spring Boot > 3
       - dependency-name: "org.springframework.boot:*"
-        update-types: [ "version-update:semver-major" ]
+        versions: [ ">= 4.0.0" ]
       # Ignore Spring Framework > 6
       - dependency-name: "org.springframework:*"
-        update-types: [ "version-update:semver-major" ]
+        versions: [ ">= 7.0.0" ]
       # Ignore Spring Security > 6
       - dependency-name: "org.springframework.security:*"
-        update-types: [ "version-update:semver-major" ]
+        versions: [ ">= 7.0.0" ]
