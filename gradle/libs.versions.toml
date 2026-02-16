@@ -1,7 +1,7 @@
 [versions]
 spring-boot = "3.5.10"
 jcip-annotations = "1.0"
-togglz = "4.5.0"
+togglz = "4.6.1"
 edison-hal = "2.2.0"
 validator-collection = "2.2.0"
 aws-sdk = "2.41.23"
