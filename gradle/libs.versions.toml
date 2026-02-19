@@ -1,5 +1,5 @@
 [versions]
-spring-boot = "4.0.2"
+spring-boot = "4.0.3"
 jcip-annotations = "1.0"
 togglz = "4.6.1"
 edison-hal = "2.2.0"
