@@ -93,4 +93,4 @@ jackson = [ "jackson-core", "jackson-databind", "jackson-annotations" ]
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
-jreleaser = { id = "org.jreleaser", version = "1.20.0" }
+jreleaser = { id = "org.jreleaser", version = "1.22.0" }

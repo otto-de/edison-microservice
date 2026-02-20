@@ -1,5 +1,14 @@
 # Release Notes
 
+## 4.0.3
+* **[all]**: Update to Spring Boot 4.0.3
+
+## 3.5.11
+* **[all]**: Update to Spring Boot 3.5.11
+
+## 4.0.2 (not released)
+* Skipped to align version with Spring Boot version
+
 ## 4.0.1
 * **[edison-platform]**: Created edison-platform as platform project that defines versions for dependency management
 * **[mongo]**: Add support for IAM authentication to connect to DocumentDB clusters
