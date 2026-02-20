@@ -28,3 +28,6 @@ updates:
       # Ignore Spring Security > 6
       - dependency-name: "org.springframework.security:*"
         versions: [ ">= 7.0.0" ]
+      # Ignore Togglz >= 3.6.0
+      - dependency-name: "org.togglz:*"
+        versions: [ ">= 3.6.0" ]
