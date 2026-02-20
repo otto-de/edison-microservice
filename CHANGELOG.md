@@ -1,4 +1,8 @@
 # Release Notes
+
+## 3.5.11
+* **[all]**: Update to Spring Boot 3.5.11
+
 ## 3.5.8
 * **[mongo]**: Add support for IAM authentication to connect to DocumentDB clusters
 

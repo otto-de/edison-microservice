@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class S3TogglzRepositoryIntegrationTest {
     private static final int TEST_PORT_S3 = 4572;
 
-    //private final static GenericContainer<?> localstackContainer = createTestContainer(TEST_PORT_S3);
-
     private S3TogglzRepository repository;
     private S3Client s3Client;
     private FeatureStateConverter featureStateConverter;
@@ -34,17 +32,10 @@ public class S3TogglzRepositoryIntegrationTest {
     public static void prepareContext() {
         // Set for AWS SDK
         System.setProperty("aws.region", "eu-central-1");
-        //localstackContainer.start();
-    }
-
-    @AfterAll
-    public static void stopContainer() {
-        //localstackContainer.stop();
     }
 
     @BeforeEach
     void setup() throws InterruptedException {
-        //final Integer mappedPort = localstackContainer.getMappedPort(TEST_PORT_S3);
         s3Client = new LocalS3Client();
 
         testBucket = "test-togglz" + UUID.randomUUID().toString();
