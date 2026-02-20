@@ -73,7 +73,7 @@ jreleaser {
 // Publish artifacts to sonatype by executing the release.sh script. Don't publish packages to github.
 //
 //
-def edison_version = "3.5.11"  // <--- CHANGE VERSION HERE FOR NEW RELEASES
+def edison_version = "3.5.12-SNAPSHOT"  // <--- CHANGE VERSION HERE FOR NEW RELEASES
 //
 //
 //
