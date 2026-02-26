@@ -61,27 +61,27 @@ public class ExampleJobsSmokeTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         JSONAssert.assertEquals("{\n" +
                 "  \"links\" : [ {\n" +
-                "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/Bar\",\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobdefinitions/Bar\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
                 "    \"title\" : \"Bar Job\"\n" +
                 "  }, {\n" +
-                "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/ExampleMetaJob\",\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobdefinitions/ExampleMetaJob\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
                 "    \"title\" : \"Some stateful Job\"\n" +
                 "  }, {\n" +
-                "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/Fizzle\",\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobdefinitions/Fizzle\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
                 "    \"title\" : \"Fizzle Job\"\n" +
                 "  }, {\n" +
-                "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/Foo\",\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobdefinitions/Foo\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
                 "    \"title\" : \"Foo Job\"\n" +
                 "  }, {\n" +
-                "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions/Old\",\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobdefinitions/Old\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
                 "    \"title\" : \"Old Job\"\n" +
                 "  }, {\n" +
-                "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions\",\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobdefinitions\",\n" +
                 "    \"rel\" : \"self\",\n" +
                 "    \"title\" : \"Self\"\n" +
                 "  } ]\n" +
@@ -100,13 +100,13 @@ public class ExampleJobsSmokeTest {
                 "  \"maxAge\" : 10800,\n" +
                 "  \"fixedDelay\" : 3600,\n" +
                 "  \"links\" : [ {\n" +
-                "    \"href\" : \"http://localhost:" + port + "/internal/jobsdefinitions/Foo\",\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobsdefinitions/Foo\",\n" +
                 "    \"rel\" : \"self\"\n" +
                 "  }, {\n" +
-                "    \"href\" : \"http://localhost:" + port + "/internal/jobdefinitions\",\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobdefinitions\",\n" +
                 "    \"rel\" : \"collection\"\n" +
                 "  }, {\n" +
-                "    \"href\" : \"http://localhost:" + port + "/internal/jobs/Foo\",\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobs/Foo\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/trigger\"\n" +
                 "  } ]\n" +
                 "}", response.getBody(), true);

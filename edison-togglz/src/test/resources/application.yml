@@ -22,3 +22,5 @@ edison:
     togglz:
         mongo:
             enabled: false
+        s3:
+            enabled: false

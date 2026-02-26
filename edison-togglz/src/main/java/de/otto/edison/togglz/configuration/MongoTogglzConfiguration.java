@@ -12,8 +12,10 @@ import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.UserProvider;
 
@@ -21,7 +23,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
 @AutoConfigureAfter(MongoConfiguration.class)
-@ConditionalOnProperty(prefix = "edison.togglz", name = "mongo.enabled", havingValue = "true", matchIfMissing = true)
+@EnableConfigurationProperties(TogglzProperties.class)
+@ConditionalOnProperty(prefix = "edison.togglz", name = "mongo.enabled", havingValue = "true")
 @ConditionalOnClass(MongoClient.class)
 public class MongoTogglzConfiguration implements RemoteTogglzConfig {
 

@@ -25,16 +25,16 @@ public class TogglzConfigurationTest {
 
     @AfterEach
     public void close() {
-        if (this.context != null) {
-            this.context.close();
-        }
+        this.context.close();
     }
 
-    @ImportAutoConfiguration({S3TogglzConfiguration.class, TogglzConfiguration.class,
-            InMemoryFeatureStateRepositoryConfiguration.class,
-            MongoAndS3TestConfiguration.class,
+    @ImportAutoConfiguration({
             MongoProperties.class,
-            MongoTogglzConfiguration.class})
+            MongoAndS3TestConfiguration.class,
+            TogglzProperties.class,
+            MongoTogglzConfiguration.class,
+            InMemoryFeatureStateRepositoryConfiguration.class,
+            TogglzConfiguration.class})
     private static class MultipleTogglzConfigsAutoConfiguration {
     }
 
