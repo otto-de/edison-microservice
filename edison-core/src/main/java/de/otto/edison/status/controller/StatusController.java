@@ -6,7 +6,6 @@ import de.otto.edison.status.domain.ExternalDependency;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -14,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 
 import static de.otto.edison.status.controller.StatusRepresentation.statusRepresentationOf;
+import static de.otto.edison.util.UrlHelper.baseUriOf;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -48,10 +48,11 @@ public class StatusController {
             produces = "text/html",
             method = GET
     )
-    public ModelAndView getStatusAsHtml() {
-        return new ModelAndView("status", new HashMap<String,Object>() {{
+    public ModelAndView getStatusAsHtml(final HttpServletRequest request) {
+        return new ModelAndView("status", new HashMap<>() {{
             put("status", aggregator.aggregatedStatus());
             put("criticality", criticality);
+            put("baseUri", baseUriOf(request));
             put("dependencies", externalDependencies.getDependencies()
                     .stream()
                     .sorted(comparing(ExternalDependency::getType).thenComparing(ExternalDependency::getName))

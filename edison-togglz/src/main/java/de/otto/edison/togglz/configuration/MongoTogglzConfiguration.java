@@ -7,6 +7,7 @@ import de.otto.edison.mongo.configuration.MongoProperties;
 import de.otto.edison.togglz.FeatureClassProvider;
 import de.otto.edison.togglz.RemoteTogglzConfig;
 import de.otto.edison.togglz.mongo.MongoTogglzRepository;
+import jakarta.annotation.Priority;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ServiceDependencyTest {
 
-    ObjectMapper mapper = JsonMapper.builder().build();
+    JsonMapper mapper = JsonMapper.builder().build();
 
     @Test
     public void shouldTransformToJson() {

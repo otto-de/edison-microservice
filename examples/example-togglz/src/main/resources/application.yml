@@ -35,3 +35,5 @@ edison:
         cache-ttl: 100
         console:
             enabled: true
+        mongo:
+            enabled: false

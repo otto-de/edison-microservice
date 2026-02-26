@@ -23,9 +23,14 @@ public class UrlHelper {
      */
     public static String baseUriOf(final HttpServletRequest request) {
         final StringBuffer requestUrl = request.getRequestURL();
-        return requestUrl != null
-                ? requestUrl.substring(0, requestUrl.indexOf(request.getServletPath()))
-                : "";
+
+        if (requestUrl == null) {
+            return "";
+        } else if (request.getServletPath().equals("/")) {
+            return requestUrl.substring(0, requestUrl.length() - 1);
+        } else {
+            return requestUrl.substring(0, requestUrl.indexOf(request.getServletPath()));
+        }
     }
 
     /**

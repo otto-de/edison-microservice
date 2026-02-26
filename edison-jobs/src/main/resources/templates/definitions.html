@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-    <script src="/js/themeInit.js"></script>
     <th:block th:replace="~{fragments/head  :: head}"></th:block>
 </head>
 
@@ -72,9 +71,8 @@
 
 <span th:replace="~{fragments/footer :: footer}"/>
 
-<script th:src="${baseUri} + '/internal/js/triggerButton.js'"></script>
+<script th:src="@{|${edisonManagementBasePath}/js/triggerButton.js|}"></script>
 
-<script th:src="@{/js/darkmodeToggle.js}"></script>
 </body>
 </html>
 
