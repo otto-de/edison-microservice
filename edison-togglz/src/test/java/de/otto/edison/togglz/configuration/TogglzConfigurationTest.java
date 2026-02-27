@@ -29,11 +29,11 @@ public class TogglzConfigurationTest {
     }
 
     @ImportAutoConfiguration({
+            InMemoryFeatureStateRepositoryConfiguration.class,
             MongoProperties.class,
             MongoAndS3TestConfiguration.class,
-            TogglzProperties.class,
             MongoTogglzConfiguration.class,
-            InMemoryFeatureStateRepositoryConfiguration.class,
+            S3TogglzConfiguration.class,
             TogglzConfiguration.class})
     private static class MultipleTogglzConfigsAutoConfiguration {
     }

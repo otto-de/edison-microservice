@@ -23,8 +23,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
 @AutoConfigureAfter(MongoConfiguration.class)
-@EnableConfigurationProperties(TogglzProperties.class)
-@ConditionalOnProperty(prefix = "edison.togglz", name = "mongo.enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "edison.togglz", name = "mongo.enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnClass(MongoClient.class)
 public class MongoTogglzConfiguration implements RemoteTogglzConfig {
 
