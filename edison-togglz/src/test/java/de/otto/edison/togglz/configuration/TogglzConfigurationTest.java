@@ -75,6 +75,7 @@ public class TogglzConfigurationTest {
                 .of("edison.togglz.s3.enabled=true")
                 .and("edison.togglz.s3.bucket-name=togglz-bucket")
                 .and("edison.togglz.s3.check-bucket=true")
+                .and("edison.togglz.mongo.enabled=true")
                 .and("edison.mongo.db=db")
                 .and("edison.mongo.user=test")
                 .and("edison.mongo.password=test")
