@@ -1,5 +1,8 @@
 # Release Notes
 
+## 4.0.4
+* **[core]**: Fix thymeleaf deprecation warning
+
 ## 4.0.3
 * **[all]**: Update to Spring Boot 4.0.3
 
