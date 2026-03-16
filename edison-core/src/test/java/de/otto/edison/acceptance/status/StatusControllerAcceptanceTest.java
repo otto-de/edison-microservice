@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import java.io.IOException;
 
 import static de.otto.edison.acceptance.api.StatusApi.internal_is_retrieved_as;
+import static de.otto.edison.acceptance.api.StatusApi.internal_resource_is_retrieved_as;
 import static de.otto.edison.acceptance.api.StatusApi.internal_status_is_retrieved_as;
 import static de.otto.edison.acceptance.api.StatusApi.the_response_headers;
 import static de.otto.edison.acceptance.api.StatusApi.the_returned_content;
@@ -155,4 +156,24 @@ public class StatusControllerAcceptanceTest {
         );
     }
 
+    @Test
+    public void shouldServeInternalJavascriptResources() throws IOException {
+        when(
+                internal_resource_is_retrieved_as("js/themeInit.js", "text/javascript")
+        );
+
+        then(
+                assertThat(the_status_code().value(), is(200)),
+                assertThat(the_returned_content(), containsString("localStorage.getItem('theme')"))
+        );
+
+        when(
+                internal_resource_is_retrieved_as("js/darkmodeToggle.js", "text/javascript")
+        );
+
+        then(
+                assertThat(the_status_code().value(), is(200)),
+                assertThat(the_returned_content(), containsString("theme-toggle"))
+        );
+    }
 }

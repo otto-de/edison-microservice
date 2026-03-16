@@ -41,6 +41,11 @@ public class StatusApi extends SpringTestBase {
         return When.INSTANCE;
     }
 
+    public static When internal_resource_is_retrieved_as(final String path, final String mediaType) throws IOException {
+        getResource("http://localhost:18084/testcore/internal/" + path, of(mediaType));
+        return When.INSTANCE;
+    }
+
     public static HttpStatusCode the_status_code() {
         return statusCode;
     }
