@@ -173,7 +173,7 @@ public class StatusControllerAcceptanceTest {
 
         then(
                 assertThat(the_status_code().value(), is(200)),
-                assertThat(the_returned_content(), containsString("theme-toggle"))
+                assertThat(the_returned_content(), containsString("darkModeToggle"))
         );
     }
 }
