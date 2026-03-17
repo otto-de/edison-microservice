@@ -34,7 +34,7 @@ It's purpose is to provide a common implementation for cross-cutting requirement
 
 ## Releases
 
-[Semantic Versioning v2.0.0](http://semver.org/spec/v2.0.0.html) is used to specify the version numbers.
+[Semantic Versioning v2.0.0](http://semver.org/spec/v2.0.0.html) is generally used to specify the version numbers. We add a fourth number for hotfixes to keep the main version in sync with the included Spring Boot version. So 4.0.3.**1** is the first hotfix of the Edison version that contains Spring Boot 4.0.3.
 
 This project maintains its roadmap with [issues](https://github.com/otto-de/edison-microservice/issues) and [milestones](https://github.com/otto-de/edison-microservice/milestones).
 
