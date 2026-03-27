@@ -236,11 +236,17 @@
                 <div class="card-body">
 
                     <table class="table table-striped table-hover">
-                        <tr>
+                        <tr th:if="${!dependencies.isEmpty()}">
                             <th>Type</th>
                             <th>Name</th>
                             <th>Description</th>
                             <th>Requirements</th>
+                        </tr>
+                        <tr th:if="${dependencies.isEmpty()}">
+                            <td colspan="4" class="text-muted">
+                                <i class="bi bi-info-circle-fill me-2 align-middle" aria-hidden="true"></i>
+                                <span class="align-middle">No external dependencies are registered.</span>
+                            </td>
                         </tr>
                         <tr th:each="dep : ${dependencies}">
                             <td th:text="${dep.type}">Type</td>
