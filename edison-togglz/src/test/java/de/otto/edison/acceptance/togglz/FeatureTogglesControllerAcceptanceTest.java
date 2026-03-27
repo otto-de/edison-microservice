@@ -65,9 +65,9 @@ public class FeatureTogglesControllerAcceptanceTest {
         ResponseEntity<String> resource = getResource("http://localhost:" + port + "/togglztest/internal/toggles");
 
         // then
-        assertThat(jsonNode(resource).at("/features/TEST_FEATURE/description").asText(), is("a test feature toggle"));
+        assertThat(jsonNode(resource).at("/features/TEST_FEATURE/description").asString(), is("a test feature toggle"));
         assertThat(jsonNode(resource).at("/features/TEST_FEATURE/enabled").asBoolean(), is(true));
-        assertThat(jsonNode(resource).at("/features/TEST_FEATURE_2/description").asText(), is("TEST_FEATURE_2"));
+        assertThat(jsonNode(resource).at("/features/TEST_FEATURE_2/description").asString(), is("TEST_FEATURE_2"));
         assertThat(jsonNode(resource).at("/features/TEST_FEATURE_2/enabled").asBoolean(), is(true));
     }
 

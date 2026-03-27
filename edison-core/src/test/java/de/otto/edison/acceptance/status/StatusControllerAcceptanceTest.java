@@ -68,10 +68,10 @@ public class StatusControllerAcceptanceTest {
         );
 
         then(
-                assertThat(the_returned_json().at("/application/name").asText(), is("test-app")),
-                assertThat(the_returned_json().at("/application/description").asText(), is("desc")),
-                assertThat(the_returned_json().at("/application/environment").asText(), is("test-env")),
-                assertThat(the_returned_json().at("/application/group").asText(), is("test-group"))
+                assertThat(the_returned_json().at("/application/name").asString(), is("test-app")),
+                assertThat(the_returned_json().at("/application/description").asString(), is("desc")),
+                assertThat(the_returned_json().at("/application/environment").asString(), is("test-env")),
+                assertThat(the_returned_json().at("/application/group").asString(), is("test-group"))
         );
 
     }
@@ -83,9 +83,9 @@ public class StatusControllerAcceptanceTest {
         );
 
         then(
-                assertThat(the_returned_json().at("/application/version").asText(), is("1.0.0")),
-                assertThat(the_returned_json().at("/application/commit").asText(), is("ab1234")),
-                assertThat(the_returned_json().at("/application/vcsUrl").asText(), is("http://example.org/vcs/1.0.0"))
+                assertThat(the_returned_json().at("/application/version").asString(), is("1.0.0")),
+                assertThat(the_returned_json().at("/application/commit").asString(), is("ab1234")),
+                assertThat(the_returned_json().at("/application/vcsUrl").asString(), is("http://example.org/vcs/1.0.0"))
         );
     }
 
@@ -96,9 +96,9 @@ public class StatusControllerAcceptanceTest {
         );
 
         then(
-                assertThat(the_returned_json().at("/team/name").asText(), is("Test Team")),
-                assertThat(the_returned_json().at("/team/technicalContact").asText(), is("technical@example.org")),
-                assertThat(the_returned_json().at("/team/businessContact").asText(), is("business@example.org"))
+                assertThat(the_returned_json().at("/team/name").asString(), is("Test Team")),
+                assertThat(the_returned_json().at("/team/technicalContact").asString(), is("technical@example.org")),
+                assertThat(the_returned_json().at("/team/businessContact").asString(), is("business@example.org"))
         );
     }
 
@@ -112,8 +112,8 @@ public class StatusControllerAcceptanceTest {
         );
 
         then(
-                assertThat(the_returned_json().at("/cluster/color").asText(), is("BLU")),
-                assertThat(the_returned_json().at("/cluster/colorState").asText(), is("STAGED"))
+                assertThat(the_returned_json().at("/cluster/color").asString(), is("BLU")),
+                assertThat(the_returned_json().at("/cluster/colorState").asString(), is("STAGED"))
         );
     }
 
@@ -125,9 +125,9 @@ public class StatusControllerAcceptanceTest {
 
         then(
                 assertThat(the_status_code().value(), is(200)),
-                assertThat(the_returned_json().at("/application/status").asText(), is("WARNING")),
-                assertThat(the_returned_json().at("/application/statusDetails/foo/status").asText(), is("OK")),
-                assertThat(the_returned_json().at("/application/statusDetails/bar/status").asText(), is("WARNING"))
+                assertThat(the_returned_json().at("/application/status").asString(), is("WARNING")),
+                assertThat(the_returned_json().at("/application/statusDetails/foo/status").asString(), is("OK")),
+                assertThat(the_returned_json().at("/application/statusDetails/bar/status").asString(), is("WARNING"))
         );
     }
 
@@ -139,8 +139,8 @@ public class StatusControllerAcceptanceTest {
 
         then(
                 assertThat(the_status_code().value(), is(200)),
-                assertThat(the_returned_json().at("/criticality/level").asText(), is("LOW")),
-                assertThat(the_returned_json().at("/criticality/disasterImpact").asText(), is("some impact"))
+                assertThat(the_returned_json().at("/criticality/level").asString(), is("LOW")),
+                assertThat(the_returned_json().at("/criticality/disasterImpact").asString(), is("some impact"))
         );
     }
 
@@ -152,7 +152,7 @@ public class StatusControllerAcceptanceTest {
 
         then(
                 assertThat(the_status_code().value(), is(200)),
-                assertThat(the_returned_json().at("/dependencies/0/url").asText(), is("http://example.com/foo"))
+                assertThat(the_returned_json().at("/dependencies/0/url").asString(), is("http://example.com/foo"))
         );
     }
 

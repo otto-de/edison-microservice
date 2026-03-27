@@ -6,8 +6,7 @@ dependencies {
     compileOnly libs.togglz.spring.boot.starter
     compileOnly libs.aws.sdk.ssm
     compileOnly libs.aws.sdk.s3
-    compileOnly libs.jackson.databind
-    compileOnly libs.jackson.annotations
+    compileOnly libs.bundles.jackson
     compileOnly libs.bundles.mongodb
 
     compileOnly libs.togglz.testing
