@@ -2,7 +2,7 @@
 spring-boot = "3.5.11"
 jcip-annotations = "1.0"
 togglz = "4.5.0"
-edison-hal = "2.2.0"
+edison-hal = "3.0.0"
 validator-collection = "2.2.0"
 aws-sdk = "2.42.21"
 mockserver = "5.15.0"
