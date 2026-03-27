@@ -202,6 +202,13 @@
                 </div>
                 <div class="card-body">
 
+                    <tr th:if="${status.statusDetails.isEmpty()}">
+                        <td colspan="4" class="text-muted">
+                            <i class="bi bi-info-circle-fill me-2 align-middle" aria-hidden="true"></i>
+                            <span class="align-middle">Service has no additional details.</span>
+                        </td>
+                    </tr>
+
                     <div class="list-group">
                         <div class="list-group-item" th:each="statusDetail : ${status.statusDetails}">
                             <h4 class="mb-1" th:text="${statusDetail.name}">List group item
