@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+
+<div th:fragment="dateTimeBadge(dateTime)"
+     th:with="parsed=${T(java.time.OffsetDateTime).parse(dateTime)},
+               formatted=${#temporals.format(parsed, 'dd.MM.yyyy HH:mm:ss')},
+               offset=${parsed.offset.id}">
+    <div  th:text="${formatted + ' (UTC' + offset + ')'}"></div>
+</div>
+
+</body>
+</html>

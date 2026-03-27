@@ -41,7 +41,7 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Status:</div>
                             <div class="col-8">
-                                <div th:replace="~{fragments/status-badge :: statusBadge(${status.status})}"></div>
+                                <div th:replace="~{fragments/widgets/status-badge :: statusBadge(${status.status})}"></div>
                             </div>
                         </div>
                     </div>
@@ -66,11 +66,15 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">System Time:</div>
-                            <div class="col-8" th:text="${system.systemTime}">System Time</div>
+                            <div class="col-8">
+                                <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${system.systemTime})}">System Time</div>
+                            </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">System Started:</div>
-                            <div class="col-8" th:text="${system.systemStartTime}">System Start Time</div>
+                            <div class="col-8">
+                                <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${system.systemStartTime})}">System Start Time</div>
+                            </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">System Uptime:</div>
@@ -205,7 +209,7 @@
                             <dl class="row mb-0">
                                 <dt class="col-sm-2">Status:</dt>
                                 <dd class="col-sm-10">
-                                    <div th:replace="~{fragments/status-badge :: statusBadge(${statusDetail.status})}"></div>
+                                    <div th:replace="~{fragments/widgets/status-badge :: statusBadge(${statusDetail.status})}"></div>
                                 </dd>
                                 <dt class="col-sm-2">Message:</dt>
                                 <dd class="col-sm-10" th:text="${statusDetail.message}"></dd>
