@@ -67,13 +67,17 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">System Time:</div>
                             <div class="col-8">
-                                <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${system.systemTime})}">System Time</div>
+                                <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${system.systemTime})}">
+                                    System Time
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">System Started:</div>
                             <div class="col-8">
-                                <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${system.systemStartTime})}">System Start Time</div>
+                                <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${system.systemStartTime})}">
+                                    System Start Time
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -115,7 +119,11 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Commit Time:</div>
-                            <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${vcs.commitTime})}">Git time</div>
+                            <div class="col-8">
+                                <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${vcs.commitTime})}">
+                                    Git time
+                                </div>
+                            </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Branch:</div>
