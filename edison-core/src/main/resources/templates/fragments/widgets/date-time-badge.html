@@ -3,10 +3,10 @@
 <body>
 
 <div th:fragment="dateTimeBadge(dateTime)"
-     th:with="parsed=${T(java.time.OffsetDateTime).parse(dateTime)},
-               formatted=${#temporals.format(parsed, 'dd.MM.yyyy HH:mm:ss')},
-               offset=${parsed.offset.id}">
-    <div  th:text="${formatted + ' (UTC' + offset + ')'}"></div>
+     th:with="parsed=${!#strings.isEmpty(dateTime)} ? ${T(java.time.OffsetDateTime).parse(dateTime)} : null,
+               formatted=${parsed != null} ? ${#temporals.format(parsed, 'dd.MM.yyyy HH:mm:ss')} : '',
+               offset=${parsed != null} ? ${parsed.offset.id} : ''">
+    <div th:text="${parsed != null} ? ${formatted + ' (UTC' + offset + ')'} : ''"></div>
 </div>
 
 </body>
