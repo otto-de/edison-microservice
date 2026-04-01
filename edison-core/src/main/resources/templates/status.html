@@ -115,7 +115,7 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Commit Time:</div>
-                            <div class="col-8" th:text="${vcs.commitTime}">Git time</div>
+                            <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${vcs.commitTime})}">Git time</div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Branch:</div>
