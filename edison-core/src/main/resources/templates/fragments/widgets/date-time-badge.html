@@ -3,10 +3,16 @@
 <body>
 
 <div th:fragment="dateTimeBadge(dateTime)"
+     class="d-flex align-items-center gap-2"
      th:with="parsed=${T(de.otto.edison.util.DateTimeUtil).parse(dateTime)},
                formatted=${parsed != null} ? ${#temporals.format(parsed, 'dd.MM.yyyy HH:mm:ss')} : '',
                offset=${parsed != null} ? ${parsed.offset.id} : ''">
-    <div th:text="${parsed != null} ? ${formatted + ' (UTC' + offset + ')'} : ''"></div>
+    <div th:text="${parsed != null} ? ${formatted} : ''"></div>
+
+    <div class="badge text-bg-secondary"
+         th:if="${parsed != null}"
+         th:text="${offset == 'Z' ? 'UTC +00:00' : 'UTC ' + offset}">
+    </div>
 </div>
 
 </body>
