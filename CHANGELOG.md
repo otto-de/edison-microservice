@@ -1,5 +1,9 @@
 # Release Notes
 
+## 4.0.3.2
+* **[core]**: Add timeout and logging to JobTriggerService registration
+              Improve Frontend on status page
+
 ## 4.0.3.1
 * **[core]**: Fix thymeleaf deprecation warning
               Fix some template issues
