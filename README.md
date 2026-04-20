@@ -18,11 +18,11 @@ Have a look at the [release notes](CHANGELOG.md) for details about updates and c
 
 ## About
 
-This project contains a number of independent libraries on top of Spring Boot to provide a faster setup of jvm microservices.
+This project contains a number of independent libraries on top of Spring Boot to provide a faster setup of JVM microservices.
 The libraries are used in different projects at OTTO.
-It's purpose is to provide a common implementation for cross-cutting requirements like:
+Its purpose is to provide a common implementation for cross-cutting requirements like:
 
-* Health checks that are used to tell the load balancer or mesos platform whether or not a service is healthy.
+* Health checks that are used to tell the load balancer whether or not a service is healthy.
 * A [status page/document](https://github.com/otto-de/edison-microservice/tree/master/edison-core) that is used to give information about the current state of the service. Status information also include details about sub-components, background jobs like imports, and so on.
 * A simple job handling library that is used to run asynchronous background jobs, which for example can be used to run data imports from other systems.
 * An optional MongoDB-based implementation of a JobRepository
@@ -48,8 +48,13 @@ This project maintains its roadmap with [issues](https://github.com/otto-de/edis
 
 ## Migration from Edison 3 to Edison 4
 
-You should be fine if you follow the Spring Boot 3 -> 4 migration guide:
+You should be fine if you follow the Spring Boot 3 → 4 migration guide:
 https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide
+
+If you have custom frontend templates you have to migrate them from Bootstrap 3 to Bootstrap 5.
+The biggest changes were introduced with Bootstrap 4, which was skipped by Edison. Please have
+a look into Boostrap 3 → 4 migration guide for details: https://getbootstrap.com/docs/4.0/migration/
+Update everything to Bootstrap 5 afterwards: https://getbootstrap.com/docs/5.0/migration/
 
 ## Migration from Edison 2 to Edison 3
 

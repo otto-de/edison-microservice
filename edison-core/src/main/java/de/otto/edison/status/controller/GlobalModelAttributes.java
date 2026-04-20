@@ -25,6 +25,7 @@ public class GlobalModelAttributes {
     public void addAttributes(Model model) {
         model.addAttribute("webEndpointBasePath", webEndpointProperties.getBasePath());
         model.addAttribute("edisonManagementBasePath", edisonApplicationProperties.getManagement().getBasePath());
+        model.addAttribute("faviconUrl", edisonApplicationProperties.getFavicon());
     }
 
     @ModelAttribute("requestURI")

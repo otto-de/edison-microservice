@@ -8,7 +8,7 @@ dependencies {
     compileOnly libs.aws.sdk.ssm
     compileOnly libs.aws.sdk.imds
     api libs.spring.boot.starter.web
-    implementation libs.spring.boot.starter.actuator
+    api libs.spring.boot.starter.actuator
     implementation libs.spring.boot.starter.thymeleaf
     implementation libs.jcip.annotations
     implementation libs.logback.classic

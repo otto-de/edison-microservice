@@ -17,6 +17,7 @@ import static de.otto.edison.testsupport.dsl.Then.then;
 import static de.otto.edison.testsupport.dsl.When.when;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
@@ -174,6 +175,18 @@ public class StatusControllerAcceptanceTest {
         then(
                 assertThat(the_status_code().value(), is(200)),
                 assertThat(the_returned_content(), containsString("darkModeToggle"))
+        );
+    }
+
+    @Test
+    public void shouldNotRenderFaviconLinkWhenNotConfigured() throws IOException {
+        when(
+                internal_status_is_retrieved_as("text/html")
+        );
+
+        then(
+                assertThat(the_status_code().value(), is(200)),
+                assertThat(the_returned_content(), not(containsString("rel=\"icon\"")))
         );
     }
 }

@@ -1,8 +1,12 @@
 # Release Notes
 
-## 4.0.3.2
+## 4.0.5.1
 * **[core]**: Add timeout and logging to JobTriggerService registration
-              Improve Frontend on status page
+  Improve Frontend on status page
+
+## 4.0.5
+* **[all]**: Update to Spring Boot 4.0.5
+* **[core]**: You can configure a favicon for the edison status page now with the property `edison.status.favicon` (e.g. `edison.status.favicon=/favicon.ico`)
 
 ## 4.0.3.1
 * **[core]**: Fix thymeleaf deprecation warning

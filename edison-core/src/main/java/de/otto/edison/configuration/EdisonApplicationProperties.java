@@ -24,6 +24,11 @@ public class EdisonApplicationProperties {
      * A human-readable short description of the application's purpose.
      */
     private String description = "";
+    /**
+     * URL of the favicon to use in the HTML head. If empty, no favicon link is rendered.
+     * Can be a relative URL (e.g. "/favicon.ico") or an absolute URL.
+     */
+    private String favicon = "";
 
     private Management management = new Management("/internal");
 
@@ -106,6 +111,15 @@ public class EdisonApplicationProperties {
 
     public EdisonApplicationProperties setDescription(String description) {
         this.description = description;
+        return this;
+    }
+
+    public String getFavicon() {
+        return favicon;
+    }
+
+    public EdisonApplicationProperties setFavicon(String favicon) {
+        this.favicon = favicon;
         return this;
     }
 
