@@ -17,10 +17,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.Optional;
+import java.util.concurrent.*;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.stream;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
@@ -83,21 +82,25 @@ public class AsyncHttpRegistryClient implements RegistryClient {
 
     @Override
     public void registerService() {
-        stream(serviceRegistryProperties.getServers().split(","))
+        registerServiceInternal();
+    }
+
+    public Stream<CompletableFuture<Optional<Integer>>> registerServiceInternal() {
+        return stream(serviceRegistryProperties.getServers().split(","))
                 .filter(server -> !isEmpty(server))
-                .forEach(discoveryServer -> {
+                .map(discoveryServer -> {
                     try {
                         final HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                                 .PUT(HttpRequest.BodyPublishers.ofString(
                                         "{\n" +
-                                        "   \"groups\":[\"" + edisonApplicationProperties.getGroup() + "\"],\n" +
-                                        "   \"expire\":" + serviceRegistryProperties.getExpireAfter() + ",\n" +
-                                        "   \"links\":[{\n" +
-                                        "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +
-                                        "      \"href\" : \"" + serviceRegistryProperties.getService() + "\",\n" +
-                                        "      \"title\":\"" + applicationInfo.title + "\"\n" +
-                                        "   }]  \n" +
-                                        "}"
+                                                "   \"groups\":[\"" + edisonApplicationProperties.getGroup() + "\"],\n" +
+                                                "   \"expire\":" + serviceRegistryProperties.getExpireAfter() + ",\n" +
+                                                "   \"links\":[{\n" +
+                                                "      \"rel\":\"http://github.com/otto-de/edison/link-relations/microservice\",\n" +
+                                                "      \"href\" : \"" + serviceRegistryProperties.getService() + "\",\n" +
+                                                "      \"title\":\"" + applicationInfo.title + "\"\n" +
+                                                "   }]  \n" +
+                                                "}"
                                 ))
                                 .uri(URI.create(discoveryServer + "/environments/" + edisonApplicationProperties.getEnvironment() + "/" + applicationInfo.name))
                                 .header(CONTENT_TYPE, "application/vnd.otto.edison.links+json")
@@ -108,32 +111,33 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                         }
 
                         LOG.debug("Updating registration of service at '{}'", discoveryServer);
-                        httpClient
+                        return httpClient
                                 .sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
                                 .orTimeout(5, TimeUnit.SECONDS)
-                                .whenComplete((response, throwable) -> {
-                                    if (throwable != null) {
-                                        final Throwable root =
-                                                (throwable instanceof CompletionException && throwable.getCause() != null)
-                                                        ? throwable.getCause()
-                                                        : throwable;
-
-                                        if (root instanceof TimeoutException) {
-                                            LOG.warn("Timeout while updating registration at '{}'", discoveryServer);
-                                        } else {
-                                            LOG.error("Error updating registration at '{}'", discoveryServer, root);
-                                        }
-                                        return;
-                                    }
-
+                                .thenApply(response -> {
                                     if (response.statusCode() < 300) {
                                         LOG.info("Successfully updated registration at '{}'", discoveryServer);
                                     } else {
                                         LOG.warn("Failed to update registration at '{}': Status='{}'", discoveryServer, response.statusCode());
                                     }
+                                    return Optional.of(response.statusCode());
+                                })
+                                .exceptionally((throwable) -> {
+                                    final Throwable root =
+                                            (throwable instanceof CompletionException && throwable.getCause() != null)
+                                                    ? throwable.getCause()
+                                                    : throwable;
+
+                                    if (root instanceof TimeoutException) {
+                                        LOG.warn("Timeout while updating registration at '{}'", discoveryServer);
+                                    } else {
+                                        LOG.error("Error updating registration at '{}'", discoveryServer, root);
+                                    }
+                                    return Optional.empty();
                                 });
                     } catch (final Exception e) {
                         LOG.error("Error updating registration", e);
+                        return CompletableFuture.completedFuture(Optional.empty());
                     }
                 });
     }

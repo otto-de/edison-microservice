@@ -1,6 +1,5 @@
 package de.otto.edison.registry.client;
 
-import tools.jackson.core.JacksonException;
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.registry.configuration.ServiceRegistryProperties;
 import de.otto.edison.registry.security.OAuth2TokenException;
@@ -17,6 +16,7 @@ import org.mockserver.client.MockServerClient;
 import org.mockserver.junit.jupiter.MockServerExtension;
 import org.mockserver.junit.jupiter.MockServerSettings;
 import org.springframework.http.HttpStatus;
+import tools.jackson.core.JacksonException;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -140,4 +140,23 @@ public class AsyncHttpRegistryClientIntegrationTest {
         // no exception thrown
     }
 
+    @Test
+    public void shouldTimeoutIfServiceIsNotReachable() {
+        // given
+        final var unreachableHostAddress = "http://example.com:1/serviceregistry";
+        when(serviceRegistryProperties.getServers()).thenReturn(unreachableHostAddress);
+        final var asyncHttpRegistryClient = new AsyncHttpRegistryClient(applicationInfo("testApplication", edisonApplicationProperties),
+                serviceRegistryProperties, edisonApplicationProperties, oAuth2TokenProviderFactory);
+
+        // when
+        var result = asyncHttpRegistryClient.registerServiceInternal().toList();
+
+        // then
+        Awaitility.await().atMost(Duration.ofSeconds(10)).until(() -> {
+                    long unfinished = result.stream()
+                            .filter((future) -> !future.isDone())
+                            .count();
+                    return unfinished == 0;
+        });
+    }
 }
