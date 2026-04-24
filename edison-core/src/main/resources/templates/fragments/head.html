@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:fragment="head">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <title th:text="${@applicationInfo.title}">Edison µService</title>
@@ -11,34 +11,23 @@
     <link th:if="${not #strings.isEmpty(faviconUrl)}" rel="icon" th:href="${faviconUrl}" />
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
     <style>
-        :root {
-            --primary-color: #6ea0eb;
-            --primary-color-rgb: 110, 160, 235;
-
-            --primary-color-dark: #375aeb;
-            --primary-color-dark-rgb: 55, 90, 235;
-
-            --bs-primary: var(--primary-color);
-            --bs-primary-rgb: var(--primary-color-rgb);
+        [data-bs-theme="light"] {
+            --bs-primary-bg-subtle: #9ec5fe;
         }
 
         [data-bs-theme="dark"] {
-            --bs-primary: var(--primary-color-dark);
-            --bs-primary-rgb: var(--primary-color-dark-rgb);
+            --bs-primary-bg-subtle: #0a58ca;
         }
 
-        .dropdown-item:active,
-        .dropdown-item.active {
-            background-color: var(--bs-primary) !important;
-            color: #fff !important;
+        body {
+            padding-top: 70px;
         }
-
-        body { padding-top: 100px; }
     </style>
 
     <script th:src="@{|${edisonManagementBasePath}/js/themeInit.js|}"></script>

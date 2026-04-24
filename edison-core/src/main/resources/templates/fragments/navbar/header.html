@@ -2,15 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 
-<div class="navbar-header" th:fragment="header">
-
-    <a class="navbar-brand btn bg-light-subtle fs-4 d-flex align-items-center" type="button"
-       th:href="@{|${edisonManagementBasePath}/status|}">
-        <i class="bi bi-cpu me-2"></i>
+<th:block th:fragment="header">
+    <a class="navbar-brand" th:href="@{|${edisonManagementBasePath}/status|}">
+        <i class="d-inline-block bi bi-cpu"></i>
         <span th:text="${@applicationInfo.title}">Edison µService</span>
     </a>
-
-</div>
+</th:block>
 
 </body>
 </html>

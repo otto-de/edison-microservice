@@ -4,15 +4,17 @@
 
 <ul class="navbar-nav" th:with="url=${requestURI}" th:fragment="right">
 
-    <li class="dropdown">
-        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" >
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Admin
-        </button>
+        </a>
         <ul class="dropdown-menu">
             <li th:each="item : ${@rightNavBar.items}">
                 <a class="dropdown-item" th:href="@{${item.link}}" th:text="${item.title}"></a>
             </li>
-            <li><hr class="dropdown-divider"></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
             <li><a class="dropdown-item" th:href="@{|${webEndpointBasePath}/health|}">health</a></li>
             <li><a class="dropdown-item" th:href="@{|${webEndpointBasePath}/trace|}">trace</a></li>
             <li><a class="dropdown-item" th:href="@{|${webEndpointBasePath}/info|}">info</a></li>
@@ -22,18 +24,12 @@
             <li><a class="dropdown-item" th:href="@{|${webEndpointBasePath}/beans|}">beans</a></li>
         </ul>
     </li>
-
-    <li class="nav-item d-flex align-items-center ms-2">
-        <div class="vr"></div>
-    </li>
-
     <li class="nav-item ms-2">
-        <button class="btn" id="darkModeToggle" type="button">
-            <i class="bi bi-moon-stars-fill"></i>
-        </button>
+        <a id="darkModeToggle" class="nav-link" href="#" role="button">
+            <i class="d-only-light bi bi-sun-fill"></i>
+            <i class="d-only-dark bi bi-moon-stars-fill"></i>
+        </a>
     </li>
-
 </ul>
-
 </body>
 </html>
