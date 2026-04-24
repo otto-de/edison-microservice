@@ -2,23 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-primary fixed-top py-3 shadow"  th:fragment="navigation">
-        <div class="container">
+<nav class="navbar navbar-expand-lg bg-primary-subtle fixed-top shadow" th:fragment="navigation">
+    <div class="container">
 
-             <div class="navbar-header" th:replace="~{fragments/navbar/header :: header}"></div>
+        <th:block th:replace="~{fragments/navbar/header :: header}"></th:block>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav me-auto" th:replace="~{fragments/navbar/main :: main}"> </ul>
-                <ul class="navbar-nav ms-auto" th:insert="~{fragments/navbar/right :: right}"> </ul>
-            </div>
-
-
+        <div class="collapse navbar-collapse" id="navbar">
+            <th:block th:replace="~{fragments/navbar/main :: main}"></th:block>
+            <th:block th:replace="~{fragments/navbar/right :: right}"></th:block>
         </div>
-    </nav>
+
+    </div>
+</nav>
 
 </body>
 </html>
