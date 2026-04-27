@@ -1,5 +1,8 @@
 # Release Notes
 
+## 4.0.5.2-SNAPSHOT
+* **[togglz]**: Migrate module to use springs `@AutoConfiguration` mechanism to ensure correct order of initialization of state repositories.
+
 ## 4.0.5.1
 * **[core]**: Add timeout and logging to JobTriggerService registration
   Improve Frontend on status page

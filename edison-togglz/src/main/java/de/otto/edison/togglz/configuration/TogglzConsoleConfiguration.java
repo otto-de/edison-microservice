@@ -2,17 +2,17 @@ package de.otto.edison.togglz.configuration;
 
 import de.otto.edison.navigation.NavBar;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.togglz.console.TogglzConsoleServlet;
 
 import static de.otto.edison.navigation.NavBarItem.bottom;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties(value = {TogglzProperties.class})
 @ConditionalOnProperty(prefix = "edison.togglz.console", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class TogglzConsoleConfiguration {
