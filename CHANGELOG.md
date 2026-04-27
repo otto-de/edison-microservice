@@ -1,6 +1,6 @@
 # Release Notes
 
-## 4.0.5.2-SNAPSHOT
+## 4.0.6
 * **[togglz]**: Migrate module to use springs `@AutoConfiguration` mechanism to ensure correct order of initialization of state repositories.
 
 ## 4.0.5.1
