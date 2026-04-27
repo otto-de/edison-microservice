@@ -17,9 +17,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.stream;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
@@ -68,7 +68,7 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                 scheduledExecutorService
                         .scheduleWithFixedDelay(this::registerService, 0, serviceRegistryProperties.getRefreshAfter(), MINUTES);
                 isRunning = true;
-                oAuth2TokenProvider = oAuth2TokenProviderFactory.isEnabled() ? oAuth2TokenProviderFactory. create() : null;
+                oAuth2TokenProvider = oAuth2TokenProviderFactory.isEnabled() ? oAuth2TokenProviderFactory.create() : null;
             } else {
                 LOG.warn("===================================================================================");
                 LOG.warn("ServiceRegistryProperties is enabled, but no service and/or servers are configured");
@@ -85,7 +85,7 @@ public class AsyncHttpRegistryClient implements RegistryClient {
         registerServiceInternal();
     }
 
-    public Stream<CompletableFuture<Optional<Integer>>> registerServiceInternal() {
+    public List<CompletableFuture<Optional<Integer>>> registerServiceInternal() {
         return stream(serviceRegistryProperties.getServers().split(","))
                 .filter(server -> !isEmpty(server))
                 .map(discoveryServer -> {
@@ -137,9 +137,10 @@ public class AsyncHttpRegistryClient implements RegistryClient {
                                 });
                     } catch (final Exception e) {
                         LOG.error("Error updating registration", e);
-                        return CompletableFuture.completedFuture(Optional.empty());
+                        return CompletableFuture.completedFuture(Optional.<Integer>empty());
                     }
-                });
+                })
+                .toList();
     }
 
     private boolean validateConfig() {

@@ -7,18 +7,18 @@ import de.otto.edison.togglz.s3.FeatureStateConverter;
 import de.otto.edison.togglz.s3.S3TogglzRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.user.UserProvider;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties(TogglzProperties.class)
 @ConditionalOnProperty(prefix = "edison.togglz", name = "s3.enabled", havingValue = "true")
 @ConditionalOnBean(type = "software.amazon.awssdk.services.s3.S3Client")
