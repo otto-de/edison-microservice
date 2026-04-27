@@ -149,7 +149,7 @@ public class AsyncHttpRegistryClientIntegrationTest {
                 serviceRegistryProperties, edisonApplicationProperties, oAuth2TokenProviderFactory);
 
         // when
-        var result = asyncHttpRegistryClient.registerServiceInternal().toList();
+        var result = asyncHttpRegistryClient.registerServiceInternal();
 
         // then
         Awaitility.await().atMost(Duration.ofSeconds(10)).until(() -> {
