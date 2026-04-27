@@ -1,0 +1,3 @@
+de.otto.edison.togglz.configuration.MongoTogglzConfiguration
+de.otto.edison.togglz.configuration.S3TogglzConfiguration
+de.otto.edison.togglz.configuration.InMemoryFeatureStateRepositoryConfiguration
