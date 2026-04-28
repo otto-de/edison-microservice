@@ -1,5 +1,8 @@
 # Release Notes
 
+## 4.0.6.2
+* **[all]**: Update to Spring Boot 4.0.6
+
 ## 4.0.6.1
 * **[all]**: Compile with Java 17 compatibility (former version was built for min Java 21 without being necessary)
 
