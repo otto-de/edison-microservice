@@ -122,10 +122,12 @@ subprojects {
             testRuntimeOnly("org.junit.platform:junit-platform-launcher")
         }
 
-
         java {
             withJavadocJar()
             withSourcesJar()
+
+            targetCompatibility = JavaVersion.VERSION_17
+            sourceCompatibility = JavaVersion.VERSION_17
         }
 
         if (!name.contains("example")) {
