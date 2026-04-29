@@ -1,5 +1,8 @@
 # Release Notes
 
+## 4.0.6.3
+* **[core]**: Fix main navbar (Links did not work in previous version)
+
 ## 4.0.6.2
 * **[all]**: Update to Spring Boot 4.0.6
 
