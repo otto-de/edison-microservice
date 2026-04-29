@@ -4,7 +4,7 @@
 <ul class="navbar-nav me-auto mb-2 mb-lg-0" th:with="url=${requestURI}"
     th:fragment="main">
     <li th:each="item : ${@mainNavBar.items}" class="nav-item">
-        <a class="nav-link" th:classappend="${url.endsWith('/') ? 'active' : ''}" th:href="@{/}"
+        <a class="nav-link" th:classappend="${url.endsWith(item.getLink()) ? 'active' : ''}" th:href="@{${item.link}}"
            th:text="${item.title}"/>
     </li>
 </ul>
