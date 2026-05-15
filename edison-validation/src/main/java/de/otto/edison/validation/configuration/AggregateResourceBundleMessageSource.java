@@ -20,7 +20,7 @@ package de.otto.edison.validation.configuration;
 import org.hibernate.validator.internal.util.actions.GetResources;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.support.AbstractResourceBasedMessageSource;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
@@ -101,8 +101,7 @@ public class AggregateResourceBundleMessageSource extends AbstractResourceBasedM
     private final Map<ResourceBundle, Map<String, Map<Locale, MessageFormat>>> cachedBundleMessageFormats =
             new ConcurrentHashMap<>();
 
-    @Nullable
-    private volatile ResourceBundle.Control control = new AggregateResourceBundleControl();
+    private volatile ResourceBundle.@Nullable Control control = new AggregateResourceBundleControl();
 
 
     public AggregateResourceBundleMessageSource() {
