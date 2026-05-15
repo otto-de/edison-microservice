@@ -35,7 +35,7 @@ public class ExampleJobsSmokeTest {
     public void shouldRenderMainPage() {
         final ResponseEntity<String> response = this.restTemplate.getForEntity("/", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).startsWith("<html");
+        assertThat(response.getBody()).startsWith("<!DOCTYPE html");
         assertThat(response.getBody()).contains("<p >Hello Microservice Edison</p>");
     }
 
