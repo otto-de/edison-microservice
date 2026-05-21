@@ -5,7 +5,8 @@ togglz = "4.5.0"
 edison-hal = "3.0.0"
 validator-collection = "2.2.0"
 aws-sdk = "2.44.9"
-mockserver = "5.15.0"
+mockserver = "6.0.0"
+commons-lang3 = "3.20.0"
 jacoco = "0.8.13"
 
 [libraries]
@@ -79,6 +80,7 @@ json-path = { module = "com.jayway.jsonpath:json-path" }
 rest-assured = { module = "io.rest-assured:rest-assured" }
 commons-codec = { module = "commons-codec:commons-codec" }
 awaitility = { module = "org.awaitility:awaitility" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
 
 [bundles]
 mockserver = [ "mockserver-netty", "mockserver-client-java", "mockserver-junit-jupiter" ]

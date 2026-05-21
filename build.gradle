@@ -98,6 +98,10 @@ subprojects {
         imports {
             mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
         }
+        dependencies {
+            // MockServer 6.x requires commons-lang3 >= 3.18.0 (Strings class added in 3.18.0)
+            dependency "org.apache.commons:commons-lang3:${libs.versions.commons.lang3.get()}"
+        }
     }
 
     version = parent.version
