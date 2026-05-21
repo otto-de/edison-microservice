@@ -1,12 +1,15 @@
 package de.otto.edison.util;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 
 /**
  * Utility for parsing date-time strings that may use different offset formats,
- * e.g. "+02:00" (ISO-8601) or "+0200" (as produced by git-commit-id-plugin).
+ * e.g. "+02:00" (ISO-8601) or "+0200" (as produced by git-commit-id-plugin),
+ * or epoch milliseconds (as produced by Spring Boot's {@code GitProperties} coercion).
  */
 public final class DateTimeUtil {
 
@@ -29,13 +32,20 @@ public final class DateTimeUtil {
     private DateTimeUtil() {}
 
     /**
-     * Parses a date-time string to {@link OffsetDateTime}, tolerating both
-     * {@code +0200} and {@code +02:00} offset styles. Returns {@code null}
-     * for {@code null} or empty input instead of throwing.
+     * Parses a date-time string to {@link OffsetDateTime}. Handles:
+     * <ul>
+     *   <li>Epoch milliseconds (e.g. {@code "1747827915000"}) — as returned by Spring Boot's
+     *       {@code GitProperties} coercion of {@code commit.time}. Interpreted as UTC.</li>
+     *   <li>ISO date-time with {@code +0200} or {@code +02:00} offset styles.</li>
+     * </ul>
+     * Returns {@code null} for {@code null} or empty input instead of throwing.
      */
     public static OffsetDateTime parse(final String dateTime) {
         if (dateTime == null || dateTime.isEmpty()) {
             return null;
+        }
+        if (dateTime.chars().allMatch(Character::isDigit)) {
+            return OffsetDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(dateTime)), ZoneOffset.UTC);
         }
         return OffsetDateTime.parse(dateTime, LENIENT_FORMATTER);
     }

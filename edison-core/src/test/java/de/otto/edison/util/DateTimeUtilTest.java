@@ -45,6 +45,11 @@ class DateTimeUtilTest {
                         "ISO-8601 with UTC Z",
                         "2026-03-31T08:47:00Z",
                         OffsetDateTime.of(2026, 3, 31, 8, 47, 0, 0, ZoneOffset.UTC)
+                ),
+                arguments(
+                        "epoch milliseconds — as coerced by Spring Boot GitProperties",
+                        "1743404778000",
+                        OffsetDateTime.of(2025, 3, 31, 7, 6, 18, 0, ZoneOffset.UTC)
                 )
         );
     }
