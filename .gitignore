@@ -17,3 +17,10 @@ example/example.iml
 .gitconfig
 classes
 gradlew/
+
+# Eclipse
+.project
+.classpath
+.settings/
+.factorypath
+
