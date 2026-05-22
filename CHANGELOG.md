@@ -1,5 +1,8 @@
 # Release Notes
 
+## 4.0.6.4
+* **[core]**: Fix internal server error that could occur when parsing commit.time for the status page
+
 ## 4.0.6.3
 * **[core]**: Fix main navbar (Links did not work in previous version)
 
