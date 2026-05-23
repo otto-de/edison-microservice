@@ -41,12 +41,19 @@ public final class DateTimeUtil {
      * Returns {@code null} for {@code null} or empty input instead of throwing.
      */
     public static OffsetDateTime parse(final String dateTime) {
-        if (dateTime == null || dateTime.isEmpty()) {
+        try {
+
+            if (dateTime == null || dateTime.isEmpty()) {
+                return null;
+            }
+
+            if (dateTime.chars().allMatch(Character::isDigit)) {
+                return OffsetDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(dateTime)), ZoneOffset.UTC);
+            }
+            return OffsetDateTime.parse(dateTime, LENIENT_FORMATTER);
+
+        } catch (final Exception e) {
             return null;
         }
-        if (dateTime.chars().allMatch(Character::isDigit)) {
-            return OffsetDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(dateTime)), ZoneOffset.UTC);
-        }
-        return OffsetDateTime.parse(dateTime, LENIENT_FORMATTER);
     }
 }

@@ -7,7 +7,7 @@
      th:with="parsed=${T(de.otto.edison.util.DateTimeUtil).parse(dateTime)},
                formatted=${parsed != null} ? ${#temporals.format(parsed, 'dd.MM.yyyy HH:mm:ss')} : '',
                offset=${parsed != null} ? ${parsed.offset.id} : ''">
-    <div th:text="${parsed != null} ? ${formatted} : ''"></div>
+    <div th:text="${parsed != null} ? ${formatted} : ${dateTime}"></div>
 
     <div class="badge text-bg-secondary"
          th:if="${parsed != null}"
