@@ -59,4 +59,20 @@ class DateTimeUtilTest {
     void shouldParseKnownFormats(String description, String input, OffsetDateTime expected) {
         assertEquals(expected, DateTimeUtil.parse(input));
     }
+
+    static Stream<Arguments> invalidFormats() {
+        return Stream.of(
+                arguments("plain text", "not-a-date"),
+                arguments("date without time", "2026-03-31"),
+                arguments("incomplete ISO datetime", "2026-03-31T"),
+                arguments("datetime with invalid offset", "2026-03-31T08:47:00+99:99"),
+                arguments("mixed digits and letters", "12345abc")
+        );
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("invalidFormats")
+    void shouldReturnNullForInvalidInput(String description, String input) {
+        assertNull(DateTimeUtil.parse(input));
+    }
 }
