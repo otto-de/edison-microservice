@@ -20,6 +20,12 @@ on:
   schedule:
     - cron: '27 23 * * 4'
 
+permissions:
+  contents: read
+  actions: read
+  packages: read
+  security-events: write
+
 jobs:
   analyze:
     if: ${{ github.actor != 'dependabot[bot]' }}
