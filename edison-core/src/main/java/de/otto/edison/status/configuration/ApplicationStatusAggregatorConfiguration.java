@@ -12,10 +12,10 @@ import de.otto.edison.status.scheduler.CronScheduler;
 import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
 import de.otto.edison.status.scheduler.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import static java.util.Collections.emptyList;
  * Configuration of the default ApplicationStatusAggregator that is used to get and cache the status of this
  * application using all StatusDetailIndicators configured in the Spring application context.
  */
-@Configuration
+@AutoConfiguration
 @EnableScheduling
 public class ApplicationStatusAggregatorConfiguration {
 

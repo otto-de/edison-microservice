@@ -1,0 +1,7 @@
+de.otto.edison.status.configuration.TeamInfoConfiguration
+de.otto.edison.status.configuration.ApplicationInfoConfiguration
+de.otto.edison.status.configuration.ApplicationStatusAggregatorConfiguration
+de.otto.edison.status.configuration.ClusterInfoConfiguration
+de.otto.edison.status.configuration.SystemInfoConfiguration
+de.otto.edison.status.configuration.VersionInfoConfiguration
+de.otto.edison.status.configuration.SystemInfoAWSConfiguration
