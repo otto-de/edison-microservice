@@ -4,6 +4,8 @@ import de.otto.edison.authentication.Credentials;
 import de.otto.edison.togglz.DefaultTogglzConfig;
 import de.otto.edison.togglz.FeatureClassProvider;
 import de.otto.edison.togglz.RemoteTogglzConfig;
+import de.otto.edison.togglz.controller.FeatureTogglesController;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,8 +23,6 @@ import org.togglz.core.user.UserProvider;
 import org.togglz.servlet.TogglzFilter;
 import org.togglz.servlet.util.HttpServletRequestHolder;
 import org.togglz.spring.manager.FeatureManagerFactory;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 import java.util.Optional;
@@ -94,6 +94,11 @@ public class TogglzConfiguration {
         final FeatureManager featureManager = featureManagerFactory.getObject();
         StaticFeatureManagerProvider.setFeatureManager(featureManager);  // this workaround should be fixed with togglz version 2.2
         return featureManager;
+    }
+
+    @Bean
+    public FeatureTogglesController featureTogglesController(final FeatureManager featureManager) {
+        return new FeatureTogglesController(featureManager);
     }
 
     private enum Features implements Feature {

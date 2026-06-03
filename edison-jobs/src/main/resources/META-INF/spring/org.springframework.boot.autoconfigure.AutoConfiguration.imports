@@ -1,0 +1,5 @@
+de.otto.edison.jobs.configuration.JobsConfiguration
+de.otto.edison.jobs.configuration.InMemoryJobsConfiguration
+de.otto.edison.jobs.configuration.MongoJobsConfiguration
+de.otto.edison.jobs.configuration.DynamoJobsConfiguration
+de.otto.edison.jobs.eventbus.EventBusConfiguration

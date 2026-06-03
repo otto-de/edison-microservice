@@ -1,12 +1,11 @@
 package de.otto.edison.jobs.service;
 
 import de.otto.edison.jobs.definition.JobDefinition;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +19,6 @@ import static java.util.stream.Collectors.toList;
  * @author Guido Steinacker
  * @since 15.09.15
  */
-@Service
 public class JobDefinitionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobDefinitionService.class);

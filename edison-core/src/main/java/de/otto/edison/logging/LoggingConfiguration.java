@@ -1,13 +1,13 @@
 package de.otto.edison.logging;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties(LoggingProperties.class)
 public class LoggingConfiguration {
 

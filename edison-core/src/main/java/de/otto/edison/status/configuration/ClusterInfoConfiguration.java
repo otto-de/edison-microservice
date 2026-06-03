@@ -3,15 +3,15 @@ package de.otto.edison.status.configuration;
 import de.otto.edison.annotations.Beta;
 import de.otto.edison.status.domain.ClusterInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
 
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties(ClusterInfoProperties.class)
 @Beta
 public class ClusterInfoConfiguration {

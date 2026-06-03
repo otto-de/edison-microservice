@@ -6,15 +6,15 @@ import de.otto.edison.jobs.repository.dynamo.DynamoJobMetaRepository;
 import de.otto.edison.jobs.repository.dynamo.DynamoJobRepository;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-@Configuration
+@AutoConfiguration
 @ConditionalOnProperty(prefix = "edison.jobs", name = "dynamo.enabled", havingValue = "true")
 @ConditionalOnBean(type = "software.amazon.awssdk.services.dynamodb.DynamoDbClient")
 public class DynamoJobsConfiguration {
@@ -26,7 +26,7 @@ public class DynamoJobsConfiguration {
                                        final @Value("${edison.jobs.dynamo.jobinfo.tableName}") String tableName,
                                        final @Value("${edison.jobs.dynamo.jobinfo.pageSize}") int pageSize) {
         LOG.info("===============================");
-        LOG.info("Using DynamoJobRepository with tableName {} and pageSize {}.",tableName, pageSize);
+        LOG.info("Using DynamoJobRepository with tableName {} and pageSize {}.", tableName, pageSize);
         LOG.info("===============================");
         return new DynamoJobRepository(dynamoDbClient, tableName, pageSize);
     }

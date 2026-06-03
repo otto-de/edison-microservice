@@ -6,11 +6,11 @@ import de.otto.edison.jobs.domain.JobMeta;
 import de.otto.edison.jobs.service.JobMetaService;
 import de.otto.edison.jobs.service.JobService;
 import de.otto.edison.navigation.NavBar;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -27,13 +25,11 @@ import java.util.Optional;
 import static de.otto.edison.jobs.controller.JobRepresentation.representationOf;
 import static de.otto.edison.navigation.NavBarItem.navBarItem;
 import static de.otto.edison.util.UrlHelper.baseUriOf;
-import static java.util.stream.Collectors.toList;
 import static jakarta.servlet.http.HttpServletResponse.*;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @Controller
-@ConditionalOnProperty(prefix = "edison.jobs", name = "external-trigger", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class JobsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsController.class);
@@ -43,7 +39,7 @@ public class JobsController {
     private final EdisonApplicationProperties applicationProperties;
 
     @Autowired
-    JobsController(final JobService jobService,
+    public JobsController(final JobService jobService,
                    final JobMetaService jobMetaService,
                    final NavBar rightNavBar,
                    final EdisonApplicationProperties applicationProperties) {

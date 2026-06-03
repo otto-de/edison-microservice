@@ -11,11 +11,9 @@ import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.scheduling.support.SimpleTriggerContext;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 @ConditionalOnProperty(value = "edison.jobs.localScheduling.enabled", havingValue = "true")
 public class LocalJobScheduler {
     private static final Logger LOG = LoggerFactory.getLogger(LocalJobScheduler.class);

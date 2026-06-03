@@ -1,12 +1,16 @@
 package de.otto.edison.validation.configuration;
 
+import de.otto.edison.validation.web.ErrorHalRepresentationFactory;
+import de.otto.edison.validation.web.ValidationExceptionHandler;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import tools.jackson.databind.ObjectMapper;
 
-@Configuration
+@AutoConfiguration
 public class ValidationConfiguration {
 
     @Bean
@@ -27,4 +31,15 @@ public class ValidationConfiguration {
         return factoryBean;
     }
 
-}
+    @Bean
+    public ErrorHalRepresentationFactory errorHalRepresentationFactory(
+            final AbstractMessageSource edisonValidationMessageSource,
+            final ObjectMapper objectMapper,
+            @Value("${edison.validation.error-profile:http://spec.otto.de/profiles/error}") final String errorProfile) {
+        return new ErrorHalRepresentationFactory(edisonValidationMessageSource, objectMapper, errorProfile);
+    }
+
+    @Bean
+    public ValidationExceptionHandler validationExceptionHandler(final ErrorHalRepresentationFactory errorHalRepresentationFactory) {
+        return new ValidationExceptionHandler(errorHalRepresentationFactory);
+    }}

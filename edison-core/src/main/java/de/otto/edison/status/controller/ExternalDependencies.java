@@ -3,7 +3,6 @@ package de.otto.edison.status.controller;
 import de.otto.edison.annotations.Beta;
 import de.otto.edison.status.domain.ExternalDependency;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -19,8 +18,7 @@ import static java.util.Collections.emptyList;
  * @since 1.1.0
  */
 @Beta
-@Component
-class ExternalDependencies {
+public class ExternalDependencies {
     @Autowired(required = false)
     private List<ExternalDependency> dependencies;
 

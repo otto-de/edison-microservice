@@ -1,7 +1,10 @@
 package de.otto.edison.registry.client;
 
-import de.otto.edison.registry.security.OAuth2TokenProviderFactory;
+import de.otto.edison.registry.configuration.ServiceRegistryConfiguration;
 import de.otto.edison.status.configuration.ApplicationInfoConfiguration;
+import de.otto.edison.status.configuration.SystemInfoConfiguration;
+import de.otto.edison.status.configuration.TeamInfoConfiguration;
+import de.otto.edison.status.configuration.VersionInfoConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,8 +35,10 @@ public class AsyncHttpRegistryClientTest {
         // given
         TestPropertyValues.of("edison.serviceregistry.enabled=false").applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
-        context.register(OAuth2TokenProviderFactory.class);
-        context.register(AsyncHttpRegistryClient.class);
+        context.register(SystemInfoConfiguration.class);
+        context.register(TeamInfoConfiguration.class);
+        context.register(VersionInfoConfiguration.class);
+        context.register(ServiceRegistryConfiguration.class);
         context.refresh();
 
         // when
@@ -50,8 +55,10 @@ public class AsyncHttpRegistryClientTest {
                 .and("edison.serviceregistry.service=http://test")
                 .applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
-        context.register(OAuth2TokenProviderFactory.class);
-        context.register(AsyncHttpRegistryClient.class);
+        context.register(SystemInfoConfiguration.class);
+        context.register(TeamInfoConfiguration.class);
+        context.register(VersionInfoConfiguration.class);
+        context.register(ServiceRegistryConfiguration.class);
         context.refresh();
 
         assertThat(context.containsBean("asyncHttpRegistryClient"), is(true));
@@ -65,8 +72,10 @@ public class AsyncHttpRegistryClientTest {
                 .and("edison.serviceregistry.servers=")
                 .applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
-        context.register(OAuth2TokenProviderFactory.class);
-        context.register(AsyncHttpRegistryClient.class);
+        context.register(SystemInfoConfiguration.class);
+        context.register(TeamInfoConfiguration.class);
+        context.register(VersionInfoConfiguration.class);
+        context.register(ServiceRegistryConfiguration.class);
         context.refresh();
 
         RegistryClient bean = context.getBean(RegistryClient.class);
@@ -79,11 +88,14 @@ public class AsyncHttpRegistryClientTest {
         // given
         TestPropertyValues
                 .of("edison.serviceregistry.enabled=true")
+                .and("edison.serviceregistry.servers=http://foo")
                 .and("edison.serviceregistry.service=")
                 .applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
-        context.register(OAuth2TokenProviderFactory.class);
-        context.register(AsyncHttpRegistryClient.class);
+        context.register(SystemInfoConfiguration.class);
+        context.register(TeamInfoConfiguration.class);
+        context.register(VersionInfoConfiguration.class);
+        context.register(ServiceRegistryConfiguration.class);
         context.refresh();
 
         RegistryClient bean = context.getBean(RegistryClient.class);
@@ -100,8 +112,10 @@ public class AsyncHttpRegistryClientTest {
                 .and("edison.serviceregistry.service=http://test")
                 .applyTo(context);
         context.register(ApplicationInfoConfiguration.class);
-        context.register(OAuth2TokenProviderFactory.class);
-        context.register(AsyncHttpRegistryClient.class);
+        context.register(SystemInfoConfiguration.class);
+        context.register(TeamInfoConfiguration.class);
+        context.register(VersionInfoConfiguration.class);
+        context.register(ServiceRegistryConfiguration.class);
         context.refresh();
 
         RegistryClient bean = context.getBean(RegistryClient.class);
@@ -113,8 +127,10 @@ public class AsyncHttpRegistryClientTest {
     public void shouldDoNothingIfNothingConfigured() {
         // given
         context.register(ApplicationInfoConfiguration.class);
-        context.register(OAuth2TokenProviderFactory.class);
-        context.register(AsyncHttpRegistryClient.class);
+        context.register(SystemInfoConfiguration.class);
+        context.register(TeamInfoConfiguration.class);
+        context.register(VersionInfoConfiguration.class);
+        context.register(ServiceRegistryConfiguration.class);
         context.refresh();
 
         RegistryClient bean = context.getBean(RegistryClient.class);

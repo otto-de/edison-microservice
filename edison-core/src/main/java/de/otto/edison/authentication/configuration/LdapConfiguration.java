@@ -5,19 +5,19 @@ import de.otto.edison.authentication.LdapRoleAuthenticationFilter;
 import de.otto.edison.authentication.connection.LdapConnectionFactory;
 import de.otto.edison.authentication.connection.SSLLdapConnectionFactory;
 import de.otto.edison.authentication.connection.StartTlsLdapConnectionFactory;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
 /**
  * Configuration for LDAP authentication. Secures specific endpoints according to the {@code edison.ldap} configuration
  * as given in {@link LdapProperties}}.
  */
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties(LdapProperties.class)
 @ConditionalOnProperty(prefix = "edison.ldap", name = "enabled", havingValue = "true")
 @ConditionalOnMissingBean(name = {"ldapAuthenticationFilter"})

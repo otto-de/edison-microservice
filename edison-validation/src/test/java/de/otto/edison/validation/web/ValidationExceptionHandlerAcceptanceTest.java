@@ -1,5 +1,6 @@
 package de.otto.edison.validation.web;
 
+import de.otto.edison.validation.configuration.ValidationConfiguration;
 import de.otto.edison.validation.validators.SafeId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,9 +26,8 @@ import static org.springframework.http.MediaType.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @EnableAutoConfiguration
-@ComponentScan("de.otto.edison.validation")
 @ContextConfiguration(classes = {
-        ValidationExceptionHandler.class,
+        ValidationConfiguration.class,
         ValidationExceptionHandlerAcceptanceTest.TestConfiguration.class})
 public class ValidationExceptionHandlerAcceptanceTest {
 
@@ -88,7 +87,14 @@ public class ValidationExceptionHandlerAcceptanceTest {
                 .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
+    @org.springframework.context.annotation.Configuration
     public static class TestConfiguration {
+
+        @org.springframework.context.annotation.Bean
+        public tools.jackson.databind.ObjectMapper objectMapper() {
+            return new tools.jackson.databind.ObjectMapper();
+        }
+
         @RestController
         public static class TestController {
             @RequestMapping(value = "/testing",

@@ -1,10 +1,8 @@
 package de.otto.edison.status.configuration;
 
-import de.otto.edison.status.domain.ApplicationInfo;
-import de.otto.edison.status.domain.ClusterInfo;
-import de.otto.edison.status.domain.SystemInfo;
-import de.otto.edison.status.domain.TeamInfo;
-import de.otto.edison.status.domain.VersionInfo;
+import de.otto.edison.configuration.EdisonApplicationProperties;
+import de.otto.edison.status.controller.*;
+import de.otto.edison.status.domain.*;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import de.otto.edison.status.indicator.CachedApplicationStatusAggregator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
@@ -12,10 +10,13 @@ import de.otto.edison.status.scheduler.CronScheduler;
 import de.otto.edison.status.scheduler.EveryTenSecondsScheduler;
 import de.otto.edison.status.scheduler.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
@@ -27,8 +28,9 @@ import static java.util.Collections.emptyList;
  * Configuration of the default ApplicationStatusAggregator that is used to get and cache the status of this
  * application using all StatusDetailIndicators configured in the Spring application context.
  */
-@Configuration
+@AutoConfiguration
 @EnableScheduling
+@EnableConfigurationProperties({ServerProperties.class, EdisonApplicationProperties.class, WebEndpointProperties.class})
 public class ApplicationStatusAggregatorConfiguration {
 
     @Autowired(required = false)
@@ -36,6 +38,36 @@ public class ApplicationStatusAggregatorConfiguration {
 
     @Autowired(required = false)
     private ClusterInfo clusterInfo;
+
+    @Bean
+    public ExternalDependencies externalDependencies() {
+        return new ExternalDependencies();
+    }
+
+    @Bean
+    public StatusController statusController(final ApplicationStatusAggregator applicationStatusAggregator,
+                                             final ExternalDependencies externalDependencies,
+                                             @Autowired(required = false) final Criticality criticality) {
+        return new StatusController(applicationStatusAggregator, externalDependencies, criticality);
+    }
+
+    @Bean
+    public GlobalModelAttributes globalModelAttributes(final WebEndpointProperties webEndpointProperties,
+                                                       final EdisonApplicationProperties edisonApplicationProperties) {
+        return new GlobalModelAttributes(webEndpointProperties, edisonApplicationProperties);
+    }
+
+    @Bean
+    public DependenciesController dependenciesController(final ExternalDependencies externalDependencies) {
+        return new DependenciesController(externalDependencies);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "edison.status.redirect-internal.enabled", havingValue = "true", matchIfMissing = true)
+    public InternalController internalController(final EdisonApplicationProperties edisonApplicationProperties,
+                                                 final ServerProperties serverProperties) {
+        return new InternalController(edisonApplicationProperties, serverProperties);
+    }
 
     /**
      * By default, a CachedApplicationStatusAggregator is used. The status is updated using a

@@ -1,0 +1,14 @@
+de.otto.edison.authentication.configuration.LdapConfiguration
+de.otto.edison.env.ParamStoreConfiguration
+de.otto.edison.health.configuration.HealthConfiguration
+de.otto.edison.logging.LoggingConfiguration
+de.otto.edison.logging.ui.LoggersConfiguration
+de.otto.edison.navigation.configuration.NavBarConfiguration
+de.otto.edison.registry.configuration.ServiceRegistryConfiguration
+de.otto.edison.status.configuration.ApplicationInfoConfiguration
+de.otto.edison.status.configuration.ApplicationStatusAggregatorConfiguration
+de.otto.edison.status.configuration.ClusterInfoConfiguration
+de.otto.edison.status.configuration.SystemInfoAWSConfiguration
+de.otto.edison.status.configuration.SystemInfoConfiguration
+de.otto.edison.status.configuration.TeamInfoConfiguration
+de.otto.edison.status.configuration.VersionInfoConfiguration

@@ -6,10 +6,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import de.otto.edison.jobs.domain.JobMarker;
 import de.otto.edison.jobs.domain.JobMessage;
-
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
@@ -20,7 +18,6 @@ import static de.otto.edison.jobs.domain.JobMessage.jobMessage;
  * Logback log appender that publishes logging events as application events, when a job_id is set in MDC,
  * so that log messages are displayed in the job message html page.
  */
-@Component
 public class JobMessageLogAppender extends AppenderBase<ILoggingEvent> {
 
     private final JobService jobService;

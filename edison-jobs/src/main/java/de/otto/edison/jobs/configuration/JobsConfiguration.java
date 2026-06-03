@@ -1,6 +1,8 @@
 package de.otto.edison.jobs.configuration;
 
 import de.otto.edison.configuration.EdisonApplicationProperties;
+import de.otto.edison.jobs.controller.JobDefinitionsController;
+import de.otto.edison.jobs.controller.JobsController;
 import de.otto.edison.jobs.definition.JobDefinition;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import de.otto.edison.jobs.repository.JobRepository;
@@ -8,28 +10,31 @@ import de.otto.edison.jobs.repository.cleanup.CleanupMessagesOfTooBigJobLogs;
 import de.otto.edison.jobs.repository.cleanup.DeleteSkippedJobs;
 import de.otto.edison.jobs.repository.cleanup.KeepLastJobs;
 import de.otto.edison.jobs.repository.cleanup.StopDeadJobs;
-import de.otto.edison.jobs.repository.inmem.InMemJobMetaRepository;
-import de.otto.edison.jobs.repository.inmem.InMemJobRepository;
-import de.otto.edison.jobs.service.JobDefinitionService;
-import de.otto.edison.jobs.service.JobService;
+import de.otto.edison.jobs.service.*;
 import de.otto.edison.jobs.status.JobStatusCalculator;
 import de.otto.edison.jobs.status.JobStatusDetailIndicator;
+import de.otto.edison.navigation.NavBar;
+import de.otto.edison.navigation.configuration.NavBarConfiguration;
 import de.otto.edison.status.domain.Status;
+import de.otto.edison.status.domain.SystemInfo;
 import de.otto.edison.status.indicator.CompositeStatusDetailIndicator;
 import de.otto.edison.status.indicator.StatusDetailIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.time.Clock;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +47,7 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.stream.Collectors.toList;
 
-@Configuration
+@AutoConfiguration(after = {MongoJobsConfiguration.class, DynamoJobsConfiguration.class, InMemoryJobsConfiguration.class})
 @EnableAsync
 @EnableScheduling
 @EnableConfigurationProperties({ JobsProperties.class, EdisonApplicationProperties.class })
@@ -55,18 +60,65 @@ public class JobsConfiguration {
 
     @Autowired
     public JobsConfiguration(final JobsProperties jobsProperties,
-                             final EdisonApplicationProperties  applicationProperties) {
+                             final EdisonApplicationProperties applicationProperties) {
         this.jobsProperties = jobsProperties;
         this.edisonManagementBasePath = applicationProperties.getManagement().getBasePath();
         final Map<String, String> calculator = this.jobsProperties.getStatus().getCalculator();
         if (!calculator.containsKey("default")) {
             this.jobsProperties.getStatus().setCalculator(
-                    new HashMap<String,String>() {{
+                    new HashMap<String, String>() {{
                         putAll(calculator);
                         put("default", "warningOnLastJobFailed");
                     }}
             );
         }
+    }
+
+    @Bean
+    public UuidProvider uuidProvider() {
+        return new UuidProvider();
+    }
+
+    @Bean
+    public JobMutexGroups jobMutexGroups() {
+        return new JobMutexGroups();
+    }
+
+    @Bean
+    public JobDefinitionService jobDefinitionService() {
+        return new JobDefinitionService();
+    }
+
+    @Bean
+    public JobMetaService jobMetaService(final JobMetaRepository jobMetaRepository,
+                                         final JobMutexGroups jobMutexGroups) {
+        return new JobMetaService(jobMetaRepository, jobMutexGroups);
+    }
+
+    @Bean
+    public JobService jobService(final JobRepository jobRepository,
+                                 final JobMetaService jobMetaService,
+                                 @Autowired(required = false) final List<JobRunnable> jobRunnables,
+                                 final ScheduledExecutorService scheduledExecutorService,
+                                 final ApplicationEventPublisher applicationEventPublisher,
+                                 @Autowired(required = false) final Clock clock,
+                                 final SystemInfo systemInfo,
+                                 final UuidProvider uuidProvider) {
+        return new JobService(jobRepository, jobMetaService, jobRunnables, scheduledExecutorService,
+                applicationEventPublisher, clock, systemInfo, uuidProvider);
+    }
+
+    @Bean
+    public JobMessageLogAppender jobMessageLogAppender(final JobService jobService) {
+        return new JobMessageLogAppender(jobService);
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = "edison.jobs.localScheduling.enabled", havingValue = "true")
+    public LocalJobScheduler localJobScheduler(final List<JobRunnable> jobRunnables,
+                                               final JobService jobService,
+                                               final TaskScheduler taskScheduler) {
+        return new LocalJobScheduler(jobRunnables, jobService, taskScheduler);
     }
 
     @Bean
@@ -86,21 +138,6 @@ public class JobsConfiguration {
     @ConditionalOnMissingBean(TaskScheduler.class)
     public TaskScheduler taskScheduler(ThreadPoolTaskSchedulerBuilder builder) {
         return builder.build();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(JobMetaRepository.class)
-    public JobMetaRepository jobMetaRepository() {
-        return new InMemJobMetaRepository();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(JobRepository.class)
-    public JobRepository jobRepository() {
-        LOG.warn("===============================");
-        LOG.warn("Using in-memory JobRepository");
-        LOG.warn("===============================");
-        return new InMemJobRepository();
     }
 
     @Bean
@@ -190,6 +227,24 @@ public class JobsConfiguration {
                 .filter(c -> calculator.equalsIgnoreCase(c.getKey()))
                 .findAny()
                 .orElseThrow(() -> new IllegalStateException("Unable to find JobStatusCalculator " + calculator));
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "edison.jobs", name = "external-trigger", havingValue = "true", matchIfMissing = true)
+    public JobsController jobsController(final JobService jobService,
+                                         final JobMetaService jobMetaService,
+                                         @Qualifier(NavBarConfiguration.RIGHT_NAV_BAR) final NavBar rightNavBar,
+                                         final EdisonApplicationProperties applicationProperties) {
+        return new JobsController(jobService, jobMetaService, rightNavBar, applicationProperties);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "edison.jobs", name = "external-trigger", havingValue = "true", matchIfMissing = true)
+    public JobDefinitionsController jobDefinitionsController(final JobDefinitionService jobDefinitionService,
+                                                             final JobMetaService jobMetaService,
+                                                             @Qualifier(NavBarConfiguration.RIGHT_NAV_BAR) final NavBar rightNavBar,
+                                                             final EdisonApplicationProperties applicationProperties) {
+        return new JobDefinitionsController(jobDefinitionService, jobMetaService, rightNavBar, applicationProperties);
     }
 
 }

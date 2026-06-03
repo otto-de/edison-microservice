@@ -5,7 +5,6 @@ import de.otto.edison.status.domain.Criticality;
 import de.otto.edison.status.domain.ExternalDependency;
 import de.otto.edison.status.indicator.ApplicationStatusAggregator;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,12 +20,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RestController
 public class StatusController {
 
-    @Autowired
-    private ApplicationStatusAggregator aggregator;
-    @Autowired
-    private ExternalDependencies externalDependencies;
-    @Autowired(required = false)
-    private Criticality criticality;
+    private final ApplicationStatusAggregator aggregator;
+    private final ExternalDependencies externalDependencies;
+    private final Criticality criticality;
+
+    public StatusController(final ApplicationStatusAggregator aggregator,
+                            final ExternalDependencies externalDependencies,
+                            final Criticality criticality) {
+        this.aggregator = aggregator;
+        this.externalDependencies = externalDependencies;
+        this.criticality = criticality;
+    }
 
     @RequestMapping(
             value = "${edison.application.management.base-path:/internal}/status",

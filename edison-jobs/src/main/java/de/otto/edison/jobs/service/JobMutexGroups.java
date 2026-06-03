@@ -1,7 +1,6 @@
 package de.otto.edison.jobs.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +12,6 @@ import static java.util.Collections.emptySet;
  *
  * @since 1.0.0
  */
-@Component
 public class JobMutexGroups {
 
     private Set<JobMutexGroup> mutexGroups = emptySet();

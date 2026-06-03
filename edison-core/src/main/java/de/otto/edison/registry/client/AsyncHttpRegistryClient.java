@@ -10,8 +10,6 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -33,8 +31,6 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @author Guido Steinacker
  * @since 1.0.0
  */
-@Component
-@EnableConfigurationProperties(ServiceRegistryProperties.class)
 @Beta
 public class AsyncHttpRegistryClient implements RegistryClient {
 

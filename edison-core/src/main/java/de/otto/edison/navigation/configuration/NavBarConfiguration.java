@@ -3,9 +3,9 @@ package de.otto.edison.navigation.configuration;
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.navigation.NavBar;
 import de.otto.edison.navigation.NavBarItem;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import static de.otto.edison.navigation.NavBar.emptyNavBar;
 import static de.otto.edison.navigation.NavBar.navBar;
@@ -32,7 +32,7 @@ import static java.util.Arrays.asList;
  *
  * @since 1.0.0
  */
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class NavBarConfiguration {
 

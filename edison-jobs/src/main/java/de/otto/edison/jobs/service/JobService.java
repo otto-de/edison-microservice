@@ -10,14 +10,13 @@ import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobRepository;
 import de.otto.edison.status.domain.SystemInfo;
 import io.micrometer.core.instrument.Metrics;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -35,7 +34,6 @@ import static java.lang.System.currentTimeMillis;
 import static java.time.OffsetDateTime.now;
 import static java.util.Collections.emptyList;
 
-@Service
 public class JobService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobService.class);
@@ -55,7 +53,7 @@ public class JobService {
     }
 
     @Autowired
-    JobService(final JobRepository jobRepository,
+    public JobService(final JobRepository jobRepository,
                final JobMetaService jobMetaService,
                @Autowired(required = false) final List<JobRunnable> jobRunnables,
                final ScheduledExecutorService executor,

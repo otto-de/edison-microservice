@@ -6,7 +6,6 @@ import de.otto.edison.jobs.repository.JobBlockedException;
 import de.otto.edison.jobs.repository.JobMetaRepository;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +16,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * A service used to manage locking of jobs.
  */
-@Service
 public class JobMetaService {
 
     private static final Logger LOG = getLogger(JobMetaService.class);

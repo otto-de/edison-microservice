@@ -2,8 +2,6 @@ package de.otto.edison.status.controller;
 
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +16,6 @@ import java.io.IOException;
  * Created by guido on 05.02.16.
  */
 @Controller
-@ConditionalOnProperty(name = "edison.status.redirect-internal.enabled", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties({ServerProperties.class, EdisonApplicationProperties.class})
 public class InternalController {
 
     private final EdisonApplicationProperties properties;

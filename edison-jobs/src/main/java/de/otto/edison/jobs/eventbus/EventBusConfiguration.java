@@ -1,15 +1,11 @@
 package de.otto.edison.jobs.eventbus;
 
 import de.otto.edison.jobs.service.JobService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@AutoConfiguration
 public class EventBusConfiguration {
-
-    @Autowired
-    private JobService jobService;
 
     @Bean
     public JobStateChangeListener logJobEventListener() {
@@ -17,7 +13,7 @@ public class EventBusConfiguration {
     }
 
     @Bean
-    public JobStateChangeListener persistenceJobEventListener() {
+    public JobStateChangeListener persistenceJobEventListener(final JobService jobService) {
         return new PersistenceJobStateChangeListener(jobService);
     }
 

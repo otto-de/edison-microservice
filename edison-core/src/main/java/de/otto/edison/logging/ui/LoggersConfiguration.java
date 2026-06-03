@@ -3,15 +3,15 @@ package de.otto.edison.logging.ui;
 import de.otto.edison.configuration.EdisonApplicationProperties;
 import de.otto.edison.navigation.NavBar;
 import org.springframework.boot.actuate.logging.LoggersEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @since 1.1.0
  */
-@Configuration
+@AutoConfiguration
 @ConditionalOnProperty(name = "endpoints.loggers.enabled", havingValue = "true")
 @EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class LoggersConfiguration {

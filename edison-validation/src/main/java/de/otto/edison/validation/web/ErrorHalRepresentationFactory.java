@@ -1,19 +1,17 @@
 package de.otto.edison.validation.web;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.AbstractMessageSource;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Locale;
 
 import static java.util.Comparator.comparing;
 
-@Component
 public class ErrorHalRepresentationFactory {
 
     private final AbstractMessageSource messageSource;
