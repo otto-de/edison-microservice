@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.metadata.ConstraintDescriptor;
 import org.hibernate.validator.internal.engine.DefaultClockProvider;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
-import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.hibernate.validator.internal.engine.path.MutablePath;
 import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 import org.junit.jupiter.api.Test;
 
@@ -92,7 +92,7 @@ public class EnumListValidatorTest {
     }
 
     private ConstraintValidatorContext createContext() {
-        return new ConstraintValidatorContextImpl(DefaultClockProvider.INSTANCE, PathImpl.createPathFromString("target"), mock(ConstraintDescriptor.class), null, ExpressionLanguageFeatureLevel.DEFAULT, ExpressionLanguageFeatureLevel.DEFAULT);
+        return new ConstraintValidatorContextImpl(DefaultClockProvider.INSTANCE, MutablePath.createPathFromString("target"), mock(ConstraintDescriptor.class), null, ExpressionLanguageFeatureLevel.DEFAULT, ExpressionLanguageFeatureLevel.DEFAULT);
     }
 
     @SuppressWarnings("unchecked")
