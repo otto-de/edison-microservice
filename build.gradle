@@ -61,11 +61,14 @@ jreleaser {
     }
 }
 
-// USE SEMANTIC VERSIONING AS SPECIFIED HERE: http://semver.org/spec/v2.0.0.html
+// VERSION STRATEGY
 //
-// Major Release: X.0.0-RELEASE: Breaking Changes. Should be avoided if possible, or planned for future release.
-// Minor Release: 0.X.0-RELEASE: Additional Features, updates from minor releases in Spring
-// Micro Release: 0.0.X-RELEASE: Bugfixes, non-breaking changes, updates from micro releases in Spring
+// We attempt to keep the first three version components in sync with the Spring Boot version
+// that is contained in this Edison release. For new releases where we release Edison faster
+// than Spring Boot, we introduced a 4th version component.
+//
+// Example: Edison 3.5.14 for Spring Boot 3.5.14
+//          Edison 3.5.14.1 for a second Edison release without Spring Boot update
 //
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
