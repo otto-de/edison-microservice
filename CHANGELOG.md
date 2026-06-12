@@ -1,5 +1,8 @@
 # Release Notes
 
+## 3.5.15
+* **[all]**: Update to Spring Boot 3.5.15
+
 ## 3.5.14
 * **[all]**: Update to Spring Boot 3.5.14
 
