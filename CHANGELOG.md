@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.1.0
+* **[all]**: Update to Spring Boot 4.1.0
+* **[core]**: **Breaking change**: Edison Microservice uses Spring Boot auto-configuration now.
+  This means, that you can remove the component scan annotation from your main class and just the @SpringBootApplication annotation.
+
 ## 4.1.0-RC1
 * **[all]**: Update to Spring Boot 4.1.0-RC1
 * **[core]**: **Breaking change**: Edison Microservice uses Spring Boot auto-configuration now. 
