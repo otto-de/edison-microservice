@@ -2,16 +2,17 @@
 #
 # HOW TO TRIGGER A RELEASE
 # -------------------------
-# 1. Update `edison_version` in build.gradle to a non-SNAPSHOT version (e.g. "4.1.1").
-# 2. Update CHANGELOG.md with the release notes for that version.
-# 3. Commit with a conventional message:
+# 1. Update `edison_version` in build.gradle (on the target branch) to a non-SNAPSHOT version.
+# 2. Update CHANGELOG.md with a "## <version>" entry on the same branch.
+# 3. Commit and push to the target branch:
 #      git commit -am "chore: prepare release 4.1.1"
-# 4. Trigger this workflow, passing the exact version that matches build.gradle:
-#      gh workflow run release.yml -f version=4.1.1
+#      git push
+# 4. Trigger this workflow, specifying the version and branch:
+#      gh workflow run release.yml -f version=4.1.1 -f branch=main
+#      gh workflow run release.yml -f version=3.5.11 -f branch=3.5.x
 #    Or use the GitHub Actions UI: Actions → Release → Run workflow.
 #
-# After a successful release, bump build.gradle to the next SNAPSHOT version and commit:
-#      git commit -am "chore: bump to 4.1.2-SNAPSHOT"
+# After a successful release, bump build.gradle to the next SNAPSHOT version and commit.
 
 name: Release
 
@@ -22,10 +23,18 @@ on:
         description: "Release version (must match edison_version in build.gradle, without -SNAPSHOT)"
         required: true
         type: string
+      branch:
+        description: "Branch to release from"
+        required: true
+        type: choice
+        options:
+          - main
+          - 3.5.x
+        default: main
 
 jobs:
   release:
-    name: Release ${{ inputs.version }}
+    name: Release ${{ inputs.version }} from ${{ inputs.branch }}
     runs-on: ubuntu-latest
 
     permissions:
@@ -36,6 +45,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.branch }}
           fetch-depth: 0  # JReleaser needs full history to generate changelogs
 
       - name: Set up JDK 17

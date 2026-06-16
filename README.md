@@ -186,9 +186,13 @@ Releases are published to both GitHub Packages (snapshots and releases) and Mave
    git push
    ```
 
-4. **Trigger the release workflow**, passing the exact version from `build.gradle`:
+4. **Trigger the release workflow**, passing the version and the branch to release from:
    ```bash
-   gh workflow run release.yml -f version=4.1.1
+   # Release from main
+   gh workflow run release.yml -f version=4.1.1 -f branch=main
+
+   # Release from 3.5.x
+   gh workflow run release.yml -f version=3.5.11 -f branch=3.5.x
    ```
    Alternatively, use the GitHub Actions UI: **Actions → Release → Run workflow**.
 
