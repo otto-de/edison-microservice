@@ -161,13 +161,47 @@ Determine possible dependency updates
 
 ### Publishing
 
-#### Publish new releases to sonatype
+Releases are published to both GitHub Packages (snapshots and releases) and Maven Central (releases only) via the
+[Release workflow](.github/workflows/release.yml) using [JReleaser](https://jreleaser.org/).
 
-    ./release.sh
+#### Step-by-step release process
 
-#### Create a release in github
-Click on "Releases" -> "Draft a new release". Create a tag and copy&paste the relevant info from the changelog.<br/>
-Don't publish packages to github. They are published to sonatype.
+1. **Set the release version** in `build.gradle` — remove the `-SNAPSHOT` suffix:
+   ```
+   def edison_version = "4.1.1"
+   ```
+
+2. **Update `CHANGELOG.md`** with the release notes for this version.
+
+3. **Commit and push:**
+   ```bash
+   git commit -am "chore: prepare release 4.1.1"
+   git push
+   ```
+
+4. **Trigger the release workflow**, passing the exact version from `build.gradle`:
+   ```bash
+   gh workflow run release.yml -f version=4.1.1
+   ```
+   Alternatively, use the GitHub Actions UI: **Actions → Release → Run workflow**.
+
+   The workflow will:
+   - Validate that the version matches `build.gradle` and is not a SNAPSHOT
+   - Run all tests
+   - Publish artifacts to GitHub Packages and Maven Central
+   - Create a GitHub release with changelog
+
+5. **Bump to the next snapshot version** after a successful release:
+   ```
+   def edison_version = "4.1.2-SNAPSHOT"
+   ```
+   ```bash
+   git commit -am "chore: bump to 4.1.2-SNAPSHOT"
+   git push
+   ```
+
+For local releases (e.g. testing the release process), you can still use `./release.sh`, which requires
+credentials configured in `~/.jreleaser/config.toml`.
 
 ## Examples
 
