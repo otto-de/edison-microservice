@@ -172,6 +172,13 @@ Releases are published to both GitHub Packages (snapshots and releases) and Mave
    ```
 
 2. **Update `CHANGELOG.md`** with the release notes for this version.
+   The entry must start with a heading of the exact form `## <version>`, e.g.:
+   ```markdown
+   ## 4.1.1
+   * **[core]**: Some fix
+   * **[all]**: Update to Spring Boot 4.1.1
+   ```
+   This section is extracted verbatim and used as the GitHub release body.
 
 3. **Commit and push:**
    ```bash
@@ -187,9 +194,10 @@ Releases are published to both GitHub Packages (snapshots and releases) and Mave
 
    The workflow will:
    - Validate that the version matches `build.gradle` and is not a SNAPSHOT
+   - Extract the `## <version>` section from `CHANGELOG.md` as the GitHub release body
    - Run all tests
    - Publish artifacts to GitHub Packages and Maven Central
-   - Create a GitHub release with changelog
+   - Create a GitHub release with the changelog entry as release notes
 
 5. **Bump to the next snapshot version** after a successful release:
    ```

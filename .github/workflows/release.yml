@@ -63,6 +63,40 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Build release notes from CHANGELOG.md and git history
+        run: |
+          mkdir -p build
+          VERSION="${{ inputs.version }}"
+
+          # 1. Extract the human-written section from CHANGELOG.md.
+          #    Grabs everything between "## <version>" and the next "## " heading.
+          awk "/^## ${VERSION}$/{found=1; next} found && /^## /{exit} found{print}" CHANGELOG.md \
+            | sed '/^[[:space:]]*$/d' \
+            > build/release-notes.md
+          if [ ! -s build/release-notes.md ]; then
+            echo "ERROR: No changelog entry found for version '${VERSION}' in CHANGELOG.md."
+            echo "Add a '## ${VERSION}' section to CHANGELOG.md before releasing."
+            exit 1
+          fi
+
+          # 2. Append the git commit log since the previous release tag.
+          #    Finds the most recent tag that is NOT the current version tag (which
+          #    hasn't been created yet at this point), then lists commits up to HEAD.
+          PREV_TAG=$(git tag --sort=-version:refname \
+            | grep -v "^v\?${VERSION}$" \
+            | head -1)
+          if [ -n "$PREV_TAG" ]; then
+            echo "" >> build/release-notes.md
+            echo "## Commits since ${PREV_TAG}" >> build/release-notes.md
+            git log "${PREV_TAG}..HEAD" \
+              --pretty=format:"- %h %s" \
+              --no-merges \
+              >> build/release-notes.md
+          fi
+
+          echo "--- release-notes.md ---"
+          cat build/release-notes.md
+
       - name: Validate JReleaser config
         run: ./gradlew jreleaserConfig
         env:
