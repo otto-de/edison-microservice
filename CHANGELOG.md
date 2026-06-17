@@ -1,5 +1,8 @@
 # Release Notes
 
+## 4.1.0.1
+* **[jobs]**: Fix possible XSS vulnerability in job status page when showing job parameters and messages. The parameters and messages are now escaped before rendering.
+
 ## 4.1.0
 * **[all]**: Update to Spring Boot 4.1.0
 * **[core]**: **Breaking change**: Edison Microservice uses Spring Boot auto-configuration now.
