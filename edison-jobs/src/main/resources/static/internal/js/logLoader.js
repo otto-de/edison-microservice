@@ -1,4 +1,6 @@
-function getLog(logIndex) {
+import { formatUTCToLocalTime, formatUTCToLocalDateTime } from './datetime.js'
+
+export function getLog(logIndex) {
     $.ajax({
         type: "GET",
         url: $('.logWindow').data("job-url"),
@@ -71,14 +73,16 @@ function getLog(logIndex) {
     });
 }
 
-//Uncheck follow log checkbox if real mouse scrolling detected
-$(".logWindow").bind("scroll mousedown DOMMouseScroll mousewheel keyup", function (e) {
-    if (e.which > 0 || e.type === "mousedown" || e.type === "mousewheel") {
-        $("#follow-log").prop('checked', false);
-    }
-});
+if (typeof window !== 'undefined' && !window.__testing__) {
+    //Uncheck follow log checkbox if real mouse scrolling detected
+    $(".logWindow").bind("scroll mousedown DOMMouseScroll mousewheel keyup", function (e) {
+        if (e.which > 0 || e.type === "mousedown" || e.type === "mousewheel") {
+            $("#follow-log").prop('checked', false);
+        }
+    });
 
-formatInitialDates();
-setTimeout(function () {
-    getLog(0)
-}, 1000);
+    formatInitialDates();
+    setTimeout(function () {
+        getLog(0)
+    }, 1000);
+}

@@ -55,6 +55,16 @@ jobs:
           java-version: 17
           cache: gradle
 
+      - name: Set up Node.js (for pnpm / JS tests)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: edison-jobs/pnpm-lock.yaml
+
+      - name: Enable pnpm via corepack
+        run: corepack enable
+
       - name: Validate version matches build.gradle
         run: |
           DECLARED=$(grep 'def edison_version' build.gradle | grep -o '"[^"]*"' | tr -d '"')

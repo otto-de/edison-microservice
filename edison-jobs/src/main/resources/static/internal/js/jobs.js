@@ -1,4 +1,6 @@
-function update() {
+import { formatUTCToLocalDateTime, formatInitialDates } from './datetime.js'
+
+export function update() {
 
     var jobsContainer = $('#jobsContainer');
     var typeFilter = jobsContainer.data("type-filter");
@@ -57,7 +59,9 @@ function update() {
     });
 }
 
-formatInitialDates();
-setTimeout(function () {
-    update();
-}, 1000);
+if (typeof window !== 'undefined' && !window.__testing__) {
+    formatInitialDates();
+    setTimeout(function () {
+        update();
+    }, 1000);
+}

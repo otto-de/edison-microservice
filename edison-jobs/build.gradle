@@ -1,5 +1,18 @@
 apply plugin: 'java-library'
 
+def jsTest = tasks.register('jsTest', Exec) {
+    description = 'Run JavaScript unit tests with Vitest'
+    group = 'verification'
+    workingDir projectDir
+    commandLine 'pnpm', 'run', 'test'
+    inputs.files('package.json', 'vitest.config.js')
+    inputs.dir('src/main/resources/static')
+    inputs.dir('src/test/js')
+    outputs.upToDateWhen { false }
+}
+
+tasks.named('check').configure { dependsOn jsTest }
+
 dependencies {
     implementation project(":edison-core")
 

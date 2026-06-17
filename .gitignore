@@ -23,3 +23,13 @@ gradlew/
 .project
 .settings/
 .factorypath
+
+# Node.js / JS tooling
+node_modules/
+.pnpm-store/
+.npm/
+dist/
+.cache/
+*.tgz
+.env
+.env.local

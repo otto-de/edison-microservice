@@ -1,4 +1,4 @@
-function formatUTCToLocalDateTime(datetime) {
+export function formatUTCToLocalDateTime(datetime) {
     if (datetime == null || datetime === "") {
         return "-";
     }
@@ -9,14 +9,14 @@ function formatUTCToLocalDateTime(datetime) {
     return (new Date(utcTime - timezoneOffset)).toISOString().slice(0, -5).replace("T", " ");
 }
 
-function formatUTCToLocalTime(datetime) {
+export function formatUTCToLocalTime(datetime) {
     if (datetime == null || datetime === "") {
         return "-";
     }
     return formatUTCToLocalDateTime(datetime).slice(11);
 }
 
-function formatInitialDates() {
+export function formatInitialDates() {
     let dateAndTimeNodes = document.querySelectorAll(".job-started, .job-stopped, .job-updated");
     for (const dateNode of dateAndTimeNodes) {
         $(dateNode).text(formatUTCToLocalDateTime($(dateNode).data("datetime")));
