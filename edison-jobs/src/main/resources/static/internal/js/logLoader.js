@@ -23,7 +23,16 @@ function getLog(logIndex) {
                 if (logIndex === 0) {
                     logWindow.empty();
                 }
-                logWindow.append("<div><span>[" + formatUTCToLocalTime(data.rawMessages[logIndex].timestampUTCIsoString) + "]</span> <span>[" + data.rawMessages[logIndex].level + "] " + data.rawMessages[logIndex].message + "</span></div>");
+                var msg = data.rawMessages[logIndex];
+                var div = document.createElement("div");
+                var tsSpan = document.createElement("span");
+                tsSpan.textContent = "[" + formatUTCToLocalTime(msg.timestampUTCIsoString) + "]";
+                var msgSpan = document.createElement("span");
+                msgSpan.textContent = "[" + msg.level + "] " + msg.message;
+                div.appendChild(tsSpan);
+                div.appendChild(document.createTextNode(" "));
+                div.appendChild(msgSpan);
+                logWindow[0].appendChild(div);
                 logIndex++;
             }
 
