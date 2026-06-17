@@ -4,7 +4,7 @@ jcip-annotations = "1.0"
 togglz = "4.6.2"
 edison-hal = "3.0.0"
 validator-collection = "2.2.0"
-aws-sdk = "2.46.10"
+aws-sdk = "2.46.12"
 mockserver = "7.1.0"
 jacoco = "0.8.13"
 
