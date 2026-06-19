@@ -12,24 +12,24 @@ export function getLog(logIndex) {
         dataType: "json",
         error: function (data, status, error) {
             console.log("Error polling job status.");
-            var jobStatus = $('#job-status');
+            const jobStatus = $('#job-status');
             jobStatus.attr("class", "badge bg-danger");
             jobStatus.attr("style", "width:10em; height:2em;");
             jobStatus.html("<span>UNKNOWN</span>");
         },
         success: function (data, textStatus, xhr) {
-            var numberOfMessages = data.messages.length;
-            var logWindow = $('.logWindow');
+            const numberOfMessages = data.messages.length;
+            const logWindow = $('.logWindow');
 
             while (logIndex < numberOfMessages) {
                 if (logIndex === 0) {
                     logWindow.empty();
                 }
-                var msg = data.rawMessages[logIndex];
-                var div = document.createElement("div");
-                var tsSpan = document.createElement("span");
+                const msg = data.rawMessages[logIndex];
+                const div = document.createElement("div");
+                const tsSpan = document.createElement("span");
                 tsSpan.textContent = "[" + formatUTCToLocalTime(msg.timestampUTCIsoString) + "]";
-                var msgSpan = document.createElement("span");
+                const msgSpan = document.createElement("span");
                 msgSpan.textContent = "[" + msg.level + "] " + msg.message;
                 div.appendChild(tsSpan);
                 div.appendChild(document.createTextNode(" "));
@@ -40,7 +40,7 @@ export function getLog(logIndex) {
 
             if ($('#follow-log').prop('checked')) {
                 logWindow.each(function () {
-                    var scrollHeight = Math.max(this.scrollHeight, this.clientHeight);
+                    const scrollHeight = Math.max(this.scrollHeight, this.clientHeight);
                     this.scrollTop = scrollHeight - this.clientHeight;
                 });
             }
@@ -51,7 +51,7 @@ export function getLog(logIndex) {
                     getLog(logIndex)
                 }, 2000);
             } else {
-                var jobStatus = $('#job-status');
+                const jobStatus = $('#job-status');
                 if (data.status === 'OK') {
                     jobStatus.attr("class", "badge bg-success");
                     jobStatus.html("<span>" + data.status + "</span>");

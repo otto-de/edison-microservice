@@ -2,12 +2,12 @@ import { formatUTCToLocalDateTime, formatInitialDates } from './datetime.js'
 
 export function update() {
 
-    var jobsContainer = $('#jobsContainer');
-    var typeFilter = jobsContainer.data("type-filter");
+    const jobsContainer = $('#jobsContainer');
+    let typeFilter = jobsContainer.data("type-filter");
     if (!typeFilter) {
         typeFilter='';
     }
-    var jobsUrl = jobsContainer.data("jobs-url");
+    const jobsUrl = jobsContainer.data("jobs-url");
 
     $.ajax({
         type: "GET",
@@ -23,11 +23,11 @@ export function update() {
             setTimeout(update, 10000);
         },
         success: function (data, textStatus, xhr) {
-            for (var i in data) {
-                var dataRow = null;
+            for (const i in data) {
+                let dataRow = null;
                 dataRow = data[i];
 
-                var jobStatus = $('#job-status-' + dataRow.id);
+                const jobStatus = $('#job-status-' + dataRow.id);
                 //There is a new job that is not in this list -> reload page!
                 if (!jobStatus.length) {
                     location.reload();
