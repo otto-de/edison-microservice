@@ -63,16 +63,19 @@
                         </div>
                     </div>
                     <div class="col-md-10">
-                        <div class="form-check text-right">
-                            <input type="checkbox" class="form-check-input" id="follow-log" checked="checked"/>
-                            <label class="form-check-label" for="follow-log">Follow log</label>
-                        </div>
-                        <div class="card">
-                        <pre class="p-2 font-monospace logWindow overflow-auto"
-                             th:attr="data-job-url=${job.jobUri} + '?humanReadable=true'"><div
-                                th:each="message : ${job.getRawMessages()}"><span class="job-messagedate"
-                                                                                  th:data-datetime="${message.getTimestampUTCIsoString()}"></span> <span
-                                th:text="'[' + ${message.getLevel()} + '] ' + ${message.getMessage()}"></span></div></pre>
+                        <div class="card" style="position: relative;">
+                            <button id="scroll-to-bottom"
+                                    style="position: absolute; top: 12px; z-index: 10;"
+                                    class="btn btn-sm btn-secondary opacity-75"
+                                    hidden="hidden"
+                                    >
+                                Follow log
+                            </button>
+                            <pre class="p-2 font-monospace logWindow job-log-scroll"
+                                 th:attr="data-job-url=${job.jobUri} + '?humanReadable=true'"><div
+                                    th:each="message : ${job.getRawMessages()}"><span class="job-messagedate"
+                                                                                      th:data-datetime="${message.getTimestampUTCIsoString()}"></span> <span
+                                    th:text="'[' + ${message.getLevel()} + '] ' + ${message.getMessage()}"></span></div></pre>
                         </div>
                     </div>
                 </div>
@@ -88,4 +91,13 @@
 <script type="module" th:src="@{|${edisonManagementBasePath}/js/logLoader.js|}"></script>
 
 </body>
+
+<style>
+    .job-log-scroll {
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+        overflow-x: auto;
+        margin-bottom: 0;
+    }
+</style>
 </html>
