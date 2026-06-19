@@ -1,4 +1,4 @@
-import { formatUTCToLocalTime, formatUTCToLocalDateTime } from './datetime.js'
+import {formatUTCToLocalTime, formatUTCToLocalDateTime, formatInitialDates} from './datetime.js'
 
 export function getLog(logIndex) {
     $.ajax({
