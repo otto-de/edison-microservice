@@ -77,6 +77,10 @@ public class ExampleJobsSmokeTest {
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
                 "    \"title\" : \"Foo Job\"\n" +
                 "  }, {\n" +
+                "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobdefinitions/Long\",\n" +
+                "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
+                "    \"title\" : \"Long Job\"\n" +
+                "  }, {\n" +
                 "    \"href\" : \"http://localhost:" + port + "/exampleContextPath/internal/jobdefinitions/Old\",\n" +
                 "    \"rel\" : \"http://github.com/otto-de/edison/link-relations/job/definition\",\n" +
                 "    \"title\" : \"Old Job\"\n" +
