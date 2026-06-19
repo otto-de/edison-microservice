@@ -1,5 +1,7 @@
 import {formatUTCToLocalTime, formatUTCToLocalDateTime, formatInitialDates} from './datetime.js'
 
+let followLog = true;
+
 export function getLog(logIndex) {
     $.ajax({
         type: "GET",
@@ -38,7 +40,7 @@ export function getLog(logIndex) {
                 logIndex++;
             }
 
-            if ($('#follow-log').prop('checked')) {
+            if (followLog) {
                 logWindow.each(function () {
                     const scrollHeight = Math.max(this.scrollHeight, this.clientHeight);
                     this.scrollTop = scrollHeight - this.clientHeight;
@@ -74,12 +76,36 @@ export function getLog(logIndex) {
 }
 
 if (typeof window !== 'undefined' && !window.__testing__) {
-    //Uncheck follow log checkbox if real mouse scrolling detected
     $(".logWindow").bind("scroll mousedown DOMMouseScroll mousewheel keyup", function (e) {
-        if (e.which > 0 || e.type === "mousedown" || e.type === "mousewheel") {
-            $("#follow-log").prop('checked', false);
+        if (e.which > 0 || e.type === "mousedown" || e.type === "mousewheel" || e.type === "scroll") {
+            const el = this;
+            const atBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 5;
+            followLog = atBottom;
+            const btn = $('#scroll-to-bottom')[0];
+
+            if(atBottom){
+                btn.setAttribute("hidden", "hidden")
+            }else{
+                const logWindow = document.querySelector('.logWindow');
+                const scrollButton = document.getElementById('scroll-to-bottom');
+
+                // Position the button relative to the scrollbar
+                const scrollbarWidth = logWindow.offsetWidth - logWindow.clientWidth;
+                const rightPosition = scrollbarWidth + 12;
+                scrollButton.style.right = rightPosition + 'px';
+
+                btn.removeAttribute("hidden")
+            }
         }
     });
+
+    $("#scroll-to-bottom").on("click", function () {
+        const el = $('.logWindow')[0];
+        el.scrollTop = el.scrollHeight;
+        followLog = true;
+        this.setAttribute("hidden", "hidden");
+    });
+
 
     formatInitialDates();
     setTimeout(function () {
