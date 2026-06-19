@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.1.0.2
+* **[jobs]**: Fix broken JavaScript functionality on job pages caused by missing ES module support
+* **[jobs, core]**: Replace `var` with `const`/`let` in JavaScript files (`datetime.js`, `jobs.js`, `logLoader.js`) to improve code quality
+* **[core]**: Use theme color for active dropdown items in navigation
+
 ## 4.1.0.1
 * **[jobs]**: Fix possible XSS vulnerability in job status page when showing job parameters and messages. The parameters and messages are now escaped before rendering.
 
