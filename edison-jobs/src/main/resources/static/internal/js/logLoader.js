@@ -2,6 +2,25 @@ import {formatUTCToLocalTime, formatUTCToLocalDateTime, formatInitialDates} from
 
 let followLog = true;
 
+export function handleScrollEvent(el, btn) {
+    const atBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 5;
+    followLog = atBottom;
+
+    if (atBottom) {
+        btn.setAttribute("hidden", "hidden");
+    } else {
+        const scrollbarWidth = el.offsetWidth - el.clientWidth;
+        btn.style.right = (scrollbarWidth + 12) + 'px';
+        btn.removeAttribute("hidden");
+    }
+}
+
+export function handleScrollToBottomClick(el, btn) {
+    el.scrollTop = el.scrollHeight;
+    followLog = true;
+    btn.setAttribute("hidden", "hidden");
+}
+
 export function getLog(logIndex) {
     $.ajax({
         type: "GET",
@@ -78,32 +97,12 @@ export function getLog(logIndex) {
 if (typeof window !== 'undefined' && !window.__testing__) {
     $(".logWindow").bind("scroll mousedown DOMMouseScroll mousewheel keyup", function (e) {
         if (e.which > 0 || e.type === "mousedown" || e.type === "mousewheel" || e.type === "scroll") {
-            const el = this;
-            const atBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 5;
-            followLog = atBottom;
-            const btn = $('#scroll-to-bottom')[0];
-
-            if(atBottom){
-                btn.setAttribute("hidden", "hidden")
-            }else{
-                const logWindow = document.querySelector('.logWindow');
-                const scrollButton = document.getElementById('scroll-to-bottom');
-
-                // Position the button relative to the scrollbar
-                const scrollbarWidth = logWindow.offsetWidth - logWindow.clientWidth;
-                const rightPosition = scrollbarWidth + 12;
-                scrollButton.style.right = rightPosition + 'px';
-
-                btn.removeAttribute("hidden")
-            }
+            handleScrollEvent(this, $('#scroll-to-bottom')[0]);
         }
     });
 
     $("#scroll-to-bottom").on("click", function () {
-        const el = $('.logWindow')[0];
-        el.scrollTop = el.scrollHeight;
-        followLog = true;
-        this.setAttribute("hidden", "hidden");
+        handleScrollToBottomClick($('.logWindow')[0], this);
     });
 
 

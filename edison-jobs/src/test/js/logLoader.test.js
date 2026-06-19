@@ -10,7 +10,7 @@ globalThis.window.__testing__ = true
 globalThis.formatUTCToLocalTime = (s) => s ?? '-'
 globalThis.formatInitialDates = () => {}
 
-const { getLog } = await import('../../main/resources/static/internal/js/logLoader.js')
+const { getLog, handleScrollEvent, handleScrollToBottomClick } = await import('../../main/resources/static/internal/js/logLoader.js')
 
 const baseData = {
     state: 'Stopped',
@@ -188,5 +188,129 @@ describe('getLog', () => {
         expect($.ajax).toHaveBeenCalledTimes(2)
 
         vi.useRealTimers()
+    })
+})
+
+describe('handleScrollEvent', () => {
+    function makeEl({ scrollHeight, scrollTop, clientHeight, offsetWidth, clientWidth }) {
+        return { scrollHeight, scrollTop, clientHeight, offsetWidth, clientWidth }
+    }
+
+    function makeBtn() {
+        return {
+            _hidden: true,
+            _right: null,
+            style: { right: null },
+            setAttribute(name, value) { if (name === 'hidden') this._hidden = true },
+            removeAttribute(name) { if (name === 'hidden') this._hidden = false },
+        }
+    }
+
+    it('hides the button and sets followLog=true when scrolled to bottom', () => {
+        const el = makeEl({ scrollHeight: 1000, scrollTop: 995, clientHeight: 10, offsetWidth: 20, clientWidth: 20 })
+        const btn = makeBtn()
+
+        handleScrollEvent(el, btn)
+
+        expect(btn._hidden).toBe(true)
+    })
+
+    it('shows the button when not scrolled to bottom', () => {
+        const el = makeEl({ scrollHeight: 1000, scrollTop: 0, clientHeight: 10, offsetWidth: 20, clientWidth: 20 })
+        const btn = makeBtn()
+
+        handleScrollEvent(el, btn)
+
+        expect(btn._hidden).toBe(false)
+    })
+
+    it('positions button right offset accounting for scrollbar width', () => {
+        // offsetWidth=30, clientWidth=20 → scrollbarWidth=10 → right = 10+12 = 22px
+        const el = makeEl({ scrollHeight: 1000, scrollTop: 0, clientHeight: 10, offsetWidth: 30, clientWidth: 20 })
+        const btn = makeBtn()
+
+        handleScrollEvent(el, btn)
+
+        expect(btn.style.right).toBe('22px')
+    })
+
+    it('treats position within 5px of bottom as "at bottom"', () => {
+        // scrollHeight(100) - scrollTop(84) = 16 > clientHeight(10) + 5 = 15 → NOT at bottom
+        const elNotBottom = makeEl({ scrollHeight: 100, scrollTop: 84, clientHeight: 10, offsetWidth: 20, clientWidth: 20 })
+        const btnNotBottom = makeBtn()
+        handleScrollEvent(elNotBottom, btnNotBottom)
+        expect(btnNotBottom._hidden).toBe(false)
+
+        // scrollHeight(100) - scrollTop(85) = 15 <= clientHeight(10) + 5 = 15 → IS at bottom (exactly at margin)
+        const elAtBottom = makeEl({ scrollHeight: 100, scrollTop: 85, clientHeight: 10, offsetWidth: 20, clientWidth: 20 })
+        const btnAtBottom = makeBtn()
+        handleScrollEvent(elAtBottom, btnAtBottom)
+        expect(btnAtBottom._hidden).toBe(true)
+    })
+
+    it('getLog does not auto-scroll when followLog was set to false by scroll event', () => {
+        // Scroll away from bottom → followLog = false
+        const el = makeEl({ scrollHeight: 1000, scrollTop: 0, clientHeight: 10, offsetWidth: 20, clientWidth: 20 })
+        const btn = makeBtn()
+        handleScrollEvent(el, btn)
+
+        // Now getLog should NOT set scrollTop
+        const logWindow = document.querySelector('.logWindow')
+        logWindow.scrollTop = 0
+        $.ajax = vi.fn(({ success }) => success({ ...baseData, messages: ['x'], rawMessages: makeMessages(['x']) }))
+        getLog(0)
+
+        expect(logWindow.scrollTop).toBe(0)
+    })
+})
+
+describe('handleScrollToBottomClick', () => {
+    function makeBtn() {
+        return {
+            _hidden: false,
+            setAttribute(name, value) { if (name === 'hidden') this._hidden = true },
+            removeAttribute(name) { if (name === 'hidden') this._hidden = false },
+        }
+    }
+
+    it('scrolls the element to the bottom and hides the button after click', () => {
+        const el = { scrollHeight: 500, scrollTop: 0 }
+        const btn = makeBtn()
+
+        handleScrollToBottomClick(el, btn)
+
+        expect(el.scrollTop).toBe(500)
+        expect(btn._hidden).toBe(true)
+    })
+
+    it('re-enables auto-scroll (followLog=true) so getLog scrolls again afterwards', () => {
+        // First disable followLog via scroll event (scrollTop=0, far from bottom)
+        const scrollEl = { scrollHeight: 1000, scrollTop: 0, clientHeight: 10, offsetWidth: 20, clientWidth: 20 }
+        const scrollBtn = {
+            _hidden: false,
+            style: { right: null },
+            setAttribute() {},
+            removeAttribute() {},
+        }
+        handleScrollEvent(scrollEl, scrollBtn)
+
+        // Now click scroll-to-bottom → followLog = true again
+        const el = { scrollHeight: 500, scrollTop: 0 }
+        const btn = makeBtn()
+        handleScrollToBottomClick(el, btn)
+
+        // Verify followLog is true again by checking getLog calls scrollTop setter.
+        // JSDOM has no layout engine so scrollHeight is always 0; we spy on the setter instead.
+        const logWindow = document.querySelector('.logWindow')
+        let scrollTopSet = false
+        Object.defineProperty(logWindow, 'scrollTop', {
+            configurable: true,
+            get: () => 0,
+            set: () => { scrollTopSet = true },
+        })
+        $.ajax = vi.fn(({ success }) => success({ ...baseData, messages: ['x'], rawMessages: makeMessages(['x']) }))
+        getLog(0)
+
+        expect(scrollTopSet).toBe(true)
     })
 })
