@@ -1,5 +1,8 @@
 # Release Notes
 
+## 4.1.0.3
+* **[core]**: Change property `endpoints.loggers.enabled` to `management.endpoint.loggers.enabled` to align with Spring Boot's logging endpoint configuration
+
 ## 4.1.0.2
 * **[jobs]**: Fix broken JavaScript functionality on job pages caused by missing ES module support
 * **[jobs, core]**: Replace `var` with `const`/`let` in JavaScript files (`datetime.js`, `jobs.js`, `logLoader.js`) to improve code quality

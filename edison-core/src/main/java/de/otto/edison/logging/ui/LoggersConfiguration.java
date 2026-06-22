@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
  * @since 1.1.0
  */
 @AutoConfiguration
-@ConditionalOnProperty(name = "endpoints.loggers.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "management.endpoint.loggers.enabled", havingValue = "true")
 @EnableConfigurationProperties(EdisonApplicationProperties.class)
 public class LoggersConfiguration {
 
