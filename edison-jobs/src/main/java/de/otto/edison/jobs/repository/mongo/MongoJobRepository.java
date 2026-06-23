@@ -16,6 +16,7 @@ import org.bson.Document;
 import org.bson.RawBsonDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
