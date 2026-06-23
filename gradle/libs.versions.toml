@@ -5,7 +5,7 @@ togglz = "4.6.2"
 edison-hal = "3.0.0"
 validator-collection = "2.2.0"
 aws-sdk = "2.46.15"
-mockserver = "7.1.0"
+mockserver = "7.2.0"
 jacoco = "0.8.13"
 
 [libraries]
