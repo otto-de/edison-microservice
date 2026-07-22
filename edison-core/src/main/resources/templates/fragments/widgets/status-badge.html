@@ -6,7 +6,7 @@
     <span th:switch="${#strings.trim(status)}">
         <span th:case="'OK'" class="badge bg-success" th:text="${status}"></span>
         <span th:case="'WARNING'" class="badge bg-warning text-dark" th:text="${status}"></span>
-        <span th:case="'ERROR'" class="badge bg-error text-dark" th:text="${status}"></span>
+        <span th:case="'ERROR'" class="badge bg-danger text-dark" th:text="${status}"></span>
         <span th:case="*" class="badge bg-info" th:text="${status}"></span>
     </span>
 </div>
