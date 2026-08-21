@@ -130,9 +130,6 @@ subprojects {
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
 
-    targetCompatibility = '17'
-    sourceCompatibility = '17'
-
     /*
     // uncomment when using podman
     test {
@@ -145,6 +142,9 @@ subprojects {
     */
 
     java {
+        targetCompatibility = '17'
+        sourceCompatibility = '17'
+
         withJavadocJar()
         withSourcesJar()
     }
