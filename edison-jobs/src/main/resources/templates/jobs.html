@@ -16,7 +16,13 @@
             <h3 class="card-title mb-0">Job Overview</h3>
         </div>
         <div class="card-body">
-            <table class="table table-striped">
+            <tr th:if="${#lists.isEmpty(jobs)}" class="text-muted">
+                <td>
+                    <i class="bi bi-info-circle-fill me-2 align-middle" aria-hidden="true"></i>
+                    <span class="align-middle">No Jobs</span>
+                </td>
+            </tr>
+            <table th:if="${!#lists.isEmpty(jobs)}" class="table table-striped">
                 <thead>
                 <tr>
                     <th>JobType</th>
@@ -81,9 +87,6 @@
                         </ul>
 
                     </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(jobs)}">
-                    <td colspan="7">No Jobs</td>
                 </tr>
                 </tbody>
             </table>
