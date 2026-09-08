@@ -7,7 +7,7 @@ buildscript {
 plugins {
     id 'java'
     alias(libs.plugins.jreleaser)
-    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.boot) apply false
 }
 
 jreleaser {
@@ -130,9 +130,6 @@ subprojects {
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
 
-    targetCompatibility = '17'
-    sourceCompatibility = '17'
-
     /*
     // uncomment when using podman
     test {
@@ -145,6 +142,8 @@ subprojects {
     */
 
     java {
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
         withJavadocJar()
         withSourcesJar()
     }
