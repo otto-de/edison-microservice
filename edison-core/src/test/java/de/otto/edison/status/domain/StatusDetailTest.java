@@ -129,13 +129,17 @@ public class StatusDetailTest {
     }
 
     @Test
-    public void shouldIgnoreSinceInEqualsAndHashCode() {
+    public void shouldIncludeSinceInEqualsAndHashCode() {
         // given
         final StatusDetail statusDetail = statusDetail("foo", WARNING, "message");
         final StatusDetail withSince = statusDetail.withSince(Instant.parse("2024-01-01T10:00:00Z"));
+        final StatusDetail withSameSince = statusDetail.withSince(Instant.parse("2024-01-01T10:00:00Z"));
+        final StatusDetail withOtherSince = statusDetail.withSince(Instant.parse("2024-01-01T11:00:00Z"));
         // then
-        assertThat(withSince, is(statusDetail));
-        assertThat(withSince.hashCode(), is(statusDetail.hashCode()));
+        assertThat(withSince, is(not(statusDetail)));
+        assertThat(withSince, is(withSameSince));
+        assertThat(withSince.hashCode(), is(withSameSince.hashCode()));
+        assertThat(withSince, is(not(withOtherSince)));
     }
 
 }
