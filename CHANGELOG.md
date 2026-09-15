@@ -1,5 +1,9 @@
 # Release Notes
 
+## 4.1.0.4
+* **[core]**: Add `since` timestamp to `StatusDetail` that marks the first occurrence of the current status.
+  It is rendered on the status page and exposed in the status JSON as instant.
+
 ## 4.1.0.3
 * **[core]**: Change property `endpoints.loggers.enabled` to `management.endpoint.loggers.enabled` to align with Spring Boot's logging endpoint configuration
 

@@ -21,11 +21,19 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
     private volatile ApplicationStatus cachedStatus;
 
     private final List<StatusDetailIndicator> indicators;
+    private final StatusDetailSinceCache statusSinceCache;
 
     public CachedApplicationStatusAggregator(final ApplicationStatus applicationStatus,
                                              final List<StatusDetailIndicator> indicators) {
+        this(applicationStatus, indicators, new StatusDetailSinceCache());
+    }
+
+    public CachedApplicationStatusAggregator(final ApplicationStatus applicationStatus,
+                                             final List<StatusDetailIndicator> indicators,
+                                             final StatusDetailSinceCache statusSinceCache) {
         this.cachedStatus = applicationStatus;
         this.indicators = indicators;
+        this.statusSinceCache = statusSinceCache;
     }
 
     @Override
@@ -35,22 +43,23 @@ public class CachedApplicationStatusAggregator implements ApplicationStatusAggre
 
     @Override
     public void update() {
+        final List<StatusDetail> statusDetails = indicators
+                .stream()
+                .flatMap(i -> {
+                    try {
+                        return i.statusDetails().stream();
+                    } catch (RuntimeException e) {
+                        return Stream.of(StatusDetail.statusDetail(i.getClass().getSimpleName(), Status.ERROR, "got exception: " + e.getLocalizedMessage()));
+                    }
+                })
+                .collect(toList());
         cachedStatus = applicationStatus(
                 cachedStatus.application,
                 cachedStatus.cluster,
                 cachedStatus.system,
                 cachedStatus.vcs,
                 cachedStatus.team,
-                indicators
-                        .stream()
-                        .flatMap(i -> {
-                            try {
-                                return i.statusDetails().stream();
-                            } catch (RuntimeException e) {
-                                return Stream.of(StatusDetail.statusDetail(i.getClass().getSimpleName(), Status.ERROR, "got exception: " + e.getLocalizedMessage()));
-                            }
-                        })
-                        .collect(toList()));
+                statusSinceCache.withSince(statusDetails));
     }
 
 }
