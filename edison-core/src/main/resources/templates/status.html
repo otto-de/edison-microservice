@@ -230,7 +230,11 @@
                                 <dd class="col-sm-10" th:text="${statusDetail.message}"></dd>
                                 <th:block th:if="${statusDetail.since != null}">
                                     <dt class="col-sm-2">Since:</dt>
-                                    <dd class="col-sm-10" th:text="${statusDetail.since}"></dd>
+                                    <dd class="col-sm-10">
+                                        <div th:replace="~{fragments/widgets/date-time-badge :: dateTimeBadge(${statusDetail.since})}">
+                                            Since
+                                        </div>
+                                    </dd>
                                 </th:block>
                                 <th:block th:each="key : ${statusDetail.details.keySet()}">
                                     <dd class="col-sm-2" th:text="${key} + ':'">Message:</dd>
