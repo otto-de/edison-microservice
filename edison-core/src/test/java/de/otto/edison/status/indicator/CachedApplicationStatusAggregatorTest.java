@@ -5,7 +5,9 @@ import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
@@ -23,18 +25,31 @@ public class CachedApplicationStatusAggregatorTest {
     public static final StatusDetail ERROR_DETAIL = statusDetail("thatsAnError", Status.ERROR, "a message");
     public static final StatusDetail EXCEPTION_DETAIL = statusDetail("ErrorThrowingStatusDetailIndicator", Status.ERROR, "got exception: boom");
 
+    private static final Instant NOW = Instant.parse("2024-01-01T10:00:00Z");
+
+    /**
+     * A since-cache with a fixed clock, so the 'since' timestamp of the aggregated StatusDetails - which is
+     * part of their equality contract - is predictable.
+     */
+    private static StatusDetailSinceCache fixedSinceCache() {
+        return new StatusDetailSinceCache(Clock.fixed(NOW, ZoneOffset.UTC));
+    }
+
     @Test
     public void shouldCacheStatus() {
         // given
         final StatusDetailIndicator mockIndicator = someStatusDetailIndicator(OK_DETAIL_ONE);
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                mock(ApplicationStatus.class), singletonList(mockIndicator)
+                mock(ApplicationStatus.class),
+                singletonList(mockIndicator)
         );
         statusAggregator.update();
+
         // when
         statusAggregator.aggregatedStatus();
         statusAggregator.aggregatedStatus();
         statusAggregator.aggregatedStatus();
+
         // then
         verify(mockIndicator, times(1)).statusDetails();
     }
@@ -43,55 +58,57 @@ public class CachedApplicationStatusAggregatorTest {
     public void shouldAggregateStatusDetails() {
         // given
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                mock(ApplicationStatus.class), asList(
-                someStatusDetailIndicator(OK_DETAIL_ONE),
-                someStatusDetailIndicator(ERROR_DETAIL)
-        )
-        );
+                mock(ApplicationStatus.class),
+                asList(someStatusDetailIndicator(OK_DETAIL_ONE), someStatusDetailIndicator(ERROR_DETAIL)),
+                fixedSinceCache());
         statusAggregator.update();
+
         // when
         statusAggregator.aggregatedStatus();
+
         // then
         assertThat(statusAggregator.aggregatedStatus().status, is(Status.ERROR));
-        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(0), is(OK_DETAIL_ONE));
-        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(1), is(ERROR_DETAIL));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(0), is(OK_DETAIL_ONE.withSince(NOW)));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(1), is(ERROR_DETAIL.withSince(NOW)));
     }
 
     @Test
     public void shouldCatchExceptionsInStatusDetails() {
         // given
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                mock(ApplicationStatus.class), asList(
-                new ErrorThrowingStatusDetailIndicator(),
-                someStatusDetailIndicator(OK_DETAIL_TWO)
-        )
+                mock(ApplicationStatus.class),
+                asList(new ErrorThrowingStatusDetailIndicator(), someStatusDetailIndicator(OK_DETAIL_TWO)),
+                fixedSinceCache()
         );
         statusAggregator.update();
+
         // when
         statusAggregator.aggregatedStatus();
+
         // then
         assertThat(statusAggregator.aggregatedStatus().status, is(Status.ERROR));
-        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(0), is(EXCEPTION_DETAIL));
-        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(1), is(OK_DETAIL_TWO));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(0), is(EXCEPTION_DETAIL.withSince(NOW)));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(1), is(OK_DETAIL_TWO.withSince(NOW)));
     }
 
     @Test
     public void shouldAggregateCompositeStatusDetails() {
         // given
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                mock(ApplicationStatus.class), asList(
-                someCompositeStatusDetailIndicator(OK_DETAIL_ONE, WARNING_DETAIL),
-                someStatusDetailIndicator(OK_DETAIL_TWO)
-        )
+                mock(ApplicationStatus.class),
+                asList(someCompositeStatusDetailIndicator(OK_DETAIL_ONE, WARNING_DETAIL), someStatusDetailIndicator(OK_DETAIL_TWO)),
+                fixedSinceCache()
         );
         statusAggregator.update();
+
         // when
         statusAggregator.aggregatedStatus();
+
         // then
         assertThat(statusAggregator.aggregatedStatus().status, is(Status.WARNING));
-        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(0), is(OK_DETAIL_ONE));
-        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(1), is(WARNING_DETAIL));
-        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(2), is(OK_DETAIL_TWO));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(0), is(OK_DETAIL_ONE.withSince(NOW)));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(1), is(WARNING_DETAIL.withSince(NOW)));
+        assertThat(statusAggregator.aggregatedStatus().statusDetails.get(2), is(OK_DETAIL_TWO.withSince(NOW)));
     }
 
     @Test
@@ -100,7 +117,8 @@ public class CachedApplicationStatusAggregatorTest {
         final StatusDetailIndicator mockIndicator = mock(StatusDetailIndicator.class);
         when(mockIndicator.statusDetails()).thenReturn(singletonList(OK_DETAIL_ONE));
         final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
-                mock(ApplicationStatus.class), singletonList(mockIndicator)
+                mock(ApplicationStatus.class),
+                singletonList(mockIndicator)
         );
         statusAggregator.update();
         final Instant sinceA = statusAggregator.aggregatedStatus().statusDetails.get(0).getSince();
@@ -144,7 +162,7 @@ public class CachedApplicationStatusAggregatorTest {
     }
 
 
-    class ErrorThrowingStatusDetailIndicator implements StatusDetailIndicator {
+    static class ErrorThrowingStatusDetailIndicator implements StatusDetailIndicator {
 
         @Override
         public List<StatusDetail> statusDetails() {

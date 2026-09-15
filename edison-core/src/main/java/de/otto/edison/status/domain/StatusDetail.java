@@ -239,14 +239,6 @@ public class StatusDetail {
         return since;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * The {@link #getSince() since} timestamp is deliberately not part of the equality contract: it is
-     * derived metadata about when the current status was first observed, not part of the status itself.
-     * Including it would make two otherwise identical StatusDetails unequal just because they were
-     * observed at different times.
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -258,7 +250,8 @@ public class StatusDetail {
         if (status != detail.status) return false;
         if (message != null ? !message.equals(detail.message) : detail.message != null) return false;
         if (links != null ? !links.equals(detail.links) : detail.links != null) return false;
-        return details != null ? details.equals(detail.details) : detail.details == null;
+        if (details != null ? !details.equals(detail.details) : detail.details != null) return false;
+        return since != null ? since.equals(detail.since) : detail.since == null;
     }
 
     @Override
@@ -268,6 +261,7 @@ public class StatusDetail {
         result = 31 * result + (message != null ? message.hashCode() : 0);
         result = 31 * result + (links != null ? links.hashCode() : 0);
         result = 31 * result + (details != null ? details.hashCode() : 0);
+        result = 31 * result + (since != null ? since.hashCode() : 0);
         return result;
     }
 
