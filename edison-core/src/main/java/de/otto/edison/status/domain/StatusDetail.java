@@ -2,6 +2,7 @@ package de.otto.edison.status.domain;
 
 import net.jcip.annotations.Immutable;
 
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,17 +34,28 @@ public class StatusDetail {
     private final String message;
     private final List<Link> links;
     private final Map<String, String> details;
+    private final Instant since;
 
     private StatusDetail(final String name,
                          final Status status,
                          final String message,
                          final List<Link> links,
                          final Map<String, String> details) {
+        this(name, status, message, links, details, null);
+    }
+
+    private StatusDetail(final String name,
+                         final Status status,
+                         final String message,
+                         final List<Link> links,
+                         final Map<String, String> details,
+                         final Instant since) {
         this.name = name;
         this.status = status;
         this.message = message;
         this.links = unmodifiableList(links);
         this.details = unmodifiableMap(new LinkedHashMap<>(details));
+        this.since = since;
     }
 
     public static StatusDetail statusDetail(final String name,
@@ -97,7 +109,7 @@ public class StatusDetail {
      * @return StatusDetail
      */
     public StatusDetail toOk(final String message) {
-        return statusDetail(name, OK, message, details);
+        return copyWith(OK, message, details);
     }
 
     /**
@@ -108,7 +120,7 @@ public class StatusDetail {
      * @return StatusDetail
      */
     public StatusDetail toWarning(final String message) {
-        return statusDetail(name, WARNING, message, details);
+        return copyWith(WARNING, message, details);
     }
 
     /**
@@ -119,7 +131,7 @@ public class StatusDetail {
      * @return StatusDetail
      */
     public StatusDetail toError(final String message) {
-        return statusDetail(name, ERROR, message, details);
+        return copyWith(ERROR, message, details);
     }
 
     /**
@@ -132,7 +144,7 @@ public class StatusDetail {
     public StatusDetail withDetail(final String key, final String value) {
         final LinkedHashMap<String, String> newDetails = new LinkedHashMap<>(details);
         newDetails.put(key, value);
-        return statusDetail(name,status,message, newDetails);
+        return copyWith(status, message, newDetails);
     }
 
     /**
@@ -144,7 +156,32 @@ public class StatusDetail {
     public StatusDetail withoutDetail(final String key) {
         final LinkedHashMap<String, String> newDetails = new LinkedHashMap<>(details);
         newDetails.remove(key);
-        return statusDetail(name,status,message, newDetails);
+        return copyWith(status, message, newDetails);
+    }
+
+    /**
+     * Create a copy of this StatusDetail with the given {@link #getSince() since} timestamp.
+     *
+     * This is used by {@link de.otto.edison.status.indicator.StatusDetailSinceCache} to keep track of
+     * the first occurrence of the current {@link Status}. There is normally no need to call this method
+     * from a {@link de.otto.edison.status.indicator.StatusDetailIndicator}.
+     *
+     * @param since the timestamp of the first occurrence of the current status, may be null
+     * @return StatusDetail
+     */
+    public StatusDetail withSince(final Instant since) {
+        return new StatusDetail(name, status, message, links, details, since);
+    }
+
+    /**
+     * Creates a copy of this StatusDetail. The {@link #getSince() since} timestamp is only retained if the
+     * status did not change, because it marks the first occurrence of the current status.
+     */
+    private StatusDetail copyWith(final Status newStatus,
+                                  final String newMessage,
+                                  final Map<String, String> newDetails) {
+        return new StatusDetail(name, newStatus, newMessage, emptyList(), newDetails,
+                newStatus == status ? since : null);
     }
 
     /**
@@ -187,6 +224,29 @@ public class StatusDetail {
         return details;
     }
 
+    /**
+     * The timestamp of the first occurrence of the current {@link #getStatus() status}.
+     *
+     * The value only changes when the status changes: as long as a StatusDetail keeps reporting the same
+     * Status, this timestamp stays the same, even though StatusDetails are recreated on every update.
+     * The timestamp is maintained by {@link de.otto.edison.status.indicator.StatusDetailSinceCache} while
+     * the {@link de.otto.edison.status.indicator.ApplicationStatusAggregator} aggregates the application
+     * status, so StatusDetails that were not aggregated yet return null here.
+     *
+     * @return the timestamp of the first occurrence of the current status, or null if unknown
+     */
+    public Instant getSince() {
+        return since;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * The {@link #getSince() since} timestamp is deliberately not part of the equality contract: it is
+     * derived metadata about when the current status was first observed, not part of the status itself.
+     * Including it would make two otherwise identical StatusDetails unequal just because they were
+     * observed at different times.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -219,6 +279,7 @@ public class StatusDetail {
                 ", message='" + message + '\'' +
                 ", links=" + links +
                 ", details=" + details +
+                ", since=" + since +
                 '}';
     }
 
