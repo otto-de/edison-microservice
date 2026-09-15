@@ -2,6 +2,7 @@ package de.otto.edison.status.domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.Map;
 
 import static de.otto.edison.status.domain.Status.ERROR;
@@ -13,6 +14,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 public class StatusDetailTest {
 
@@ -105,5 +107,35 @@ public class StatusDetailTest {
         assertThat(statusDetail.getDetails(), hasEntry("foo", "baz"));
     }
 
+    @Test
+    public void shouldKeepSinceWhenStatusIsUnchanged() {
+        // given
+        final Instant since = Instant.parse("2024-01-01T10:00:00Z");
+        final StatusDetail statusDetail = statusDetail("foo", WARNING, "message").withSince(since);
+        // then
+        assertThat(statusDetail.withDetail("foo", "bar").getSince(), is(since));
+        assertThat(statusDetail.withoutDetail("foo").getSince(), is(since));
+        assertThat(statusDetail.toWarning("different message").getSince(), is(since));
+    }
+
+    @Test
+    public void shouldDropSinceWhenStatusChanges() {
+        // given
+        final StatusDetail statusDetail = statusDetail("foo", WARNING, "message")
+                .withSince(Instant.parse("2024-01-01T10:00:00Z"));
+        // then
+        assertThat(statusDetail.toOk("different message").getSince(), is(nullValue()));
+        assertThat(statusDetail.toError("different message").getSince(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldIgnoreSinceInEqualsAndHashCode() {
+        // given
+        final StatusDetail statusDetail = statusDetail("foo", WARNING, "message");
+        final StatusDetail withSince = statusDetail.withSince(Instant.parse("2024-01-01T10:00:00Z"));
+        // then
+        assertThat(withSince, is(statusDetail));
+        assertThat(withSince.hashCode(), is(statusDetail.hashCode()));
+    }
 
 }

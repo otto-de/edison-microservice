@@ -5,13 +5,14 @@ import de.otto.edison.status.domain.Status;
 import de.otto.edison.status.domain.StatusDetail;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.List;
 
 import static de.otto.edison.status.domain.StatusDetail.statusDetail;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 public class CachedApplicationStatusAggregatorTest {
@@ -91,6 +92,43 @@ public class CachedApplicationStatusAggregatorTest {
         assertThat(statusAggregator.aggregatedStatus().statusDetails.get(0), is(OK_DETAIL_ONE));
         assertThat(statusAggregator.aggregatedStatus().statusDetails.get(1), is(WARNING_DETAIL));
         assertThat(statusAggregator.aggregatedStatus().statusDetails.get(2), is(OK_DETAIL_TWO));
+    }
+
+    @Test
+    public void shouldKeepSinceOfStatusDetailsAcrossUpdates() {
+        // given
+        final StatusDetailIndicator mockIndicator = mock(StatusDetailIndicator.class);
+        when(mockIndicator.statusDetails()).thenReturn(singletonList(OK_DETAIL_ONE));
+        final ApplicationStatusAggregator statusAggregator = new CachedApplicationStatusAggregator(
+                mock(ApplicationStatus.class), singletonList(mockIndicator)
+        );
+        statusAggregator.update();
+        final Instant sinceA = statusAggregator.aggregatedStatus().statusDetails.get(0).getSince();
+        assertThat(sinceA, is(notNullValue()));
+
+        // when the status stays the same, but the message changes
+        when(mockIndicator.statusDetails()).thenReturn(singletonList(statusDetail("one", Status.OK, "another message")));
+        statusAggregator.update();
+        // then 'since' is unchanged
+        final Instant sinceB = statusAggregator.aggregatedStatus().statusDetails.get(0).getSince();
+        assertThat(sinceB, is(sinceA));
+
+        // when the status changes
+        when(mockIndicator.statusDetails()).thenReturn(singletonList(statusDetail("one", Status.ERROR, "another message")));
+        statusAggregator.update();
+        // then 'since' is updated
+        final Instant sinceC = statusAggregator.aggregatedStatus().statusDetails.get(0).getSince();
+        assertThat(sinceC, is(not(sinceA)));
+        assertThat(sinceC, greaterThan(sinceA));
+
+        // when the status changes back to OK
+        when(mockIndicator.statusDetails()).thenReturn(singletonList(statusDetail("one", Status.OK, "another message")));
+        statusAggregator.update();
+        // then 'since' is updated (but not previous value)
+        final Instant sinceD = statusAggregator.aggregatedStatus().statusDetails.get(0).getSince();
+        assertThat(sinceD, is(not(sinceA)));
+        assertThat(sinceD, is(not(sinceC)));
+        assertThat(sinceD, greaterThan(sinceC));
     }
 
     private StatusDetailIndicator someCompositeStatusDetailIndicator(final StatusDetail... statusDetails) {

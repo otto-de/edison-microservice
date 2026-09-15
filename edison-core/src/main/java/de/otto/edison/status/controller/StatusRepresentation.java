@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
@@ -147,6 +148,9 @@ public class StatusRepresentation {
                 map.put(toCamelCase(entry.getName()), new LinkedHashMap<String, Object>() {{
                     put("status", entry.getStatus().name());
                     put("message", entry.getMessage());
+                    if (entry.getSince() != null) {
+                        put("since", ISO_INSTANT.format(entry.getSince()));
+                    }
                     put("links", links);
                     putAll(entry.getDetails().entrySet().stream().collect(Collectors.toMap(entry -> toCamelCase(entry.getKey()), Map.Entry::getValue)));
                 }});
