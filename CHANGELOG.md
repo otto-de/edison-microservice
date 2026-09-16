@@ -1,6 +1,7 @@
 # Release Notes
 
-## 4.1.0.4
+## 4.1.1
+* **[all]**: Update to Spring Boot 4.1.1
 * **[core]**: Add `since` timestamp to `StatusDetail` that marks the first occurrence of the current status.
   It is rendered on the status page and exposed in the status JSON as instant.
 
