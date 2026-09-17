@@ -38,7 +38,7 @@ Its purpose is to provide a common implementation for cross-cutting requirements
 
 This project maintains its roadmap with [issues](https://github.com/otto-de/edison-microservice/issues) and [milestones](https://github.com/otto-de/edison-microservice/milestones).
 
-**4.0.x**: Edison Microservices for Spring Boot 4.0.x &#10004; - Compatible with Java 17 and greater
+**4.1.x**: Edison Microservices for Spring Boot 4.1.x &#10004; - Compatible with Java 17 and greater
 
 **3.5.x**: Edison Microservices for Spring Boot 3.5.x &#10004; - Compatible with Java 17 and greater
 
