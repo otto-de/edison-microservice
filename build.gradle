@@ -74,8 +74,8 @@ jreleaser {
 // that is contained in this Edison release. For new releases where we release Edison faster
 // than Spring Boot, we introduced a 4th version component.
 //
-// Example: Edison 3.5.14 for Spring Boot 3.5.14
-//          Edison 3.5.14.1 for a second Edison release without Spring Boot update
+// Examples: Edison 3.5.14     for Spring Boot 3.5.14
+//           Edison 3.5.14.1   for a second Edison release without Spring Boot update
 //
 // DO NOT FORGET TO DOCUMENT CHANGES IN CHANGELOG.md
 //
@@ -83,7 +83,7 @@ jreleaser {
 // This adds a GitHub release for every new release: https://github.com/otto-de/edison-microservice/releases
 //
 //
-def edison_version = "4.1.1"  // <--- SET AND UPDATE EDISON VERSION HERE
+def edison_version = "4.1.1.1-SNAPSHOT"  // <--- SET AND UPDATE EDISON VERSION HERE
 //
 //
 //
