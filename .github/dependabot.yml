@@ -31,3 +31,28 @@ updates:
       # Ignore Togglz >= 3.6.0
       - dependency-name: "org.togglz:*"
         versions: [ ">= 3.6.0" ]
+
+  # Workflow actions are pinned to full commit SHAs (see .github/workflows/*.yml).
+  # Dependabot keeps those SHAs and their "# vX.Y.Z" comments up to date.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "main"
+    open-pull-requests-limit: 10
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/edison-jobs"
+    schedule:
+      interval: "weekly"
+    target-branch: "main"
+    open-pull-requests-limit: 10
+    groups:
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
