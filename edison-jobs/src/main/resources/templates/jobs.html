@@ -47,9 +47,10 @@
                             <span th:if="${job.status} == 'DEAD'" class="badge bg-warning"
                                   th:id="'job-status-' + ${job.id}"><span th:text="${job.status}"></span></span>
                         </th:block>
-                        <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING"
-                                                                          class="badge bg-info text-dark"
-                                                                          th:id="'job-status-' + ${job.id}">RUNNING</span>
+                        <th:block th:if="${job.state} == 'Running'">
+                            <span class="badge bg-info text-dark" th:id="'job-status-' + ${job.id}">
+                                <span class="spinner-border spinner-border-sm me-1"></span>RUNNING
+                            </span>
                         </th:block>
                     </td>
                     <td class="job-started" th:text="${job.started}" th:data-datetime="${job.startedIso}"

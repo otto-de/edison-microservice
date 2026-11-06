@@ -22,8 +22,8 @@
                             <dt>Status:</dt>
                             <dd>
                                 <th:block th:if="${job.state} != 'Running'">
-                                <span th:if="${job.status} == 'OK'" class="badge bg-success" id="job-status"><span
-                                        th:text="${job.status}"></span></span>
+                                    <span th:if="${job.status} == 'OK'" class="badge bg-success" id="job-status"><span
+                                            th:text="${job.status}"></span></span>
                                     <span th:if="${job.status} == 'SKIPPED'" class="badge bg-secondary"
                                           id="job-status"><span th:text="${job.status}"></span></span>
                                     <span th:if="${job.status} == 'ERROR'" class="badge bg-danger" id="job-status"><span
@@ -31,9 +31,10 @@
                                     <span th:if="${job.status} == 'DEAD'" class="badge bg-warning" id="job-status"><span
                                             th:text="${job.status}"></span></span>
                                 </th:block>
-                                <th:block th:if="${job.state} == 'Running'"><span th:text="RUNNING"
-                                                                                  class="badge bg-info text-dark"
-                                                                                  id="job-status">RUNNING</span>
+                                <th:block th:if="${job.state} == 'Running'">
+                                    <span class="badge bg-info text-dark" id="job-status">
+                                        <span class="spinner-border spinner-border-sm me-1"></span>RUNNING
+                                    </span>
                                 </th:block>
                             </dd>
                             <dt><br/>Executed by:</dt>
