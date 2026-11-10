@@ -1,5 +1,9 @@
 # Release Notes
 
+## 4.1.2
+* **[all]**: Update to Spring Boot 4.1.2
+* **[jobs]**: Add a loading spinner to the RUNNING status badge on job overview and job detail pages
+
 ## 4.1.1
 * **[all]**: Update to Spring Boot 4.1.1
 * **[core]**: Add `since` timestamp to `StatusDetail` that marks the first occurrence of the current status.
