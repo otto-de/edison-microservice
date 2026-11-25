@@ -38,7 +38,7 @@ Its purpose is to provide a common implementation for cross-cutting requirements
 
 This project maintains its roadmap with [issues](https://github.com/otto-de/edison-microservice/issues) and [milestones](https://github.com/otto-de/edison-microservice/milestones).
 
-**4.1.x**: Edison Microservices for Spring Boot 4.1.x &#10004; - Compatible with Java 17 and greater
+**4.2.x**: Edison Microservices for Spring Boot 4.2.x &#10004; - Compatible with Java 17 and greater
 
 **3.5.x**: Edison Microservices for Spring Boot 3.5.x &#10004; - Compatible with Java 17 and greater
 
@@ -168,28 +168,28 @@ Releases are published to both GitHub Packages (snapshots and releases) and Mave
 
 1. **Set the release version** in `build.gradle` — remove the `-SNAPSHOT` suffix:
    ```
-   def edison_version = "4.1.1"
+   def edison_version = "4.2.0"
    ```
 
 2. **Update `CHANGELOG.md`** with the release notes for this version.
    The entry must start with a heading of the exact form `## <version>`, e.g.:
    ```markdown
-   ## 4.1.1
+   ## 4.2.0
    * **[core]**: Some fix
-   * **[all]**: Update to Spring Boot 4.1.1
+   * **[all]**: Update to Spring Boot 4.2.0
    ```
    This section is extracted verbatim and used as the GitHub release body.
 
 3. **Commit and push:**
    ```bash
-   git commit -am "chore: prepare release 4.1.1"
+   git commit -am "chore: prepare release 4.2.0"
    git push
    ```
 
 4. **Trigger the release workflow**, passing the version and the branch to release from:
    ```bash
    # Release from main
-   gh workflow run release.yml -f version=4.1.1 -f branch=main
+   gh workflow run release.yml -f version=4.2.0 -f branch=main
 
    # Release from 3.5.x
    gh workflow run release.yml -f version=3.5.11 -f branch=3.5.x
@@ -205,10 +205,10 @@ Releases are published to both GitHub Packages (snapshots and releases) and Mave
 
 5. **Bump to the next snapshot version** after a successful release:
    ```
-   def edison_version = "4.1.2-SNAPSHOT"
+   def edison_version = "4.2.1-SNAPSHOT"
    ```
    ```bash
-   git commit -am "chore: bump to 4.1.2-SNAPSHOT"
+   git commit -am "chore: bump to 4.2.1-SNAPSHOT"
    git push
    ```
 

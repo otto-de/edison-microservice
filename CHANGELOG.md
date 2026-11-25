@@ -1,5 +1,8 @@
 # Release Notes
 
+## 4.2.0
+* **[all]**: Update to Spring Boot 4.2.0
+
 ## 4.1.2
 * **[all]**: Update to Spring Boot 4.1.2
 * **[jobs]**: Add a loading spinner to the RUNNING status badge on job overview and job detail pages
